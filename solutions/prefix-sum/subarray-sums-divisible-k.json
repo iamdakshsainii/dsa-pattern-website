@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e9e",
+  "questionSlug": "subarray-sums-divisible-k",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/subarray-sums-divisible-by-k/description/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

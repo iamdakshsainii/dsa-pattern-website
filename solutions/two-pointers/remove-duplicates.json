@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e7a",
+  "questionSlug": "remove-duplicates",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/remove-duplicates-from-sorted-list/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ebe",
+  "questionSlug": "first-non-repeating-character",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/first-unique-character-in-a-string/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e94",
+  "questionSlug": "maximum-size-subarray-sum",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/problems/minimum-window-substring-substring/description/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eb3",
+  "questionSlug": "reverse-alternating-k-sublist",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/reverse-alternate-k-nodes-in-a-singly-linked-list/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

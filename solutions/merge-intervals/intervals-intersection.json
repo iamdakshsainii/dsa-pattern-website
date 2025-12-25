@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ea4",
+  "questionSlug": "intervals-intersection",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/interval-list-intersections/description/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

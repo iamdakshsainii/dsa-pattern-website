@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e7f",
+  "questionSlug": "subarrays-product-less-target",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/subarray-product-less-than-k/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

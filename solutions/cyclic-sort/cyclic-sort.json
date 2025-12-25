@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ea8",
+  "questionSlug": "cyclic-sort",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/sort-an-array-which-contain-1-to-n-values-in-on-using-cycle-sort/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

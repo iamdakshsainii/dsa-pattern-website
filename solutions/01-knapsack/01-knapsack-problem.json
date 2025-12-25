@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8f0e",
+  "questionSlug": "01-knapsack-problem",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

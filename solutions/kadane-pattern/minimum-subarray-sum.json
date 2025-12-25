@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e97",
+  "questionSlug": "minimum-subarray-sum",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/problems/smallest-sum-contiguous-subarray/1",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

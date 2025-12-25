@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eb2",
+  "questionSlug": "reverse-k-element-sublist",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

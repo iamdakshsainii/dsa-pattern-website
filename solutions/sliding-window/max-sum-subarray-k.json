@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e8c",
+  "questionSlug": "max-sum-subarray-k",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

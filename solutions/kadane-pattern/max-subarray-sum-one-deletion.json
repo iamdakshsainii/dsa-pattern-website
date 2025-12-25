@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e99",
+  "questionSlug": "max-subarray-sum-one-deletion",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-subarray-sum-with-one-deletion/description/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}
