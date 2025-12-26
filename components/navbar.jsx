@@ -1,164 +1,283 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Menu, X, LogOut, User, Home, Grid3x3, BookOpen, LayoutDashboard } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Menu,
+  X,
+  LogOut,
+  User,
+  Home,
+  Grid3x3,
+  BookOpen,
+  LayoutDashboard,
+  Bookmark,
+  StickyNote,
+  ChevronDown,
+} from "lucide-react"
 import { useState, useEffect } from "react"
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+export default function Navbar({ currentUser }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
-    // Check if user is logged in by checking cookie
-    const checkAuth = () => {
-      const token = document.cookie.includes("auth-token")
-      setIsLoggedIn(token)
-    }
-    checkAuth()
+    setMobileMenuOpen(false)
   }, [pathname])
 
   const handleLogout = async () => {
-    // Remove auth cookie
-    document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT"
-    setIsLoggedIn(false)
-    window.location.href = "/"
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      })
+
+      if (response.ok) {
+        document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT"
+        window.location.href = "/"
+      }
+    } catch (error) {
+      console.error("Logout error:", error)
+    }
   }
 
-  const navLinks = [
-    { href: "/", label: "Home", icon: Home },
-    { href: "/patterns", label: "Patterns", icon: Grid3x3 },
-    { href: "/sheets", label: "Sheets", icon: BookOpen },
+  const navItems = [
+    { name: "Home", href: "/", icon: Home },
+    { name: "Patterns", href: "/patterns", icon: Grid3x3 },
+    { name: "Sheets", href: "/sheets", icon: BookOpen },
   ]
 
-  if (isLoggedIn) {
-    navLinks.push({ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard })
+  const isActive = (href) => {
+    if (href === "/") {
+      return pathname === "/"
+    }
+    return pathname.startsWith(href)
   }
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold">
-              DSA
-            </div>
-            <span className="font-semibold text-lg hidden sm:inline">Pattern Mastery</span>
-          </Link>
+    <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
+      <div className="container flex h-16 items-center justify-between px-4">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary">
+            <span className="text-primary-foreground font-bold text-lg">D</span>
+          </div>
+          <span className="font-bold text-xl hidden sm:inline">DSA Patterns</span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => {
-              const Icon = link.icon
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-6">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
+                  isActive(item.href)
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {item.name}
+              </Link>
+            )
+          })}
+        </div>
+
+        {/* Desktop Auth Buttons */}
+        <div className="hidden md:flex items-center gap-3">
+          {currentUser ? (
+            <>
+              <Link href="/dashboard">
+                <Button
+                  variant={pathname === "/dashboard" ? "default" : "ghost"}
+                  size="sm"
+                  className="gap-2"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  Dashboard
+                </Button>
+              </Link>
+
+              {/* User Dropdown Menu - FIXED ALIGNMENT */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <User className="h-4 w-4" />
+                    {currentUser.name}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem asChild>
+                    <Link href="/bookmarks" className="cursor-pointer flex items-center">
+                      <Bookmark className="h-4 w-4 mr-2" />
+                      Bookmarks
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link href="/notes" className="cursor-pointer flex items-center">
+                      <StickyNote className="h-4 w-4 mr-2" />
+                      Saved Notes
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="cursor-pointer flex items-center">
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link href="/auth/login">
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/auth/signup">
+                <Button size="sm">Sign Up</Button>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden p-2 hover:bg-accent rounded-lg"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t bg-background">
+          <div className="container px-4 py-4 space-y-3">
+            {/* Navigation Links */}
+            {navItems.map((item) => {
+              const Icon = item.icon
               return (
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
-                    pathname === link.href ? "text-primary" : "text-muted-foreground"
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive(item.href)
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  {link.label}
+                  <Icon className="h-5 w-5" />
+                  {item.name}
                 </Link>
               )
             })}
-          </div>
 
-          {/* Auth Buttons */}
-          <div className="hidden md:flex items-center gap-3">
-            {isLoggedIn ? (
+            {currentUser && (
               <>
-                <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <User className="h-4 w-4" />
-                    Profile
-                  </Button>
+                <div className="border-t my-2" />
+
+                <Link
+                  href="/dashboard"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/dashboard"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <LayoutDashboard className="h-5 w-5" />
+                  Dashboard
                 </Link>
-                <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2 bg-transparent">
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link href="/auth/login">
-                  <Button variant="ghost" size="sm">
-                    Login
-                  </Button>
+
+                <Link
+                  href="/bookmarks"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/bookmarks"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <Bookmark className="h-5 w-5" />
+                  Bookmarks
                 </Link>
-                <Link href="/auth/sign-up">
-                  <Button size="sm">Sign Up</Button>
+
+                <Link
+                  href="/notes"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/notes"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <StickyNote className="h-5 w-5" />
+                  Saved Notes
                 </Link>
               </>
             )}
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
+            <div className="border-t my-2" />
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden py-4 space-y-3">
-            {navLinks.map((link) => {
-              const Icon = link.icon
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
-                    pathname === link.href ? "bg-primary text-primary-foreground" : "hover:bg-accent"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Icon className="h-5 w-5" />
-                  {link.label}
-                </Link>
-              )
-            })}
-            <div className="border-t pt-3 space-y-2">
-              {isLoggedIn ? (
-                <>
-                  <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start gap-2">
-                      <User className="h-4 w-4" />
-                      Profile
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2 bg-transparent"
-                    onClick={() => {
-                      handleLogout()
-                      setIsOpen(false)
-                    }}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Logout
+            {/* Auth Buttons */}
+            {currentUser ? (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950 w-full"
+              >
+                <LogOut className="h-5 w-5" />
+                Logout
+              </button>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <Link href="/auth/login">
+                  <Button variant="outline" className="w-full">
+                    Login
                   </Button>
-                </>
-              ) : (
-                <>
-                  <Link href="/auth/login" onClick={() => setIsOpen(false)}>
-                    <Button variant="ghost" className="w-full">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link href="/auth/sign-up" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full">Sign Up</Button>
-                  </Link>
-                </>
-              )}
-            </div>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button className="w-full">Sign Up</Button>
+                </Link>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   )
 }

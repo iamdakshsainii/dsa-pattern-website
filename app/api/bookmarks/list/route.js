@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
-import { toggleBookmark } from "@/lib/db"
+import { getBookmarkedQuestions } from "@/lib/db"
 
-export async function POST(request) {
+export async function GET() {
   try {
     const cookieStore = await cookies()
     const authToken = cookieStore.get("auth-token")
@@ -17,22 +17,16 @@ export async function POST(request) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 })
     }
 
-    const { questionId } = await request.json()
+    const result = await getBookmarkedQuestions(payload.userId)
 
-    if (!questionId) {
-      return NextResponse.json(
-        { error: "Question ID is required" },
-        { status: 400 }
-      )
-    }
-
-    const result = await toggleBookmark(payload.userId, questionId)
-
-    return NextResponse.json({ success: true, bookmarked: result.bookmarked })
+    return NextResponse.json({
+      questions: result.questions || [],
+      userProgress: result.userProgress || {}
+    })
   } catch (error) {
-    console.error("Bookmark toggle error:", error)
+    console.error("Fetch bookmarks error:", error)
     return NextResponse.json(
-      { error: "Failed to toggle bookmark" },
+      { error: "Failed to fetch bookmarks" },
       { status: 500 }
     )
   }

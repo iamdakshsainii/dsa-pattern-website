@@ -1,55 +1,58 @@
 import { NextResponse } from "next/server"
 import { getUser } from "@/lib/db"
+import { verifyPassword, createToken } from "@/lib/auth"
 
 export async function POST(request) {
   try {
     const { email, password } = await request.json()
 
-    if (email === "test@example.com" && password === "test123") {
-      // Create auth token (simple version - in production use JWT)
-      const token = Buffer.from(JSON.stringify({ userId: "test-user-id", email })).toString("base64")
-
-      const response = NextResponse.json({
-        success: true,
-        user: {
-          id: "test-user-id",
-          email,
-          name: "Test User",
-        },
-      })
-
-      // Set cookie
-      response.cookies.set("auth-token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-        path: "/",
-      })
-
-      return response
+    // Validation
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Email and password are required" },
+        { status: 400 }
+      )
     }
 
-    // Find user
+    // Get user from database
     const user = await getUser(email)
 
-    if (!user || user.password !== password) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+    if (!user) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      )
     }
 
-    // Create auth token
-    const token = Buffer.from(JSON.stringify({ userId: user._id.toString(), email })).toString("base64")
+    // Verify password
+    const isValidPassword = await verifyPassword(password, user.password)
 
+    if (!isValidPassword) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      )
+    }
+
+    // Create JWT token
+    const token = createToken({
+      userId: user._id,
+      email: user.email,
+      name: user.name,
+    })
+
+    // Create response
     const response = NextResponse.json({
       success: true,
       user: {
-        id: user._id.toString(),
+        id: user._id,
         email: user.email,
         name: user.name,
       },
+      token,
     })
 
-    // Set cookie
+    // Set cookie with proper settings
     response.cookies.set("auth-token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -61,6 +64,9 @@ export async function POST(request) {
     return response
   } catch (error) {
     console.error("Login error:", error)
-    return NextResponse.json({ error: "Login failed" }, { status: 500 })
+    return NextResponse.json(
+      { error: "An error occurred during login. Please try again." },
+      { status: 500 }
+    )
   }
 }

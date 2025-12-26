@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { BookOpen, Loader2 } from "lucide-react"
+import { BookOpen, Loader2, Mail, Lock } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -25,76 +25,99 @@ export default function LoginPage() {
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       })
 
       const data = await response.json()
 
-      if (response.ok) {
-        window.location.href = "/dashboard"
-      } else {
-        setError(data.error || "Login failed")
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed")
       }
+
+      document.cookie = `auth-token=${data.token}; path=/; max-age=${60*60*24*7}; SameSite=Lax`
+
+      await new Promise(resolve => setTimeout(resolve, 200))
+
+      window.dispatchEvent(new Event('auth-changed'))
+
+      window.location.href = "/dashboard"
     } catch (err) {
-      setError("Something went wrong. Please try again.")
+      setError(err.message)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/20 p-4">
-      <Card className="w-full max-w-md p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+      <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <BookOpen className="h-12 w-12 text-primary" />
+            <div className="h-12 w-12 rounded-xl bg-blue-600 flex items-center justify-center">
+              <BookOpen className="h-6 w-6 text-white" />
+            </div>
           </div>
-          <h1 className="text-2xl font-bold">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">Sign in to continue your learning journey</p>
-        </div>
-
-        <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-6 text-sm">
-          <p className="font-medium mb-1">Test Credentials:</p>
-          <p className="text-muted-foreground">
-            Email: <code className="bg-background px-1 rounded">test@example.com</code>
-          </p>
-          <p className="text-muted-foreground">
-            Password: <code className="bg-background px-1 rounded">test123</code>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome Back</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Sign in to continue your DSA journey
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-4 text-sm text-red-600 dark:text-red-400">
-            {error}
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p className="text-red-800 dark:text-red-400 text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="[email protected]"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <Label htmlFor="email" className="text-sm font-medium">
+              Email Address
+            </Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
+                className="pl-10"
+              />
+            </div>
           </div>
+
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <Label htmlFor="password" className="text-sm font-medium">
+              Password
+            </Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
+                className="pl-10"
+              />
+            </div>
           </div>
-          <Button className="w-full" type="submit" disabled={loading}>
+
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700"
+            size="lg"
+            disabled={loading}
+          >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Signing in...
               </>
             ) : (
@@ -103,18 +126,17 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          Don't have an account?{" "}
-          <Link href="/auth/sign-up" className="text-primary hover:underline font-medium">
-            Sign up
-          </Link>
-        </p>
-
-        <p className="text-center text-xs text-muted-foreground mt-4">
-          <Link href="/" className="hover:underline">
-            ← Back to home
-          </Link>
-        </p>
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Don't have an account?{" "}
+            <Link
+              href="/auth/signup"
+              className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Sign up
+            </Link>
+          </p>
+        </div>
       </Card>
     </div>
   )

@@ -1,145 +1,223 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Youtube, BookOpen, Code } from "lucide-react"
+import { ExternalLink, Youtube, BookOpen, Code, CheckCircle2, Circle, Bookmark, BookmarkCheck } from "lucide-react"
 
-export default function QuestionList({ questions, patternSlug, solutions = {} }) {
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty?.toLowerCase()) {
-      case "easy":
-        return "bg-green-500/10 text-green-700 dark:text-green-400"
-      case "medium":
-        return "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400"
-      case "hard":
-        return "bg-red-500/10 text-red-700 dark:text-red-400"
-      default:
-        return "bg-gray-500/10 text-gray-700 dark:text-gray-400"
+export default function QuestionList({ questions, patternSlug, solutions, userProgress, currentUser, onProgressUpdate }) {
+  const [localProgress, setLocalProgress] = useState(userProgress?.completed || [])
+  const [localBookmarks, setLocalBookmarks] = useState(userProgress?.bookmarks || [])
+  const [loading, setLoading] = useState({})
+
+  const difficultyColors = {
+    Easy: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+    Medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+    Hard: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  }
+
+  const handleCheckboxClick = async (questionId) => {
+    if (!currentUser) {
+      alert("Please login to track your progress!")
+      return
+    }
+
+    setLoading(prev => ({ ...prev, [questionId]: true }))
+
+    const isCompleted = localProgress.includes(questionId)
+    const newStatus = isCompleted ? "not_started" : "completed"
+
+    try {
+      const response = await fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          questionId,
+          status: newStatus,
+        }),
+      })
+
+      if (response.ok) {
+        const newProgress = isCompleted
+          ? localProgress.filter(id => id !== questionId)
+          : [...localProgress, questionId]
+
+        setLocalProgress(newProgress)
+
+        // Notify parent component to update progress bar
+        if (onProgressUpdate) {
+          onProgressUpdate(newProgress)
+        }
+      } else {
+        alert("Failed to update progress. Please try again.")
+      }
+    } catch (error) {
+      console.error("Failed to update progress:", error)
+      alert("An error occurred. Please try again.")
+    } finally {
+      setLoading(prev => ({ ...prev, [questionId]: false }))
     }
   }
 
-  // Helper to get links from both MongoDB and JSON (JSON takes priority)
-  const getLinks = (question, questionId) => {
-    const solution = solutions[questionId]
-    const links = {}
-
-    // LeetCode - priority: JSON > MongoDB
-    links.leetcode = solution?.resources?.leetcode || question.links?.leetcode
-
-    // YouTube - Get first video from JSON, or MongoDB fallback
-    if (solution?.resources?.videos?.[0]?.url) {
-      links.youtube = solution.resources.videos[0].url
-      links.youtubeCount = solution.resources.videos.length
-    } else {
-      links.youtube = question.links?.youtube
+  const handleBookmarkClick = async (questionId) => {
+    if (!currentUser) {
+      alert("Please login to bookmark questions!")
+      return
     }
 
-    // GFG - Get first practice link with GFG, or MongoDB fallback
-    const gfgLink = solution?.resources?.practice?.find(p =>
-      p.url?.includes('geeksforgeeks.org') || p.platform === 'GeeksforGeeks'
-    )
-    links.gfg = gfgLink?.url || question.links?.gfg
+    setLoading(prev => ({ ...prev, [`bookmark-${questionId}`]: true }))
 
-    // Article - Get first article, or MongoDB fallback
-    links.article = solution?.resources?.articles?.[0]?.url || question.links?.article
+    try {
+      const response = await fetch("/api/bookmarks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ questionId }),
+      })
 
-    return links
+      if (response.ok) {
+        const data = await response.json()
+        setLocalBookmarks(prev =>
+          data.bookmarked
+            ? [...prev, questionId]
+            : prev.filter(id => id !== questionId)
+        )
+      } else {
+        alert("Failed to update bookmark. Please try again.")
+      }
+    } catch (error) {
+      console.error("Failed to update bookmark:", error)
+      alert("An error occurred. Please try again.")
+    } finally {
+      setLoading(prev => ({ ...prev, [`bookmark-${questionId}`]: false }))
+    }
   }
 
   return (
     <div className="space-y-4">
-      {questions.map((question, index) => {
-        const links = getLinks(question, question._id)
+      {questions.map((question) => {
+        const solution = solutions[question._id]
+        const isCompleted = localProgress.includes(question._id)
+        const isBookmarked = localBookmarks.includes(question._id)
+        const isCheckboxLoading = loading[question._id]
+        const isBookmarkLoading = loading[`bookmark-${question._id}`]
 
         return (
-          <Card key={question._id} className="p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between gap-4">
+          <Card
+            key={question._id}
+            className={`p-6 hover:shadow-lg transition-all ${
+              isCompleted ? "bg-green-50/50 dark:bg-green-950/20 border-green-300 dark:border-green-800" : ""
+            }`}
+          >
+            <div className="flex items-start gap-4">
+              {/* Checkbox */}
+              <button
+                onClick={() => handleCheckboxClick(question._id)}
+                disabled={isCheckboxLoading || !currentUser}
+                className={`flex-shrink-0 mt-1 transition-all ${
+                  !currentUser ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:scale-110"
+                } ${isCheckboxLoading ? "animate-pulse" : ""}`}
+                title={!currentUser ? "Login to track progress" : isCompleted ? "Mark as incomplete" : "Mark as complete"}
+              >
+                {isCompleted ? (
+                  <CheckCircle2 className="w-6 h-6 text-green-600" />
+                ) : (
+                  <Circle className="w-6 h-6 text-gray-400" />
+                )}
+              </button>
+
               <div className="flex-1 space-y-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-mono text-muted-foreground">#{index + 1}</span>
-                  <h3 className="font-semibold text-lg">{question.title}</h3>
-                  <Badge className={getDifficultyColor(question.difficulty)}>{question.difficulty}</Badge>
-                  {question.level && <Badge variant="outline">{question.level}</Badge>}
+                {/* Question Title and Difficulty */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-semibold">
+                      {question.title}
+                    </h3>
+                    {isCompleted && (
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 border-green-300">
+                        ✓ Completed
+                      </Badge>
+                    )}
+                  </div>
+                  <Badge className={difficultyColors[question.difficulty]}>
+                    {question.difficulty}
+                  </Badge>
                 </div>
 
-                {question.patternTriggers && (
-                  <div className="text-sm">
-                    <span className="font-medium">Why this pattern: </span>
-                    <span className="text-muted-foreground">{question.patternTriggers}</span>
+                {/* Tags */}
+                {solution?.tags && (
+                  <div className="flex flex-wrap gap-2">
+                    {solution.tags.slice(0, 3).map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {solution.tags.length > 3 && (
+                      <Badge variant="secondary" className="text-xs">
+                        +{solution.tags.length - 3} more
+                      </Badge>
+                    )}
                   </div>
                 )}
 
-                {/* Resource Links */}
+                {/* Action Buttons */}
                 <div className="flex flex-wrap gap-2">
-                  {/* LeetCode */}
-                  {links.leetcode ? (
-                    <a href={links.leetcode} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="gap-2 hover:border-orange-400 transition-colors">
-                        <Code className="h-4 w-4 text-orange-600" />
+                  {/* External Links */}
+                  {solution?.resources?.leetcode && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={solution.resources.leetcode} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4 mr-1" />
                         LeetCode
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
-                    </a>
-                  ) : (
-                    <Button variant="outline" size="sm" className="gap-2 bg-transparent opacity-50" disabled>
-                      <Code className="h-4 w-4" />
-                      LeetCode
+                      </a>
                     </Button>
                   )}
 
-                  {/* YouTube */}
-                  {links.youtube ? (
-                    <a href={links.youtube} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="gap-2 hover:border-red-400 transition-colors">
-                        <Youtube className="h-4 w-4 text-red-500" />
+                  {solution?.resources?.videos?.[0] && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={solution.resources.videos[0].url} target="_blank" rel="noopener noreferrer">
+                        <Youtube className="w-4 h-4 mr-1" />
                         Video
-                        {links.youtubeCount > 1 && (
-                          <span className="text-xs text-muted-foreground">+{links.youtubeCount - 1}</span>
-                        )}
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
-                    </a>
-                  ) : (
-                    <Button variant="outline" size="sm" className="gap-2 bg-transparent opacity-50" disabled>
-                      <Youtube className="h-4 w-4" />
-                      Video
+                      </a>
                     </Button>
                   )}
 
-                  {/* GFG */}
-                  {links.gfg ? (
-                    <a href={links.gfg} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="gap-2 hover:border-green-400 transition-colors">
-                        <BookOpen className="h-4 w-4 text-green-600" />
-                        GFG
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
-                    </a>
-                  ) : (
-                    <Button variant="outline" size="sm" className="gap-2 bg-transparent opacity-50" disabled>
-                      <BookOpen className="h-4 w-4" />
-                      GFG
+                  {solution?.resources?.practice?.[0] && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={solution.resources.practice[0].url} target="_blank" rel="noopener noreferrer">
+                        <BookOpen className="w-4 h-4 mr-1" />
+                        {solution.resources.practice[0].platform}
+                      </a>
                     </Button>
                   )}
 
-                  {/* Article */}
-                  {links.article && (
-                    <a href={links.article} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="gap-2 hover:border-blue-400 transition-colors">
-                        <BookOpen className="h-4 w-4 text-blue-600" />
-                        Article
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
-                    </a>
-                  )}
+                  {/* Bookmark Button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleBookmarkClick(question._id)}
+                    disabled={isBookmarkLoading || !currentUser}
+                    title={!currentUser ? "Login to bookmark" : isBookmarked ? "Remove bookmark" : "Add bookmark"}
+                  >
+                    {isBookmarked ? (
+                      <BookmarkCheck className="w-4 h-4 mr-1 text-blue-600" />
+                    ) : (
+                      <Bookmark className="w-4 h-4 mr-1" />
+                    )}
+                    {isBookmarked ? "Bookmarked" : "Bookmark"}
+                  </Button>
+
+                  {/* View Solution */}
+                  <Button variant="default" size="sm" asChild>
+                    <Link href={`/questions/${question._id}`}>
+                      <Code className="w-4 h-4 mr-1" />
+                      View Solution
+                    </Link>
+                  </Button>
                 </div>
               </div>
-
-              <Link href={`/questions/${question._id}`}>
-                <Button>View Solution</Button>
-              </Link>
             </div>
           </Card>
         )

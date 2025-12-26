@@ -1,8 +1,23 @@
 import { getQuestion, getSolution, getPattern } from "@/lib/db"
+import { getCurrentUser } from "@/lib/auth"
 import { notFound } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Lightbulb, Clock, Database, AlertCircle, Lightbulb as HintIcon, ArrowRight, Building2, Hash } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  Lightbulb,
+  Clock,
+  Database,
+  AlertCircle,
+  Lightbulb as HintIcon,
+  ArrowRight,
+  Building2,
+  Hash,
+  ExternalLink,
+  Youtube,
+  FileText,
+  BookOpen
+} from "lucide-react"
 import SolutionTabs from "@/components/solution-tabs"
 import NotesSection from "@/components/notes-section"
 import BackNavigation from "@/components/back-navigation"
@@ -19,6 +34,9 @@ export default async function QuestionPage({ params }) {
 
   const solution = await getSolution(id)
   const pattern = await getPattern(question.pattern_id)
+
+  // Fetch current user for notes section
+  const currentUser = await getCurrentUser()
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty?.toLowerCase()) {
@@ -289,8 +307,8 @@ export default async function QuestionPage({ params }) {
           </Card>
         )}
 
-        {/* Notes Section */}
-        <NotesSection questionId={id} />
+        {/* Notes Section - Now with currentUser prop */}
+        <NotesSection questionId={id} currentUser={currentUser} />
       </main>
     </div>
   )

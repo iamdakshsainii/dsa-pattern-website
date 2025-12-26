@@ -1,24 +1,38 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from 'next/server'
+import { verifyToken } from './lib/auth'
 
 export function proxy(request) {
-  const token = request.cookies.get("auth-token")?.value
+  const authToken = request.cookies.get('auth-token')
   const { pathname } = request.nextUrl
 
-  // Protected routes
-  const protectedRoutes = ["/dashboard", "/bookmarks"]
-  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
+  let isAuthenticated = false
 
-  // If trying to access protected route without token, redirect to login
-  if (isProtectedRoute && !token) {
-    const loginUrl = new URL("/auth/login", request.url)
+  if (authToken?.value) {
+    const payload = verifyToken(authToken.value)
+    isAuthenticated = payload !== null && payload !== undefined
+  }
+
+  const protectedRoutes = ['/dashboard', '/bookmarks']
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
+
+  const authRoutes = ['/auth/login', '/auth/sign-up']
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
+
+  if (isProtectedRoute && !isAuthenticated) {
+    const loginUrl = new URL('/auth/login', request.url)
+    loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  // Let them access auth pages if they want (e.g., to see the form)
+  if (isAuthRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/bookmarks/:path*"],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*|api).*)',
+  ]
 }
