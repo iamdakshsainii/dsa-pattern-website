@@ -3,17 +3,187 @@
   "questionSlug": "merge-k-sorted-lists",
   "resources": {
     "leetcode": "https://leetcode.com/problems/merge-k-sorted-lists/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Merge K Sorted Lists - Leetcode 23",
+        "url": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
+        "channel": "NeetCode",
+        "duration": "12:45",
+        "language": "English"
+      },
+      {
+        "title": "Merge K Sorted Lists - Heap Solution",
+        "url": "https://www.youtube.com/watch?v=ptYUCjfNhJY",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:20",
+        "language": "English"
+      },
+      {
+        "title": "Merge K Sorted Lists - Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=zLcNwcR6yO4",
+        "channel": "TECH DOSE",
+        "duration": "16:35",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Merge K Sorted Lists Solution",
+        "url": "https://leetcode.com/problems/merge-k-sorted-lists/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Merge K Sorted Lists - Multiple Approaches",
+        "url": "https://algo.monster/liteproblems/23",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Merge K Sorted Linked Lists",
+        "url": "https://www.geeksforgeeks.org/merge-k-sorted-linked-lists/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Merge Two Sorted Lists",
+        "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Smallest Element in a Sorted Matrix",
+        "url": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find K Pairs with Smallest Sums",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Ugly Number II",
+        "url": "https://leetcode.com/problems/ugly-number-ii/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use K-way Merge pattern when merging multiple sorted sequences into one. Key indicators: merge k sorted lists/arrays, combine multiple sorted inputs, maintain overall sorted order, use min-heap to efficiently find next smallest element across k sources.",
+  "approaches": [
+    {
+      "name": "Min Heap (Priority Queue)",
+      "order": 1,
+      "intuition": "Use a min-heap to always extract the smallest element among the current heads of all k lists. Start by adding the head of each list to heap. Repeatedly extract min, add to result, and insert the next node from that list. Heap maintains the smallest element across all lists at any time.",
+      "approach": "Create min-heap with (value, node) pairs. Add all list heads to heap. While heap not empty: extract min, add to result list, and push the next node from extracted node's list if it exists. This ensures we always pick the globally smallest element.",
+      "steps": [
+        "Create dummy head for result list",
+        "Initialize min-heap (priority queue)",
+        "Add head of each non-null list to heap with (value, node)",
+        "Initialize current pointer to dummy",
+        "While heap is not empty:",
+        "  - Extract minimum node from heap",
+        "  - Attach it to result list (current.next = minNode)",
+        "  - Move current forward",
+        "  - If minNode has next, add minNode.next to heap",
+        "Return dummy.next"
+      ],
+      "complexity": {
+        "time": "O(N log k)",
+        "space": "O(k)",
+        "timeExplanation": "N = total number of nodes across all lists. Each node inserted/extracted from heap once, each operation O(log k) where k = number of lists. Total: N * O(log k) = O(N log k).",
+        "spaceExplanation": "Heap stores at most k nodes (one from each list) at any time. O(k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* mergeKLists(vector<ListNode*>& lists) {\n        // Min heap comparator: compare by node values\n        auto cmp = [](ListNode* a, ListNode* b) { return a->val > b->val; };\n        priority_queue<ListNode*, vector<ListNode*>, decltype(cmp)> minHeap(cmp);\n        \n        // Add head of each non-null list to heap\n        for (ListNode* head : lists) {\n            if (head) minHeap.push(head);\n        }\n        \n        ListNode dummy(0);\n        ListNode* current = &dummy;\n        \n        while (!minHeap.empty()) {\n            // Extract minimum node\n            ListNode* minNode = minHeap.top();\n            minHeap.pop();\n            \n            // Add to result\n            current->next = minNode;\n            current = current->next;\n            \n            // Add next node from same list if exists\n            if (minNode->next) {\n                minHeap.push(minNode->next);\n            }\n        }\n        \n        return dummy.next;\n    }\n};",
+        "java": "class Solution {\n    public ListNode mergeKLists(ListNode[] lists) {\n        // Min heap: compare by node values\n        PriorityQueue<ListNode> minHeap = new PriorityQueue<>(\n            (a, b) -> a.val - b.val\n        );\n        \n        // Add head of each non-null list to heap\n        for (ListNode head : lists) {\n            if (head != null) {\n                minHeap.offer(head);\n            }\n        }\n        \n        ListNode dummy = new ListNode(0);\n        ListNode current = dummy;\n        \n        while (!minHeap.isEmpty()) {\n            // Extract minimum node\n            ListNode minNode = minHeap.poll();\n            \n            // Add to result\n            current.next = minNode;\n            current = current.next;\n            \n            // Add next node from same list if exists\n            if (minNode.next != null) {\n                minHeap.offer(minNode.next);\n            }\n        }\n        \n        return dummy.next;\n    }\n}",
+        "python": "import heapq\n\ndef mergeKLists(lists):\n    # Min heap with (value, index, node)\n    # index is used to break ties for nodes with same value\n    min_heap = []\n    \n    # Add head of each non-null list to heap\n    for i, head in enumerate(lists):\n        if head:\n            heapq.heappush(min_heap, (head.val, i, head))\n    \n    dummy = ListNode(0)\n    current = dummy\n    \n    while min_heap:\n        # Extract minimum node\n        val, i, min_node = heapq.heappop(min_heap)\n        \n        # Add to result\n        current.next = min_node\n        current = current.next\n        \n        # Add next node from same list if exists\n        if min_node.next:\n            heapq.heappush(min_heap, (min_node.next.val, i, min_node.next))\n    \n    return dummy.next",
+        "javascript": "function mergeKLists(lists) {\n    // Min heap implementation using array\n    const minHeap = new MinPriorityQueue({ priority: node => node.val });\n    \n    // Add head of each non-null list to heap\n    for (const head of lists) {\n        if (head) {\n            minHeap.enqueue(head);\n        }\n    }\n    \n    const dummy = new ListNode(0);\n    let current = dummy;\n    \n    while (!minHeap.isEmpty()) {\n        // Extract minimum node\n        const minNode = minHeap.dequeue().element;\n        \n        // Add to result\n        current.next = minNode;\n        current = current.next;\n        \n        // Add next node from same list if exists\n        if (minNode.next) {\n            minHeap.enqueue(minNode.next);\n        }\n    }\n    \n    return dummy.next;\n}"
+      }
+    },
+    {
+      "name": "Divide and Conquer (Merge Pairs)",
+      "order": 2,
+      "intuition": "Instead of merging all k lists at once, merge them in pairs repeatedly. First merge lists 0&1, 2&3, 4&5, etc. Then merge the results in pairs again. Continue until one list remains. This is like tournament bracket - log(k) rounds, each round merges N total nodes.",
+      "approach": "Repeatedly merge lists in pairs until only one remains. In each iteration, merge lists[i] with lists[i+k] where k is current interval. Interval doubles each round. This reduces k lists by half each iteration.",
+      "steps": [
+        "Handle edge cases: empty array or all null lists",
+        "Set interval = 1",
+        "While interval < k (number of lists):",
+        "  - For i from 0 to k-interval with step 2*interval:",
+        "    - Merge lists[i] with lists[i+interval]",
+        "    - Store result in lists[i]",
+        "  - Double interval",
+        "Return lists[0] (merged result)",
+        "Helper: mergeTwoLists(l1, l2):",
+        "  - Standard merge of two sorted lists",
+        "  - Return merged list"
+      ],
+      "complexity": {
+        "time": "O(N log k)",
+        "space": "O(1)",
+        "timeExplanation": "N = total nodes. log(k) merge rounds. Each round processes all N nodes once. Total: O(N log k).",
+        "spaceExplanation": "Only reuses existing nodes, no extra space except recursion stack for mergeTwoLists which is O(1) if iterative."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* mergeKLists(vector<ListNode*>& lists) {\n        if (lists.empty()) return nullptr;\n        \n        int k = lists.size();\n        int interval = 1;\n        \n        // Merge in pairs until one list remains\n        while (interval < k) {\n            for (int i = 0; i < k - interval; i += 2 * interval) {\n                lists[i] = mergeTwoLists(lists[i], lists[i + interval]);\n            }\n            interval *= 2;\n        }\n        \n        return lists[0];\n    }\n    \nprivate:\n    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {\n        ListNode dummy(0);\n        ListNode* current = &dummy;\n        \n        while (l1 && l2) {\n            if (l1->val < l2->val) {\n                current->next = l1;\n                l1 = l1->next;\n            } else {\n                current->next = l2;\n                l2 = l2->next;\n            }\n            current = current->next;\n        }\n        \n        current->next = l1 ? l1 : l2;\n        return dummy.next;\n    }\n};",
+        "java": "class Solution {\n    public ListNode mergeKLists(ListNode[] lists) {\n        if (lists == null || lists.length == 0) return null;\n        \n        int k = lists.length;\n        int interval = 1;\n        \n        // Merge in pairs until one list remains\n        while (interval < k) {\n            for (int i = 0; i < k - interval; i += 2 * interval) {\n                lists[i] = mergeTwoLists(lists[i], lists[i + interval]);\n            }\n            interval *= 2;\n        }\n        \n        return lists[0];\n    }\n    \n    private ListNode mergeTwoLists(ListNode l1, ListNode l2) {\n        ListNode dummy = new ListNode(0);\n        ListNode current = dummy;\n        \n        while (l1 != null && l2 != null) {\n            if (l1.val < l2.val) {\n                current.next = l1;\n                l1 = l1.next;\n            } else {\n                current.next = l2;\n                l2 = l2.next;\n            }\n            current = current.next;\n        }\n        \n        current.next = (l1 != null) ? l1 : l2;\n        return dummy.next;\n    }\n}",
+        "python": "def mergeKLists(lists):\n    if not lists:\n        return None\n    \n    def merge_two_lists(l1, l2):\n        dummy = ListNode(0)\n        current = dummy\n        \n        while l1 and l2:\n            if l1.val < l2.val:\n                current.next = l1\n                l1 = l1.next\n            else:\n                current.next = l2\n                l2 = l2.next\n            current = current.next\n        \n        current.next = l1 if l1 else l2\n        return dummy.next\n    \n    k = len(lists)\n    interval = 1\n    \n    # Merge in pairs until one list remains\n    while interval < k:\n        for i in range(0, k - interval, 2 * interval):\n            lists[i] = merge_two_lists(lists[i], lists[i + interval])\n        interval *= 2\n    \n    return lists[0] if lists else None",
+        "javascript": "function mergeKLists(lists) {\n    if (!lists || lists.length === 0) return null;\n    \n    function mergeTwoLists(l1, l2) {\n        const dummy = new ListNode(0);\n        let current = dummy;\n        \n        while (l1 && l2) {\n            if (l1.val < l2.val) {\n                current.next = l1;\n                l1 = l1.next;\n            } else {\n                current.next = l2;\n                l2 = l2.next;\n            }\n            current = current.next;\n        }\n        \n        current.next = l1 || l2;\n        return dummy.next;\n    }\n    \n    let k = lists.length;\n    let interval = 1;\n    \n    // Merge in pairs until one list remains\n    while (interval < k) {\n        for (let i = 0; i < k - interval; i += 2 * interval) {\n            lists[i] = mergeTwoLists(lists[i], lists[i + interval]);\n        }\n        interval *= 2;\n    }\n    \n    return lists[0];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "In heap approach, forgetting to check if node.next exists before pushing to heap",
+    "Not handling empty input array or array with all null lists",
+    "In Python heap, not using index/counter to break ties for nodes with equal values",
+    "In divide-and-conquer, incorrect interval logic causing infinite loop",
+    "Trying to merge all lists sequentially (O(Nk) instead of O(N log k))",
+    "In heap, comparing entire node objects instead of node values",
+    "Not using dummy node, making edge case handling complex"
+  ],
+  "hints": [
+    "Think about how to efficiently find the smallest element across k lists at each step",
+    "Min-heap can maintain the smallest element from each list in O(log k) time",
+    "Alternative: merge lists in pairs like a tournament bracket - log(k) rounds",
+    "Merging all lists sequentially is inefficient (O(Nk)) - avoid this approach",
+    "Both heap and divide-conquer achieve O(N log k), but heap uses O(k) space",
+    "In Python, use tuple with counter in heap: (val, counter, node) to avoid comparison issues"
+  ],
+  "followUp": [
+    "What if lists are given as arrays instead of linked lists?",
+    "How would you handle duplicate values differently (remove/keep)?",
+    "Can you merge k sorted arrays into one sorted array efficiently?",
+    "What if you need to merge in descending order instead?",
+    "How would you optimize if most lists are empty or very short?",
+    "Can you implement with external sorting for very large lists?",
+    "What if lists are infinite streams - how to merge first n elements?",
+    "How would you parallelize the merging process?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "LinkedIn",
+    "Uber",
+    "Bloomberg",
+    "Oracle",
+    "Adobe",
+    "Airbnb"
+  ],
+  "tags": [
+    "Linked List",
+    "Divide and Conquer",
+    "Heap (Priority Queue)",
+    "Merge Sort"
+  ],
+  "relatedProblems": [
+    "Merge Two Sorted Lists",
+    "Ugly Number II",
+    "Kth Smallest Element in a Sorted Matrix",
+    "Find K Pairs with Smallest Sums",
+    "Smallest Range Covering Elements from K Lists",
+    "Merge Sorted Array",
+    "Sort List"
+  ]
 }

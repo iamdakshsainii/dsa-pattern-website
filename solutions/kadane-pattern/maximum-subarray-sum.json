@@ -3,17 +3,184 @@
   "questionSlug": "maximum-subarray-sum",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-subarray/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum Subarray Sum - Kadane's Algorithm",
+        "url": "https://www.youtube.com/watch?v=5WZl3MMT0Eg",
+        "channel": "take U forward",
+        "duration": "13:40",
+        "language": "English"
+      },
+      {
+        "title": "Kadane's Algorithm to Maximum Sum Subarray Problem",
+        "url": "https://www.youtube.com/watch?v=86CQq3pKSUw",
+        "channel": "CS Dojo",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Subarray - Leetcode 53",
+        "url": "https://www.youtube.com/watch?v=5WZl3MMT0Eg",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Subarray Solution",
+        "url": "https://leetcode.com/problems/maximum-subarray/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Kadane's Algorithm Explained",
+        "url": "https://www.geeksforgeeks.org/largest-sum-contiguous-subarray/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Maximum Subarray Problem",
+        "url": "https://en.wikipedia.org/wiki/Maximum_subarray_problem",
+        "source": "Wikipedia"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Product Subarray",
+        "url": "https://leetcode.com/problems/maximum-product-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Sum Circular Subarray",
+        "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Best Time to Buy and Sell Stock",
+        "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Subarray Sum After One Operation",
+        "url": "https://leetcode.com/problems/maximum-subarray-sum-after-one-operation/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Kadane's Algorithm pattern when finding maximum sum of contiguous subarray. Key indicators: contiguous subarray, maximum sum, array traversal, optimal substructure property, need to decide extend vs restart.",
+  "approaches": [
+    {
+      "name": "Kadane's Algorithm",
+      "order": 1,
+      "intuition": "At each position, decide whether to extend current subarray or start new one. If current sum becomes negative, it won't help future elements, so restart. Track maximum sum seen so far. This greedy approach works because negative sums can only decrease future totals.",
+      "approach": "Traverse array maintaining current sum and maximum sum. At each element, add it to current sum. If current sum drops below element itself, start fresh from current element. Update maximum throughout.",
+      "steps": [
+        "Initialize maxSum = nums[0], currentSum = nums[0]",
+        "For i from 1 to n-1:",
+        "  - currentSum = max(nums[i], currentSum + nums[i])",
+        "  - maxSum = max(maxSum, currentSum)",
+        "Return maxSum",
+        "",
+        "Alternative formulation:",
+        "- If currentSum < 0: reset currentSum = 0",
+        "- Add current element to currentSum",
+        "- Update maxSum = max(maxSum, currentSum)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array of length n. O(n) time.",
+        "spaceExplanation": "Only two variables used. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int maxSum = nums[0];\n        int currentSum = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            // Either extend existing subarray or start new one\n            currentSum = max(nums[i], currentSum + nums[i]);\n            maxSum = max(maxSum, currentSum);\n        }\n        \n        return maxSum;\n    }\n};",
+        "java": "class Solution {\n    public int maxSubArray(int[] nums) {\n        int maxSum = nums[0];\n        int currentSum = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            // Either extend existing subarray or start new one\n            currentSum = Math.max(nums[i], currentSum + nums[i]);\n            maxSum = Math.max(maxSum, currentSum);\n        }\n        \n        return maxSum;\n    }\n}",
+        "python": "def maxSubArray(nums):\n    max_sum = nums[0]\n    current_sum = nums[0]\n    \n    for i in range(1, len(nums)):\n        # Either extend existing subarray or start new one\n        current_sum = max(nums[i], current_sum + nums[i])\n        max_sum = max(max_sum, current_sum)\n    \n    return max_sum",
+        "javascript": "function maxSubArray(nums) {\n    let maxSum = nums[0];\n    let currentSum = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        // Either extend existing subarray or start new one\n        currentSum = Math.max(nums[i], currentSum + nums[i]);\n        maxSum = Math.max(maxSum, currentSum);\n    }\n    \n    return maxSum;\n}"
+      }
+    },
+    {
+      "name": "Divide and Conquer",
+      "order": 2,
+      "intuition": "Maximum subarray is either: (1) entirely in left half, (2) entirely in right half, or (3) crosses the middle. Recursively find max in left and right halves. For crossing case, find best extending left from mid and best extending right from mid, then combine.",
+      "approach": "Divide array at middle. Recursively find max subarray in left and right halves. For crossing case, find maximum sum extending from mid to left, and mid to right. Return maximum of these three values.",
+      "steps": [
+        "Base case: if left == right, return nums[left]",
+        "mid = (left + right) / 2",
+        "leftMax = maxSubArray(nums, left, mid)",
+        "rightMax = maxSubArray(nums, mid+1, right)",
+        "crossMax = findCrossingMax(nums, left, mid, right):",
+        "  - Find max sum from mid extending left",
+        "  - Find max sum from mid+1 extending right",
+        "  - Return leftSum + rightSum",
+        "Return max(leftMax, rightMax, crossMax)"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(log n)",
+        "timeExplanation": "Recursion tree has log n levels. At each level, linear work to find crossing sum. Total: O(n log n).",
+        "spaceExplanation": "Recursion stack depth is O(log n) for balanced divide."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findCrossingMax(vector<int>& nums, int left, int mid, int right) {\n        // Find max sum from mid extending left\n        int leftSum = INT_MIN;\n        int sum = 0;\n        for (int i = mid; i >= left; i--) {\n            sum += nums[i];\n            leftSum = max(leftSum, sum);\n        }\n        \n        // Find max sum from mid+1 extending right\n        int rightSum = INT_MIN;\n        sum = 0;\n        for (int i = mid + 1; i <= right; i++) {\n            sum += nums[i];\n            rightSum = max(rightSum, sum);\n        }\n        \n        return leftSum + rightSum;\n    }\n    \n    int maxSubArrayHelper(vector<int>& nums, int left, int right) {\n        if (left == right) {\n            return nums[left];\n        }\n        \n        int mid = left + (right - left) / 2;\n        \n        int leftMax = maxSubArrayHelper(nums, left, mid);\n        int rightMax = maxSubArrayHelper(nums, mid + 1, right);\n        int crossMax = findCrossingMax(nums, left, mid, right);\n        \n        return max({leftMax, rightMax, crossMax});\n    }\n    \n    int maxSubArray(vector<int>& nums) {\n        return maxSubArrayHelper(nums, 0, nums.size() - 1);\n    }\n};",
+        "java": "class Solution {\n    private int findCrossingMax(int[] nums, int left, int mid, int right) {\n        // Find max sum from mid extending left\n        int leftSum = Integer.MIN_VALUE;\n        int sum = 0;\n        for (int i = mid; i >= left; i--) {\n            sum += nums[i];\n            leftSum = Math.max(leftSum, sum);\n        }\n        \n        // Find max sum from mid+1 extending right\n        int rightSum = Integer.MIN_VALUE;\n        sum = 0;\n        for (int i = mid + 1; i <= right; i++) {\n            sum += nums[i];\n            rightSum = Math.max(rightSum, sum);\n        }\n        \n        return leftSum + rightSum;\n    }\n    \n    private int maxSubArrayHelper(int[] nums, int left, int right) {\n        if (left == right) {\n            return nums[left];\n        }\n        \n        int mid = left + (right - left) / 2;\n        \n        int leftMax = maxSubArrayHelper(nums, left, mid);\n        int rightMax = maxSubArrayHelper(nums, mid + 1, right);\n        int crossMax = findCrossingMax(nums, left, mid, right);\n        \n        return Math.max(leftMax, Math.max(rightMax, crossMax));\n    }\n    \n    public int maxSubArray(int[] nums) {\n        return maxSubArrayHelper(nums, 0, nums.length - 1);\n    }\n}",
+        "python": "def maxSubArray(nums):\n    def find_crossing_max(left, mid, right):\n        # Find max sum from mid extending left\n        left_sum = float('-inf')\n        total = 0\n        for i in range(mid, left - 1, -1):\n            total += nums[i]\n            left_sum = max(left_sum, total)\n        \n        # Find max sum from mid+1 extending right\n        right_sum = float('-inf')\n        total = 0\n        for i in range(mid + 1, right + 1):\n            total += nums[i]\n            right_sum = max(right_sum, total)\n        \n        return left_sum + right_sum\n    \n    def max_subarray_helper(left, right):\n        if left == right:\n            return nums[left]\n        \n        mid = (left + right) // 2\n        \n        left_max = max_subarray_helper(left, mid)\n        right_max = max_subarray_helper(mid + 1, right)\n        cross_max = find_crossing_max(left, mid, right)\n        \n        return max(left_max, right_max, cross_max)\n    \n    return max_subarray_helper(0, len(nums) - 1)",
+        "javascript": "function maxSubArray(nums) {\n    function findCrossingMax(left, mid, right) {\n        // Find max sum from mid extending left\n        let leftSum = -Infinity;\n        let sum = 0;\n        for (let i = mid; i >= left; i--) {\n            sum += nums[i];\n            leftSum = Math.max(leftSum, sum);\n        }\n        \n        // Find max sum from mid+1 extending right\n        let rightSum = -Infinity;\n        sum = 0;\n        for (let i = mid + 1; i <= right; i++) {\n            sum += nums[i];\n            rightSum = Math.max(rightSum, sum);\n        }\n        \n        return leftSum + rightSum;\n    }\n    \n    function maxSubArrayHelper(left, right) {\n        if (left === right) {\n            return nums[left];\n        }\n        \n        const mid = Math.floor((left + right) / 2);\n        \n        const leftMax = maxSubArrayHelper(left, mid);\n        const rightMax = maxSubArrayHelper(mid + 1, right);\n        const crossMax = findCrossingMax(left, mid, right);\n        \n        return Math.max(leftMax, rightMax, crossMax);\n    }\n    \n    return maxSubArrayHelper(0, nums.length - 1);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Initializing maxSum to 0 instead of nums[0] - fails when all elements negative",
+    "Not handling single element array correctly",
+    "Resetting currentSum to 0 instead of comparing with nums[i]",
+    "Forgetting to update maxSum inside the loop",
+    "In divide & conquer, not including mid element in crossing calculation",
+    "Not handling empty array case",
+    "Confusing maximum subarray with maximum element"
+  ],
+  "hints": [
+    "At each position, you have two choices: extend current subarray or start fresh",
+    "If current sum becomes negative, it cannot help future elements",
+    "Kadane's algorithm is greedy - always take maximum at each step",
+    "Initialize both maxSum and currentSum to first element, not zero",
+    "The maximum subarray must end at some position - check all positions",
+    "For divide & conquer: don't forget the crossing case!"
+  ],
+  "followUp": [
+    "How to return the actual subarray indices, not just the sum?",
+    "What if the array is circular (last element connects to first)?",
+    "How to find k non-overlapping subarrays with maximum sum?",
+    "Can you solve it using dynamic programming explicitly?",
+    "What if you can delete at most one element?",
+    "How to find subarray with sum closest to a target?",
+    "Can you extend to 2D arrays (maximum sum rectangle)?",
+    "What if elements can be multiplied by -1 before selecting subarray?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Uber",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Divide and Conquer",
+    "Dynamic Programming",
+    "Greedy",
+    "Kadane's Algorithm"
+  ],
+  "relatedProblems": [
+    "Maximum Product Subarray",
+    "Maximum Sum Circular Subarray",
+    "Longest Turbulent Subarray",
+    "Maximum Subarray Sum After One Operation",
+    "Maximum Absolute Sum of Any Subarray",
+    "Best Time to Buy and Sell Stock",
+    "K Concatenation Maximum Sum"
+  ]
 }

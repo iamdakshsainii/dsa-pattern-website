@@ -3,17 +3,192 @@
   "questionSlug": "smallest-number-range",
   "resources": {
     "leetcode": "https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Smallest Range Covering Elements from K Lists - Leetcode 632",
+        "url": "https://www.youtube.com/watch?v=Fqal25NgLq0",
+        "channel": "NeetCode",
+        "duration": "14:25",
+        "language": "English"
+      },
+      {
+        "title": "Smallest Range in K Sorted Lists",
+        "url": "https://www.youtube.com/watch?v=zplklOy7ENo",
+        "channel": "TECH DOSE",
+        "duration": "18:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Smallest Range - Heap Solution",
+        "url": "https://www.youtube.com/watch?v=rJZy_AW8B6Y",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "12:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Smallest Range Covering Elements from K Lists Solution",
+        "url": "https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Smallest Range from K Sorted Lists",
+        "url": "https://algo.monster/liteproblems/632",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Find Smallest Range Containing Elements",
+        "url": "https://www.geeksforgeeks.org/find-smallest-range-containing-elements-from-k-lists/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Merge K Sorted Lists",
+        "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Window Substring",
+        "url": "https://leetcode.com/problems/minimum-window-substring/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find K Pairs with Smallest Sums",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Sliding Window Maximum",
+        "url": "https://leetcode.com/problems/sliding-window-maximum/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use K-way Merge with Min-Max Tracking pattern when finding range covering elements from multiple sources. Key indicators: smallest range from k lists, range containing at least one element from each list, track minimum and maximum simultaneously, sliding window across merged sequence.",
+  "approaches": [
+    {
+      "name": "Min-Heap with Max Tracking",
+      "order": 1,
+      "intuition": "Use min-heap to track smallest element from each list. Also track the maximum among current elements in heap. The range [min, max] covers one element from each list. Move the minimum forward by replacing it with next element from its list, update max if needed. Track smallest range seen.",
+      "approach": "Initialize heap with first element of each list, track current max. Current range is [heap_min, current_max]. Pop minimum, add next from its list, update max. Update best range if current is smaller. Repeat until any list exhausted.",
+      "steps": [
+        "Create min-heap with (value, listIndex, elementIndex)",
+        "Add first element of each list to heap",
+        "Track currentMax = max of all first elements",
+        "Initialize bestRange = [heap_min, currentMax]",
+        "While heap has k elements (one from each list):",
+        "  - minVal = heap.top().value (this is currentMin)",
+        "  - Current range = [minVal, currentMax]",
+        "  - If current range smaller than bestRange: update bestRange",
+        "  - Pop minimum element (val, listIdx, elemIdx)",
+        "  - If this list has more elements:",
+        "    - Add next element to heap",
+        "    - Update currentMax if new element > currentMax",
+        "  - Else: break (can't maintain k elements)",
+        "Return bestRange"
+      ],
+      "complexity": {
+        "time": "O(n * k * log k)",
+        "space": "O(k)",
+        "timeExplanation": "n = average list length, k = number of lists. Process all n*k elements. Each heap operation O(log k). Total: O(n*k*log k).",
+        "spaceExplanation": "Heap stores k elements (one from each list). O(k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> smallestRange(vector<vector<int>>& nums) {\n        // Min heap: {value, listIndex, elementIndex}\n        auto cmp = [](const tuple<int,int,int>& a, const tuple<int,int,int>& b) {\n            return get<0>(a) > get<0>(b);\n        };\n        priority_queue<tuple<int,int,int>, vector<tuple<int,int,int>>, decltype(cmp)> minHeap(cmp);\n        \n        int currentMax = INT_MIN;\n        \n        // Add first element of each list\n        for (int i = 0; i < nums.size(); i++) {\n            minHeap.push({nums[i][0], i, 0});\n            currentMax = max(currentMax, nums[i][0]);\n        }\n        \n        vector<int> bestRange = {0, INT_MAX};\n        \n        while (minHeap.size() == nums.size()) {\n            auto [minVal, listIdx, elemIdx] = minHeap.top();\n            minHeap.pop();\n            \n            // Update best range if current is smaller\n            if (currentMax - minVal < bestRange[1] - bestRange[0]) {\n                bestRange = {minVal, currentMax};\n            }\n            \n            // Try to add next element from same list\n            if (elemIdx + 1 < nums[listIdx].size()) {\n                int nextVal = nums[listIdx][elemIdx + 1];\n                minHeap.push({nextVal, listIdx, elemIdx + 1});\n                currentMax = max(currentMax, nextVal);\n            } else {\n                // Can't maintain one element from each list\n                break;\n            }\n        }\n        \n        return bestRange;\n    }\n};",
+        "java": "class Solution {\n    public int[] smallestRange(List<List<Integer>> nums) {\n        // Min heap: {value, listIndex, elementIndex}\n        PriorityQueue<int[]> minHeap = new PriorityQueue<>(\n            (a, b) -> a[0] - b[0]\n        );\n        \n        int currentMax = Integer.MIN_VALUE;\n        \n        // Add first element of each list\n        for (int i = 0; i < nums.size(); i++) {\n            int val = nums.get(i).get(0);\n            minHeap.offer(new int[]{val, i, 0});\n            currentMax = Math.max(currentMax, val);\n        }\n        \n        int[] bestRange = {0, Integer.MAX_VALUE};\n        \n        while (minHeap.size() == nums.size()) {\n            int[] elem = minHeap.poll();\n            int minVal = elem[0];\n            int listIdx = elem[1];\n            int elemIdx = elem[2];\n            \n            // Update best range if current is smaller\n            if (currentMax - minVal < bestRange[1] - bestRange[0]) {\n                bestRange[0] = minVal;\n                bestRange[1] = currentMax;\n            }\n            \n            // Try to add next element from same list\n            if (elemIdx + 1 < nums.get(listIdx).size()) {\n                int nextVal = nums.get(listIdx).get(elemIdx + 1);\n                minHeap.offer(new int[]{nextVal, listIdx, elemIdx + 1});\n                currentMax = Math.max(currentMax, nextVal);\n            } else {\n                // Can't maintain one element from each list\n                break;\n            }\n        }\n        \n        return bestRange;\n    }\n}",
+        "python": "import heapq\n\ndef smallestRange(nums):\n    # Min heap: (value, listIndex, elementIndex)\n    min_heap = []\n    current_max = float('-inf')\n    \n    # Add first element of each list\n    for i in range(len(nums)):\n        heapq.heappush(min_heap, (nums[i][0], i, 0))\n        current_max = max(current_max, nums[i][0])\n    \n    best_range = [0, float('inf')]\n    \n    while len(min_heap) == len(nums):\n        min_val, list_idx, elem_idx = heapq.heappop(min_heap)\n        \n        # Update best range if current is smaller\n        if current_max - min_val < best_range[1] - best_range[0]:\n            best_range = [min_val, current_max]\n        \n        # Try to add next element from same list\n        if elem_idx + 1 < len(nums[list_idx]):\n            next_val = nums[list_idx][elem_idx + 1]\n            heapq.heappush(min_heap, (next_val, list_idx, elem_idx + 1))\n            current_max = max(current_max, next_val)\n        else:\n            # Can't maintain one element from each list\n            break\n    \n    return best_range",
+        "javascript": "function smallestRange(nums) {\n    // Min heap implementation\n    const minHeap = new MinPriorityQueue({ priority: x => x[0] });\n    let currentMax = -Infinity;\n    \n    // Add first element of each list\n    for (let i = 0; i < nums.length; i++) {\n        minHeap.enqueue([nums[i][0], i, 0]);\n        currentMax = Math.max(currentMax, nums[i][0]);\n    }\n    \n    let bestRange = [0, Infinity];\n    \n    while (minHeap.size() === nums.length) {\n        const [minVal, listIdx, elemIdx] = minHeap.dequeue().element;\n        \n        // Update best range if current is smaller\n        if (currentMax - minVal < bestRange[1] - bestRange[0]) {\n            bestRange = [minVal, currentMax];\n        }\n        \n        // Try to add next element from same list\n        if (elemIdx + 1 < nums[listIdx].length) {\n            const nextVal = nums[listIdx][elemIdx + 1];\n            minHeap.enqueue([nextVal, listIdx, elemIdx + 1]);\n            currentMax = Math.max(currentMax, nextVal);\n        } else {\n            // Can't maintain one element from each list\n            break;\n        }\n    }\n    \n    return bestRange;\n}"
+      }
+    },
+    {
+      "name": "Merge and Two Pointers",
+      "order": 2,
+      "intuition": "Merge all lists with list identifiers. Sort merged list. Use sliding window with two pointers to find smallest range covering all k lists. Maintain count of lists in current window. When window covers all lists, try to shrink from left.",
+      "approach": "Create merged list with (value, listIndex). Sort by value. Use two pointers for sliding window. Expand right until all lists covered. Then shrink left while maintaining coverage. Track minimum range.",
+      "steps": [
+        "Merge all lists into one: merged = [(value, listIndex), ...]",
+        "Sort merged by value",
+        "Initialize left = 0, right = 0",
+        "Use map to count lists in current window",
+        "While right < merged.length:",
+        "  - Add merged[right].listIdx to count",
+        "  - While window covers all k lists:",
+        "    - Update bestRange if [merged[left].val, merged[right].val] is smaller",
+        "    - Remove merged[left].listIdx from count",
+        "    - left++",
+        "  - right++",
+        "Return bestRange"
+      ],
+      "complexity": {
+        "time": "O(n * k * log(n * k))",
+        "space": "O(n * k)",
+        "timeExplanation": "Merge all elements: O(n*k). Sort merged list: O(n*k*log(n*k)). Two pointer scan: O(n*k). Total dominated by sort: O(n*k*log(n*k)).",
+        "spaceExplanation": "Merged list stores all n*k elements. O(n*k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> smallestRange(vector<vector<int>>& nums) {\n        vector<pair<int, int>> merged;  // {value, listIndex}\n        \n        // Merge all lists with list identifiers\n        for (int i = 0; i < nums.size(); i++) {\n            for (int val : nums[i]) {\n                merged.push_back({val, i});\n            }\n        }\n        \n        // Sort by value\n        sort(merged.begin(), merged.end());\n        \n        int k = nums.size();\n        unordered_map<int, int> count;  // listIndex -> count in window\n        int left = 0;\n        vector<int> bestRange = {0, INT_MAX};\n        \n        for (int right = 0; right < merged.size(); right++) {\n            count[merged[right].second]++;\n            \n            // When window covers all k lists\n            while (count.size() == k) {\n                int rangeStart = merged[left].first;\n                int rangeEnd = merged[right].first;\n                \n                if (rangeEnd - rangeStart < bestRange[1] - bestRange[0]) {\n                    bestRange = {rangeStart, rangeEnd};\n                }\n                \n                // Try to shrink from left\n                count[merged[left].second]--;\n                if (count[merged[left].second] == 0) {\n                    count.erase(merged[left].second);\n                }\n                left++;\n            }\n        }\n        \n        return bestRange;\n    }\n};",
+        "java": "class Solution {\n    public int[] smallestRange(List<List<Integer>> nums) {\n        List<int[]> merged = new ArrayList<>();  // {value, listIndex}\n        \n        // Merge all lists with list identifiers\n        for (int i = 0; i < nums.size(); i++) {\n            for (int val : nums.get(i)) {\n                merged.add(new int[]{val, i});\n            }\n        }\n        \n        // Sort by value\n        Collections.sort(merged, (a, b) -> a[0] - b[0]);\n        \n        int k = nums.size();\n        Map<Integer, Integer> count = new HashMap<>();  // listIndex -> count\n        int left = 0;\n        int[] bestRange = {0, Integer.MAX_VALUE};\n        \n        for (int right = 0; right < merged.size(); right++) {\n            int listIdx = merged.get(right)[1];\n            count.put(listIdx, count.getOrDefault(listIdx, 0) + 1);\n            \n            // When window covers all k lists\n            while (count.size() == k) {\n                int rangeStart = merged.get(left)[0];\n                int rangeEnd = merged.get(right)[0];\n                \n                if (rangeEnd - rangeStart < bestRange[1] - bestRange[0]) {\n                    bestRange[0] = rangeStart;\n                    bestRange[1] = rangeEnd;\n                }\n                \n                // Try to shrink from left\n                int leftListIdx = merged.get(left)[1];\n                count.put(leftListIdx, count.get(leftListIdx) - 1);\n                if (count.get(leftListIdx) == 0) {\n                    count.remove(leftListIdx);\n                }\n                left++;\n            }\n        }\n        \n        return bestRange;\n    }\n}",
+        "python": "def smallestRange(nums):\n    merged = []  # (value, listIndex)\n    \n    # Merge all lists with list identifiers\n    for i, lst in enumerate(nums):\n        for val in lst:\n            merged.append((val, i))\n    \n    # Sort by value\n    merged.sort()\n    \n    k = len(nums)\n    count = {}  # listIndex -> count in window\n    left = 0\n    best_range = [0, float('inf')]\n    \n    for right in range(len(merged)):\n        list_idx = merged[right][1]\n        count[list_idx] = count.get(list_idx, 0) + 1\n        \n        # When window covers all k lists\n        while len(count) == k:\n            range_start = merged[left][0]\n            range_end = merged[right][0]\n            \n            if range_end - range_start < best_range[1] - best_range[0]:\n                best_range = [range_start, range_end]\n            \n            # Try to shrink from left\n            left_list_idx = merged[left][1]\n            count[left_list_idx] -= 1\n            if count[left_list_idx] == 0:\n                del count[left_list_idx]\n            left += 1\n    \n    return best_range",
+        "javascript": "function smallestRange(nums) {\n    const merged = [];  // [value, listIndex]\n    \n    // Merge all lists with list identifiers\n    for (let i = 0; i < nums.length; i++) {\n        for (const val of nums[i]) {\n            merged.push([val, i]);\n        }\n    }\n    \n    // Sort by value\n    merged.sort((a, b) => a[0] - b[0]);\n    \n    const k = nums.length;\n    const count = new Map();  // listIndex -> count\n    let left = 0;\n    let bestRange = [0, Infinity];\n    \n    for (let right = 0; right < merged.length; right++) {\n        const listIdx = merged[right][1];\n        count.set(listIdx, (count.get(listIdx) || 0) + 1);\n        \n        // When window covers all k lists\n        while (count.size === k) {\n            const rangeStart = merged[left][0];\n            const rangeEnd = merged[right][0];\n            \n            if (rangeEnd - rangeStart < bestRange[1] - bestRange[0]) {\n                bestRange = [rangeStart, rangeEnd];\n            }\n            \n            // Try to shrink from left\n            const leftListIdx = merged[left][1];\n            count.set(leftListIdx, count.get(leftListIdx) - 1);\n            if (count.get(leftListIdx) === 0) {\n                count.delete(leftListIdx);\n            }\n            left++;\n        }\n    }\n    \n    return bestRange;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not updating currentMax when adding new element to heap",
+    "Breaking loop too early - should continue until any list is exhausted",
+    "Comparing range size incorrectly - should compare (max-min) not just endpoints",
+    "In merge approach, not handling ties correctly when ranges have same size",
+    "Forgetting to track which lists are covered in sliding window",
+    "Not initializing bestRange properly (should be [0, INT_MAX] or infinity)",
+    "In heap approach, not checking if list has more elements before accessing next"
+  ],
+  "hints": [
+    "At any point, you need one element from each of the k lists to form a range",
+    "The minimum of current k elements is left bound, maximum is right bound",
+    "Use min-heap to efficiently get minimum, track maximum separately",
+    "When you advance the minimum, you might get a better (smaller) range",
+    "Stop when any list is exhausted - can't maintain k elements anymore",
+    "Alternative: merge all lists, use sliding window to find smallest range covering all lists"
+  ],
+  "followUp": [
+    "What if lists are not sorted - how would you modify the approach?",
+    "How to find the kth smallest range instead of absolute smallest?",
+    "Can you handle the case where some lists are empty?",
+    "What if you need ranges covering at least m out of k lists (m < k)?",
+    "How would you optimize for very long lists with similar values?",
+    "Can you extend to find range with maximum coverage (most unique lists)?",
+    "What if lists can have duplicate values - how does it affect the solution?",
+    "How would you handle streaming lists where elements arrive dynamically?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Uber"
+  ],
+  "tags": [
+    "Hash Table",
+    "Two Pointers",
+    "String",
+    "Sliding Window",
+    "Heap (Priority Queue)",
+    "Greedy",
+    "Sorting"
+  ],
+  "relatedProblems": [
+    "Merge K Sorted Lists",
+    "Minimum Window Substring",
+    "Find K Pairs with Smallest Sums",
+    "Sliding Window Maximum",
+    "Minimum Size Subarray Sum",
+    "Longest Substring with At Most K Distinct Characters",
+    "Minimize Maximum Pair Sum in Array"
+  ]
 }

@@ -3,17 +3,185 @@
   "questionSlug": "kth-smallest-m-lists",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/find-m-th-smallest-value-in-k-sorted-arrays/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Kth Smallest Element in M Sorted Arrays",
+        "url": "https://www.youtube.com/watch?v=D0F7-fsSMpY",
+        "channel": "take U forward",
+        "duration": "15:45",
+        "language": "English"
+      },
+      {
+        "title": "Find Kth Smallest in Multiple Lists - Heap Solution",
+        "url": "https://www.youtube.com/watch?v=c1zQw5C1xbY",
+        "channel": "TECH DOSE",
+        "duration": "18:20",
+        "language": "English"
+      },
+      {
+        "title": "Kth Smallest Element - K-way Merge Pattern",
+        "url": "https://www.youtube.com/watch?v=ptYUCjfNhJY",
+        "channel": "Back To Back SWE",
+        "duration": "14:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Kth Smallest Element in K Sorted Arrays",
+        "url": "https://www.geeksforgeeks.org/find-m-th-smallest-value-in-k-sorted-arrays/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Kth Smallest Element Using Min Heap",
+        "url": "https://algo.monster/liteproblems/378",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "K-way Merge Pattern Explained",
+        "url": "https://www.educative.io/courses/grokking-the-coding-interview/myAqDMyRXn3",
+        "source": "Educative"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Kth Smallest Element in a Sorted Matrix",
+        "url": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Merge K Sorted Lists",
+        "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find K Pairs with Smallest Sums",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Largest Element in an Array",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use K-way Merge pattern when finding kth element across multiple sorted lists. Key indicators: k sorted arrays/lists, find kth smallest/largest element, merge multiple sorted sequences, maintain order across sources.",
+  "approaches": [
+    {
+      "name": "Min-Heap with K Extractions",
+      "order": 1,
+      "intuition": "Use min-heap to efficiently get smallest elements across all lists. Start with first element of each list. Extract minimum k times - the kth extraction gives the kth smallest element. When extracting from a list, add its next element to heap.",
+      "approach": "Initialize heap with first element from each list along with list index and element index. Extract minimum k times. Each time, add next element from the same list to heap. The kth extracted element is the answer.",
+      "steps": [
+        "Create min-heap with (value, listIndex, elementIndex)",
+        "Add first element of each of the m lists to heap",
+        "Perform k extractions:",
+        "  - Extract minimum from heap",
+        "  - If this is the kth extraction: return this value",
+        "  - Get next element from same list (listIndex, elementIndex+1)",
+        "  - If next element exists: add to heap",
+        "Return the kth extracted value"
+      ],
+      "complexity": {
+        "time": "O(k * log m)",
+        "space": "O(m)",
+        "timeExplanation": "m = number of lists. Heap size is at most m. Each of k extractions takes O(log m). Total: O(k * log m).",
+        "spaceExplanation": "Heap stores at most m elements (one from each list). O(m) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int kthSmallest(vector<vector<int>>& lists, int k) {\n        // Min heap: {value, listIndex, elementIndex}\n        auto cmp = [](const tuple<int,int,int>& a, const tuple<int,int,int>& b) {\n            return get<0>(a) > get<0>(b);\n        };\n        priority_queue<tuple<int,int,int>, vector<tuple<int,int,int>>, decltype(cmp)> minHeap(cmp);\n        \n        // Add first element of each list\n        for (int i = 0; i < lists.size(); i++) {\n            if (!lists[i].empty()) {\n                minHeap.push({lists[i][0], i, 0});\n            }\n        }\n        \n        int result = 0;\n        \n        // Extract minimum k times\n        for (int count = 0; count < k && !minHeap.empty(); count++) {\n            auto [val, listIdx, elemIdx] = minHeap.top();\n            minHeap.pop();\n            result = val;\n            \n            // Add next element from same list\n            if (elemIdx + 1 < lists[listIdx].size()) {\n                minHeap.push({lists[listIdx][elemIdx + 1], listIdx, elemIdx + 1});\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int kthSmallest(List<List<Integer>> lists, int k) {\n        // Min heap: {value, listIndex, elementIndex}\n        PriorityQueue<int[]> minHeap = new PriorityQueue<>(\n            (a, b) -> a[0] - b[0]\n        );\n        \n        // Add first element of each list\n        for (int i = 0; i < lists.size(); i++) {\n            if (!lists.get(i).isEmpty()) {\n                minHeap.offer(new int[]{lists.get(i).get(0), i, 0});\n            }\n        }\n        \n        int result = 0;\n        \n        // Extract minimum k times\n        for (int count = 0; count < k && !minHeap.isEmpty(); count++) {\n            int[] elem = minHeap.poll();\n            result = elem[0];\n            int listIdx = elem[1];\n            int elemIdx = elem[2];\n            \n            // Add next element from same list\n            if (elemIdx + 1 < lists.get(listIdx).size()) {\n                minHeap.offer(new int[]{\n                    lists.get(listIdx).get(elemIdx + 1), \n                    listIdx, \n                    elemIdx + 1\n                });\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "import heapq\n\ndef kthSmallest(lists, k):\n    # Min heap: (value, listIndex, elementIndex)\n    min_heap = []\n    \n    # Add first element of each list\n    for i in range(len(lists)):\n        if lists[i]:\n            heapq.heappush(min_heap, (lists[i][0], i, 0))\n    \n    result = 0\n    \n    # Extract minimum k times\n    for count in range(k):\n        if not min_heap:\n            break\n            \n        val, list_idx, elem_idx = heapq.heappop(min_heap)\n        result = val\n        \n        # Add next element from same list\n        if elem_idx + 1 < len(lists[list_idx]):\n            heapq.heappush(min_heap, (\n                lists[list_idx][elem_idx + 1],\n                list_idx,\n                elem_idx + 1\n            ))\n    \n    return result",
+        "javascript": "function kthSmallest(lists, k) {\n    // Min heap implementation\n    const minHeap = new MinPriorityQueue({ priority: x => x[0] });\n    \n    // Add first element of each list\n    for (let i = 0; i < lists.length; i++) {\n        if (lists[i].length > 0) {\n            minHeap.enqueue([lists[i][0], i, 0]);\n        }\n    }\n    \n    let result = 0;\n    \n    // Extract minimum k times\n    for (let count = 0; count < k && !minHeap.isEmpty(); count++) {\n        const [val, listIdx, elemIdx] = minHeap.dequeue().element;\n        result = val;\n        \n        // Add next element from same list\n        if (elemIdx + 1 < lists[listIdx].length) {\n            minHeap.enqueue([\n                lists[listIdx][elemIdx + 1],\n                listIdx,\n                elemIdx + 1\n            ]);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Binary Search on Value Range",
+      "order": 2,
+      "intuition": "Find the value range [min, max] across all lists. Binary search on this range. For each mid value, count how many elements are ≤ mid across all lists. If count ≥ k, the kth element is ≤ mid. Adjust search space accordingly.",
+      "approach": "Binary search on value range. For each mid, count elements ≤ mid in all lists (use binary search per list). If count >= k, search in lower half. Otherwise, search in upper half.",
+      "steps": [
+        "Find min = minimum first element across all lists",
+        "Find max = maximum last element across all lists",
+        "Binary search on range [min, max]:",
+        "  - mid = (min + max) / 2",
+        "  - count = 0",
+        "  - For each list:",
+        "    - Use binary search to count elements <= mid",
+        "    - Add to count",
+        "  - If count >= k:",
+        "    - Answer is <= mid, search left: max = mid",
+        "  - Else:",
+        "    - Answer is > mid, search right: min = mid + 1",
+        "Return min (or max, they converge)"
+      ],
+      "complexity": {
+        "time": "O(m * n * log(max - min) * log n)",
+        "space": "O(1)",
+        "timeExplanation": "m = number of lists, n = average list length. Binary search on range: O(log(max-min)) iterations. Each iteration counts in all m lists using binary search: O(m * log n). Total: O(m * n * log(max-min) * log n). Can be simplified to O(m * log n * log(max-min)).",
+        "spaceExplanation": "Only uses constant extra space. O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countLessOrEqual(vector<vector<int>>& lists, int target) {\n        int count = 0;\n        for (auto& list : lists) {\n            // Binary search to count elements <= target\n            count += upper_bound(list.begin(), list.end(), target) - list.begin();\n        }\n        return count;\n    }\n    \n    int kthSmallest(vector<vector<int>>& lists, int k) {\n        int minVal = INT_MAX, maxVal = INT_MIN;\n        \n        // Find value range\n        for (auto& list : lists) {\n            if (!list.empty()) {\n                minVal = min(minVal, list.front());\n                maxVal = max(maxVal, list.back());\n            }\n        }\n        \n        // Binary search on value range\n        while (minVal < maxVal) {\n            int mid = minVal + (maxVal - minVal) / 2;\n            int count = countLessOrEqual(lists, mid);\n            \n            if (count < k) {\n                minVal = mid + 1;\n            } else {\n                maxVal = mid;\n            }\n        }\n        \n        return minVal;\n    }\n};",
+        "java": "class Solution {\n    private int countLessOrEqual(List<List<Integer>> lists, int target) {\n        int count = 0;\n        for (List<Integer> list : lists) {\n            // Binary search to count elements <= target\n            int left = 0, right = list.size();\n            while (left < right) {\n                int mid = left + (right - left) / 2;\n                if (list.get(mid) <= target) {\n                    left = mid + 1;\n                } else {\n                    right = mid;\n                }\n            }\n            count += left;\n        }\n        return count;\n    }\n    \n    public int kthSmallest(List<List<Integer>> lists, int k) {\n        int minVal = Integer.MAX_VALUE;\n        int maxVal = Integer.MIN_VALUE;\n        \n        // Find value range\n        for (List<Integer> list : lists) {\n            if (!list.isEmpty()) {\n                minVal = Math.min(minVal, list.get(0));\n                maxVal = Math.max(maxVal, list.get(list.size() - 1));\n            }\n        }\n        \n        // Binary search on value range\n        while (minVal < maxVal) {\n            int mid = minVal + (maxVal - minVal) / 2;\n            int count = countLessOrEqual(lists, mid);\n            \n            if (count < k) {\n                minVal = mid + 1;\n            } else {\n                maxVal = mid;\n            }\n        }\n        \n        return minVal;\n    }\n}",
+        "python": "import bisect\n\ndef kthSmallest(lists, k):\n    def count_less_or_equal(target):\n        count = 0\n        for lst in lists:\n            # Binary search to count elements <= target\n            count += bisect.bisect_right(lst, target)\n        return count\n    \n    # Find value range\n    min_val = min(lst[0] for lst in lists if lst)\n    max_val = max(lst[-1] for lst in lists if lst)\n    \n    # Binary search on value range\n    while min_val < max_val:\n        mid = (min_val + max_val) // 2\n        count = count_less_or_equal(mid)\n        \n        if count < k:\n            min_val = mid + 1\n        else:\n            max_val = mid\n    \n    return min_val",
+        "javascript": "function kthSmallest(lists, k) {\n    function countLessOrEqual(target) {\n        let count = 0;\n        for (const list of lists) {\n            // Binary search to count elements <= target\n            let left = 0, right = list.length;\n            while (left < right) {\n                const mid = Math.floor((left + right) / 2);\n                if (list[mid] <= target) {\n                    left = mid + 1;\n                } else {\n                    right = mid;\n                }\n            }\n            count += left;\n        }\n        return count;\n    }\n    \n    // Find value range\n    let minVal = Infinity;\n    let maxVal = -Infinity;\n    \n    for (const list of lists) {\n        if (list.length > 0) {\n            minVal = Math.min(minVal, list[0]);\n            maxVal = Math.max(maxVal, list[list.length - 1]);\n        }\n    }\n    \n    // Binary search on value range\n    while (minVal < maxVal) {\n        const mid = Math.floor((minVal + maxVal) / 2);\n        const count = countLessOrEqual(mid);\n        \n        if (count < k) {\n            minVal = mid + 1;\n        } else {\n            maxVal = mid;\n        }\n    }\n    \n    return minVal;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling empty lists - can cause heap to be empty or access errors",
+    "Extracting k+1 times instead of k times from heap",
+    "Forgetting to add next element to heap after extraction",
+    "In binary search approach, using wrong boundary for counting (< vs <=)",
+    "Not updating min/max correctly when lists have different ranges",
+    "Off-by-one error in k (0-indexed vs 1-indexed)",
+    "Not checking if elemIdx + 1 is within bounds before adding to heap"
+  ],
+  "hints": [
+    "You only need to extract k elements, not merge all lists completely",
+    "Min-heap helps get the global minimum across all lists efficiently",
+    "Each extraction from heap should trigger adding next element from same list",
+    "Alternative: Binary search on value range + count elements <= mid",
+    "For binary search approach, use upper_bound to count elements <= target",
+    "Stop heap extraction after exactly k elements are extracted"
+  ],
+  "followUp": [
+    "What if k is larger than total number of elements across all lists?",
+    "How to find kth largest instead of kth smallest?",
+    "Can you optimize for the case where k is very close to total elements?",
+    "What if lists are not sorted - how would you modify the approach?",
+    "How to handle duplicate values across lists?",
+    "Can you extend to find range of kth to (k+m)th smallest elements efficiently?",
+    "What if lists are infinite streams - how to find kth element?",
+    "How would you handle the case where some lists are much longer than others?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Bloomberg",
+    "LinkedIn",
+    "Uber",
+    "Apple"
+  ],
+  "tags": [
+    "Heap (Priority Queue)",
+    "Array",
+    "Binary Search",
+    "Divide and Conquer",
+    "Sorting",
+    "Matrix"
+  ],
+  "relatedProblems": [
+    "Kth Smallest Element in a Sorted Matrix",
+    "Merge K Sorted Lists",
+    "Find K Pairs with Smallest Sums",
+    "Kth Largest Element in an Array",
+    "Median of Two Sorted Arrays",
+    "Smallest Range Covering Elements from K Lists"
+  ]
 }

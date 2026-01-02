@@ -2,18 +2,193 @@
   "questionId": "694d4a3a98494915f3bc8f06",
   "questionSlug": "kth-smallest-sorted-matrix",
   "resources": {
-    "leetcode": "https://www.educative.io/courses/grokking-the-coding-interview/x1NJVYKNvqz",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/",
+    "videos": [
+      {
+        "title": "Kth Smallest Element in Sorted Matrix - Leetcode 378",
+        "url": "https://www.youtube.com/watch?v=_XOVIEW0fvE",
+        "channel": "NeetCode",
+        "duration": "11:20",
+        "language": "English"
+      },
+      {
+        "title": "Kth Smallest in Sorted Matrix - Binary Search",
+        "url": "https://www.youtube.com/watch?v=Xh-lytaY4TQ",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Find Kth Smallest - Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=D0F3SxFb_3I",
+        "channel": "TECH DOSE",
+        "duration": "16:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth Smallest Element in a Sorted Matrix Solution",
+        "url": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Kth Smallest in Sorted Matrix Explained",
+        "url": "https://algo.monster/liteproblems/378",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Find Kth Smallest Element in Matrix",
+        "url": "https://www.educative.io/courses/grokking-the-coding-interview/x1NJVYKNvqz",
+        "source": "Educative"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find K Pairs with Smallest Sums",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Largest Element in an Array",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Merge K Sorted Lists",
+        "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search a 2D Matrix II",
+        "url": "https://leetcode.com/problems/search-a-2d-matrix-ii/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use K-way Merge or Binary Search pattern for sorted matrix problems. Key indicators: matrix sorted row-wise and column-wise, find kth smallest element, each row is sorted sequence, can treat as n sorted arrays (rows).",
+  "approaches": [
+    {
+      "name": "Min-Heap (K-way Merge)",
+      "order": 1,
+      "intuition": "Treat each row as a sorted array. Use min-heap to merge n sorted arrays. Start with first element of each row in heap. Extract minimum k times. After each extraction, add next element from same row. The kth extraction gives answer.",
+      "approach": "Initialize heap with first element of each row (value, row, col). Extract min k times. When extracting element from position (r,c), add element at (r, c+1) if it exists. The kth extracted value is the answer.",
+      "steps": [
+        "Create min-heap with (value, row, col) tuples",
+        "Add first element of each row: (matrix[i][0], i, 0) for all rows",
+        "Initialize count = 0",
+        "While count < k:",
+        "  - Extract minimum (value, row, col) from heap",
+        "  - Increment count",
+        "  - If count == k, return value",
+        "  - If col+1 < n (more elements in this row):",
+        "    - Add (matrix[row][col+1], row, col+1) to heap",
+        "Return extracted value"
+      ],
+      "complexity": {
+        "time": "O(min(k, n) + k log n)",
+        "space": "O(n)",
+        "timeExplanation": "n = matrix dimension. Initialize heap with n elements: O(n). Extract k times, each O(log n): O(k log n). Total: O(n + k log n) = O(k log n) when k > n.",
+        "spaceExplanation": "Heap stores at most n elements (one per row). O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int kthSmallest(vector<vector<int>>& matrix, int k) {\n        int n = matrix.size();\n        \n        // Min heap: {value, row, col}\n        auto cmp = [](const tuple<int,int,int>& a, const tuple<int,int,int>& b) {\n            return get<0>(a) > get<0>(b);\n        };\n        priority_queue<tuple<int,int,int>, vector<tuple<int,int,int>>, decltype(cmp)> minHeap(cmp);\n        \n        // Add first element of each row\n        for (int i = 0; i < min(n, k); i++) {\n            minHeap.push({matrix[i][0], i, 0});\n        }\n        \n        int count = 0;\n        int result = 0;\n        \n        while (!minHeap.empty() && count < k) {\n            auto [value, row, col] = minHeap.top();\n            minHeap.pop();\n            \n            count++;\n            result = value;\n            \n            // Add next element from same row\n            if (col + 1 < n) {\n                minHeap.push({matrix[row][col + 1], row, col + 1});\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int kthSmallest(int[][] matrix, int k) {\n        int n = matrix.length;\n        \n        // Min heap: {value, row, col}\n        PriorityQueue<int[]> minHeap = new PriorityQueue<>(\n            (a, b) -> a[0] - b[0]\n        );\n        \n        // Add first element of each row\n        for (int i = 0; i < Math.min(n, k); i++) {\n            minHeap.offer(new int[]{matrix[i][0], i, 0});\n        }\n        \n        int count = 0;\n        int result = 0;\n        \n        while (!minHeap.isEmpty() && count < k) {\n            int[] elem = minHeap.poll();\n            int value = elem[0];\n            int row = elem[1];\n            int col = elem[2];\n            \n            count++;\n            result = value;\n            \n            // Add next element from same row\n            if (col + 1 < n) {\n                minHeap.offer(new int[]{matrix[row][col + 1], row, col + 1});\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "import heapq\n\ndef kthSmallest(matrix, k):\n    n = len(matrix)\n    \n    # Min heap: (value, row, col)\n    min_heap = []\n    \n    # Add first element of each row\n    for i in range(min(n, k)):\n        heapq.heappush(min_heap, (matrix[i][0], i, 0))\n    \n    count = 0\n    result = 0\n    \n    while min_heap and count < k:\n        value, row, col = heapq.heappop(min_heap)\n        \n        count += 1\n        result = value\n        \n        # Add next element from same row\n        if col + 1 < n:\n            heapq.heappush(min_heap, (matrix[row][col + 1], row, col + 1))\n    \n    return result",
+        "javascript": "function kthSmallest(matrix, k) {\n    const n = matrix.length;\n    \n    // Min heap implementation\n    const minHeap = new MinPriorityQueue({ priority: x => x[0] });\n    \n    // Add first element of each row\n    for (let i = 0; i < Math.min(n, k); i++) {\n        minHeap.enqueue([matrix[i][0], i, 0]);\n    }\n    \n    let count = 0;\n    let result = 0;\n    \n    while (!minHeap.isEmpty() && count < k) {\n        const [value, row, col] = minHeap.dequeue().element;\n        \n        count++;\n        result = value;\n        \n        // Add next element from same row\n        if (col + 1 < n) {\n            minHeap.enqueue([matrix[row][col + 1], row, col + 1]);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Binary Search on Value Range",
+      "order": 2,
+      "intuition": "Binary search on the value range [matrix[0][0], matrix[n-1][n-1]]. For each mid value, count how many elements in matrix are <= mid. If count >= k, answer is <= mid (search left). Else search right. This leverages the sorted property efficiently.",
+      "approach": "Binary search on values from smallest (top-left) to largest (bottom-right). For each mid, count elements <= mid by traversing from bottom-left or top-right. Adjust search based on count vs k.",
+      "steps": [
+        "Initialize left = matrix[0][0], right = matrix[n-1][n-1]",
+        "While left < right:",
+        "  - mid = (left + right) / 2",
+        "  - count = countLessOrEqual(matrix, mid)",
+        "  - If count < k:",
+        "    - left = mid + 1 (need larger values)",
+        "  - Else:",
+        "    - right = mid (mid could be answer)",
+        "Return left",
+        "countLessOrEqual(matrix, target):",
+        "  - Start from bottom-left (row=n-1, col=0)",
+        "  - While in bounds:",
+        "    - If matrix[row][col] <= target:",
+        "      - Add (col+1) to count, move right (col++)",
+        "    - Else: move up (row--)",
+        "  - Return count"
+      ],
+      "complexity": {
+        "time": "O(n * log(max - min))",
+        "space": "O(1)",
+        "timeExplanation": "Binary search takes log(max-min) iterations. Each iteration counts in O(n) time by traversing matrix smartly. Total: O(n * log(max-min)).",
+        "spaceExplanation": "Only constant extra space. O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int kthSmallest(vector<vector<int>>& matrix, int k) {\n        int n = matrix.size();\n        int left = matrix[0][0];\n        int right = matrix[n-1][n-1];\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            int count = countLessOrEqual(matrix, mid);\n            \n            if (count < k) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        return left;\n    }\n    \nprivate:\n    int countLessOrEqual(vector<vector<int>>& matrix, int target) {\n        int n = matrix.size();\n        int count = 0;\n        int row = n - 1;  // Start from bottom-left\n        int col = 0;\n        \n        while (row >= 0 && col < n) {\n            if (matrix[row][col] <= target) {\n                count += row + 1;  // All elements in this column up to row\n                col++;\n            } else {\n                row--;\n            }\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int kthSmallest(int[][] matrix, int k) {\n        int n = matrix.length;\n        int left = matrix[0][0];\n        int right = matrix[n-1][n-1];\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            int count = countLessOrEqual(matrix, mid);\n            \n            if (count < k) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        return left;\n    }\n    \n    private int countLessOrEqual(int[][] matrix, int target) {\n        int n = matrix.length;\n        int count = 0;\n        int row = n - 1;  // Start from bottom-left\n        int col = 0;\n        \n        while (row >= 0 && col < n) {\n            if (matrix[row][col] <= target) {\n                count += row + 1;  // All elements in this column up to row\n                col++;\n            } else {\n                row--;\n            }\n        }\n        \n        return count;\n    }\n}",
+        "python": "def kthSmallest(matrix, k):\n    n = len(matrix)\n    left = matrix[0][0]\n    right = matrix[n-1][n-1]\n    \n    def count_less_or_equal(target):\n        count = 0\n        row = n - 1  # Start from bottom-left\n        col = 0\n        \n        while row >= 0 and col < n:\n            if matrix[row][col] <= target:\n                count += row + 1  # All elements in this column up to row\n                col += 1\n            else:\n                row -= 1\n        \n        return count\n    \n    while left < right:\n        mid = (left + right) // 2\n        count = count_less_or_equal(mid)\n        \n        if count < k:\n            left = mid + 1\n        else:\n            right = mid\n    \n    return left",
+        "javascript": "function kthSmallest(matrix, k) {\n    const n = matrix.length;\n    let left = matrix[0][0];\n    let right = matrix[n-1][n-1];\n    \n    function countLessOrEqual(target) {\n        let count = 0;\n        let row = n - 1;  // Start from bottom-left\n        let col = 0;\n        \n        while (row >= 0 && col < n) {\n            if (matrix[row][col] <= target) {\n                count += row + 1;  // All elements in this column up to row\n                col++;\n            } else {\n                row--;\n            }\n        }\n        \n        return count;\n    }\n    \n    while (left < right) {\n        const mid = Math.floor((left + right) / 2);\n        const count = countLessOrEqual(mid);\n        \n        if (count < k) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    \n    return left;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "In heap approach, adding all n^2 elements to heap instead of just first of each row",
+    "Not handling the case where k > n (need to optimize heap initialization)",
+    "In binary search, using wrong counting logic - must count from bottom-left or top-right",
+    "Comparing count == k instead of count >= k in binary search adjustment",
+    "In counting, adding 1 instead of (row+1) or (col+1) - missing multiple elements",
+    "Not understanding that answer might not exist in matrix (binary search finds it anyway)",
+    "In heap, forgetting to check column bounds before adding next element"
+  ],
+  "hints": [
+    "Matrix is sorted both row-wise and column-wise - exploit this property",
+    "Heap approach: treat each row as a sorted list, merge n sorted lists",
+    "Binary search approach: search on values, not indices",
+    "For counting elements <= target, start from bottom-left or top-right corner",
+    "When at bottom-left: if element <= target, entire column above is <= target",
+    "Heap is intuitive, binary search is more efficient for large k",
+    "The kth smallest might not actually exist in matrix - binary search handles this"
+  ],
+  "followUp": [
+    "What if matrix is only row-sorted, not column-sorted?",
+    "How would you find kth largest instead?",
+    "Can you handle non-square matrix (m x n)?",
+    "What if you need to find all elements less than a given value?",
+    "How to optimize when k is very small (k << n)?",
+    "Can you extend to 3D sorted matrix?",
+    "What if matrix values are not unique - how to handle ties?",
+    "How would you find the median of the matrix efficiently?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Uber",
+    "Oracle"
+  ],
+  "tags": [
+    "Array",
+    "Binary Search",
+    "Matrix",
+    "Sorting",
+    "Heap (Priority Queue)"
+  ],
+  "relatedProblems": [
+    "Find K Pairs with Smallest Sums",
+    "Kth Smallest Element in a BST",
+    "Kth Largest Element in an Array",
+    "Search a 2D Matrix II",
+    "Merge K Sorted Lists",
+    "Ugly Number II",
+    "Find K-th Smallest Pair Distance"
+  ]
 }
