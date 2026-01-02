@@ -1,0 +1,159 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e89",
+  "questionSlug": "palindrome-linkedlist",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/palindrome-linked-list/",
+    "videos": [
+      {
+        "title": "Palindrome Linked List - Leetcode 234",
+        "url": "https://www.youtube.com/watch?v=yOzXms1J6Nk",
+        "channel": "NeetCode",
+        "duration": "7:28",
+        "language": "English"
+      },
+      {
+        "title": "Check if Linked List is Palindrome",
+        "url": "https://www.youtube.com/watch?v=-DtNInqFUXs",
+        "channel": "takeUforward",
+        "duration": "14:25",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Palindrome Linked List Solution",
+        "url": "https://leetcode.com/problems/palindrome-linked-list/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Check if Linked List is Palindrome",
+        "url": "https://www.geeksforgeeks.org/function-to-check-if-a-singly-linked-list-is-palindrome/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Valid Palindrome",
+        "url": "https://leetcode.com/problems/valid-palindrome/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Linked List",
+        "url": "https://leetcode.com/problems/reverse-linked-list/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Fast & Slow Pointers combined with linked list reversal when checking palindrome in a linked list with O(1) space. Key indicators: palindrome check, linked list, space optimization, need to compare first and second half.",
+  "approaches": [
+    {
+      "name": "Array Conversion",
+      "order": 1,
+      "intuition": "Convert linked list to array, then use two pointers from both ends to check if it's a palindrome.",
+      "approach": "Store all values in array, then compare elements from start and end moving toward center.",
+      "steps": [
+        "Create empty array/list",
+        "Traverse linked list and add all values to array",
+        "Initialize left = 0, right = array.length - 1",
+        "While left < right:",
+        "  If array[left] not equals array[right]:",
+        "    Return false",
+        "  Increment left, decrement right",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "O(n) to build array, O(n) to check palindrome",
+        "spaceExplanation": "Array stores all n values from linked list"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isPalindrome(ListNode* head) {\n        // Convert linked list to array\n        vector<int> values;\n        ListNode* current = head;\n        while (current != nullptr) {\n            values.push_back(current->val);\n            current = current->next;\n        }\n        \n        // Check if array is palindrome\n        int left = 0;\n        int right = values.size() - 1;\n        \n        while (left < right) {\n            if (values[left] != values[right]) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean isPalindrome(ListNode head) {\n        // Convert linked list to array\n        List<Integer> values = new ArrayList<>();\n        ListNode current = head;\n        while (current != null) {\n            values.add(current.val);\n            current = current.next;\n        }\n        \n        // Check if array is palindrome\n        int left = 0;\n        int right = values.size() - 1;\n        \n        while (left < right) {\n            if (!values.get(left).equals(values.get(right))) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        \n        return true;\n    }\n}",
+        "python": "def is_palindrome(head):\n    # Convert linked list to array\n    values = []\n    current = head\n    while current:\n        values.append(current.val)\n        current = current.next\n    \n    # Check if array is palindrome\n    left = 0\n    right = len(values) - 1\n    \n    while left < right:\n        if values[left] != values[right]:\n            return False\n        left += 1\n        right -= 1\n    \n    return True",
+        "javascript": "function isPalindrome(head) {\n    // Convert linked list to array\n    const values = [];\n    let current = head;\n    while (current !== null) {\n        values.push(current.val);\n        current = current.next;\n    }\n    \n    // Check if array is palindrome\n    let left = 0;\n    let right = values.length - 1;\n    \n    while (left < right) {\n        if (values[left] !== values[right]) {\n            return false;\n        }\n        left++;\n        right--;\n    }\n    \n    return true;\n}"
+      }
+    },
+    {
+      "name": "Fast & Slow Pointers with Reversal (Optimal)",
+      "order": 2,
+      "intuition": "Find middle using fast & slow pointers, reverse second half, then compare first and second halves. This achieves O(1) space by modifying the list in-place.",
+      "approach": "Use fast & slow pointers to find middle, reverse second half, compare both halves, optionally restore list.",
+      "steps": [
+        "Step 1: Find middle using fast & slow pointers",
+        "  slow and fast both start at head",
+        "  Move slow by 1, fast by 2 until fast reaches end",
+        "  slow is now at middle",
+        "Step 2: Reverse second half starting from slow",
+        "  Use standard linked list reversal",
+        "Step 3: Compare first half and reversed second half",
+        "  Use two pointers from head and reversed middle",
+        "  Compare values while moving forward",
+        "Step 4 (Optional): Restore original list",
+        "  Reverse the second half again"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "O(n/2) to find middle, O(n/2) to reverse, O(n/2) to compare = O(n)",
+        "spaceExplanation": "Only using pointer variables, modifying list in-place"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isPalindrome(ListNode* head) {\n        if (head == nullptr || head->next == nullptr) {\n            return true;\n        }\n        \n        // Step 1: Find middle\n        ListNode* slow = head;\n        ListNode* fast = head;\n        while (fast != nullptr && fast->next != nullptr) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        \n        // Step 2: Reverse second half\n        ListNode* secondHalf = reverseList(slow);\n        \n        // Step 3: Compare both halves\n        ListNode* firstHalf = head;\n        ListNode* secondHalfCopy = secondHalf;\n        \n        bool isPalin = true;\n        while (secondHalf != nullptr) {\n            if (firstHalf->val != secondHalf->val) {\n                isPalin = false;\n                break;\n            }\n            firstHalf = firstHalf->next;\n            secondHalf = secondHalf->next;\n        }\n        \n        // Step 4: Restore list (optional)\n        reverseList(secondHalfCopy);\n        \n        return isPalin;\n    }\n    \nprivate:\n    ListNode* reverseList(ListNode* head) {\n        ListNode* prev = nullptr;\n        ListNode* current = head;\n        \n        while (current != nullptr) {\n            ListNode* next = current->next;\n            current->next = prev;\n            prev = current;\n            current = next;\n        }\n        \n        return prev;\n    }\n};",
+        "java": "class Solution {\n    public boolean isPalindrome(ListNode head) {\n        if (head == null || head.next == null) {\n            return true;\n        }\n        \n        // Step 1: Find middle\n        ListNode slow = head;\n        ListNode fast = head;\n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n        }\n        \n        // Step 2: Reverse second half\n        ListNode secondHalf = reverseList(slow);\n        \n        // Step 3: Compare both halves\n        ListNode firstHalf = head;\n        ListNode secondHalfCopy = secondHalf;\n        \n        boolean isPalin = true;\n        while (secondHalf != null) {\n            if (firstHalf.val != secondHalf.val) {\n                isPalin = false;\n                break;\n            }\n            firstHalf = firstHalf.next;\n            secondHalf = secondHalf.next;\n        }\n        \n        // Step 4: Restore list (optional)\n        reverseList(secondHalfCopy);\n        \n        return isPalin;\n    }\n    \n    private ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        ListNode current = head;\n        \n        while (current != null) {\n            ListNode next = current.next;\n            current.next = prev;\n            prev = current;\n            current = next;\n        }\n        \n        return prev;\n    }\n}",
+        "python": "def is_palindrome(head):\n    if not head or not head.next:\n        return True\n    \n    def reverse_list(node):\n        prev = None\n        current = node\n        \n        while current:\n            next_node = current.next\n            current.next = prev\n            prev = current\n            current = next_node\n        \n        return prev\n    \n    # Step 1: Find middle\n    slow = head\n    fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    \n    # Step 2: Reverse second half\n    second_half = reverse_list(slow)\n    \n    # Step 3: Compare both halves\n    first_half = head\n    second_half_copy = second_half\n    \n    is_palin = True\n    while second_half:\n        if first_half.val != second_half.val:\n            is_palin = False\n            break\n        first_half = first_half.next\n        second_half = second_half.next\n    \n    # Step 4: Restore list (optional)\n    reverse_list(second_half_copy)\n    \n    return is_palin",
+        "javascript": "function isPalindrome(head) {\n    if (!head || !head.next) {\n        return true;\n    }\n    \n    const reverseList = (node) => {\n        let prev = null;\n        let current = node;\n        \n        while (current !== null) {\n            const next = current.next;\n            current.next = prev;\n            prev = current;\n            current = next;\n        }\n        \n        return prev;\n    };\n    \n    // Step 1: Find middle\n    let slow = head;\n    let fast = head;\n    while (fast !== null && fast.next !== null) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    \n    // Step 2: Reverse second half\n    let secondHalf = reverseList(slow);\n    \n    // Step 3: Compare both halves\n    let firstHalf = head;\n    const secondHalfCopy = secondHalf;\n    \n    let isPalin = true;\n    while (secondHalf !== null) {\n        if (firstHalf.val !== secondHalf.val) {\n            isPalin = false;\n            break;\n        }\n        firstHalf = firstHalf.next;\n        secondHalf = secondHalf.next;\n    }\n    \n    // Step 4: Restore list (optional)\n    reverseList(secondHalfCopy);\n    \n    return isPalin;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling odd-length lists correctly (middle node belongs to first half)",
+    "Forgetting to restore the original list after comparison",
+    "Not checking for null/empty list edge cases",
+    "Reversing the entire list instead of just the second half",
+    "Comparing wrong number of nodes (should only compare up to middle)",
+    "Not storing reference to reversed second half for restoration"
+  ],
+  "hints": [
+    "Can you find the middle of the linked list efficiently?",
+    "What if you reverse the second half of the list?",
+    "After reversing second half, how do you compare with first half?",
+    "Do you need to restore the list after checking?",
+    "For odd-length lists, the middle element doesn't need to be compared",
+    "Use fast & slow pointers to find the middle in one pass"
+  ],
+  "followUp": [
+    "Can you solve it with O(1) space and without modifying the list?",
+    "How would you handle a doubly linked list?",
+    "What if you need to check if list is almost palindrome (k changes allowed)?",
+    "Can you find the longest palindromic sublist?",
+    "How would you implement this recursively?",
+    "What if the list is circular?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn",
+    "Yahoo"
+  ],
+  "tags": [
+    "Linked List",
+    "Fast & Slow Pointers",
+    "Two Pointers",
+    "Recursion",
+    "Stack"
+  ],
+  "relatedProblems": [
+    "Reverse Linked List",
+    "Middle of the Linked List",
+    "Valid Palindrome",
+    "Reorder List",
+    "Palindrome Number"
+  ]
+}

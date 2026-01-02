@@ -1,0 +1,196 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eae",
+  "questionSlug": "smallest-missing-positive",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/first-missing-positive/",
+    "videos": [
+      {
+        "title": "First Missing Positive - Leetcode 41 - Cyclic Sort",
+        "url": "https://www.youtube.com/watch?v=8g78yfzMlao",
+        "channel": "NeetCode",
+        "duration": "11:34",
+        "language": "English"
+      },
+      {
+        "title": "First Missing Positive Integer - Optimal Solution",
+        "url": "https://www.youtube.com/watch?v=9SnkdYXNIzM",
+        "channel": "takeUforward",
+        "duration": "14:22",
+        "language": "English"
+      },
+      {
+        "title": "First Missing Positive | Hard Array Problem",
+        "url": "https://www.youtube.com/watch?v=9SnkdYXNIzM",
+        "channel": "TECH DOSE",
+        "duration": "13:18",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "First Missing Positive",
+        "url": "https://leetcode.com/problems/first-missing-positive/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Find First Missing Positive",
+        "url": "https://www.geeksforgeeks.org/find-the-smallest-positive-number-missing-from-an-unsorted-array/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Missing Number",
+        "url": "https://leetcode.com/problems/missing-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find All Numbers Disappeared",
+        "url": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Cyclic Sort pattern when finding smallest missing positive in unsorted array. Key indicators: array can have negatives/zeros/large numbers, need O(n) time and O(1) space, find first missing positive integer starting from 1.",
+  "approaches": [
+    {
+      "name": "Brute Force (Check Each Positive)",
+      "order": 1,
+      "intuition": "Start checking from 1 onwards to see which positive number is missing. For each candidate, scan entire array to check if it exists.",
+      "approach": "Iterate from 1 onwards, for each number check if it exists in array. First number not found is the answer.",
+      "steps": [
+        "Initialize candidate = 1",
+        "While true:",
+        "  Check if candidate exists in array:",
+        "    found = false",
+        "    For each element in array:",
+        "      If element == candidate:",
+        "        found = true, break",
+        "  If not found:",
+        "    Return candidate (first missing positive)",
+        "  Increment candidate"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Worst case: check numbers 1 to n+1, each requiring O(n) array scan: n*n = O(n²)",
+        "spaceExplanation": "Only using constant space for variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n        int candidate = 1;\n        int n = nums.size();\n        \n        // Check each positive starting from 1\n        while (true) {\n            bool found = false;\n            \n            // Search for candidate in array\n            for (int i = 0; i < n; i++) {\n                if (nums[i] == candidate) {\n                    found = true;\n                    break;\n                }\n            }\n            \n            // If not found, it's the first missing positive\n            if (!found) {\n                return candidate;\n            }\n            \n            candidate++;\n        }\n        \n        return candidate;\n    }\n};",
+        "java": "class Solution {\n    public int firstMissingPositive(int[] nums) {\n        int candidate = 1;\n        int n = nums.length;\n        \n        // Check each positive starting from 1\n        while (true) {\n            boolean found = false;\n            \n            // Search for candidate in array\n            for (int i = 0; i < n; i++) {\n                if (nums[i] == candidate) {\n                    found = true;\n                    break;\n                }\n            }\n            \n            // If not found, it's the first missing positive\n            if (!found) {\n                return candidate;\n            }\n            \n            candidate++;\n        }\n    }\n}",
+        "python": "def first_missing_positive(nums):\n    candidate = 1\n    \n    # Check each positive starting from 1\n    while True:\n        # Check if candidate exists in array\n        if candidate not in nums:\n            return candidate\n        \n        candidate += 1",
+        "javascript": "function firstMissingPositive(nums) {\n    let candidate = 1;\n    \n    // Check each positive starting from 1\n    while (true) {\n        // Check if candidate exists in array\n        if (!nums.includes(candidate)) {\n            return candidate;\n        }\n        \n        candidate++;\n    }\n}"
+      }
+    },
+    {
+      "name": "Better (Hash Set)",
+      "order": 2,
+      "intuition": "Create hash set of all numbers for O(1) lookup. Then check from 1 onwards which positive integer is not in set. This avoids repeated array scans.",
+      "approach": "Build set once, then check numbers 1,2,3,... in sequence until we find one not in set.",
+      "steps": [
+        "Create hash set and add all array elements",
+        "Initialize candidate = 1",
+        "While candidate is in set:",
+        "  Increment candidate",
+        "Return candidate (first missing positive)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "O(n) to build set, O(n) worst case to check up to n+1 candidates with O(1) lookup",
+        "spaceExplanation": "Hash set stores all n elements from array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n        // Build set of all numbers\n        unordered_set<int> numSet(nums.begin(), nums.end());\n        \n        // Find first missing positive\n        int candidate = 1;\n        while (numSet.find(candidate) != numSet.end()) {\n            candidate++;\n        }\n        \n        return candidate;\n    }\n};",
+        "java": "class Solution {\n    public int firstMissingPositive(int[] nums) {\n        // Build set of all numbers\n        Set<Integer> numSet = new HashSet<>();\n        for (int num : nums) {\n            numSet.add(num);\n        }\n        \n        // Find first missing positive\n        int candidate = 1;\n        while (numSet.contains(candidate)) {\n            candidate++;\n        }\n        \n        return candidate;\n    }\n}",
+        "python": "def first_missing_positive(nums):\n    # Build set of all numbers\n    num_set = set(nums)\n    \n    # Find first missing positive\n    candidate = 1\n    while candidate in num_set:\n        candidate += 1\n    \n    return candidate",
+        "javascript": "function firstMissingPositive(nums) {\n    // Build set of all numbers\n    const numSet = new Set(nums);\n    \n    // Find first missing positive\n    let candidate = 1;\n    while (numSet.has(candidate)) {\n        candidate++;\n    }\n    \n    return candidate;\n}"
+      }
+    },
+    {
+      "name": "Optimal (Cyclic Sort)",
+      "order": 3,
+      "intuition": "The answer must be in range [1, n+1] where n is array size. Use cyclic sort to place positive numbers in [1,n] at their correct indices. Ignore negatives, zeros, and numbers > n. After sorting, first index where nums[i] != i+1 gives us the missing positive.",
+      "approach": "Apply cyclic sort for numbers in range [1,n]. Then scan to find first position with wrong value. If all correct, answer is n+1.",
+      "steps": [
+        "Cyclic sort phase:",
+        "  Initialize i = 0, n = array length",
+        "  While i < n:",
+        "    If nums[i] in range [1,n] and not at correct position:",
+        "      correct_idx = nums[i] - 1",
+        "      If nums[i] != nums[correct_idx]:",
+        "        Swap nums[i] with nums[correct_idx]",
+        "      Else: i++ (duplicate)",
+        "    Else: i++ (ignore negatives, zeros, > n)",
+        "Find first missing:",
+        "  For each index i from 0 to n-1:",
+        "    If nums[i] != i + 1:",
+        "      Return i + 1",
+        "  Return n + 1 (all 1 to n present)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Cyclic sort O(n) where each element swapped at most once, plus O(n) scan = O(n)",
+        "spaceExplanation": "In-place sorting with only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n        int i = 0;\n        int n = nums.size();\n        \n        // Cyclic sort: place positive numbers at correct indices\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            // Check if number is in valid range [1,n] and not at correct position\n            if (nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctIndex]) {\n                swap(nums[i], nums[correctIndex]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find first missing positive\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1) {\n                return i + 1;\n            }\n        }\n        \n        // All numbers 1 to n are present\n        return n + 1;\n    }\n};",
+        "java": "class Solution {\n    public int firstMissingPositive(int[] nums) {\n        int i = 0;\n        int n = nums.length;\n        \n        // Cyclic sort: place positive numbers at correct indices\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            // Check if number is in valid range [1,n] and not at correct position\n            if (nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctIndex]) {\n                // Swap\n                int temp = nums[i];\n                nums[i] = nums[correctIndex];\n                nums[correctIndex] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find first missing positive\n        for (int j = 0; j < n; j++) {\n            if (nums[j] != j + 1) {\n                return j + 1;\n            }\n        }\n        \n        // All numbers 1 to n are present\n        return n + 1;\n    }\n}",
+        "python": "def first_missing_positive(nums):\n    i = 0\n    n = len(nums)\n    \n    # Cyclic sort: place positive numbers at correct indices\n    while i < n:\n        correct_index = nums[i] - 1\n        \n        # Check if number is in valid range [1,n] and not at correct position\n        if 0 < nums[i] <= n and nums[i] != nums[correct_index]:\n            nums[i], nums[correct_index] = nums[correct_index], nums[i]\n        else:\n            i += 1\n    \n    # Find first missing positive\n    for i in range(n):\n        if nums[i] != i + 1:\n            return i + 1\n    \n    # All numbers 1 to n are present\n    return n + 1",
+        "javascript": "function firstMissingPositive(nums) {\n    let i = 0;\n    const n = nums.length;\n    \n    // Cyclic sort: place positive numbers at correct indices\n    while (i < n) {\n        const correctIndex = nums[i] - 1;\n        \n        // Check if number is in valid range [1,n] and not at correct position\n        if (nums[i] > 0 && nums[i] <= n && nums[i] !== nums[correctIndex]) {\n            [nums[i], nums[correctIndex]] = [nums[correctIndex], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find first missing positive\n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== i + 1) {\n            return i + 1;\n        }\n    }\n    \n    // All numbers 1 to n are present\n    return n + 1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling negative numbers and zeros - they should be ignored during cyclic sort",
+    "Not handling numbers greater than n - they're irrelevant as answer must be ≤ n+1",
+    "Forgetting to return n+1 when all numbers from 1 to n are present",
+    "Creating infinite loop when encountering duplicates or out-of-range numbers",
+    "Not checking nums[i] != nums[correct_idx] before swapping (infinite loop on duplicates)",
+    "Off-by-one error: checking nums[i] != i instead of nums[i] != i+1"
+  ],
+  "hints": [
+    "The answer must be in range [1, n+1]. Why?",
+    "If array has all numbers from 1 to n, what's the answer?",
+    "Can you place positive numbers at their 'correct' indices?",
+    "Number k should ideally be at index k-1. Can you achieve this?",
+    "What should you do with negatives, zeros, and numbers > n?",
+    "After placing numbers correctly, scan from index 0 to find first mismatch"
+  ],
+  "followUp": [
+    "What if you cannot modify the input array?",
+    "How would you find the first k missing positive integers?",
+    "Can you solve this in O(n) time without using extra space and without modifying array?",
+    "What if array has duplicates? Does the algorithm still work?",
+    "How would you handle if array can be very large?",
+    "Can you prove why the answer must be in range [1, n+1]?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Uber",
+    "Twitter"
+  ],
+  "tags": [
+    "Array",
+    "Cyclic Sort",
+    "Hash Table",
+    "In-Place"
+  ],
+  "relatedProblems": [
+    "Missing Number",
+    "Find All Numbers Disappeared in an Array",
+    "Find All Duplicates in an Array",
+    "Kth Missing Positive Number",
+    "Set Mismatch",
+    "Find the Duplicate Number"
+  ]
+}

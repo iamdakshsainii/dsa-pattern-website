@@ -1,0 +1,157 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e79",
+  "questionSlug": "pair-with-target-sum",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/two-sum/",
+    "videos": [
+      {
+        "title": "Two Sum - LeetCode Solution Explained",
+        "url": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
+        "channel": "NeetCode",
+        "duration": "8:23",
+        "language": "English"
+      },
+      {
+        "title": "Two Pointers Technique Explained",
+        "url": "https://www.youtube.com/watch?v=example2",
+        "channel": "Striver",
+        "duration": "12:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Two Sum Solution",
+        "url": "https://leetcode.com/problems/two-sum/solution/",
+        "source": "LeetCode Editorial"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/two-sum/",
+        "platform": "GeeksforGeeks"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Two Pointers when you need to find pairs in a sorted array or when you need to compare elements from both ends moving toward the center.",
+  "approaches": [
+    {
+      "name": "Brute Force",
+      "order": 1,
+      "intuition": "Try all possible pairs in the array to find which two numbers sum to the target.",
+      "approach": "Use two nested loops to check every possible pair of numbers in the array.",
+      "steps": [
+        "Loop through each element with index i",
+        "For each i, loop through remaining elements with index j",
+        "Check if arr[i] + arr[j] equals target",
+        "Return the indices when a match is found"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops iterate through the array",
+        "spaceExplanation": "No extra space needed, only loop variables"
+      },
+      "code": {
+        "cpp": "vector<int> twoSum(vector<int>& nums, int target) {\n    for (int i = 0; i < nums.size(); i++) {\n        for (int j = i + 1; j < nums.size(); j++) {\n            if (nums[i] + nums[j] == target) {\n                return {i, j};\n            }\n        }\n    }\n    return {};\n}",
+        "java": "public int[] twoSum(int[] nums, int target) {\n    for (int i = 0; i < nums.length; i++) {\n        for (int j = i + 1; j < nums.length; j++) {\n            if (nums[i] + nums[j] == target) {\n                return new int[]{i, j};\n            }\n        }\n    }\n    return new int[]{};\n}",
+        "python": "def two_sum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]\n    return []",
+        "javascript": "function twoSum(nums, target) {\n    for (let i = 0; i < nums.length; i++) {\n        for (let j = i + 1; j < nums.length; j++) {\n            if (nums[i] + nums[j] === target) {\n                return [i, j];\n            }\n        }\n    }\n    return [];\n}"
+      }
+    },
+    {
+      "name": "Two Pointers (Optimal)",
+      "order": 2,
+      "intuition": "Since the array is sorted, we can use two pointers from both ends. If sum is too small, move left pointer right. If sum is too large, move right pointer left.",
+      "approach": "Use two pointers starting from the beginning and end of the sorted array, adjusting based on the comparison with target.",
+      "steps": [
+        "Initialize left pointer at index 0",
+        "Initialize right pointer at last index",
+        "While left < right:",
+        "  Calculate sum = arr[left] + arr[right]",
+        "  If sum == target: return [left, right]",
+        "  If sum < target: increment left",
+        "  If sum > target: decrement right",
+        "Return empty if no pair found"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through the array with two pointers",
+        "spaceExplanation": "Only two pointer variables used"
+      },
+      "code": {
+        "cpp": "vector<int> twoSum(vector<int>& nums, int target) {\n    int left = 0, right = nums.size() - 1;\n    \n    while (left < right) {\n        int sum = nums[left] + nums[right];\n        \n        if (sum == target) {\n            return {left, right};\n        } else if (sum < target) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    \n    return {};\n}",
+        "java": "public int[] twoSum(int[] nums, int target) {\n    int left = 0, right = nums.length - 1;\n    \n    while (left < right) {\n        int sum = nums[left] + nums[right];\n        \n        if (sum == target) {\n            return new int[]{left, right};\n        } else if (sum < target) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    \n    return new int[]{};\n}",
+        "python": "def two_sum(nums, target):\n    left, right = 0, len(nums) - 1\n    \n    while left < right:\n        current_sum = nums[left] + nums[right]\n        \n        if current_sum == target:\n            return [left, right]\n        elif current_sum < target:\n            left += 1\n        else:\n            right -= 1\n    \n    return []",
+        "javascript": "function twoSum(nums, target) {\n    let left = 0, right = nums.length - 1;\n    \n    while (left < right) {\n        const sum = nums[left] + nums[right];\n        \n        if (sum === target) {\n            return [left, right];\n        } else if (sum < target) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    \n    return [];\n}"
+      }
+    },
+    {
+      "name": "Hash Map (Alternative)",
+      "order": 3,
+      "intuition": "Store each number's complement in a hash map as we iterate through the array.",
+      "approach": "Use a hash map to store numbers we've seen and check if the complement exists.",
+      "steps": [
+        "Create an empty hash map",
+        "For each number in array:",
+        "  Calculate complement = target - number",
+        "  If complement exists in map: return [map[complement], current_index]",
+        "  Store current number with its index in map",
+        "Return empty if no pair found"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through the array",
+        "spaceExplanation": "Hash map stores up to n elements"
+      },
+      "code": {
+        "cpp": "vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int, int> map;\n    \n    for (int i = 0; i < nums.size(); i++) {\n        int complement = target - nums[i];\n        \n        if (map.find(complement) != map.end()) {\n            return {map[complement], i};\n        }\n        \n        map[nums[i]] = i;\n    }\n    \n    return {};\n}",
+        "java": "public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> map = new HashMap<>();\n    \n    for (int i = 0; i < nums.length; i++) {\n        int complement = target - nums[i];\n        \n        if (map.containsKey(complement)) {\n            return new int[]{map.get(complement), i};\n        }\n        \n        map.put(nums[i], i);\n    }\n    \n    return new int[]{};\n}",
+        "python": "def two_sum(nums, target):\n    seen = {}\n    \n    for i, num in enumerate(nums):\n        complement = target - num\n        \n        if complement in seen:\n            return [seen[complement], i]\n        \n        seen[num] = i\n    \n    return []",
+        "javascript": "function twoSum(nums, target) {\n    const map = new Map();\n    \n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        \n        if (map.has(complement)) {\n            return [map.get(complement), i];\n        }\n        \n        map.set(nums[i], i);\n    }\n    \n    return [];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to check if the array is sorted before using two pointers",
+    "Using the same element twice (not incrementing/decrementing pointers correctly)",
+    "Not handling edge cases like empty array or array with less than 2 elements",
+    "In hash map approach, not checking if complement exists before accessing it"
+  ],
+  "hints": [
+    "Think about what you can determine by comparing the sum of two elements with the target",
+    "Consider how the sorted nature of the array can help optimize your solution",
+    "What data structure allows O(1) lookup time?",
+    "Can you solve it in a single pass?"
+  ],
+  "followUp": [
+    "What if the array is not sorted?",
+    "How would you modify the solution if you need to find all pairs that sum to target?",
+    "Can you solve it with O(1) space complexity?",
+    "What if there are duplicate numbers in the array?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Hash Table",
+    "Sorting"
+  ],
+  "relatedProblems": [
+    "3Sum",
+    "4Sum",
+    "Two Sum II - Input Array Is Sorted",
+    "Two Sum Less Than K"
+  ]
+}

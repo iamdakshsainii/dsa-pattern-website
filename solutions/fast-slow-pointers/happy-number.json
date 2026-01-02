@@ -1,0 +1,159 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e86",
+  "questionSlug": "happy-number",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/happy-number/",
+    "videos": [
+      {
+        "title": "Happy Number - Floyd's Cycle Detection",
+        "url": "https://www.youtube.com/watch?v=ljz85bxOYJ0",
+        "channel": "NeetCode",
+        "duration": "5:23",
+        "language": "English"
+      },
+      {
+        "title": "Happy Number Problem",
+        "url": "https://www.youtube.com/watch?v=gW4hSbRoQoY",
+        "channel": "Nick White",
+        "duration": "7:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Happy Number Solution",
+        "url": "https://leetcode.com/problems/happy-number/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Happy Number Explained",
+        "url": "https://www.geeksforgeeks.org/happy-number/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Linked List Cycle",
+        "url": "https://leetcode.com/problems/linked-list-cycle/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Add Digits",
+        "url": "https://leetcode.com/problems/add-digits/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Fast & Slow Pointers when you need to detect cycles in a sequence without using extra space. Key indicators: repeated transformations, cycle detection in non-linked-list scenarios, space optimization required.",
+  "approaches": [
+    {
+      "name": "Hash Set (Tracking Seen Numbers)",
+      "order": 1,
+      "intuition": "Keep track of all numbers we've seen during the transformation process. If we see a number again, we're in a cycle and it's not happy. If we reach 1, it's happy.",
+      "approach": "Repeatedly calculate sum of squares of digits and store in a hash set. If we see a repeated number, it's not happy. If we reach 1, it's happy.",
+      "steps": [
+        "Create hash set to track seen numbers",
+        "Start with n",
+        "While n is not 1 and not in seen set:",
+        "  Add n to seen set",
+        "  Calculate sum of squares of digits:",
+        "    Initialize sum = 0",
+        "    While n > 0:",
+        "      Extract digit: digit = n % 10",
+        "      Add square: sum += digit * digit",
+        "      Remove digit: n /= 10",
+        "  Set n = sum",
+        "Return true if n is 1, false otherwise"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(log n)",
+        "timeExplanation": "Number of digits in n is log n. Each iteration processes digits. The sequence will either reach 1 or enter a cycle quickly.",
+        "spaceExplanation": "Hash set stores at most O(log n) numbers before detecting cycle"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isHappy(int n) {\n        unordered_set<int> seen;\n        \n        while (n != 1 && seen.find(n) == seen.end()) {\n            seen.insert(n);\n            n = getSumOfSquares(n);\n        }\n        \n        return n == 1;\n    }\n    \nprivate:\n    int getSumOfSquares(int n) {\n        int sum = 0;\n        while (n > 0) {\n            int digit = n % 10;\n            sum += digit * digit;\n            n /= 10;\n        }\n        return sum;\n    }\n};",
+        "java": "class Solution {\n    public boolean isHappy(int n) {\n        Set<Integer> seen = new HashSet<>();\n        \n        while (n != 1 && !seen.contains(n)) {\n            seen.add(n);\n            n = getSumOfSquares(n);\n        }\n        \n        return n == 1;\n    }\n    \n    private int getSumOfSquares(int n) {\n        int sum = 0;\n        while (n > 0) {\n            int digit = n % 10;\n            sum += digit * digit;\n            n /= 10;\n        }\n        return sum;\n    }\n}",
+        "python": "def is_happy(n):\n    def get_sum_of_squares(num):\n        sum_sq = 0\n        while num > 0:\n            digit = num % 10\n            sum_sq += digit * digit\n            num //= 10\n        return sum_sq\n    \n    seen = set()\n    \n    while n != 1 and n not in seen:\n        seen.add(n)\n        n = get_sum_of_squares(n)\n    \n    return n == 1",
+        "javascript": "function isHappy(n) {\n    const getSumOfSquares = (num) => {\n        let sum = 0;\n        while (num > 0) {\n            const digit = num % 10;\n            sum += digit * digit;\n            num = Math.floor(num / 10);\n        }\n        return sum;\n    };\n    \n    const seen = new Set();\n    \n    while (n !== 1 && !seen.has(n)) {\n        seen.add(n);\n        n = getSumOfSquares(n);\n    }\n    \n    return n === 1;\n}"
+      }
+    },
+    {
+      "name": "Fast & Slow Pointers (Optimal)",
+      "order": 2,
+      "intuition": "Treat this like a linked list cycle detection problem. The transformation creates a sequence. If there's a cycle that doesn't include 1, it's not happy. Use Floyd's algorithm with fast moving 2 steps and slow moving 1 step.",
+      "approach": "Use two pointers: slow (one transformation per step) and fast (two transformations per step). If they meet at 1, it's happy. If they meet at any other number, there's a cycle and it's not happy.",
+      "steps": [
+        "Initialize slow = n and fast = getSumOfSquares(n)",
+        "While fast is not 1 and slow is not equal to fast:",
+        "  slow = getSumOfSquares(slow) (one step)",
+        "  fast = getSumOfSquares(getSumOfSquares(fast)) (two steps)",
+        "Return true if fast is 1, false otherwise",
+        "Helper function getSumOfSquares:",
+        "  Calculate sum of squares of all digits",
+        "  Return the sum"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Similar to hash set approach but without extra space. Number of steps depends on when cycle is detected or 1 is reached.",
+        "spaceExplanation": "Only using two variables (slow and fast pointers)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isHappy(int n) {\n        int slow = n;\n        int fast = getSumOfSquares(n);\n        \n        // Continue until fast reaches 1 or slow catches up to fast (cycle)\n        while (fast != 1 && slow != fast) {\n            slow = getSumOfSquares(slow);                    // Move slow by 1\n            fast = getSumOfSquares(getSumOfSquares(fast));   // Move fast by 2\n        }\n        \n        // If fast reached 1, it's happy\n        return fast == 1;\n    }\n    \nprivate:\n    int getSumOfSquares(int n) {\n        int sum = 0;\n        while (n > 0) {\n            int digit = n % 10;\n            sum += digit * digit;\n            n /= 10;\n        }\n        return sum;\n    }\n};",
+        "java": "class Solution {\n    public boolean isHappy(int n) {\n        int slow = n;\n        int fast = getSumOfSquares(n);\n        \n        // Continue until fast reaches 1 or slow catches up to fast (cycle)\n        while (fast != 1 && slow != fast) {\n            slow = getSumOfSquares(slow);                    // Move slow by 1\n            fast = getSumOfSquares(getSumOfSquares(fast));   // Move fast by 2\n        }\n        \n        // If fast reached 1, it's happy\n        return fast == 1;\n    }\n    \n    private int getSumOfSquares(int n) {\n        int sum = 0;\n        while (n > 0) {\n            int digit = n % 10;\n            sum += digit * digit;\n            n /= 10;\n        }\n        return sum;\n    }\n}",
+        "python": "def is_happy(n):\n    def get_sum_of_squares(num):\n        sum_sq = 0\n        while num > 0:\n            digit = num % 10\n            sum_sq += digit * digit\n            num //= 10\n        return sum_sq\n    \n    slow = n\n    fast = get_sum_of_squares(n)\n    \n    # Continue until fast reaches 1 or slow catches up to fast (cycle)\n    while fast != 1 and slow != fast:\n        slow = get_sum_of_squares(slow)                    # Move slow by 1\n        fast = get_sum_of_squares(get_sum_of_squares(fast))   # Move fast by 2\n    \n    # If fast reached 1, it's happy\n    return fast == 1",
+        "javascript": "function isHappy(n) {\n    const getSumOfSquares = (num) => {\n        let sum = 0;\n        while (num > 0) {\n            const digit = num % 10;\n            sum += digit * digit;\n            num = Math.floor(num / 10);\n        }\n        return sum;\n    };\n    \n    let slow = n;\n    let fast = getSumOfSquares(n);\n    \n    // Continue until fast reaches 1 or slow catches up to fast (cycle)\n    while (fast !== 1 && slow !== fast) {\n        slow = getSumOfSquares(slow);                    // Move slow by 1\n        fast = getSumOfSquares(getSumOfSquares(fast));   // Move fast by 2\n    }\n    \n    // If fast reached 1, it's happy\n    return fast === 1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the case where n is already 1",
+    "Forgetting to check for cycles - infinite loop without cycle detection",
+    "Incorrect calculation of sum of squares (forgetting to reset sum)",
+    "Not extracting all digits properly (off-by-one errors)",
+    "Checking if slow equals fast before moving pointers in fast & slow approach",
+    "Integer overflow for very large intermediate sums"
+  ],
+  "hints": [
+    "A number is happy if the sequence of transformations eventually reaches 1",
+    "If a number is not happy, the sequence will enter a cycle",
+    "Can you detect a cycle without using extra space?",
+    "Think about how you would detect a cycle in a linked list",
+    "The transformation n → sum of squares of digits creates a sequence",
+    "All unhappy numbers eventually enter the cycle: 4 → 16 → 37 → 58 → 89 → 145 → 42 → 20 → 4"
+  ],
+  "followUp": [
+    "What if you need to find all happy numbers up to n?",
+    "Can you prove that all unhappy numbers eventually reach the same cycle?",
+    "What's the maximum number of iterations before detecting a cycle or reaching 1?",
+    "How would you modify this for different bases (not base 10)?",
+    "Can you find the happy number closest to a given number?",
+    "What if instead of sum of squares, you use sum of cubes?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "LinkedIn",
+    "Airbnb",
+    "Uber"
+  ],
+  "tags": [
+    "Fast & Slow Pointers",
+    "Hash Table",
+    "Math",
+    "Cycle Detection",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Linked List Cycle",
+    "Add Digits",
+    "Ugly Number",
+    "Perfect Number",
+    "Find the Duplicate Number"
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ed4",
+  "questionSlug": "path-exists-graph",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-if-path-exists-in-graph/",
+    "videos": [
+      {
+        "title": "Find if Path Exists in Graph - DFS & BFS",
+        "url": "https://www.youtube.com/watch?v=aZXi1unBdJA",
+        "channel": "NeetCode",
+        "duration": "7:20",
+        "language": "English"
+      },
+      {
+        "title": "Path Exists in Graph - Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=YVnFE0IxPBw",
+        "channel": "TECH DOSE",
+        "duration": "10:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find if Path Exists in Graph Solution",
+        "url": "https://leetcode.com/problems/find-if-path-exists-in-graph/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Check Path Between Vertices",
+        "url": "https://www.geeksforgeeks.org/check-if-there-is-a-path-between-two-vertices-in-a-given-graph/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "All Paths From Source to Target",
+        "url": "https://leetcode.com/problems/all-paths-from-source-to-target/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Number of Provinces",
+        "url": "https://leetcode.com/problems/number-of-provinces/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use DFS, BFS, or Union-Find when checking if a path exists between two nodes in an undirected graph. Key indicators: connectivity check, reachability problem, undirected graph, can use any graph traversal technique.",
+  "approaches": [
+    {
+      "name": "DFS Approach (Recursive)",
+      "order": 1,
+      "intuition": "Use Depth-First Search to explore from source node. If we reach destination during traversal, a path exists. Mark visited nodes to avoid cycles in the graph.",
+      "approach": "Build adjacency list for the undirected graph, then perform DFS from source. Return true if destination is found.",
+      "steps": [
+        "Build adjacency list from edges (add both directions for undirected)",
+        "Create visited array of size n",
+        "Define DFS function:",
+        "  If current node equals destination: return true",
+        "  Mark current node as visited",
+        "  For each neighbor of current node:",
+        "    If neighbor not visited:",
+        "      If DFS(neighbor) returns true: return true",
+        "  Return false",
+        "Call DFS(source) and return result"
+      ],
+      "complexity": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "timeExplanation": "Visit each vertex once and explore each edge once. V is number of vertices, E is number of edges.",
+        "spaceExplanation": "Visited array of size V, recursion stack can go V deep in worst case"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {\n        // Build adjacency list (undirected graph)\n        vector<vector<int>> graph(n);\n        for (auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n            graph[edge[1]].push_back(edge[0]);\n        }\n        \n        vector<bool> visited(n, false);\n        return dfs(source, destination, graph, visited);\n    }\n    \nprivate:\n    bool dfs(int node, int destination, vector<vector<int>>& graph, \n             vector<bool>& visited) {\n        // Reached destination\n        if (node == destination) {\n            return true;\n        }\n        \n        // Mark as visited\n        visited[node] = true;\n        \n        // Explore all neighbors\n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                if (dfs(neighbor, destination, graph, visited)) {\n                    return true;\n                }\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean validPath(int n, int[][] edges, int source, int destination) {\n        // Build adjacency list (undirected graph)\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            graph.add(new ArrayList<>());\n        }\n        for (int[] edge : edges) {\n            graph.get(edge[0]).add(edge[1]);\n            graph.get(edge[1]).add(edge[0]);\n        }\n        \n        boolean[] visited = new boolean[n];\n        return dfs(source, destination, graph, visited);\n    }\n    \n    private boolean dfs(int node, int destination, List<List<Integer>> graph, \n                       boolean[] visited) {\n        // Reached destination\n        if (node == destination) {\n            return true;\n        }\n        \n        // Mark as visited\n        visited[node] = true;\n        \n        // Explore all neighbors\n        for (int neighbor : graph.get(node)) {\n            if (!visited[neighbor]) {\n                if (dfs(neighbor, destination, graph, visited)) {\n                    return true;\n                }\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "def valid_path(n, edges, source, destination):\n    # Build adjacency list (undirected graph)\n    graph = [[] for _ in range(n)]\n    for u, v in edges:\n        graph[u].append(v)\n        graph[v].append(u)\n    \n    visited = [False] * n\n    \n    def dfs(node):\n        # Reached destination\n        if node == destination:\n            return True\n        \n        # Mark as visited\n        visited[node] = True\n        \n        # Explore all neighbors\n        for neighbor in graph[node]:\n            if not visited[neighbor]:\n                if dfs(neighbor):\n                    return True\n        \n        return False\n    \n    return dfs(source)",
+        "javascript": "function validPath(n, edges, source, destination) {\n    // Build adjacency list (undirected graph)\n    const graph = Array.from({ length: n }, () => []);\n    for (const [u, v] of edges) {\n        graph[u].push(v);\n        graph[v].push(u);\n    }\n    \n    const visited = new Array(n).fill(false);\n    \n    function dfs(node) {\n        // Reached destination\n        if (node === destination) {\n            return true;\n        }\n        \n        // Mark as visited\n        visited[node] = true;\n        \n        // Explore all neighbors\n        for (const neighbor of graph[node]) {\n            if (!visited[neighbor]) {\n                if (dfs(neighbor)) {\n                    return true;\n                }\n            }\n        }\n        \n        return false;\n    }\n    \n    return dfs(source);\n}"
+      }
+    },
+    {
+      "name": "BFS Approach (Iterative)",
+      "order": 2,
+      "intuition": "Use Breadth-First Search with a queue to explore nodes level by level. If we encounter the destination while processing the queue, a path exists.",
+      "approach": "Build adjacency list, use queue for BFS starting from source. Mark visited nodes and check if we reach destination.",
+      "steps": [
+        "Build adjacency list from edges (undirected)",
+        "Create visited array and queue",
+        "Add source to queue and mark as visited",
+        "While queue is not empty:",
+        "  Dequeue current node",
+        "  If current node is destination: return true",
+        "  For each neighbor of current node:",
+        "    If neighbor not visited:",
+        "      Mark neighbor as visited",
+        "      Add neighbor to queue",
+        "Return false (destination not reached)"
+      ],
+      "complexity": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "timeExplanation": "Visit each vertex once and explore each edge once",
+        "spaceExplanation": "Queue and visited array can each store up to V vertices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {\n        // Build adjacency list (undirected graph)\n        vector<vector<int>> graph(n);\n        for (auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n            graph[edge[1]].push_back(edge[0]);\n        }\n        \n        vector<bool> visited(n, false);\n        queue<int> q;\n        \n        // Start BFS from source\n        q.push(source);\n        visited[source] = true;\n        \n        while (!q.empty()) {\n            int node = q.front();\n            q.pop();\n            \n            // Check if we reached destination\n            if (node == destination) {\n                return true;\n            }\n            \n            // Explore all neighbors\n            for (int neighbor : graph[node]) {\n                if (!visited[neighbor]) {\n                    visited[neighbor] = true;\n                    q.push(neighbor);\n                }\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean validPath(int n, int[][] edges, int source, int destination) {\n        // Build adjacency list (undirected graph)\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            graph.add(new ArrayList<>());\n        }\n        for (int[] edge : edges) {\n            graph.get(edge[0]).add(edge[1]);\n            graph.get(edge[1]).add(edge[0]);\n        }\n        \n        boolean[] visited = new boolean[n];\n        Queue<Integer> queue = new LinkedList<>();\n        \n        // Start BFS from source\n        queue.offer(source);\n        visited[source] = true;\n        \n        while (!queue.isEmpty()) {\n            int node = queue.poll();\n            \n            // Check if we reached destination\n            if (node == destination) {\n                return true;\n            }\n            \n            // Explore all neighbors\n            for (int neighbor : graph.get(node)) {\n                if (!visited[neighbor]) {\n                    visited[neighbor] = true;\n                    queue.offer(neighbor);\n                }\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "from collections import deque\n\ndef valid_path(n, edges, source, destination):\n    # Build adjacency list (undirected graph)\n    graph = [[] for _ in range(n)]\n    for u, v in edges:\n        graph[u].append(v)\n        graph[v].append(u)\n    \n    visited = [False] * n\n    queue = deque()\n    \n    # Start BFS from source\n    queue.append(source)\n    visited[source] = True\n    \n    while queue:\n        node = queue.popleft()\n        \n        # Check if we reached destination\n        if node == destination:\n            return True\n        \n        # Explore all neighbors\n        for neighbor in graph[node]:\n            if not visited[neighbor]:\n                visited[neighbor] = True\n                queue.append(neighbor)\n    \n    return False",
+        "javascript": "function validPath(n, edges, source, destination) {\n    // Build adjacency list (undirected graph)\n    const graph = Array.from({ length: n }, () => []);\n    for (const [u, v] of edges) {\n        graph[u].push(v);\n        graph[v].push(u);\n    }\n    \n    const visited = new Array(n).fill(false);\n    const queue = [];\n    \n    // Start BFS from source\n    queue.push(source);\n    visited[source] = true;\n    \n    while (queue.length > 0) {\n        const node = queue.shift();\n        \n        // Check if we reached destination\n        if (node === destination) {\n            return true;\n        }\n        \n        // Explore all neighbors\n        for (const neighbor of graph[node]) {\n            if (!visited[neighbor]) {\n                visited[neighbor] = true;\n                queue.push(neighbor);\n            }\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Union-Find (Disjoint Set Union)",
+      "order": 3,
+      "intuition": "Union-Find efficiently checks connectivity. Unite all connected nodes using union operations on edges, then check if source and destination belong to the same connected component by comparing their root parents.",
+      "approach": "Initialize Union-Find structure where each node is its own parent. Union nodes for each edge. Check if source and destination have the same root.",
+      "steps": [
+        "Initialize parent array: parent[i] = i for all i",
+        "Initialize rank array: rank[i] = 0 for all i",
+        "For each edge [u, v]:",
+        "  Union(u, v)",
+        "Return find(source) == find(destination)",
+        "Find function (with path compression):",
+        "  If parent[x] != x:",
+        "    parent[x] = find(parent[x])",
+        "  Return parent[x]",
+        "Union function (with union by rank):",
+        "  Find roots of both nodes",
+        "  Attach smaller rank tree under larger rank tree"
+      ],
+      "complexity": {
+        "time": "O(E * α(V))",
+        "space": "O(V)",
+        "timeExplanation": "E union operations, each taking nearly constant time α(V) (inverse Ackermann function)",
+        "spaceExplanation": "Parent and rank arrays each of size V"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {\n        // Initialize Union-Find\n        parent.resize(n);\n        rank.resize(n, 0);\n        for (int i = 0; i < n; i++) {\n            parent[i] = i;\n        }\n        \n        // Union all edges\n        for (auto& edge : edges) {\n            unionSets(edge[0], edge[1]);\n        }\n        \n        // Check if source and destination are in same component\n        return find(source) == find(destination);\n    }\n    \nprivate:\n    vector<int> parent;\n    vector<int> rank;\n    \n    int find(int x) {\n        if (parent[x] != x) {\n            parent[x] = find(parent[x]); // Path compression\n        }\n        return parent[x];\n    }\n    \n    void unionSets(int x, int y) {\n        int rootX = find(x);\n        int rootY = find(y);\n        \n        if (rootX != rootY) {\n            // Union by rank\n            if (rank[rootX] < rank[rootY]) {\n                parent[rootX] = rootY;\n            } else if (rank[rootX] > rank[rootY]) {\n                parent[rootY] = rootX;\n            } else {\n                parent[rootY] = rootX;\n                rank[rootX]++;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    private int[] parent;\n    private int[] rank;\n    \n    public boolean validPath(int n, int[][] edges, int source, int destination) {\n        // Initialize Union-Find\n        parent = new int[n];\n        rank = new int[n];\n        for (int i = 0; i < n; i++) {\n            parent[i] = i;\n        }\n        \n        // Union all edges\n        for (int[] edge : edges) {\n            union(edge[0], edge[1]);\n        }\n        \n        // Check if source and destination are in same component\n        return find(source) == find(destination);\n    }\n    \n    private int find(int x) {\n        if (parent[x] != x) {\n            parent[x] = find(parent[x]); // Path compression\n        }\n        return parent[x];\n    }\n    \n    private void union(int x, int y) {\n        int rootX = find(x);\n        int rootY = find(y);\n        \n        if (rootX != rootY) {\n            // Union by rank\n            if (rank[rootX] < rank[rootY]) {\n                parent[rootX] = rootY;\n            } else if (rank[rootX] > rank[rootY]) {\n                parent[rootY] = rootX;\n            } else {\n                parent[rootY] = rootX;\n                rank[rootX]++;\n            }\n        }\n    }\n}",
+        "python": "def valid_path(n, edges, source, destination):\n    # Initialize Union-Find\n    parent = list(range(n))\n    rank = [0] * n\n    \n    def find(x):\n        if parent[x] != x:\n            parent[x] = find(parent[x])  # Path compression\n        return parent[x]\n    \n    def union(x, y):\n        root_x = find(x)\n        root_y = find(y)\n        \n        if root_x != root_y:\n            # Union by rank\n            if rank[root_x] < rank[root_y]:\n                parent[root_x] = root_y\n            elif rank[root_x] > rank[root_y]:\n                parent[root_y] = root_x\n            else:\n                parent[root_y] = root_x\n                rank[root_x] += 1\n    \n    # Union all edges\n    for u, v in edges:\n        union(u, v)\n    \n    # Check if source and destination are in same component\n    return find(source) == find(destination)",
+        "javascript": "function validPath(n, edges, source, destination) {\n    // Initialize Union-Find\n    const parent = Array.from({ length: n }, (_, i) => i);\n    const rank = new Array(n).fill(0);\n    \n    function find(x) {\n        if (parent[x] !== x) {\n            parent[x] = find(parent[x]); // Path compression\n        }\n        return parent[x];\n    }\n    \n    function union(x, y) {\n        const rootX = find(x);\n        const rootY = find(y);\n        \n        if (rootX !== rootY) {\n            // Union by rank\n            if (rank[rootX] < rank[rootY]) {\n                parent[rootX] = rootY;\n            } else if (rank[rootX] > rank[rootY]) {\n                parent[rootY] = rootX;\n            } else {\n                parent[rootY] = rootX;\n                rank[rootX]++;\n            }\n        }\n    }\n    \n    // Union all edges\n    for (const [u, v] of edges) {\n        union(u, v);\n    }\n    \n    // Check if source and destination are in same component\n    return find(source) === find(destination);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting this is an undirected graph - must add edges in both directions",
+    "Not marking nodes as visited, causing infinite loops",
+    "Checking visited after dequeuing in BFS instead of before enqueuing",
+    "Not handling edge case when source equals destination",
+    "Using wrong data structure (stack for BFS or queue for DFS)",
+    "In Union-Find, not implementing path compression or union by rank optimization"
+  ],
+  "hints": [
+    "The graph is undirected - each edge connects both vertices bidirectionally",
+    "You can use DFS, BFS, or Union-Find - all work for this problem",
+    "Mark nodes as visited to avoid infinite loops",
+    "If source equals destination, the path always exists",
+    "Union-Find is especially efficient if you have multiple path queries",
+    "For BFS/DFS, remember to build the adjacency list correctly"
+  ],
+  "followUp": [
+    "What if you need to find the actual path, not just check if it exists?",
+    "How would you find the shortest path between source and destination?",
+    "What if you have multiple queries for different source-destination pairs?",
+    "Can you solve this for a directed graph?",
+    "How would you handle weighted edges and find minimum cost path?",
+    "What if the graph is very large and doesn't fit in memory?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Uber"
+  ],
+  "tags": [
+    "Graph",
+    "DFS",
+    "BFS",
+    "Union Find",
+    "Connectivity"
+  ],
+  "relatedProblems": [
+    "Number of Provinces",
+    "Number of Connected Components in an Undirected Graph",
+    "All Paths From Source to Target",
+    "Shortest Path in Binary Matrix",
+    "Network Delay Time"
+  ]
+}

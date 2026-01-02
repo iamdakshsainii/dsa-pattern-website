@@ -1,0 +1,160 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ed3",
+  "questionSlug": "graph-bfs",
+  "resources": {
+    "leetcode": "",
+    "videos": [
+      {
+        "title": "Graph BFS Traversal Explained",
+        "url": "https://www.youtube.com/watch?v=oDqjPvD54Ss",
+        "channel": "Abdul Bari",
+        "duration": "16:40",
+        "language": "English"
+      },
+      {
+        "title": "BFS Graph Algorithm",
+        "url": "https://www.youtube.com/watch?v=xlVX7dXLS64",
+        "channel": "Back To Back SWE",
+        "duration": "12:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Breadth First Search",
+        "url": "https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "BFS Algorithm",
+        "url": "https://en.wikipedia.org/wiki/Breadth-first_search",
+        "source": "Wikipedia"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Number of Islands",
+        "url": "https://leetcode.com/problems/number-of-islands/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use BFS for graph traversal when you need to explore nodes level by level, find shortest path in unweighted graphs, or process nodes in order of distance from source. Key indicators: shortest path, level-order traversal, minimum steps, exploring neighbors before going deeper.",
+  "approaches": [
+    {
+      "name": "BFS using Queue (Standard)",
+      "order": 1,
+      "intuition": "BFS explores graph level by level using a queue. Start from source node, visit all neighbors, then visit neighbors of neighbors, and so on. This ensures shortest path in unweighted graphs.",
+      "approach": "Use queue to track nodes to visit. Mark nodes as visited to avoid cycles. Process nodes level by level.",
+      "steps": [
+        "Create adjacency list representation of graph",
+        "Create visited array/set to track visited nodes",
+        "Create queue and add starting node",
+        "Mark starting node as visited",
+        "While queue is not empty:",
+        "  Dequeue front node",
+        "  Process current node",
+        "  For each unvisited neighbor:",
+        "    Mark neighbor as visited",
+        "    Enqueue neighbor",
+        "Return traversal order or result"
+      ],
+      "complexity": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "timeExplanation": "Visit each vertex once (V) and explore each edge once (E)",
+        "spaceExplanation": "Queue and visited set can store up to V vertices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> bfsTraversal(int vertices, vector<vector<int>>& edges, int start) {\n        // Build adjacency list\n        vector<vector<int>> graph(vertices);\n        for (auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n            // For undirected graph, add reverse edge too\n            // graph[edge[1]].push_back(edge[0]);\n        }\n        \n        vector<int> result;\n        vector<bool> visited(vertices, false);\n        queue<int> q;\n        \n        // Start BFS from starting node\n        q.push(start);\n        visited[start] = true;\n        \n        while (!q.empty()) {\n            int node = q.front();\n            q.pop();\n            result.push_back(node);\n            \n            // Visit all unvisited neighbors\n            for (int neighbor : graph[node]) {\n                if (!visited[neighbor]) {\n                    visited[neighbor] = true;\n                    q.push(neighbor);\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> bfsTraversal(int vertices, int[][] edges, int start) {\n        // Build adjacency list\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < vertices; i++) {\n            graph.add(new ArrayList<>());\n        }\n        for (int[] edge : edges) {\n            graph.get(edge[0]).add(edge[1]);\n            // For undirected graph, add reverse edge too\n            // graph.get(edge[1]).add(edge[0]);\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        boolean[] visited = new boolean[vertices];\n        Queue<Integer> queue = new LinkedList<>();\n        \n        // Start BFS from starting node\n        queue.offer(start);\n        visited[start] = true;\n        \n        while (!queue.isEmpty()) {\n            int node = queue.poll();\n            result.add(node);\n            \n            // Visit all unvisited neighbors\n            for (int neighbor : graph.get(node)) {\n                if (!visited[neighbor]) {\n                    visited[neighbor] = true;\n                    queue.offer(neighbor);\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import deque\n\ndef bfs_traversal(vertices, edges, start):\n    # Build adjacency list\n    graph = [[] for _ in range(vertices)]\n    for u, v in edges:\n        graph[u].append(v)\n        # For undirected graph, add reverse edge too\n        # graph[v].append(u)\n    \n    result = []\n    visited = [False] * vertices\n    queue = deque()\n    \n    # Start BFS from starting node\n    queue.append(start)\n    visited[start] = True\n    \n    while queue:\n        node = queue.popleft()\n        result.append(node)\n        \n        # Visit all unvisited neighbors\n        for neighbor in graph[node]:\n            if not visited[neighbor]:\n                visited[neighbor] = True\n                queue.append(neighbor)\n    \n    return result",
+        "javascript": "function bfsTraversal(vertices, edges, start) {\n    // Build adjacency list\n    const graph = Array.from({ length: vertices }, () => []);\n    for (const [u, v] of edges) {\n        graph[u].push(v);\n        // For undirected graph, add reverse edge too\n        // graph[v].push(u);\n    }\n    \n    const result = [];\n    const visited = new Array(vertices).fill(false);\n    const queue = [];\n    \n    // Start BFS from starting node\n    queue.push(start);\n    visited[start] = true;\n    \n    while (queue.length > 0) {\n        const node = queue.shift();\n        result.push(node);\n        \n        // Visit all unvisited neighbors\n        for (const neighbor of graph[node]) {\n            if (!visited[neighbor]) {\n                visited[neighbor] = true;\n                queue.push(neighbor);\n            }\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Level-wise BFS (With Level Tracking)",
+      "order": 2,
+      "intuition": "Sometimes we need to track which level each node is at. Process nodes level by level by tracking the size of queue at each level.",
+      "approach": "Use queue with level tracking. Process all nodes at current level before moving to next level.",
+      "steps": [
+        "Build adjacency list",
+        "Initialize queue with starting node and level 0",
+        "Create visited set",
+        "While queue not empty:",
+        "  Get current level size",
+        "  For each node in current level:",
+        "    Dequeue and process node",
+        "    Add all unvisited neighbors to queue",
+        "  Increment level",
+        "Return result with level information"
+      ],
+      "complexity": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "timeExplanation": "Visit each vertex once and explore each edge once",
+        "spaceExplanation": "Queue can store up to V vertices, visited set stores V vertices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> bfsLevelOrder(int vertices, vector<vector<int>>& edges, int start) {\n        // Build adjacency list\n        vector<vector<int>> graph(vertices);\n        for (auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n        }\n        \n        vector<vector<int>> result;\n        vector<bool> visited(vertices, false);\n        queue<int> q;\n        \n        q.push(start);\n        visited[start] = true;\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            vector<int> currentLevel;\n            \n            // Process all nodes at current level\n            for (int i = 0; i < levelSize; i++) {\n                int node = q.front();\n                q.pop();\n                currentLevel.push_back(node);\n                \n                // Add unvisited neighbors\n                for (int neighbor : graph[node]) {\n                    if (!visited[neighbor]) {\n                        visited[neighbor] = true;\n                        q.push(neighbor);\n                    }\n                }\n            }\n            \n            result.push_back(currentLevel);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> bfsLevelOrder(int vertices, int[][] edges, int start) {\n        // Build adjacency list\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < vertices; i++) {\n            graph.add(new ArrayList<>());\n        }\n        for (int[] edge : edges) {\n            graph.get(edge[0]).add(edge[1]);\n        }\n        \n        List<List<Integer>> result = new ArrayList<>();\n        boolean[] visited = new boolean[vertices];\n        Queue<Integer> queue = new LinkedList<>();\n        \n        queue.offer(start);\n        visited[start] = true;\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            List<Integer> currentLevel = new ArrayList<>();\n            \n            // Process all nodes at current level\n            for (int i = 0; i < levelSize; i++) {\n                int node = queue.poll();\n                currentLevel.add(node);\n                \n                // Add unvisited neighbors\n                for (int neighbor : graph.get(node)) {\n                    if (!visited[neighbor]) {\n                        visited[neighbor] = true;\n                        queue.offer(neighbor);\n                    }\n                }\n            }\n            \n            result.add(currentLevel);\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import deque\n\ndef bfs_level_order(vertices, edges, start):\n    # Build adjacency list\n    graph = [[] for _ in range(vertices)]\n    for u, v in edges:\n        graph[u].append(v)\n    \n    result = []\n    visited = [False] * vertices\n    queue = deque()\n    \n    queue.append(start)\n    visited[start] = True\n    \n    while queue:\n        level_size = len(queue)\n        current_level = []\n        \n        # Process all nodes at current level\n        for _ in range(level_size):\n            node = queue.popleft()\n            current_level.append(node)\n            \n            # Add unvisited neighbors\n            for neighbor in graph[node]:\n                if not visited[neighbor]:\n                    visited[neighbor] = True\n                    queue.append(neighbor)\n        \n        result.append(current_level)\n    \n    return result",
+        "javascript": "function bfsLevelOrder(vertices, edges, start) {\n    // Build adjacency list\n    const graph = Array.from({ length: vertices }, () => []);\n    for (const [u, v] of edges) {\n        graph[u].push(v);\n    }\n    \n    const result = [];\n    const visited = new Array(vertices).fill(false);\n    const queue = [];\n    \n    queue.push(start);\n    visited[start] = true;\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        const currentLevel = [];\n        \n        // Process all nodes at current level\n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            currentLevel.push(node);\n            \n            // Add unvisited neighbors\n            for (const neighbor of graph[node]) {\n                if (!visited[neighbor]) {\n                    visited[neighbor] = true;\n                    queue.push(neighbor);\n                }\n            }\n        }\n        \n        result.push(currentLevel);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to mark nodes as visited before adding to queue (causes infinite loops)",
+    "Using stack instead of queue (that would be DFS, not BFS)",
+    "Not handling disconnected components in the graph",
+    "Marking node as visited after dequeuing instead of before enqueuing",
+    "For undirected graphs, forgetting to add edges in both directions",
+    "Not checking if neighbor is already visited before enqueuing"
+  ],
+  "hints": [
+    "BFS uses a queue (FIFO) data structure",
+    "Always mark a node as visited when you enqueue it, not when you dequeue it",
+    "BFS finds shortest path in unweighted graphs",
+    "Process nodes level by level - all nodes at distance k before any node at distance k+1",
+    "For disconnected graphs, you may need to run BFS from multiple starting points",
+    "The order of visiting neighbors doesn't affect correctness but may affect traversal order"
+  ],
+  "followUp": [
+    "How would you find the shortest path between two nodes?",
+    "Can you modify BFS to handle weighted graphs?",
+    "How would you detect if a graph is bipartite using BFS?",
+    "What if you need to track the parent of each node during traversal?",
+    "How would you handle a graph with disconnected components?",
+    "Can you implement bidirectional BFS for faster pathfinding?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Graph",
+    "BFS",
+    "Queue",
+    "Traversal",
+    "Shortest Path"
+  ],
+  "relatedProblems": [
+    "Binary Tree Level Order Traversal",
+    "Number of Islands",
+    "Rotting Oranges",
+    "Word Ladder",
+    "Shortest Path in Binary Matrix"
+  ]
+}

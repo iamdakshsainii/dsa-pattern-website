@@ -1,0 +1,190 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eab",
+  "questionSlug": "find-duplicate-number-cyclic",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-the-duplicate-number/",
+    "videos": [
+      {
+        "title": "Find the Duplicate Number - Floyd's Algorithm - Leetcode 287",
+        "url": "https://www.youtube.com/watch?v=wjYnzkAhcNk",
+        "channel": "NeetCode",
+        "duration": "10:52",
+        "language": "English"
+      },
+      {
+        "title": "Find Duplicate Number - Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=32Ll35mhWg0",
+        "channel": "takeUforward",
+        "duration": "16:28",
+        "language": "English"
+      },
+      {
+        "title": "LeetCode 287: Find the Duplicate Number",
+        "url": "https://www.youtube.com/watch?v=dfIqLxAf-8s",
+        "channel": "Back To Back SWE",
+        "duration": "12:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find the Duplicate Number",
+        "url": "https://leetcode.com/problems/find-the-duplicate-number/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Floyd's Cycle Detection",
+        "url": "https://www.geeksforgeeks.org/find-duplicates-in-on-time-and-constant-extra-space/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find All Duplicates in an Array",
+        "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Missing Number",
+        "url": "https://leetcode.com/problems/missing-number/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Cyclic Sort when array of n+1 elements contains numbers [1,n] with one duplicate. Key indicators: cannot modify array (for optimal), one number repeated, numbers in range [1,n], O(1) space required. Also solvable with Floyd's Cycle Detection.",
+  "approaches": [
+    {
+      "name": "Brute Force (Nested Loop)",
+      "order": 1,
+      "intuition": "Compare each element with every other element. If we find two elements that are equal, we've found the duplicate.",
+      "approach": "Use two nested loops to compare all pairs of elements and find the duplicate.",
+      "steps": [
+        "For each index i from 0 to n:",
+        "  For each index j from i+1 to n:",
+        "    If nums[i] == nums[j]:",
+        "      Return nums[i] (duplicate found)",
+        "Return -1 if no duplicate (shouldn't happen)"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops compare each pair: n*(n-1)/2 comparisons = O(n²)",
+        "spaceExplanation": "Only using constant space for loop variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findDuplicate(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Compare all pairs\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (nums[i] == nums[j]) {\n                    return nums[i];\n                }\n            }\n        }\n        \n        return -1; // Should never reach here\n    }\n};",
+        "java": "class Solution {\n    public int findDuplicate(int[] nums) {\n        int n = nums.length;\n        \n        // Compare all pairs\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (nums[i] == nums[j]) {\n                    return nums[i];\n                }\n            }\n        }\n        \n        return -1; // Should never reach here\n    }\n}",
+        "python": "def find_duplicate(nums):\n    n = len(nums)\n    \n    # Compare all pairs\n    for i in range(n):\n        for j in range(i + 1, n):\n            if nums[i] == nums[j]:\n                return nums[i]\n    \n    return -1  # Should never reach here",
+        "javascript": "function findDuplicate(nums) {\n    const n = nums.length;\n    \n    // Compare all pairs\n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            if (nums[i] === nums[j]) {\n                return nums[i];\n            }\n        }\n    }\n    \n    return -1; // Should never reach here\n}"
+      }
+    },
+    {
+      "name": "Better (Hash Set or Sorting)",
+      "order": 2,
+      "intuition": "Use hash set to track seen numbers. When we encounter a number already in set, it's the duplicate. Alternative: sort the array and find adjacent duplicates.",
+      "approach": "Hash Set approach: iterate once, checking if number exists in set. First repeated number is duplicate.",
+      "steps": [
+        "Create empty hash set",
+        "For each number in array:",
+        "  If number already in set:",
+        "    Return number (duplicate found)",
+        "  Add number to set",
+        "Return -1 (shouldn't reach)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array with O(1) hash set operations",
+        "spaceExplanation": "Hash set stores up to n unique numbers in worst case"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findDuplicate(vector<int>& nums) {\n        unordered_set<int> seen;\n        \n        // Check each number\n        for (int num : nums) {\n            if (seen.find(num) != seen.end()) {\n                return num; // Duplicate found\n            }\n            seen.insert(num);\n        }\n        \n        return -1; // Should never reach here\n    }\n};",
+        "java": "class Solution {\n    public int findDuplicate(int[] nums) {\n        Set<Integer> seen = new HashSet<>();\n        \n        // Check each number\n        for (int num : nums) {\n            if (seen.contains(num)) {\n                return num; // Duplicate found\n            }\n            seen.add(num);\n        }\n        \n        return -1; // Should never reach here\n    }\n}",
+        "python": "def find_duplicate(nums):\n    seen = set()\n    \n    # Check each number\n    for num in nums:\n        if num in seen:\n            return num  # Duplicate found\n        seen.add(num)\n    \n    return -1  # Should never reach here",
+        "javascript": "function findDuplicate(nums) {\n    const seen = new Set();\n    \n    // Check each number\n    for (const num of nums) {\n        if (seen.has(num)) {\n            return num; // Duplicate found\n        }\n        seen.add(num);\n    }\n    \n    return -1; // Should never reach here\n}"
+      }
+    },
+    {
+      "name": "Optimal (Floyd's Cycle Detection / Cyclic Sort)",
+      "order": 3,
+      "intuition": "Treat array as a linked list where nums[i] points to index nums[i]. Since there's a duplicate, there must be a cycle. Use Floyd's tortoise and hare algorithm to find cycle start, which is the duplicate. This achieves O(1) space without modifying array.",
+      "approach": "Use two pointers (slow and fast) to detect cycle. Once cycle found, use another pointer from start to find cycle entrance (duplicate number).",
+      "steps": [
+        "Phase 1: Detect cycle",
+        "  Initialize slow = nums[0], fast = nums[0]",
+        "  Do:",
+        "    slow = nums[slow] (move 1 step)",
+        "    fast = nums[nums[fast]] (move 2 steps)",
+        "  While slow != fast",
+        "Phase 2: Find cycle entrance (duplicate)",
+        "  Initialize slow = nums[0]",
+        "  While slow != fast:",
+        "    slow = nums[slow]",
+        "    fast = nums[fast]",
+        "  Return slow (cycle entrance = duplicate)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Phase 1 takes O(n) to detect cycle, Phase 2 takes O(n) to find entrance, total O(n)",
+        "spaceExplanation": "Only using two pointer variables, no extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findDuplicate(vector<int>& nums) {\n        // Phase 1: Detect cycle using Floyd's algorithm\n        int slow = nums[0];\n        int fast = nums[0];\n        \n        do {\n            slow = nums[slow];           // Move 1 step\n            fast = nums[nums[fast]];     // Move 2 steps\n        } while (slow != fast);\n        \n        // Phase 2: Find cycle entrance (duplicate)\n        slow = nums[0];\n        while (slow != fast) {\n            slow = nums[slow];\n            fast = nums[fast];\n        }\n        \n        return slow; // Cycle entrance is the duplicate\n    }\n};",
+        "java": "class Solution {\n    public int findDuplicate(int[] nums) {\n        // Phase 1: Detect cycle using Floyd's algorithm\n        int slow = nums[0];\n        int fast = nums[0];\n        \n        do {\n            slow = nums[slow];           // Move 1 step\n            fast = nums[nums[fast]];     // Move 2 steps\n        } while (slow != fast);\n        \n        // Phase 2: Find cycle entrance (duplicate)\n        slow = nums[0];\n        while (slow != fast) {\n            slow = nums[slow];\n            fast = nums[fast];\n        }\n        \n        return slow; // Cycle entrance is the duplicate\n    }\n}",
+        "python": "def find_duplicate(nums):\n    # Phase 1: Detect cycle using Floyd's algorithm\n    slow = nums[0]\n    fast = nums[0]\n    \n    while True:\n        slow = nums[slow]           # Move 1 step\n        fast = nums[nums[fast]]     # Move 2 steps\n        if slow == fast:\n            break\n    \n    # Phase 2: Find cycle entrance (duplicate)\n    slow = nums[0]\n    while slow != fast:\n        slow = nums[slow]\n        fast = nums[fast]\n    \n    return slow  # Cycle entrance is the duplicate",
+        "javascript": "function findDuplicate(nums) {\n    // Phase 1: Detect cycle using Floyd's algorithm\n    let slow = nums[0];\n    let fast = nums[0];\n    \n    do {\n        slow = nums[slow];           // Move 1 step\n        fast = nums[nums[fast]];     // Move 2 steps\n    } while (slow !== fast);\n    \n    // Phase 2: Find cycle entrance (duplicate)\n    slow = nums[0];\n    while (slow !== fast) {\n        slow = nums[slow];\n        fast = nums[fast];\n    }\n    \n    return slow; // Cycle entrance is the duplicate\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding why Floyd's cycle detection works for this problem",
+    "Forgetting that array values point to indices (treating as linked list)",
+    "Using while loop instead of do-while in phase 1 (would never enter loop)",
+    "Not resetting slow pointer to nums[0] in phase 2",
+    "Thinking fast moves 2 positions when it should follow links: nums[nums[fast]]",
+    "Modifying array when problem explicitly says not to"
+  ],
+  "hints": [
+    "Think of array as a linked list where value at index points to next index",
+    "If there's a duplicate, what does that mean for the 'linked list'?",
+    "Two different indices pointing to same value creates a cycle",
+    "Floyd's cycle detection can find the start of a cycle",
+    "The cycle entrance corresponds to the duplicate number",
+    "You need two phases: detect cycle, then find entrance"
+  ],
+  "followUp": [
+    "What if there are multiple duplicates? How would you find all?",
+    "Can you prove why Floyd's algorithm finds the duplicate?",
+    "What if numbers are in range [0,n] instead of [1,n]?",
+    "How would you solve if you could modify the array?",
+    "What if duplicate appears more than twice?",
+    "Can you use binary search on this problem?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Uber"
+  ],
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Fast & Slow Pointers",
+    "Cycle Detection",
+    "Linked List"
+  ],
+  "relatedProblems": [
+    "Linked List Cycle",
+    "Linked List Cycle II",
+    "Find All Duplicates in an Array",
+    "Set Mismatch",
+    "Missing Number",
+    "Happy Number"
+  ]
+}

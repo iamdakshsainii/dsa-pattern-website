@@ -1,0 +1,174 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eb2",
+  "questionSlug": "reverse-k-element-sublist",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+    "videos": [
+      {
+        "title": "Reverse Nodes in K-Group - Leetcode 25",
+        "url": "https://www.youtube.com/watch?v=1UOPsfP85V4",
+        "channel": "NeetCode",
+        "duration": "12:45",
+        "language": "English"
+      },
+      {
+        "title": "Reverse Linked List in Groups of K",
+        "url": "https://www.youtube.com/watch?v=Of0HPkk3JgI",
+        "channel": "TECH DOSE",
+        "duration": "16:30",
+        "language": "English"
+      },
+      {
+        "title": "Reverse K Group Nodes - Hard Problem",
+        "url": "https://www.youtube.com/watch?v=p0nSbI6NAYw",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Reverse Nodes in k-Group Solution",
+        "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Reverse Nodes in k-Group Explained",
+        "url": "https://algo.monster/liteproblems/25",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Reverse a List in Groups of Given Size",
+        "url": "https://www.geeksforgeeks.org/reverse-a-list-in-groups-of-given-size/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Reverse Linked List",
+        "url": "https://leetcode.com/problems/reverse-linked-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Linked List II",
+        "url": "https://leetcode.com/problems/reverse-linked-list-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Swap Nodes in Pairs",
+        "url": "https://leetcode.com/problems/swap-nodes-in-pairs/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Swapping Nodes in a Linked List",
+        "url": "https://leetcode.com/problems/swapping-nodes-in-a-linked-list/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use In-place Reversal pattern when asked to reverse linked list in groups of k nodes. Key indicators: reverse k nodes at a time, leave remaining nodes as-is if less than k, maintain O(1) space, hard difficulty reversal problem.",
+  "approaches": [
+    {
+      "name": "Iterative with Group Reversal",
+      "order": 1,
+      "intuition": "Process the list in chunks of k nodes. For each complete group of k nodes, reverse them using standard reversal technique. Keep track of connections between groups. If remaining nodes < k, leave them unchanged.",
+      "approach": "Use dummy node for easier head handling. For each group: check if k nodes exist, reverse those k nodes, reconnect previous group to current reversed group, move pointers forward. Repeat until fewer than k nodes remain.",
+      "steps": [
+        "Create dummy node pointing to head",
+        "Initialize groupPrev = dummy",
+        "While there are k or more nodes remaining:",
+        "  - Check if k nodes exist from current position",
+        "  - If yes, reverse those k nodes",
+        "  - Reconnect sections",
+        "  - Update groupPrev to tail of current group",
+        "  - If no, break loop",
+        "Return dummy.next"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Visit each node once during reversal",
+        "spaceExplanation": "Only constant extra pointers, no recursion"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseKGroup(ListNode* head, int k) {\n        if (!head || k == 1) return head;\n        \n        ListNode* dummy = new ListNode(0);\n        dummy->next = head;\n        ListNode* groupPrev = dummy;\n        \n        while (true) {\n            ListNode* kth = getKth(groupPrev, k);\n            if (!kth) break;\n            \n            ListNode* groupNext = kth->next;\n            ListNode* prev = kth->next;\n            ListNode* curr = groupPrev->next;\n            \n            while (curr != groupNext) {\n                ListNode* tmp = curr->next;\n                curr->next = prev;\n                prev = curr;\n                curr = tmp;\n            }\n            \n            ListNode* tmp = groupPrev->next;\n            groupPrev->next = kth;\n            groupPrev = tmp;\n        }\n        \n        return dummy->next;\n    }\n    \n    ListNode* getKth(ListNode* curr, int k) {\n        while (curr && k > 0) {\n            curr = curr->next;\n            k--;\n        }\n        return curr;\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseKGroup(ListNode head, int k) {\n        if (head == null || k == 1) return head;\n        \n        ListNode dummy = new ListNode(0);\n        dummy.next = head;\n        ListNode groupPrev = dummy;\n        \n        while (true) {\n            ListNode kth = getKth(groupPrev, k);\n            if (kth == null) break;\n            \n            ListNode groupNext = kth.next;\n            ListNode prev = kth.next;\n            ListNode curr = groupPrev.next;\n            \n            while (curr != groupNext) {\n                ListNode tmp = curr.next;\n                curr.next = prev;\n                prev = curr;\n                curr = tmp;\n            }\n            \n            ListNode tmp = groupPrev.next;\n            groupPrev.next = kth;\n            groupPrev = tmp;\n        }\n        \n        return dummy.next;\n    }\n    \n    private ListNode getKth(ListNode curr, int k) {\n        while (curr != null && k > 0) {\n            curr = curr.next;\n            k--;\n        }\n        return curr;\n    }\n}",
+        "python": "def reverseKGroup(head, k):\n    if not head or k == 1:\n        return head\n    \n    dummy = ListNode(0)\n    dummy.next = head\n    group_prev = dummy\n    \n    def get_kth(curr, k):\n        while curr and k > 0:\n            curr = curr.next\n            k -= 1\n        return curr\n    \n    while True:\n        kth = get_kth(group_prev, k)\n        if not kth:\n            break\n        \n        group_next = kth.next\n        prev = kth.next\n        curr = group_prev.next\n        \n        while curr != group_next:\n            tmp = curr.next\n            curr.next = prev\n            prev = curr\n            curr = tmp\n        \n        tmp = group_prev.next\n        group_prev.next = kth\n        group_prev = tmp\n    \n    return dummy.next",
+        "javascript": "function reverseKGroup(head, k) {\n    if (!head || k === 1) return head;\n    \n    const dummy = new ListNode(0);\n    dummy.next = head;\n    let groupPrev = dummy;\n    \n    function getKth(curr, k) {\n        while (curr && k > 0) {\n            curr = curr.next;\n            k--;\n        }\n        return curr;\n    }\n    \n    while (true) {\n        const kth = getKth(groupPrev, k);\n        if (!kth) break;\n        \n        const groupNext = kth.next;\n        let prev = kth.next;\n        let curr = groupPrev.next;\n        \n        while (curr !== groupNext) {\n            const tmp = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = tmp;\n        }\n        \n        const tmp = groupPrev.next;\n        groupPrev.next = kth;\n        groupPrev = tmp;\n    }\n    \n    return dummy.next;\n}"
+      }
+    },
+    {
+      "name": "Recursive Approach",
+      "order": 2,
+      "intuition": "Reverse first k nodes, then recursively reverse the rest. The recursive call handles all subsequent groups. Base case is when fewer than k nodes remain.",
+      "approach": "Count if k nodes exist. If yes, reverse first k nodes and recursively call for remaining list. If no, return head as-is. The recursion naturally handles group-by-group reversal.",
+      "steps": [
+        "Count k nodes from head",
+        "If fewer than k nodes, return head (base case)",
+        "Reverse first k nodes using standard technique",
+        "Recursively reverse rest: tail.next = reverseKGroup(remaining, k)",
+        "Return new head of reversed group"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n/k)",
+        "timeExplanation": "Visit each node once, O(n) total",
+        "spaceExplanation": "Recursion depth is O(n/k) for n/k groups"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseKGroup(ListNode* head, int k) {\n        ListNode* curr = head;\n        int count = 0;\n        while (curr && count < k) {\n            curr = curr->next;\n            count++;\n        }\n        \n        if (count < k) return head;\n        \n        ListNode* prev = nullptr;\n        curr = head;\n        for (int i = 0; i < k; i++) {\n            ListNode* next = curr->next;\n            curr->next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        head->next = reverseKGroup(curr, k);\n        return prev;\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseKGroup(ListNode head, int k) {\n        ListNode curr = head;\n        int count = 0;\n        while (curr != null && count < k) {\n            curr = curr.next;\n            count++;\n        }\n        \n        if (count < k) return head;\n        \n        ListNode prev = null;\n        curr = head;\n        for (int i = 0; i < k; i++) {\n            ListNode next = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        head.next = reverseKGroup(curr, k);\n        return prev;\n    }\n}",
+        "python": "def reverseKGroup(head, k):\n    curr = head\n    count = 0\n    while curr and count < k:\n        curr = curr.next\n        count += 1\n    \n    if count < k:\n        return head\n    \n    prev = None\n    curr = head\n    for _ in range(k):\n        next_node = curr.next\n        curr.next = prev\n        prev = curr\n        curr = next_node\n    \n    head.next = reverseKGroup(curr, k)\n    return prev",
+        "javascript": "function reverseKGroup(head, k) {\n    let curr = head;\n    let count = 0;\n    while (curr && count < k) {\n        curr = curr.next;\n        count++;\n    }\n    \n    if (count < k) return head;\n    \n    let prev = null;\n    curr = head;\n    for (let i = 0; i < k; i++) {\n        const next = curr.next;\n        curr.next = prev;\n        prev = curr;\n        curr = next;\n    }\n    \n    head.next = reverseKGroup(curr, k);\n    return prev;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if k nodes exist before reversing",
+    "Losing connection between reversed groups",
+    "Off-by-one errors when counting k nodes",
+    "Not properly updating groupPrev pointer after each group",
+    "Forgetting to handle the last partial group",
+    "Mixing up which node becomes new head vs tail of reversed group"
+  ],
+  "hints": [
+    "First check if k nodes exist before attempting to reverse",
+    "You need to track connections between groups",
+    "The first node of each group becomes the tail after reversal",
+    "Use a dummy node to simplify edge cases",
+    "For recursive approach, reverse first k then recurse on rest"
+  ],
+  "followUp": [
+    "What if you need to reverse every alternate group of k nodes?",
+    "Can you do it with tail recursion to reduce stack space?",
+    "How would you handle different k values for different groups?",
+    "What if you need to reverse from right to left instead?",
+    "Can you optimize for the case where k is very large?",
+    "How would you reverse k groups starting from the end?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Uber",
+    "Oracle",
+    "Goldman Sachs"
+  ],
+  "tags": [
+    "Linked List",
+    "Recursion"
+  ],
+  "relatedProblems": [
+    "Reverse Linked List",
+    "Reverse Linked List II",
+    "Swap Nodes in Pairs",
+    "Reverse Nodes in Even Length Groups",
+    "Swapping Nodes in a Linked List",
+    "Reverse Alternate K Nodes"
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ed6",
+  "questionSlug": "number-islands",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/number-of-islands/",
+    "videos": [
+      {
+        "title": "Number of Islands - DFS - Leetcode 200",
+        "url": "https://www.youtube.com/watch?v=pV2kpPD66nE",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Number of Islands | Grid Graph DFS",
+        "url": "https://www.youtube.com/watch?v=__98uL6wst8",
+        "channel": "Back To Back SWE",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Number of Islands - BFS and DFS Approach",
+        "url": "https://www.youtube.com/watch?v=CLvNe-8-6s8",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Number of Islands Solution",
+        "url": "https://leetcode.com/problems/number-of-islands/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Number of Islands - DFS and BFS Explained",
+        "url": "https://algo.monster/liteproblems/200",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Count Islands in a Grid",
+        "url": "https://www.geeksforgeeks.org/find-number-of-islands/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Max Area of Island",
+        "url": "https://leetcode.com/problems/max-area-of-island/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Number of Closed Islands",
+        "url": "https://leetcode.com/problems/number-of-closed-islands/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Number of Provinces",
+        "url": "https://leetcode.com/problems/number-of-provinces/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Flood Fill",
+        "url": "https://leetcode.com/problems/flood-fill/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Matrix Traversal (DFS/BFS) pattern when asked to count or find connected components in a 2D grid. Key indicators: count distinct islands/regions, connected cells with same value, explore all 4 directions, mark visited cells, grid traversal problem.",
+  "approaches": [
+    {
+      "name": "DFS with Marking",
+      "order": 1,
+      "intuition": "Each island is a connected component of '1's. Start DFS from each unvisited '1', mark all connected '1's as visited during the traversal. Each DFS call represents one complete island, so count the number of DFS initiations.",
+      "approach": "Iterate through each cell in the grid. When we find a '1' that hasn't been visited, increment island count and perform DFS to mark all connected land cells. Modify grid in-place by changing '1' to '0' to mark as visited, or use a separate visited set.",
+      "steps": [
+        "Initialize island count to 0",
+        "Iterate through each cell (i, j) in the grid",
+        "If grid[i][j] == '1' (unvisited land):",
+        "  - Increment island count",
+        "  - Call DFS from (i, j) to mark entire island",
+        "DFS function:",
+        "  - Check boundaries and if current cell is '1'",
+        "  - Mark current cell as '0' (visited)",
+        "  - Recursively call DFS on all 4 neighbors",
+        "Return total island count"
+      ],
+      "complexity": {
+        "time": "O(m * n)",
+        "space": "O(m * n)",
+        "timeExplanation": "Visit each cell once, m = rows, n = columns. Each cell visited at most once during DFS traversals.",
+        "spaceExplanation": "Recursion stack can go as deep as m*n in worst case (entire grid is one island). If modifying in-place, no extra space except stack."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numIslands(vector<vector<char>>& grid) {\n        if (grid.empty() || grid[0].empty()) return 0;\n        \n        int rows = grid.size();\n        int cols = grid[0].size();\n        int islands = 0;\n        \n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == '1') {\n                    islands++;\n                    dfs(grid, i, j);\n                }\n            }\n        }\n        \n        return islands;\n    }\n    \nprivate:\n    void dfs(vector<vector<char>>& grid, int i, int j) {\n        // Check boundaries and if cell is land\n        if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size() || grid[i][j] == '0') {\n            return;\n        }\n        \n        // Mark as visited\n        grid[i][j] = '0';\n        \n        // Explore all 4 directions\n        dfs(grid, i + 1, j);  // down\n        dfs(grid, i - 1, j);  // up\n        dfs(grid, i, j + 1);  // right\n        dfs(grid, i, j - 1);  // left\n    }\n};",
+        "java": "class Solution {\n    public int numIslands(char[][] grid) {\n        if (grid == null || grid.length == 0) return 0;\n        \n        int rows = grid.length;\n        int cols = grid[0].length;\n        int islands = 0;\n        \n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == '1') {\n                    islands++;\n                    dfs(grid, i, j);\n                }\n            }\n        }\n        \n        return islands;\n    }\n    \n    private void dfs(char[][] grid, int i, int j) {\n        // Check boundaries and if cell is land\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] == '0') {\n            return;\n        }\n        \n        // Mark as visited\n        grid[i][j] = '0';\n        \n        // Explore all 4 directions\n        dfs(grid, i + 1, j);  // down\n        dfs(grid, i - 1, j);  // up\n        dfs(grid, i, j + 1);  // right\n        dfs(grid, i, j - 1);  // left\n    }\n}",
+        "python": "def numIslands(grid):\n    if not grid or not grid[0]:\n        return 0\n    \n    rows, cols = len(grid), len(grid[0])\n    islands = 0\n    \n    def dfs(i, j):\n        # Check boundaries and if cell is land\n        if i < 0 or i >= rows or j < 0 or j >= cols or grid[i][j] == '0':\n            return\n        \n        # Mark as visited\n        grid[i][j] = '0'\n        \n        # Explore all 4 directions\n        dfs(i + 1, j)  # down\n        dfs(i - 1, j)  # up\n        dfs(i, j + 1)  # right\n        dfs(i, j - 1)  # left\n    \n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == '1':\n                islands += 1\n                dfs(i, j)\n    \n    return islands",
+        "javascript": "function numIslands(grid) {\n    if (!grid || grid.length === 0) return 0;\n    \n    const rows = grid.length;\n    const cols = grid[0].length;\n    let islands = 0;\n    \n    function dfs(i, j) {\n        // Check boundaries and if cell is land\n        if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] === '0') {\n            return;\n        }\n        \n        // Mark as visited\n        grid[i][j] = '0';\n        \n        // Explore all 4 directions\n        dfs(i + 1, j);  // down\n        dfs(i - 1, j);  // up\n        dfs(i, j + 1);  // right\n        dfs(i, j - 1);  // left\n    }\n    \n    for (let i = 0; i < rows; i++) {\n        for (let j = 0; j < cols; j++) {\n            if (grid[i][j] === '1') {\n                islands++;\n                dfs(i, j);\n            }\n        }\n    }\n    \n    return islands;\n}"
+      }
+    },
+    {
+      "name": "BFS with Queue",
+      "order": 2,
+      "intuition": "Similar to DFS but use BFS (level-order traversal) to explore each island. When we find unvisited land, use a queue to explore all connected land cells level by level. This is more intuitive for shortest path problems and avoids deep recursion.",
+      "approach": "Use a queue to perform BFS. When encountering a '1', add it to queue and start BFS to mark all connected cells. Each BFS traversal marks one complete island.",
+      "steps": [
+        "Initialize island count and directions array [(1,0), (-1,0), (0,1), (0,-1)]",
+        "Iterate through each cell",
+        "When finding '1':",
+        "  - Increment island count",
+        "  - Add cell to queue and mark as '0'",
+        "  - While queue not empty:",
+        "    - Dequeue cell",
+        "    - For each of 4 directions:",
+        "      - If neighbor is valid and is '1':",
+        "        - Mark as '0' and add to queue",
+        "Return island count"
+      ],
+      "complexity": {
+        "time": "O(m * n)",
+        "space": "O(min(m, n))",
+        "timeExplanation": "Visit each cell once, m = rows, n = columns",
+        "spaceExplanation": "Queue size at most min(m,n) in worst case (diagonal island). Best case for BFS space complexity."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numIslands(vector<vector<char>>& grid) {\n        if (grid.empty() || grid[0].empty()) return 0;\n        \n        int rows = grid.size();\n        int cols = grid[0].size();\n        int islands = 0;\n        \n        vector<pair<int, int>> directions = {{1,0}, {-1,0}, {0,1}, {0,-1}};\n        \n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == '1') {\n                    islands++;\n                    queue<pair<int, int>> q;\n                    q.push({i, j});\n                    grid[i][j] = '0';\n                    \n                    while (!q.empty()) {\n                        auto [x, y] = q.front();\n                        q.pop();\n                        \n                        for (auto [dx, dy] : directions) {\n                            int nx = x + dx;\n                            int ny = y + dy;\n                            \n                            if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && grid[nx][ny] == '1') {\n                                grid[nx][ny] = '0';\n                                q.push({nx, ny});\n                            }\n                        }\n                    }\n                }\n            }\n        }\n        \n        return islands;\n    }\n};",
+        "java": "class Solution {\n    public int numIslands(char[][] grid) {\n        if (grid == null || grid.length == 0) return 0;\n        \n        int rows = grid.length;\n        int cols = grid[0].length;\n        int islands = 0;\n        \n        int[][] directions = {{1,0}, {-1,0}, {0,1}, {0,-1}};\n        \n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == '1') {\n                    islands++;\n                    Queue<int[]> queue = new LinkedList<>();\n                    queue.offer(new int[]{i, j});\n                    grid[i][j] = '0';\n                    \n                    while (!queue.isEmpty()) {\n                        int[] cell = queue.poll();\n                        \n                        for (int[] dir : directions) {\n                            int nx = cell[0] + dir[0];\n                            int ny = cell[1] + dir[1];\n                            \n                            if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && grid[nx][ny] == '1') {\n                                grid[nx][ny] = '0';\n                                queue.offer(new int[]{nx, ny});\n                            }\n                        }\n                    }\n                }\n            }\n        }\n        \n        return islands;\n    }\n}",
+        "python": "from collections import deque\n\ndef numIslands(grid):\n    if not grid or not grid[0]:\n        return 0\n    \n    rows, cols = len(grid), len(grid[0])\n    islands = 0\n    directions = [(1,0), (-1,0), (0,1), (0,-1)]\n    \n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == '1':\n                islands += 1\n                queue = deque([(i, j)])\n                grid[i][j] = '0'\n                \n                while queue:\n                    x, y = queue.popleft()\n                    \n                    for dx, dy in directions:\n                        nx, ny = x + dx, y + dy\n                        \n                        if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == '1':\n                            grid[nx][ny] = '0'\n                            queue.append((nx, ny))\n    \n    return islands",
+        "javascript": "function numIslands(grid) {\n    if (!grid || grid.length === 0) return 0;\n    \n    const rows = grid.length;\n    const cols = grid[0].length;\n    let islands = 0;\n    const directions = [[1,0], [-1,0], [0,1], [0,-1]];\n    \n    for (let i = 0; i < rows; i++) {\n        for (let j = 0; j < cols; j++) {\n            if (grid[i][j] === '1') {\n                islands++;\n                const queue = [[i, j]];\n                grid[i][j] = '0';\n                \n                while (queue.length > 0) {\n                    const [x, y] = queue.shift();\n                    \n                    for (const [dx, dy] of directions) {\n                        const nx = x + dx;\n                        const ny = y + dy;\n                        \n                        if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && grid[nx][ny] === '1') {\n                            grid[nx][ny] = '0';\n                            queue.push([nx, ny]);\n                        }\n                    }\n                }\n            }\n        }\n    }\n    \n    return islands;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not marking cells as visited, causing infinite loops or wrong counts",
+    "Checking visited status after adding to queue (in BFS) instead of before, causing duplicates",
+    "Forgetting to handle empty grid or grid with no land",
+    "Using wrong boundary conditions (>= vs >) causing out of bounds errors",
+    "Not considering diagonal connections when problem only asks for 4-directional",
+    "Modifying grid without checking if it's allowed (some problems require preserving original grid)",
+    "Creating new visited array when in-place marking is simpler and more efficient"
+  ],
+  "hints": [
+    "Think of the problem as counting connected components in an undirected graph",
+    "Each land cell ('1') is a node, and edges connect adjacent land cells (4 directions)",
+    "DFS or BFS can both be used - DFS is simpler to code, BFS uses less stack space",
+    "Mark visited cells by changing '1' to '0' in-place to save space",
+    "Each time you start a new DFS/BFS, you've found a new island",
+    "Make sure to mark cells as visited BEFORE adding to queue (BFS) to avoid duplicates"
+  ],
+  "followUp": [
+    "What if the grid is very large and doesn't fit in memory? (Hint: process in chunks)",
+    "How would you handle diagonal connections as well (8 directions)?",
+    "Can you solve it with Union-Find for better performance with multiple queries?",
+    "What if islands can be added/removed dynamically and you need to update count?",
+    "How would you find the largest island instead of counting them?",
+    "Can you identify which islands are connected to the border vs enclosed?",
+    "What if you need to color each island with a different color (label)?",
+    "How would you handle a 3D grid (voxels) instead of 2D?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "Oracle",
+    "LinkedIn",
+    "Adobe",
+    "Cisco",
+    "Salesforce"
+  ],
+  "tags": [
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Union Find",
+    "Array",
+    "Matrix"
+  ],
+  "relatedProblems": [
+    "Max Area of Island",
+    "Number of Closed Islands",
+    "Number of Distinct Islands",
+    "Number of Enclaves",
+    "Surrounded Regions",
+    "Walls and Gates",
+    "Number of Provinces"
+  ]
+}

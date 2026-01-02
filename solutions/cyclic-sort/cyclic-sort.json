@@ -1,0 +1,188 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ea8",
+  "questionSlug": "cyclic-sort",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/sort-an-array-which-contain-1-to-n-values-in-on-using-cycle-sort/",
+    "videos": [
+      {
+        "title": "Cyclic Sort Algorithm Explained",
+        "url": "https://www.youtube.com/watch?v=JfinxytTYFQ",
+        "channel": "takeUforward",
+        "duration": "15:32",
+        "language": "English"
+      },
+      {
+        "title": "Cycle Sort - Sorting Algorithm",
+        "url": "https://www.youtube.com/watch?v=JfinxytTYFQ",
+        "channel": "Abdul Bari",
+        "duration": "12:18",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Cycle Sort Algorithm",
+        "url": "https://www.geeksforgeeks.org/cycle-sort/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Cyclic Sort Pattern",
+        "url": "https://emre.me/coding-patterns/cyclic-sort/",
+        "source": "Emre.me"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find All Numbers Disappeared in an Array",
+        "url": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find the Duplicate Number",
+        "url": "https://leetcode.com/problems/find-the-duplicate-number/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Cyclic Sort when array contains numbers in range [1, n] or [0, n-1] and you need to find missing/duplicate numbers. Key indicators: array size n with numbers from 1 to n, in-place sorting needed, O(n) time required, finding missing/duplicate elements.",
+  "approaches": [
+    {
+      "name": "Brute Force (Selection Sort)",
+      "order": 1,
+      "intuition": "Use basic sorting approach like selection sort. Find the minimum element in unsorted portion and place it at the beginning. Repeat for all positions. This doesn't leverage the special property that numbers are in range [1, n].",
+      "approach": "For each position, find minimum from remaining unsorted portion and swap it to current position.",
+      "steps": [
+        "For each position i from 0 to n-1:",
+        "  Find minimum element in range [i, n-1]:",
+        "    Initialize min_index = i",
+        "    For j from i+1 to n-1:",
+        "      If arr[j] < arr[min_index]:",
+        "        Update min_index = j",
+        "  Swap arr[i] with arr[min_index]",
+        "After all iterations, array is sorted"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Outer loop runs n times, inner loop runs n-i times for each iteration, total: n + (n-1) + (n-2) + ... + 1 = O(n²)",
+        "spaceExplanation": "In-place sorting, only using constant space for swap variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void cyclicSort(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Selection sort approach\n        for (int i = 0; i < n; i++) {\n            // Find minimum in remaining array\n            int minIndex = i;\n            for (int j = i + 1; j < n; j++) {\n                if (nums[j] < nums[minIndex]) {\n                    minIndex = j;\n                }\n            }\n            \n            // Swap minimum to current position\n            swap(nums[i], nums[minIndex]);\n        }\n    }\n};",
+        "java": "class Solution {\n    public void cyclicSort(int[] nums) {\n        int n = nums.length;\n        \n        // Selection sort approach\n        for (int i = 0; i < n; i++) {\n            // Find minimum in remaining array\n            int minIndex = i;\n            for (int j = i + 1; j < n; j++) {\n                if (nums[j] < nums[minIndex]) {\n                    minIndex = j;\n                }\n            }\n            \n            // Swap minimum to current position\n            int temp = nums[i];\n            nums[i] = nums[minIndex];\n            nums[minIndex] = temp;\n        }\n    }\n}",
+        "python": "def cyclic_sort(nums):\n    n = len(nums)\n    \n    # Selection sort approach\n    for i in range(n):\n        # Find minimum in remaining array\n        min_index = i\n        for j in range(i + 1, n):\n            if nums[j] < nums[min_index]:\n                min_index = j\n        \n        # Swap minimum to current position\n        nums[i], nums[min_index] = nums[min_index], nums[i]",
+        "javascript": "function cyclicSort(nums) {\n    const n = nums.length;\n    \n    // Selection sort approach\n    for (let i = 0; i < n; i++) {\n        // Find minimum in remaining array\n        let minIndex = i;\n        for (let j = i + 1; j < n; j++) {\n            if (nums[j] < nums[minIndex]) {\n                minIndex = j;\n            }\n        }\n        \n        // Swap minimum to current position\n        [nums[i], nums[minIndex]] = [nums[minIndex], nums[i]];\n    }\n}"
+      }
+    },
+    {
+      "name": "Better (Insertion Sort)",
+      "order": 2,
+      "intuition": "Build sorted portion incrementally. For each element, insert it into its correct position in the already sorted portion by shifting elements. Still doesn't use the property that numbers are from 1 to n.",
+      "approach": "Maintain sorted portion on left. For each new element, shift larger elements right and insert current element at correct position.",
+      "steps": [
+        "Assume first element is sorted",
+        "For each position i from 1 to n-1:",
+        "  Store current element: key = arr[i]",
+        "  Initialize j = i - 1",
+        "  Shift elements greater than key to right:",
+        "    While j >= 0 and arr[j] > key:",
+        "      arr[j+1] = arr[j]",
+        "      Decrement j",
+        "  Insert key at correct position: arr[j+1] = key",
+        "Array is now sorted"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Worst case: array in reverse order, each insertion requires shifting all previous elements. Total comparisons: 1 + 2 + 3 + ... + (n-1) = O(n²)",
+        "spaceExplanation": "In-place sorting with only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void cyclicSort(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Insertion sort approach\n        for (int i = 1; i < n; i++) {\n            int key = nums[i];\n            int j = i - 1;\n            \n            // Shift elements greater than key to right\n            while (j >= 0 && nums[j] > key) {\n                nums[j + 1] = nums[j];\n                j--;\n            }\n            \n            // Insert key at correct position\n            nums[j + 1] = key;\n        }\n    }\n};",
+        "java": "class Solution {\n    public void cyclicSort(int[] nums) {\n        int n = nums.length;\n        \n        // Insertion sort approach\n        for (int i = 1; i < n; i++) {\n            int key = nums[i];\n            int j = i - 1;\n            \n            // Shift elements greater than key to right\n            while (j >= 0 && nums[j] > key) {\n                nums[j + 1] = nums[j];\n                j--;\n            }\n            \n            // Insert key at correct position\n            nums[j + 1] = key;\n        }\n    }\n}",
+        "python": "def cyclic_sort(nums):\n    n = len(nums)\n    \n    # Insertion sort approach\n    for i in range(1, n):\n        key = nums[i]\n        j = i - 1\n        \n        # Shift elements greater than key to right\n        while j >= 0 and nums[j] > key:\n            nums[j + 1] = nums[j]\n            j -= 1\n        \n        # Insert key at correct position\n        nums[j + 1] = key",
+        "javascript": "function cyclicSort(nums) {\n    const n = nums.length;\n    \n    // Insertion sort approach\n    for (let i = 1; i < n; i++) {\n        const key = nums[i];\n        let j = i - 1;\n        \n        // Shift elements greater than key to right\n        while (j >= 0 && nums[j] > key) {\n            nums[j + 1] = nums[j];\n            j--;\n        }\n        \n        // Insert key at correct position\n        nums[j + 1] = key;\n    }\n}"
+      }
+    },
+    {
+      "name": "Optimal (Cyclic Sort Pattern)",
+      "order": 3,
+      "intuition": "Numbers from 1 to n should be at indices 0 to n-1. Number k should be at index k-1. Iterate through array and place each number at its correct index by swapping. When all numbers are at correct positions, array is sorted. This leverages the special property efficiently.",
+      "approach": "For each position, keep swapping current number with number at its target position until current position has the correct number or all numbers are placed.",
+      "steps": [
+        "Initialize i = 0",
+        "While i < n:",
+        "  Calculate correct index for nums[i]:",
+        "    correct_index = nums[i] - 1 (since nums are 1 to n)",
+        "  If nums[i] is not at correct position:",
+        "    If nums[i] != nums[correct_index]:",
+        "      Swap nums[i] with nums[correct_index]",
+        "    Else: move to next (duplicate case)",
+        "      i++",
+        "  Else: nums[i] is already at correct position",
+        "    i++",
+        "Array is now sorted with each number at index number-1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each number is swapped at most once to its correct position. Total swaps ≤ n, and we traverse array once, so O(n) + O(n) = O(n)",
+        "spaceExplanation": "In-place sorting, only using constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void cyclicSort(vector<int>& nums) {\n        int i = 0;\n        int n = nums.size();\n        \n        while (i < n) {\n            // Calculate correct index for current number\n            int correctIndex = nums[i] - 1;\n            \n            // If number is not at correct position, swap it\n            if (nums[i] != nums[correctIndex]) {\n                swap(nums[i], nums[correctIndex]);\n            } else {\n                // Number is at correct position, move to next\n                i++;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public void cyclicSort(int[] nums) {\n        int i = 0;\n        int n = nums.length;\n        \n        while (i < n) {\n            // Calculate correct index for current number\n            int correctIndex = nums[i] - 1;\n            \n            // If number is not at correct position, swap it\n            if (nums[i] != nums[correctIndex]) {\n                // Swap\n                int temp = nums[i];\n                nums[i] = nums[correctIndex];\n                nums[correctIndex] = temp;\n            } else {\n                // Number is at correct position, move to next\n                i++;\n            }\n        }\n    }\n}",
+        "python": "def cyclic_sort(nums):\n    i = 0\n    n = len(nums)\n    \n    while i < n:\n        # Calculate correct index for current number\n        correct_index = nums[i] - 1\n        \n        # If number is not at correct position, swap it\n        if nums[i] != nums[correct_index]:\n            nums[i], nums[correct_index] = nums[correct_index], nums[i]\n        else:\n            # Number is at correct position, move to next\n            i += 1",
+        "javascript": "function cyclicSort(nums) {\n    let i = 0;\n    const n = nums.length;\n    \n    while (i < n) {\n        // Calculate correct index for current number\n        const correctIndex = nums[i] - 1;\n        \n        // If number is not at correct position, swap it\n        if (nums[i] !== nums[correctIndex]) {\n            [nums[i], nums[correctIndex]] = [nums[correctIndex], nums[i]];\n        } else {\n            // Number is at correct position, move to next\n            i++;\n        }\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using wrong index calculation: forgetting nums[i]-1 for 1-indexed arrays",
+    "Incrementing i even when swap happened (should only increment when number is at correct position)",
+    "Not handling duplicates correctly - infinite loop if nums[i] == nums[correct_index]",
+    "Off-by-one errors when array is 0-indexed vs 1-indexed",
+    "Trying to use this pattern on arrays that don't have numbers in range [1,n] or [0,n-1]",
+    "Not understanding why time complexity is O(n) despite nested while loop"
+  ],
+  "hints": [
+    "If array has numbers from 1 to n, where should number k be placed?",
+    "Can you place each number at index (number - 1) directly?",
+    "What happens if you keep swapping until current position has correct number?",
+    "How many times can each number be swapped?",
+    "Think about the invariant: after processing position i, all positions before i have correct numbers",
+    "Why is this better than regular sorting for this specific case?"
+  ],
+  "followUp": [
+    "What if array has numbers from 0 to n-1 instead of 1 to n?",
+    "How would you find the missing number using cyclic sort?",
+    "Can you find all duplicate numbers using this pattern?",
+    "What if there are multiple missing numbers?",
+    "How would you handle if array has both missing and duplicate numbers?",
+    "Can this pattern be applied to find first k missing positive numbers?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Adobe",
+    "Uber"
+  ],
+  "tags": [
+    "Array",
+    "Sorting",
+    "Cyclic Sort",
+    "In-Place",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Find All Numbers Disappeared in an Array",
+    "Find All Duplicates in an Array",
+    "Find the Duplicate Number",
+    "Missing Number",
+    "First Missing Positive",
+    "Set Mismatch"
+  ]
+}

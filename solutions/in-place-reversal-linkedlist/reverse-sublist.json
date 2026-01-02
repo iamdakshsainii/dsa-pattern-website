@@ -1,0 +1,181 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eb1",
+  "questionSlug": "reverse-sublist",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/reverse-linked-list-ii/",
+    "videos": [
+      {
+        "title": "Reverse Linked List II - Leetcode 92",
+        "url": "https://www.youtube.com/watch?v=RF_M9tX4Eag",
+        "channel": "NeetCode",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Reverse a Sublist of Linked List",
+        "url": "https://www.youtube.com/watch?v=pHMJr-_mjG4",
+        "channel": "TECH DOSE",
+        "duration": "14:20",
+        "language": "English"
+      },
+      {
+        "title": "Reverse Linked List Between Positions",
+        "url": "https://www.youtube.com/watch?v=wk8-h3full8",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Reverse Linked List II Solution",
+        "url": "https://leetcode.com/problems/reverse-linked-list-ii/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Reverse Linked List II Explained",
+        "url": "https://algo.monster/liteproblems/92",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Reverse a Linked List from Position m to n",
+        "url": "https://www.geeksforgeeks.org/reverse-a-linked-list-from-position-m-to-n/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Reverse Linked List",
+        "url": "https://leetcode.com/problems/reverse-linked-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Nodes in k-Group",
+        "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Swap Nodes in Pairs",
+        "url": "https://leetcode.com/problems/swap-nodes-in-pairs/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Rotate List",
+        "url": "https://leetcode.com/problems/rotate-list/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use In-place Reversal pattern when asked to reverse a portion/sublist of linked list between two positions. Key indicators: reverse from position left to right, partial reversal, maintain connections with unreversed parts, modify specific section while keeping rest intact.",
+  "approaches": [
+    {
+      "name": "Iterative One-Pass with Connection Tracking",
+      "order": 1,
+      "intuition": "Navigate to position left-1, then reverse nodes from left to right while keeping track of connections before and after the reversed section. Reconnect all parts at the end. Use dummy node to handle edge case where left=1.",
+      "approach": "Use a dummy node to handle edge cases. Find the node before left position. Reverse the sublist from left to right using standard reversal technique. Finally, reconnect the three parts: before_left -> reversed_section -> after_right.",
+      "steps": [
+        "Create dummy node pointing to head (handles left=1 case)",
+        "Navigate to node before left position (leftPrev)",
+        "Identify the node that will become tail of reversed section (curr)",
+        "Reverse nodes from left to right positions:",
+        "  - Use standard three-pointer reversal technique",
+        "  - Keep track of the node after right position",
+        "Reconnect: leftPrev.next = new head of reversed section",
+        "Reconnect: tail of reversed section -> node after right",
+        "Return dummy.next"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through list, O(left) to reach position + O(right-left) to reverse, total O(n)",
+        "spaceExplanation": "Only constant extra pointers used, no additional data structures"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseBetween(ListNode* head, int left, int right) {\n        if (!head || left == right) return head;\n        \n        // Dummy node to handle edge cases\n        ListNode* dummy = new ListNode(0);\n        dummy->next = head;\n        \n        // Navigate to node before left position\n        ListNode* leftPrev = dummy;\n        for (int i = 1; i < left; i++) {\n            leftPrev = leftPrev->next;\n        }\n        \n        // Start of sublist to reverse\n        ListNode* curr = leftPrev->next;\n        \n        // Reverse the sublist from left to right\n        ListNode* prev = nullptr;\n        ListNode* tail = curr;  // This will be tail after reversal\n        \n        for (int i = left; i <= right; i++) {\n            ListNode* next = curr->next;\n            curr->next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        // Reconnect the reversed sublist\n        leftPrev->next = prev;  // Connect to new head of reversed section\n        tail->next = curr;      // Connect tail to rest of list\n        \n        return dummy->next;\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseBetween(ListNode head, int left, int right) {\n        if (head == null || left == right) return head;\n        \n        // Dummy node to handle edge cases\n        ListNode dummy = new ListNode(0);\n        dummy.next = head;\n        \n        // Navigate to node before left position\n        ListNode leftPrev = dummy;\n        for (int i = 1; i < left; i++) {\n            leftPrev = leftPrev.next;\n        }\n        \n        // Start of sublist to reverse\n        ListNode curr = leftPrev.next;\n        \n        // Reverse the sublist from left to right\n        ListNode prev = null;\n        ListNode tail = curr;  // This will be tail after reversal\n        \n        for (int i = left; i <= right; i++) {\n            ListNode next = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        // Reconnect the reversed sublist\n        leftPrev.next = prev;  // Connect to new head of reversed section\n        tail.next = curr;      // Connect tail to rest of list\n        \n        return dummy.next;\n    }\n}",
+        "python": "def reverseBetween(head, left, right):\n    if not head or left == right:\n        return head\n    \n    # Dummy node to handle edge cases\n    dummy = ListNode(0)\n    dummy.next = head\n    \n    # Navigate to node before left position\n    left_prev = dummy\n    for _ in range(left - 1):\n        left_prev = left_prev.next\n    \n    # Start of sublist to reverse\n    curr = left_prev.next\n    \n    # Reverse the sublist from left to right\n    prev = None\n    tail = curr  # This will be tail after reversal\n    \n    for _ in range(right - left + 1):\n        next_node = curr.next\n        curr.next = prev\n        prev = curr\n        curr = next_node\n    \n    # Reconnect the reversed sublist\n    left_prev.next = prev  # Connect to new head of reversed section\n    tail.next = curr       # Connect tail to rest of list\n    \n    return dummy.next",
+        "javascript": "function reverseBetween(head, left, right) {\n    if (!head || left === right) return head;\n    \n    // Dummy node to handle edge cases\n    const dummy = new ListNode(0);\n    dummy.next = head;\n    \n    // Navigate to node before left position\n    let leftPrev = dummy;\n    for (let i = 1; i < left; i++) {\n        leftPrev = leftPrev.next;\n    }\n    \n    // Start of sublist to reverse\n    let curr = leftPrev.next;\n    \n    // Reverse the sublist from left to right\n    let prev = null;\n    const tail = curr;  // This will be tail after reversal\n    \n    for (let i = left; i <= right; i++) {\n        const next = curr.next;\n        curr.next = prev;\n        prev = curr;\n        curr = next;\n    }\n    \n    // Reconnect the reversed sublist\n    leftPrev.next = prev;  // Connect to new head of reversed section\n    tail.next = curr;      // Connect tail to rest of list\n    \n    return dummy.next;\n}"
+      }
+    },
+    {
+      "name": "Iterative with Node Insertion (Elegant)",
+      "order": 2,
+      "intuition": "Instead of reversing in place, repeatedly take the next node and move it to the front of the sublist. This builds the reversed section incrementally by inserting nodes one at a time at the beginning of the section.",
+      "approach": "Position pointer before left. For each iteration, take the next node after current and insert it right after leftPrev. After (right-left) iterations, the sublist is reversed without explicitly reversing pointers.",
+      "steps": [
+        "Create dummy and navigate to leftPrev (node before left position)",
+        "Set curr = leftPrev.next (first node of section to reverse)",
+        "Repeat (right - left) times:",
+        "  - Extract next node: temp = curr.next",
+        "  - Remove temp from current position: curr.next = temp.next",
+        "  - Insert temp at the front: temp.next = leftPrev.next",
+        "  - Update leftPrev.next = temp",
+        "Return dummy.next"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "O(left) to reach position + O(right-left) for insertions, total O(n)",
+        "spaceExplanation": "Only constant pointers used, no extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseBetween(ListNode* head, int left, int right) {\n        if (!head || left == right) return head;\n        \n        ListNode* dummy = new ListNode(0);\n        dummy->next = head;\n        \n        // Navigate to node before left\n        ListNode* leftPrev = dummy;\n        for (int i = 1; i < left; i++) {\n            leftPrev = leftPrev->next;\n        }\n        \n        ListNode* curr = leftPrev->next;\n        \n        // Reverse by moving nodes to front\n        for (int i = 0; i < right - left; i++) {\n            ListNode* temp = curr->next;\n            curr->next = temp->next;      // Remove temp\n            temp->next = leftPrev->next;  // Insert at front\n            leftPrev->next = temp;\n        }\n        \n        return dummy->next;\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseBetween(ListNode head, int left, int right) {\n        if (head == null || left == right) return head;\n        \n        ListNode dummy = new ListNode(0);\n        dummy.next = head;\n        \n        // Navigate to node before left\n        ListNode leftPrev = dummy;\n        for (int i = 1; i < left; i++) {\n            leftPrev = leftPrev.next;\n        }\n        \n        ListNode curr = leftPrev.next;\n        \n        // Reverse by moving nodes to front\n        for (int i = 0; i < right - left; i++) {\n            ListNode temp = curr.next;\n            curr.next = temp.next;      // Remove temp\n            temp.next = leftPrev.next;  // Insert at front\n            leftPrev.next = temp;\n        }\n        \n        return dummy.next;\n    }\n}",
+        "python": "def reverseBetween(head, left, right):\n    if not head or left == right:\n        return head\n    \n    dummy = ListNode(0)\n    dummy.next = head\n    \n    # Navigate to node before left\n    left_prev = dummy\n    for _ in range(left - 1):\n        left_prev = left_prev.next\n    \n    curr = left_prev.next\n    \n    # Reverse by moving nodes to front\n    for _ in range(right - left):\n        temp = curr.next\n        curr.next = temp.next      # Remove temp\n        temp.next = left_prev.next  # Insert at front\n        left_prev.next = temp\n    \n    return dummy.next",
+        "javascript": "function reverseBetween(head, left, right) {\n    if (!head || left === right) return head;\n    \n    const dummy = new ListNode(0);\n    dummy.next = head;\n    \n    // Navigate to node before left\n    let leftPrev = dummy;\n    for (let i = 1; i < left; i++) {\n        leftPrev = leftPrev.next;\n    }\n    \n    const curr = leftPrev.next;\n    \n    // Reverse by moving nodes to front\n    for (let i = 0; i < right - left; i++) {\n        const temp = curr.next;\n        curr.next = temp.next;      // Remove temp\n        temp.next = leftPrev.next;  // Insert at front\n        leftPrev.next = temp;\n    }\n    \n    return dummy.next;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling left=1 case (reversing from head) - always use dummy node to avoid this",
+    "Losing connection to the part before left or after right positions",
+    "Off-by-one errors in loop iterations (should be right-left times, not right-left+1)",
+    "Not properly identifying which node becomes the tail after reversal",
+    "Forgetting to reconnect both ends of reversed section to the rest of the list",
+    "Mixing up leftPrev.next and tail.next connections during reconnection",
+    "Not handling single node or empty list edge cases"
+  ],
+  "hints": [
+    "Use a dummy node to simplify handling when left=1 (reversing from the head)",
+    "You need to track the node before position left to reconnect later",
+    "The node at position left becomes the tail of the reversed section",
+    "Think about what connections need to be updated after reversal: before->reversed, reversed->after",
+    "Consider the elegant approach of moving nodes one by one to the front instead of traditional reversal",
+    "Draw out the pointers on paper - it helps visualize the reconnections needed"
+  ],
+  "followUp": [
+    "What if left and right are given as node references instead of positions?",
+    "Can you reverse multiple non-overlapping sublists in one pass?",
+    "How would you reverse every alternate sublist of size k?",
+    "What if you need to reverse in groups with different sizes for each group?",
+    "Can you do it recursively with O(1) space (tail recursion)?",
+    "How would you handle reversing sublists in a doubly linked list?",
+    "What if the positions are 0-indexed instead of 1-indexed?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Uber",
+    "Oracle",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Linked List",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Reverse Linked List",
+    "Reverse Nodes in k-Group",
+    "Swap Nodes in Pairs",
+    "Reverse Nodes in Even Length Groups",
+    "Swapping Nodes in a Linked List",
+    "Reverse Nodes in Alternate Groups",
+    "Reorder List"
+  ]
+}

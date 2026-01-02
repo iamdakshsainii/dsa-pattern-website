@@ -1,0 +1,166 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e8b",
+  "questionSlug": "cycle-circular-array",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/circular-array-loop/",
+    "videos": [
+      {
+        "title": "Circular Array Loop - Fast & Slow Pointers",
+        "url": "https://www.youtube.com/watch?v=2hVinjU-5SA",
+        "channel": "NeetCode",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Detect Cycle in Circular Array",
+        "url": "https://www.youtube.com/watch?v=zbKlHrP3M5M",
+        "channel": "TECH DOSE",
+        "duration": "13:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Circular Array Loop Solution",
+        "url": "https://leetcode.com/problems/circular-array-loop/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Circular Array Loop Explained",
+        "url": "https://www.geeksforgeeks.org/circular-array-loop/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Linked List Cycle",
+        "url": "https://leetcode.com/problems/linked-list-cycle/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find the Duplicate Number",
+        "url": "https://leetcode.com/problems/find-the-duplicate-number/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Fast & Slow Pointers when detecting cycles in arrays where elements represent jump distances. Key indicators: circular array, cycle detection with direction constraint, following jump patterns, O(1) space requirement.",
+  "approaches": [
+    {
+      "name": "Brute Force (Check Each Starting Point)",
+      "order": 1,
+      "intuition": "For each index, try to follow the cycle and check if it's valid. A valid cycle must have consistent direction (all forward or all backward) and length > 1.",
+      "approach": "Start from each index and follow the jumps, marking visited indices. Check if we return to start and all moves are in same direction.",
+      "steps": [
+        "For each index i in array:",
+        "  Create visited set",
+        "  current = i",
+        "  direction = sign of nums[i]",
+        "  While current not visited:",
+        "    If nums[current] has different direction:",
+        "      Break (invalid cycle)",
+        "    Mark current as visited",
+        "    next = getNext(current)",
+        "    If next equals current:",
+        "      Break (single element loop)",
+        "    current = next",
+        "  If returned to i and cycle length > 1:",
+        "    Return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "For each of n starting points, we might traverse up to n elements",
+        "spaceExplanation": "Visited set can store up to n elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool circularArrayLoop(vector<int>& nums) {\n        int n = nums.size();\n        \n        for (int i = 0; i < n; i++) {\n            unordered_set<int> visited;\n            int current = i;\n            bool isForward = nums[i] > 0;\n            \n            while (visited.find(current) == visited.end()) {\n                // Check if direction changes\n                if ((nums[current] > 0) != isForward) {\n                    break;\n                }\n                \n                visited.insert(current);\n                int next = getNext(nums, current);\n                \n                // Single element loop\n                if (next == current) {\n                    break;\n                }\n                \n                current = next;\n            }\n            \n            // Check if we found a valid cycle\n            if (visited.find(current) != visited.end() && \n                current == i && visited.size() > 1) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n    \nprivate:\n    int getNext(vector<int>& nums, int index) {\n        int n = nums.size();\n        int next = (index + nums[index]) % n;\n        return next < 0 ? next + n : next;\n    }\n};",
+        "java": "class Solution {\n    public boolean circularArrayLoop(int[] nums) {\n        int n = nums.length;\n        \n        for (int i = 0; i < n; i++) {\n            Set<Integer> visited = new HashSet<>();\n            int current = i;\n            boolean isForward = nums[i] > 0;\n            \n            while (!visited.contains(current)) {\n                // Check if direction changes\n                if ((nums[current] > 0) != isForward) {\n                    break;\n                }\n                \n                visited.add(current);\n                int next = getNext(nums, current);\n                \n                // Single element loop\n                if (next == current) {\n                    break;\n                }\n                \n                current = next;\n            }\n            \n            // Check if we found a valid cycle\n            if (visited.contains(current) && \n                current == i && visited.size() > 1) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n    \n    private int getNext(int[] nums, int index) {\n        int n = nums.length;\n        int next = (index + nums[index]) % n;\n        return next < 0 ? next + n : next;\n    }\n}",
+        "python": "def circular_array_loop(nums):\n    n = len(nums)\n    \n    def get_next(index):\n        next_idx = (index + nums[index]) % n\n        return next_idx if next_idx >= 0 else next_idx + n\n    \n    for i in range(n):\n        visited = set()\n        current = i\n        is_forward = nums[i] > 0\n        \n        while current not in visited:\n            # Check if direction changes\n            if (nums[current] > 0) != is_forward:\n                break\n            \n            visited.add(current)\n            next_idx = get_next(current)\n            \n            # Single element loop\n            if next_idx == current:\n                break\n            \n            current = next_idx\n        \n        # Check if we found a valid cycle\n        if current in visited and current == i and len(visited) > 1:\n            return True\n    \n    return False",
+        "javascript": "function circularArrayLoop(nums) {\n    const n = nums.length;\n    \n    const getNext = (index) => {\n        const next = (index + nums[index]) % n;\n        return next < 0 ? next + n : next;\n    };\n    \n    for (let i = 0; i < n; i++) {\n        const visited = new Set();\n        let current = i;\n        const isForward = nums[i] > 0;\n        \n        while (!visited.has(current)) {\n            // Check if direction changes\n            if ((nums[current] > 0) !== isForward) {\n                break;\n            }\n            \n            visited.add(current);\n            const next = getNext(current);\n            \n            // Single element loop\n            if (next === current) {\n                break;\n            }\n            \n            current = next;\n        }\n        \n        // Check if we found a valid cycle\n        if (visited.has(current) && \n            current === i && visited.size > 1) {\n            return true;\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Fast & Slow Pointers with Marking (Optimal)",
+      "order": 2,
+      "intuition": "Use Floyd's cycle detection for each starting point. Mark visited indices to avoid re-checking them. A valid cycle must maintain consistent direction and have length > 1.",
+      "approach": "For each unmarked index, use fast & slow pointers to detect cycle. Check direction consistency and cycle length. Mark invalid paths.",
+      "steps": [
+        "For each index i in array:",
+        "  If already marked, skip",
+        "  Initialize slow = i, fast = i",
+        "  direction = sign of nums[i]",
+        "  Phase 1: Detect if cycle exists",
+        "    Move slow one step, fast two steps",
+        "    Check direction consistency at each step",
+        "    If direction changes or single-element loop, break",
+        "    If slow equals fast, potential cycle found",
+        "  Phase 2: Validate cycle",
+        "    Check if cycle length > 1",
+        "    Verify all elements in cycle have same direction",
+        "  If valid cycle: return true",
+        "  Mark all visited indices as invalid",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element is visited at most twice (once for detection, once for marking). Amortized O(n).",
+        "spaceExplanation": "Only using pointer variables. Marking is done in input array or with O(1) extra space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool circularArrayLoop(vector<int>& nums) {\n        int n = nums.size();\n        \n        for (int i = 0; i < n; i++) {\n            // Skip if already marked as invalid\n            if (nums[i] == 0) continue;\n            \n            int slow = i, fast = i;\n            bool isForward = nums[i] > 0;\n            \n            // Try to find cycle\n            while (true) {\n                // Move slow one step\n                slow = getNext(nums, slow);\n                if (!isValidMove(nums, slow, isForward)) break;\n                \n                // Move fast two steps\n                fast = getNext(nums, fast);\n                if (!isValidMove(nums, fast, isForward)) break;\n                fast = getNext(nums, fast);\n                if (!isValidMove(nums, fast, isForward)) break;\n                \n                // Cycle detected\n                if (slow == fast) {\n                    // Verify cycle length > 1\n                    if (slow == getNext(nums, slow)) break;\n                    return true;\n                }\n            }\n            \n            // Mark all elements in this path as invalid\n            slow = i;\n            int sign = nums[i] > 0 ? 1 : -1;\n            while (nums[slow] * sign > 0) {\n                int next = getNext(nums, slow);\n                nums[slow] = 0;\n                slow = next;\n            }\n        }\n        \n        return false;\n    }\n    \nprivate:\n    int getNext(vector<int>& nums, int index) {\n        int n = nums.size();\n        int next = (index + nums[index]) % n;\n        return next < 0 ? next + n : next;\n    }\n    \n    bool isValidMove(vector<int>& nums, int index, bool isForward) {\n        // Check if direction is consistent and not a single-element loop\n        return (nums[index] > 0) == isForward && \n               nums[index] % nums.size() != 0;\n    }\n};",
+        "java": "class Solution {\n    public boolean circularArrayLoop(int[] nums) {\n        int n = nums.length;\n        \n        for (int i = 0; i < n; i++) {\n            // Skip if already marked as invalid\n            if (nums[i] == 0) continue;\n            \n            int slow = i, fast = i;\n            boolean isForward = nums[i] > 0;\n            \n            // Try to find cycle\n            while (true) {\n                // Move slow one step\n                slow = getNext(nums, slow);\n                if (!isValidMove(nums, slow, isForward)) break;\n                \n                // Move fast two steps\n                fast = getNext(nums, fast);\n                if (!isValidMove(nums, fast, isForward)) break;\n                fast = getNext(nums, fast);\n                if (!isValidMove(nums, fast, isForward)) break;\n                \n                // Cycle detected\n                if (slow == fast) {\n                    // Verify cycle length > 1\n                    if (slow == getNext(nums, slow)) break;\n                    return true;\n                }\n            }\n            \n            // Mark all elements in this path as invalid\n            slow = i;\n            int sign = nums[i] > 0 ? 1 : -1;\n            while (nums[slow] * sign > 0) {\n                int next = getNext(nums, slow);\n                nums[slow] = 0;\n                slow = next;\n            }\n        }\n        \n        return false;\n    }\n    \n    private int getNext(int[] nums, int index) {\n        int n = nums.length;\n        int next = (index + nums[index]) % n;\n        return next < 0 ? next + n : next;\n    }\n    \n    private boolean isValidMove(int[] nums, int index, boolean isForward) {\n        // Check if direction is consistent and not a single-element loop\n        return (nums[index] > 0) == isForward && \n               nums[index] % nums.length != 0;\n    }\n}",
+        "python": "def circular_array_loop(nums):\n    n = len(nums)\n    \n    def get_next(index):\n        next_idx = (index + nums[index]) % n\n        return next_idx if next_idx >= 0 else next_idx + n\n    \n    def is_valid_move(index, is_forward):\n        # Check if direction is consistent and not a single-element loop\n        return (nums[index] > 0) == is_forward and nums[index] % n != 0\n    \n    for i in range(n):\n        # Skip if already marked as invalid\n        if nums[i] == 0:\n            continue\n        \n        slow = fast = i\n        is_forward = nums[i] > 0\n        \n        # Try to find cycle\n        while True:\n            # Move slow one step\n            slow = get_next(slow)\n            if not is_valid_move(slow, is_forward):\n                break\n            \n            # Move fast two steps\n            fast = get_next(fast)\n            if not is_valid_move(fast, is_forward):\n                break\n            fast = get_next(fast)\n            if not is_valid_move(fast, is_forward):\n                break\n            \n            # Cycle detected\n            if slow == fast:\n                # Verify cycle length > 1\n                if slow == get_next(slow):\n                    break\n                return True\n        \n        # Mark all elements in this path as invalid\n        slow = i\n        sign = 1 if nums[i] > 0 else -1\n        while nums[slow] * sign > 0:\n            next_idx = get_next(slow)\n            nums[slow] = 0\n            slow = next_idx\n    \n    return False",
+        "javascript": "function circularArrayLoop(nums) {\n    const n = nums.length;\n    \n    const getNext = (index) => {\n        const next = (index + nums[index]) % n;\n        return next < 0 ? next + n : next;\n    };\n    \n    const isValidMove = (index, isForward) => {\n        // Check if direction is consistent and not a single-element loop\n        return (nums[index] > 0) === isForward && nums[index] % n !== 0;\n    };\n    \n    for (let i = 0; i < n; i++) {\n        // Skip if already marked as invalid\n        if (nums[i] === 0) continue;\n        \n        let slow = i, fast = i;\n        const isForward = nums[i] > 0;\n        \n        // Try to find cycle\n        while (true) {\n            // Move slow one step\n            slow = getNext(slow);\n            if (!isValidMove(slow, isForward)) break;\n            \n            // Move fast two steps\n            fast = getNext(fast);\n            if (!isValidMove(fast, isForward)) break;\n            fast = getNext(fast);\n            if (!isValidMove(fast, isForward)) break;\n            \n            // Cycle detected\n            if (slow === fast) {\n                // Verify cycle length > 1\n                if (slow === getNext(slow)) break;\n                return true;\n            }\n        }\n        \n        // Mark all elements in this path as invalid\n        slow = i;\n        const sign = nums[i] > 0 ? 1 : -1;\n        while (nums[slow] * sign > 0) {\n            const next = getNext(slow);\n            nums[slow] = 0;\n            slow = next;\n        }\n    }\n    \n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling negative indices correctly when calculating next position",
+    "Forgetting to check for single-element loops (nums[i] % n == 0)",
+    "Not validating that all elements in cycle have same direction",
+    "Marking elements incorrectly, leading to missed valid cycles",
+    "Not handling the modulo operation for negative numbers properly",
+    "Checking cycle existence but not cycle length > 1"
+  ],
+  "hints": [
+    "Think of the array as a linked list where each element points to another index",
+    "A valid cycle must move in one direction only (all forward or all backward)",
+    "Use Floyd's cycle detection algorithm",
+    "How do you calculate the next index in a circular array?",
+    "Mark visited paths to avoid redundant work",
+    "A cycle of length 1 is not valid"
+  ],
+  "followUp": [
+    "What if you need to find the length of the cycle?",
+    "How would you find all valid cycles in the array?",
+    "Can you modify this to work with 2D arrays?",
+    "What if elements can be zero?",
+    "How would you handle very large jump values?",
+    "Can you detect cycles in both directions simultaneously?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Array",
+    "Fast & Slow Pointers",
+    "Two Pointers",
+    "Cycle Detection"
+  ],
+  "relatedProblems": [
+    "Linked List Cycle",
+    "Find the Duplicate Number",
+    "Happy Number",
+    "Linked List Cycle II"
+  ]
+}

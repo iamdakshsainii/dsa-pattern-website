@@ -1,0 +1,135 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e7e",
+  "questionSlug": "triplets-smaller-sum",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/problems/count-triplets-with-sum-smaller-than-x5549/1",
+    "videos": [
+      {
+        "title": "3Sum Smaller - Two Pointers Approach",
+        "url": "https://www.youtube.com/watch?v=GYHfjD0woPI",
+        "channel": "TECH DOSE",
+        "duration": "11:25",
+        "language": "English"
+      },
+      {
+        "title": "Count Triplets with Sum Smaller Than Given Value",
+        "url": "https://www.youtube.com/watch?v=h7hs8YrFfGQ",
+        "channel": "Pepcoding",
+        "duration": "14:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Count Triplets with Sum Smaller Than X",
+        "url": "https://www.geeksforgeeks.org/count-triplets-with-sum-smaller-that-a-given-value/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/problems/count-triplets-with-sum-smaller-than-x5549/1",
+        "platform": "GeeksforGeeks"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Two Pointers after sorting when counting triplets with sum condition. Fix one element and use two pointers for remaining pair.",
+  "approaches": [
+    {
+      "name": "Brute Force",
+      "order": 1,
+      "intuition": "Check all possible triplets and count those with sum less than target.",
+      "approach": "Use three nested loops to examine every combination of three numbers.",
+      "steps": [
+        "Initialize count to 0",
+        "Use three nested loops with indices i, j, k",
+        "For each triplet, check if nums[i] + nums[j] + nums[k] < target",
+        "If condition is true, increment count",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(1)",
+        "timeExplanation": "Three nested loops iterate through all triplets",
+        "spaceExplanation": "Only counter variable used"
+      },
+      "code": {
+        "cpp": "int tripletCount(vector<int>& nums, int target) {\n    int count = 0;\n    int n = nums.size();\n    \n    for (int i = 0; i < n - 2; i++) {\n        for (int j = i + 1; j < n - 1; j++) {\n            for (int k = j + 1; k < n; k++) {\n                if (nums[i] + nums[j] + nums[k] < target) {\n                    count++;\n                }\n            }\n        }\n    }\n    \n    return count;\n}",
+        "java": "public int tripletCount(int[] nums, int target) {\n    int count = 0;\n    int n = nums.length;\n    \n    for (int i = 0; i < n - 2; i++) {\n        for (int j = i + 1; j < n - 1; j++) {\n            for (int k = j + 1; k < n; k++) {\n                if (nums[i] + nums[j] + nums[k] < target) {\n                    count++;\n                }\n            }\n        }\n    }\n    \n    return count;\n}",
+        "python": "def triplet_count(nums, target):\n    count = 0\n    n = len(nums)\n    \n    for i in range(n - 2):\n        for j in range(i + 1, n - 1):\n            for k in range(j + 1, n):\n                if nums[i] + nums[j] + nums[k] < target:\n                    count += 1\n    \n    return count",
+        "javascript": "function tripletCount(nums, target) {\n    let count = 0;\n    const n = nums.length;\n    \n    for (let i = 0; i < n - 2; i++) {\n        for (let j = i + 1; j < n - 1; j++) {\n            for (let k = j + 1; k < n; k++) {\n                if (nums[i] + nums[j] + nums[k] < target) {\n                    count++;\n                }\n            }\n        }\n    }\n    \n    return count;\n}"
+      }
+    },
+    {
+      "name": "Two Pointers (Optimal)",
+      "order": 2,
+      "intuition": "Sort the array first. Fix one element and use two pointers to count valid pairs. When sum < target, all elements between left and right form valid triplets.",
+      "approach": "After sorting, for each fixed element, use two pointers to efficiently count all valid pairs.",
+      "steps": [
+        "Sort the array",
+        "Initialize count to 0",
+        "For each element at index i (up to n-3):",
+        "  Set left = i + 1, right = n - 1",
+        "  While left < right:",
+        "    Calculate sum = nums[i] + nums[left] + nums[right]",
+        "    If sum < target:",
+        "      All triplets with nums[i], nums[left], and any element",
+        "      between left and right are valid",
+        "      Add (right - left) to count",
+        "      Increment left",
+        "    Else: decrement right",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "O(n log n) for sorting + O(n²) for outer loop and two pointers",
+        "spaceExplanation": "O(1) excluding sorting space"
+      },
+      "code": {
+        "cpp": "int tripletCount(vector<int>& nums, int target) {\n    sort(nums.begin(), nums.end());\n    int count = 0;\n    int n = nums.size();\n    \n    for (int i = 0; i < n - 2; i++) {\n        int left = i + 1, right = n - 1;\n        \n        while (left < right) {\n            int sum = nums[i] + nums[left] + nums[right];\n            \n            if (sum < target) {\n                // All triplets with nums[i], nums[left], and\n                // any element between left and right are valid\n                count += right - left;\n                left++;\n            } else {\n                right--;\n            }\n        }\n    }\n    \n    return count;\n}",
+        "java": "public int tripletCount(int[] nums, int target) {\n    Arrays.sort(nums);\n    int count = 0;\n    int n = nums.length;\n    \n    for (int i = 0; i < n - 2; i++) {\n        int left = i + 1, right = n - 1;\n        \n        while (left < right) {\n            int sum = nums[i] + nums[left] + nums[right];\n            \n            if (sum < target) {\n                // All triplets with nums[i], nums[left], and\n                // any element between left and right are valid\n                count += right - left;\n                left++;\n            } else {\n                right--;\n            }\n        }\n    }\n    \n    return count;\n}",
+        "python": "def triplet_count(nums, target):\n    nums.sort()\n    count = 0\n    n = len(nums)\n    \n    for i in range(n - 2):\n        left, right = i + 1, n - 1\n        \n        while left < right:\n            current_sum = nums[i] + nums[left] + nums[right]\n            \n            if current_sum < target:\n                # All triplets with nums[i], nums[left], and\n                # any element between left and right are valid\n                count += right - left\n                left += 1\n            else:\n                right -= 1\n    \n    return count",
+        "javascript": "function tripletCount(nums, target) {\n    nums.sort((a, b) => a - b);\n    let count = 0;\n    const n = nums.length;\n    \n    for (let i = 0; i < n - 2; i++) {\n        let left = i + 1, right = n - 1;\n        \n        while (left < right) {\n            const sum = nums[i] + nums[left] + nums[right];\n            \n            if (sum < target) {\n                // All triplets with nums[i], nums[left], and\n                // any element between left and right are valid\n                count += right - left;\n                left++;\n            } else {\n                right--;\n            }\n        }\n    }\n    \n    return count;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding why we add (right - left) instead of 1 to count",
+    "Forgetting to sort the array before applying two pointers",
+    "Moving both pointers when sum < target (should only move left)",
+    "Using wrong loop bounds (should be i < n-2)",
+    "Trying to enumerate all triplets instead of just counting them"
+  ],
+  "hints": [
+    "Sorting the array first enables efficient counting with two pointers",
+    "When sum < target, all elements between left and right will also give valid triplets",
+    "Think about how many triplets can be formed with nums[i] and nums[left] when sum < target",
+    "This is similar to 3Sum but we're counting instead of finding unique triplets"
+  ],
+  "followUp": [
+    "How would you find all unique triplets with sum less than target (not just count)?",
+    "Can you solve this for quadruplets (4 numbers)?",
+    "What if you need triplets with sum greater than target?",
+    "How would you modify this to find triplets with sum in a given range?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook"
+  ],
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Sorting"
+  ],
+  "relatedProblems": [
+    "3Sum",
+    "3Sum Closest",
+    "Valid Triangle Number",
+    "Two Sum Less Than K"
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eb4",
+  "questionSlug": "rotate-linkedlist",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/rotate-list/",
+    "videos": [
+      {
+        "title": "Rotate List - Leetcode 61",
+        "url": "https://www.youtube.com/watch?v=UcGtPs2LE_c",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Rotate a Linked List | Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=9VPm6nEbVPA",
+        "channel": "TECH DOSE",
+        "duration": "13:40",
+        "language": "English"
+      },
+      {
+        "title": "Rotate Linked List Solution Explained",
+        "url": "https://www.youtube.com/watch?v=fKO8KHYsh6k",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Rotate List Solution",
+        "url": "https://leetcode.com/problems/rotate-list/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Rotate List Explained with Examples",
+        "url": "https://algo.monster/liteproblems/61",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Rotate a Linked List",
+        "url": "https://www.geeksforgeeks.org/rotate-a-linked-list/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Rotate Array",
+        "url": "https://leetcode.com/problems/rotate-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Linked List",
+        "url": "https://leetcode.com/problems/reverse-linked-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reorder List",
+        "url": "https://leetcode.com/problems/reorder-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Split Linked List in Parts",
+        "url": "https://leetcode.com/problems/split-linked-list-in-parts/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use In-place Reversal/Rotation pattern when asked to rotate linked list by k positions. Key indicators: rotate/shift nodes to right, circular rotation, moving tail to head k times, modify list structure without extra space.",
+  "approaches": [
+    {
+      "name": "Form Circle and Break at New Head",
+      "order": 1,
+      "intuition": "Rotating right by k is equivalent to making the (n-k)th node the new tail. Connect tail to head forming a circle, then break the circle at the right position. Handle k > n by using k % n.",
+      "approach": "First find the length and connect tail to head forming a circle. Calculate the actual rotation: k = k % n. Find the new tail at position (n - k - 1). Break the circle after new tail and return the node after it as new head.",
+      "steps": [
+        "Handle edge cases: empty list, single node, k=0",
+        "Count length n and find tail",
+        "Optimize rotation: k = k % n",
+        "If k = 0, return head (no rotation needed)",
+        "Form circle: tail.next = head",
+        "Find new tail at position (n - k - 1)",
+        "Break circle: newHead = newTail.next, newTail.next = null",
+        "Return newHead"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "O(n) to find length, O(n) to find new tail, total O(n)",
+        "spaceExplanation": "Only constant extra pointers used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* rotateRight(ListNode* head, int k) {\n        if (!head || !head->next || k == 0) return head;\n        \n        // Find length and tail\n        int length = 1;\n        ListNode* tail = head;\n        while (tail->next) {\n            tail = tail->next;\n            length++;\n        }\n        \n        // Optimize k\n        k = k % length;\n        if (k == 0) return head;\n        \n        // Form circle\n        tail->next = head;\n        \n        // Find new tail at position (length - k - 1)\n        ListNode* newTail = head;\n        for (int i = 0; i < length - k - 1; i++) {\n            newTail = newTail->next;\n        }\n        \n        // Break circle\n        ListNode* newHead = newTail->next;\n        newTail->next = nullptr;\n        \n        return newHead;\n    }\n};",
+        "java": "class Solution {\n    public ListNode rotateRight(ListNode head, int k) {\n        if (head == null || head.next == null || k == 0) return head;\n        \n        // Find length and tail\n        int length = 1;\n        ListNode tail = head;\n        while (tail.next != null) {\n            tail = tail.next;\n            length++;\n        }\n        \n        // Optimize k\n        k = k % length;\n        if (k == 0) return head;\n        \n        // Form circle\n        tail.next = head;\n        \n        // Find new tail at position (length - k - 1)\n        ListNode newTail = head;\n        for (int i = 0; i < length - k - 1; i++) {\n            newTail = newTail.next;\n        }\n        \n        // Break circle\n        ListNode newHead = newTail.next;\n        newTail.next = null;\n        \n        return newHead;\n    }\n}",
+        "python": "def rotateRight(head, k):\n    if not head or not head.next or k == 0:\n        return head\n    \n    # Find length and tail\n    length = 1\n    tail = head\n    while tail.next:\n        tail = tail.next\n        length += 1\n    \n    # Optimize k\n    k = k % length\n    if k == 0:\n        return head\n    \n    # Form circle\n    tail.next = head\n    \n    # Find new tail at position (length - k - 1)\n    new_tail = head\n    for _ in range(length - k - 1):\n        new_tail = new_tail.next\n    \n    # Break circle\n    new_head = new_tail.next\n    new_tail.next = None\n    \n    return new_head",
+        "javascript": "function rotateRight(head, k) {\n    if (!head || !head.next || k === 0) return head;\n    \n    // Find length and tail\n    let length = 1;\n    let tail = head;\n    while (tail.next) {\n        tail = tail.next;\n        length++;\n    }\n    \n    // Optimize k\n    k = k % length;\n    if (k === 0) return head;\n    \n    // Form circle\n    tail.next = head;\n    \n    // Find new tail at position (length - k - 1)\n    let newTail = head;\n    for (let i = 0; i < length - k - 1; i++) {\n        newTail = newTail.next;\n    }\n    \n    // Break circle\n    const newHead = newTail.next;\n    newTail.next = null;\n    \n    return newHead;\n}"
+      }
+    },
+    {
+      "name": "Two Pointer - Fast and Slow",
+      "order": 2,
+      "intuition": "Use two pointers separated by k nodes. Move both until fast reaches the end. The slow pointer will be at the new tail position. Reconnect the nodes appropriately.",
+      "approach": "After optimizing k, position fast pointer k nodes ahead of slow. Move both together until fast reaches tail. Slow is now at new tail. Reconnect: tail.next = head, return slow.next, set slow.next = null.",
+      "steps": [
+        "Handle edge cases",
+        "Count length and optimize k = k % length",
+        "If k = 0, return head",
+        "Position fast pointer k nodes ahead",
+        "Move both pointers until fast reaches tail",
+        "Reconnect: tail.next = head",
+        "newHead = slow.next",
+        "slow.next = null",
+        "Return newHead"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "O(n) to count length, O(n) for two-pointer traversal",
+        "spaceExplanation": "Only constant pointers"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* rotateRight(ListNode* head, int k) {\n        if (!head || !head->next || k == 0) return head;\n        \n        // Count length\n        int length = 0;\n        ListNode* curr = head;\n        ListNode* tail = nullptr;\n        while (curr) {\n            tail = curr;\n            curr = curr->next;\n            length++;\n        }\n        \n        k = k % length;\n        if (k == 0) return head;\n        \n        // Position fast k nodes ahead\n        ListNode* fast = head;\n        for (int i = 0; i < k; i++) {\n            fast = fast->next;\n        }\n        \n        // Move both until fast reaches end\n        ListNode* slow = head;\n        while (fast->next) {\n            slow = slow->next;\n            fast = fast->next;\n        }\n        \n        // Reconnect\n        ListNode* newHead = slow->next;\n        slow->next = nullptr;\n        fast->next = head;\n        \n        return newHead;\n    }\n};",
+        "java": "class Solution {\n    public ListNode rotateRight(ListNode head, int k) {\n        if (head == null || head.next == null || k == 0) return head;\n        \n        // Count length\n        int length = 0;\n        ListNode curr = head;\n        ListNode tail = null;\n        while (curr != null) {\n            tail = curr;\n            curr = curr.next;\n            length++;\n        }\n        \n        k = k % length;\n        if (k == 0) return head;\n        \n        // Position fast k nodes ahead\n        ListNode fast = head;\n        for (int i = 0; i < k; i++) {\n            fast = fast.next;\n        }\n        \n        // Move both until fast reaches end\n        ListNode slow = head;\n        while (fast.next != null) {\n            slow = slow.next;\n            fast = fast.next;\n        }\n        \n        // Reconnect\n        ListNode newHead = slow.next;\n        slow.next = null;\n        fast.next = head;\n        \n        return newHead;\n    }\n}",
+        "python": "def rotateRight(head, k):\n    if not head or not head.next or k == 0:\n        return head\n    \n    # Count length\n    length = 0\n    curr = head\n    tail = None\n    while curr:\n        tail = curr\n        curr = curr.next\n        length += 1\n    \n    k = k % length\n    if k == 0:\n        return head\n    \n    # Position fast k nodes ahead\n    fast = head\n    for _ in range(k):\n        fast = fast.next\n    \n    # Move both until fast reaches end\n    slow = head\n    while fast.next:\n        slow = slow.next\n        fast = fast.next\n    \n    # Reconnect\n    new_head = slow.next\n    slow.next = None\n    fast.next = head\n    \n    return new_head",
+        "javascript": "function rotateRight(head, k) {\n    if (!head || !head.next || k === 0) return head;\n    \n    // Count length\n    let length = 0;\n    let curr = head;\n    let tail = null;\n    while (curr) {\n        tail = curr;\n        curr = curr.next;\n        length++;\n    }\n    \n    k = k % length;\n    if (k === 0) return head;\n    \n    // Position fast k nodes ahead\n    let fast = head;\n    for (let i = 0; i < k; i++) {\n        fast = fast.next;\n    }\n    \n    // Move both until fast reaches end\n    let slow = head;\n    while (fast.next) {\n        slow = slow.next;\n        fast = fast.next;\n    }\n    \n    // Reconnect\n    const newHead = slow.next;\n    slow.next = null;\n    fast.next = head;\n    \n    return newHead;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling k > length (must use k % length)",
+    "Forgetting to check if k % length == 0 (no rotation needed)",
+    "Off-by-one errors when finding new tail position",
+    "Not breaking the circle after rotation",
+    "Forgetting edge cases: null, single node, k=0",
+    "Incorrectly calculating new tail position"
+  ],
+  "hints": [
+    "Rotating right by k is same as making (n-k)th node the new tail",
+    "Always optimize k using modulo: k = k % length",
+    "Consider forming a circle then breaking it at the right position",
+    "Two-pointer approach: keep k gap between pointers",
+    "The new head will be at position (n-k) from original head"
+  ],
+  "followUp": [
+    "What if you need to rotate left instead of right?",
+    "Can you do it in one pass without counting length first?",
+    "How would you rotate by k positions from a given node?",
+    "What if k is extremely large (optimize further)?",
+    "How to rotate doubly linked list?",
+    "Can you rotate in groups (rotate first k, then next k, etc.)?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Oracle",
+    "Uber"
+  ],
+  "tags": [
+    "Linked List",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Rotate Array",
+    "Reverse Linked List",
+    "Reverse Linked List II",
+    "Reorder List",
+    "Split Linked List in Parts",
+    "Reverse Nodes in k-Group"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ec9",
+  "questionSlug": "connect-level-order-siblings",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

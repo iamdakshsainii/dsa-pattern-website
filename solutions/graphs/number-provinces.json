@@ -1,0 +1,194 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ed5",
+  "questionSlug": "number-provinces",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/number-of-provinces/",
+    "videos": [
+      {
+        "title": "Number of Provinces - Graph DFS",
+        "url": "https://www.youtube.com/watch?v=ACzkVtewUYA",
+        "channel": "NeetCode",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "Number of Connected Components",
+        "url": "https://www.youtube.com/watch?v=0jNmHPfA_yE",
+        "channel": "takeUforward",
+        "duration": "12:40",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Number of Provinces Solution",
+        "url": "https://leetcode.com/problems/number-of-provinces/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Connected Components in Graph",
+        "url": "https://www.geeksforgeeks.org/connected-components-in-an-undirected-graph/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Number of Islands",
+        "url": "https://leetcode.com/problems/number-of-islands/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Friend Circles",
+        "url": "https://leetcode.com/problems/friend-circles/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use DFS/BFS or Union-Find to count connected components in an undirected graph. Key indicators: counting groups/clusters, adjacency matrix representation, finding number of disconnected subgraphs, connectivity problem.",
+  "approaches": [
+    {
+      "name": "DFS Approach",
+      "order": 1,
+      "intuition": "Each province is a connected component in the graph. Use DFS to mark all cities in a province as visited. Count how many times we need to start a new DFS (each start represents a new province).",
+      "approach": "For each unvisited city, perform DFS to mark all connected cities, increment province count.",
+      "steps": [
+        "Create visited array of size n (number of cities)",
+        "Initialize province count = 0",
+        "For each city i from 0 to n-1:",
+        "  If city i not visited:",
+        "    Increment province count",
+        "    Perform DFS from city i:",
+        "      Mark city as visited",
+        "      For each city j from 0 to n-1:",
+        "        If isConnected[i][j] == 1 and j not visited:",
+        "          Recursively DFS(j)",
+        "Return province count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "We visit each cell in the n×n adjacency matrix once",
+        "spaceExplanation": "Visited array of size n, recursion stack can go up to n deep"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findCircleNum(vector<vector<int>>& isConnected) {\n        int n = isConnected.size();\n        vector<bool> visited(n, false);\n        int provinces = 0;\n        \n        // Try to start DFS from each city\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                provinces++;\n                dfs(i, isConnected, visited);\n            }\n        }\n        \n        return provinces;\n    }\n    \nprivate:\n    void dfs(int city, vector<vector<int>>& isConnected, vector<bool>& visited) {\n        visited[city] = true;\n        \n        // Visit all connected cities\n        for (int j = 0; j < isConnected.size(); j++) {\n            if (isConnected[city][j] == 1 && !visited[j]) {\n                dfs(j, isConnected, visited);\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public int findCircleNum(int[][] isConnected) {\n        int n = isConnected.length;\n        boolean[] visited = new boolean[n];\n        int provinces = 0;\n        \n        // Try to start DFS from each city\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                provinces++;\n                dfs(i, isConnected, visited);\n            }\n        }\n        \n        return provinces;\n    }\n    \n    private void dfs(int city, int[][] isConnected, boolean[] visited) {\n        visited[city] = true;\n        \n        // Visit all connected cities\n        for (int j = 0; j < isConnected.length; j++) {\n            if (isConnected[city][j] == 1 && !visited[j]) {\n                dfs(j, isConnected, visited);\n            }\n        }\n    }\n}",
+        "python": "def find_circle_num(is_connected):\n    n = len(is_connected)\n    visited = [False] * n\n    provinces = 0\n    \n    def dfs(city):\n        visited[city] = True\n        \n        # Visit all connected cities\n        for j in range(n):\n            if is_connected[city][j] == 1 and not visited[j]:\n                dfs(j)\n    \n    # Try to start DFS from each city\n    for i in range(n):\n        if not visited[i]:\n            provinces += 1\n            dfs(i)\n    \n    return provinces",
+        "javascript": "function findCircleNum(isConnected) {\n    const n = isConnected.length;\n    const visited = new Array(n).fill(false);\n    let provinces = 0;\n    \n    function dfs(city) {\n        visited[city] = true;\n        \n        // Visit all connected cities\n        for (let j = 0; j < n; j++) {\n            if (isConnected[city][j] === 1 && !visited[j]) {\n                dfs(j);\n            }\n        }\n    }\n    \n    // Try to start DFS from each city\n    for (let i = 0; i < n; i++) {\n        if (!visited[i]) {\n            provinces++;\n            dfs(i);\n        }\n    }\n    \n    return provinces;\n}"
+      }
+    },
+    {
+      "name": "BFS Approach",
+      "order": 2,
+      "intuition": "Similar to DFS, but use BFS (queue) to explore each connected component. Each time we start a new BFS represents finding a new province.",
+      "approach": "For each unvisited city, perform BFS to mark all cities in the same province.",
+      "steps": [
+        "Create visited array of size n",
+        "Initialize province count = 0",
+        "For each city i from 0 to n-1:",
+        "  If city i not visited:",
+        "    Increment province count",
+        "    Create queue and add city i",
+        "    Mark i as visited",
+        "    While queue not empty:",
+        "      Dequeue city",
+        "      For each connected city j:",
+        "        If j not visited:",
+        "          Mark j as visited",
+        "          Enqueue j",
+        "Return province count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each cell in adjacency matrix once",
+        "spaceExplanation": "Queue and visited array each of size n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findCircleNum(vector<vector<int>>& isConnected) {\n        int n = isConnected.size();\n        vector<bool> visited(n, false);\n        int provinces = 0;\n        \n        // Try to start BFS from each city\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                provinces++;\n                queue<int> q;\n                q.push(i);\n                visited[i] = true;\n                \n                while (!q.empty()) {\n                    int city = q.front();\n                    q.pop();\n                    \n                    // Add all connected unvisited cities to queue\n                    for (int j = 0; j < n; j++) {\n                        if (isConnected[city][j] == 1 && !visited[j]) {\n                            visited[j] = true;\n                            q.push(j);\n                        }\n                    }\n                }\n            }\n        }\n        \n        return provinces;\n    }\n};",
+        "java": "class Solution {\n    public int findCircleNum(int[][] isConnected) {\n        int n = isConnected.length;\n        boolean[] visited = new boolean[n];\n        int provinces = 0;\n        \n        // Try to start BFS from each city\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                provinces++;\n                Queue<Integer> queue = new LinkedList<>();\n                queue.offer(i);\n                visited[i] = true;\n                \n                while (!queue.isEmpty()) {\n                    int city = queue.poll();\n                    \n                    // Add all connected unvisited cities to queue\n                    for (int j = 0; j < n; j++) {\n                        if (isConnected[city][j] == 1 && !visited[j]) {\n                            visited[j] = true;\n                            queue.offer(j);\n                        }\n                    }\n                }\n            }\n        }\n        \n        return provinces;\n    }\n}",
+        "python": "from collections import deque\n\ndef find_circle_num(is_connected):\n    n = len(is_connected)\n    visited = [False] * n\n    provinces = 0\n    \n    # Try to start BFS from each city\n    for i in range(n):\n        if not visited[i]:\n            provinces += 1\n            queue = deque([i])\n            visited[i] = True\n            \n            while queue:\n                city = queue.popleft()\n                \n                # Add all connected unvisited cities to queue\n                for j in range(n):\n                    if is_connected[city][j] == 1 and not visited[j]:\n                        visited[j] = True\n                        queue.append(j)\n    \n    return provinces",
+        "javascript": "function findCircleNum(isConnected) {\n    const n = isConnected.length;\n    const visited = new Array(n).fill(false);\n    let provinces = 0;\n    \n    // Try to start BFS from each city\n    for (let i = 0; i < n; i++) {\n        if (!visited[i]) {\n            provinces++;\n            const queue = [i];\n            visited[i] = true;\n            \n            while (queue.length > 0) {\n                const city = queue.shift();\n                \n                // Add all connected unvisited cities to queue\n                for (let j = 0; j < n; j++) {\n                    if (isConnected[city][j] === 1 && !visited[j]) {\n                        visited[j] = true;\n                        queue.push(j);\n                    }\n                }\n            }\n        }\n    }\n    \n    return provinces;\n}"
+      }
+    },
+    {
+      "name": "Union-Find (Optimal)",
+      "order": 3,
+      "intuition": "Use Union-Find to group cities into provinces. For each connection, union the two cities. At the end, count the number of distinct root parents.",
+      "approach": "Initialize each city as its own set. Union cities that are connected. Count distinct components.",
+      "steps": [
+        "Initialize parent[i] = i for all cities",
+        "Initialize rank[i] = 0 for all cities",
+        "Initialize province count = n",
+        "For each pair (i, j):",
+        "  If isConnected[i][j] == 1:",
+        "    If union(i, j) succeeds:",
+        "      Decrement province count",
+        "Return province count",
+        "Union returns true if i and j were in different sets"
+      ],
+      "complexity": {
+        "time": "O(n² * α(n))",
+        "space": "O(n)",
+        "timeExplanation": "Check all n² pairs, each union/find operation takes nearly constant time α(n)",
+        "spaceExplanation": "Parent and rank arrays each of size n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findCircleNum(vector<vector<int>>& isConnected) {\n        int n = isConnected.size();\n        parent.resize(n);\n        rank.resize(n, 0);\n        \n        // Initialize each city as its own parent\n        for (int i = 0; i < n; i++) {\n            parent[i] = i;\n        }\n        \n        int provinces = n;\n        \n        // Union connected cities\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (isConnected[i][j] == 1) {\n                    if (unionSets(i, j)) {\n                        provinces--;\n                    }\n                }\n            }\n        }\n        \n        return provinces;\n    }\n    \nprivate:\n    vector<int> parent;\n    vector<int> rank;\n    \n    int find(int x) {\n        if (parent[x] != x) {\n            parent[x] = find(parent[x]);\n        }\n        return parent[x];\n    }\n    \n    bool unionSets(int x, int y) {\n        int rootX = find(x);\n        int rootY = find(y);\n        \n        if (rootX == rootY) {\n            return false; // Already in same set\n        }\n        \n        // Union by rank\n        if (rank[rootX] < rank[rootY]) {\n            parent[rootX] = rootY;\n        } else if (rank[rootX] > rank[rootY]) {\n            parent[rootY] = rootX;\n        } else {\n            parent[rootY] = rootX;\n            rank[rootX]++;\n        }\n        \n        return true; // Successfully merged\n    }\n};",
+        "java": "class Solution {\n    private int[] parent;\n    private int[] rank;\n    \n    public int findCircleNum(int[][] isConnected) {\n        int n = isConnected.length;\n        parent = new int[n];\n        rank = new int[n];\n        \n        // Initialize each city as its own parent\n        for (int i = 0; i < n; i++) {\n            parent[i] = i;\n        }\n        \n        int provinces = n;\n        \n        // Union connected cities\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (isConnected[i][j] == 1) {\n                    if (union(i, j)) {\n                        provinces--;\n                    }\n                }\n            }\n        }\n        \n        return provinces;\n    }\n    \n    private int find(int x) {\n        if (parent[x] != x) {\n            parent[x] = find(parent[x]);\n        }\n        return parent[x];\n    }\n    \n    private boolean union(int x, int y) {\n        int rootX = find(x);\n        int rootY = find(y);\n        \n        if (rootX == rootY) {\n            return false; // Already in same set\n        }\n        \n        // Union by rank\n        if (rank[rootX] < rank[rootY]) {\n            parent[rootX] = rootY;\n        } else if (rank[rootX] > rank[rootY]) {\n            parent[rootY] = rootX;\n        } else {\n            parent[rootY] = rootX;\n            rank[rootX]++;\n        }\n        \n        return true; // Successfully merged\n    }\n}",
+        "python": "def find_circle_num(is_connected):\n    n = len(is_connected)\n    parent = list(range(n))\n    rank = [0] * n\n    \n    def find(x):\n        if parent[x] != x:\n            parent[x] = find(parent[x])\n        return parent[x]\n    \n    def union(x, y):\n        root_x = find(x)\n        root_y = find(y)\n        \n        if root_x == root_y:\n            return False  # Already in same set\n        \n        # Union by rank\n        if rank[root_x] < rank[root_y]:\n            parent[root_x] = root_y\n        elif rank[root_x] > rank[root_y]:\n            parent[root_y] = root_x\n        else:\n            parent[root_y] = root_x\n            rank[root_x] += 1\n        \n        return True  # Successfully merged\n    \n    provinces = n\n    \n    # Union connected cities\n    for i in range(n):\n        for j in range(i + 1, n):\n            if is_connected[i][j] == 1:\n                if union(i, j):\n                    provinces -= 1\n    \n    return provinces",
+        "javascript": "function findCircleNum(isConnected) {\n    const n = isConnected.length;\n    const parent = Array.from({ length: n }, (_, i) => i);\n    const rank = new Array(n).fill(0);\n    \n    function find(x) {\n        if (parent[x] !== x) {\n            parent[x] = find(parent[x]);\n        }\n        return parent[x];\n    }\n    \n    function union(x, y) {\n        const rootX = find(x);\n        const rootY = find(y);\n        \n        if (rootX === rootY) {\n            return false; // Already in same set\n        }\n        \n        // Union by rank\n        if (rank[rootX] < rank[rootY]) {\n            parent[rootX] = rootY;\n        } else if (rank[rootX] > rank[rootY]) {\n            parent[rootY] = rootX;\n        } else {\n            parent[rootY] = rootX;\n            rank[rootX]++;\n        }\n        \n        return true; // Successfully merged\n    }\n    \n    let provinces = n;\n    \n    // Union connected cities\n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            if (isConnected[i][j] === 1) {\n                if (union(i, j)) {\n                    provinces--;\n                }\n            }\n        }\n    }\n    \n    return provinces;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding that adjacency matrix is symmetric (isConnected[i][j] = isConnected[j][i])",
+    "Double counting when iterating through matrix (should check only upper or lower triangle)",
+    "Forgetting that isConnected[i][i] is always 1 (city connected to itself)",
+    "Not marking cities as visited in DFS/BFS",
+    "In Union-Find, not implementing path compression or union by rank",
+    "Counting the number of edges instead of connected components"
+  ],
+  "hints": [
+    "Each province is a connected component in the graph",
+    "You can use DFS, BFS, or Union-Find to solve this",
+    "Start a new DFS/BFS from each unvisited city",
+    "The adjacency matrix is symmetric - only check upper triangle",
+    "Union-Find is particularly elegant for this problem",
+    "Think about what happens when you visit all cities in one province"
+  ],
+  "followUp": [
+    "What if the graph is represented as an adjacency list instead?",
+    "How would you find the largest province?",
+    "Can you solve this with O(1) space? (modifying input is allowed)",
+    "What if you need to list all cities in each province?",
+    "How would you handle dynamic addition/removal of connections?",
+    "Can you solve this if the matrix is very sparse?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Oracle"
+  ],
+  "tags": [
+    "Graph",
+    "DFS",
+    "BFS",
+    "Union Find",
+    "Connected Components",
+    "Matrix"
+  ],
+  "relatedProblems": [
+    "Number of Islands",
+    "Number of Connected Components in an Undirected Graph",
+    "Friend Circles",
+    "Find if Path Exists in Graph",
+    "Accounts Merge"
+  ]
+}

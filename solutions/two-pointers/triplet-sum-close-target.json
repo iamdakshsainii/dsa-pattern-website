@@ -1,0 +1,136 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e7d",
+  "questionSlug": "triplet-sum-close-target",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/3sum-closest/",
+    "videos": [
+      {
+        "title": "3Sum Closest - Leetcode 16 - Python",
+        "url": "https://www.youtube.com/watch?v=qBr2hq4daWE",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "3 Sum Closest | Two Pointers",
+        "url": "https://www.youtube.com/watch?v=M5VSt-G7jGY",
+        "channel": "takeUforward",
+        "duration": "12:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "3Sum Closest Solution",
+        "url": "https://leetcode.com/problems/3sum-closest/solution/",
+        "source": "LeetCode Editorial"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/find-triplet-that-sum-to-a-given-value/",
+        "platform": "GeeksforGeeks"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Two Pointers when you need to find the closest sum or optimize for a target value in a sorted array.",
+  "approaches": [
+    {
+      "name": "Brute Force",
+      "order": 1,
+      "intuition": "Try all possible triplets and keep track of the one with sum closest to target.",
+      "approach": "Use three nested loops to check every combination and update the closest sum.",
+      "steps": [
+        "Initialize closestSum to a large value",
+        "Use three nested loops with indices i, j, k",
+        "For each triplet, calculate sum = nums[i] + nums[j] + nums[k]",
+        "If absolute difference |sum - target| is smaller than |closestSum - target|:",
+        "  Update closestSum = sum",
+        "Return closestSum"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(1)",
+        "timeExplanation": "Three nested loops iterate through all combinations",
+        "spaceExplanation": "Only a few variables used"
+      },
+      "code": {
+        "cpp": "int threeSumClosest(vector<int>& nums, int target) {\n    int n = nums.size();\n    int closestSum = nums[0] + nums[1] + nums[2];\n    \n    for (int i = 0; i < n - 2; i++) {\n        for (int j = i + 1; j < n - 1; j++) {\n            for (int k = j + 1; k < n; k++) {\n                int sum = nums[i] + nums[j] + nums[k];\n                \n                if (abs(sum - target) < abs(closestSum - target)) {\n                    closestSum = sum;\n                }\n                \n                if (closestSum == target) {\n                    return closestSum;\n                }\n            }\n        }\n    }\n    \n    return closestSum;\n}",
+        "java": "public int threeSumClosest(int[] nums, int target) {\n    int n = nums.length;\n    int closestSum = nums[0] + nums[1] + nums[2];\n    \n    for (int i = 0; i < n - 2; i++) {\n        for (int j = i + 1; j < n - 1; j++) {\n            for (int k = j + 1; k < n; k++) {\n                int sum = nums[i] + nums[j] + nums[k];\n                \n                if (Math.abs(sum - target) < Math.abs(closestSum - target)) {\n                    closestSum = sum;\n                }\n                \n                if (closestSum == target) {\n                    return closestSum;\n                }\n            }\n        }\n    }\n    \n    return closestSum;\n}",
+        "python": "def three_sum_closest(nums, target):\n    n = len(nums)\n    closest_sum = nums[0] + nums[1] + nums[2]\n    \n    for i in range(n - 2):\n        for j in range(i + 1, n - 1):\n            for k in range(j + 1, n):\n                current_sum = nums[i] + nums[j] + nums[k]\n                \n                if abs(current_sum - target) < abs(closest_sum - target):\n                    closest_sum = current_sum\n                \n                if closest_sum == target:\n                    return closest_sum\n    \n    return closest_sum",
+        "javascript": "function threeSumClosest(nums, target) {\n    const n = nums.length;\n    let closestSum = nums[0] + nums[1] + nums[2];\n    \n    for (let i = 0; i < n - 2; i++) {\n        for (let j = i + 1; j < n - 1; j++) {\n            for (let k = j + 1; k < n; k++) {\n                const sum = nums[i] + nums[j] + nums[k];\n                \n                if (Math.abs(sum - target) < Math.abs(closestSum - target)) {\n                    closestSum = sum;\n                }\n                \n                if (closestSum === target) {\n                    return closestSum;\n                }\n            }\n        }\n    }\n    \n    return closestSum;\n}"
+      }
+    },
+    {
+      "name": "Two Pointers (Optimal)",
+      "order": 2,
+      "intuition": "Sort the array and fix one element. Use two pointers on the remaining array to efficiently find the closest sum.",
+      "approach": "After sorting, iterate through each element and use two pointers to find the pair that makes the sum closest to target.",
+      "steps": [
+        "Sort the array",
+        "Initialize closestSum with first three elements",
+        "For each element at index i:",
+        "  Set left = i + 1, right = n - 1",
+        "  While left < right:",
+        "    Calculate sum = nums[i] + nums[left] + nums[right]",
+        "    If |sum - target| < |closestSum - target|:",
+        "      Update closestSum = sum",
+        "    If sum == target: return target (perfect match)",
+        "    If sum < target: increment left",
+        "    If sum > target: decrement right",
+        "Return closestSum"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "O(n log n) for sorting + O(n²) for the outer loop and two pointers",
+        "spaceExplanation": "O(1) excluding sorting space"
+      },
+      "code": {
+        "cpp": "int threeSumClosest(vector<int>& nums, int target) {\n    sort(nums.begin(), nums.end());\n    int n = nums.size();\n    int closestSum = nums[0] + nums[1] + nums[2];\n    \n    for (int i = 0; i < n - 2; i++) {\n        int left = i + 1, right = n - 1;\n        \n        while (left < right) {\n            int sum = nums[i] + nums[left] + nums[right];\n            \n            // Update closest sum if current sum is closer\n            if (abs(sum - target) < abs(closestSum - target)) {\n                closestSum = sum;\n            }\n            \n            // If we found exact target, return immediately\n            if (sum == target) {\n                return target;\n            }\n            \n            // Move pointers based on comparison with target\n            if (sum < target) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n    }\n    \n    return closestSum;\n}",
+        "java": "public int threeSumClosest(int[] nums, int target) {\n    Arrays.sort(nums);\n    int n = nums.length;\n    int closestSum = nums[0] + nums[1] + nums[2];\n    \n    for (int i = 0; i < n - 2; i++) {\n        int left = i + 1, right = n - 1;\n        \n        while (left < right) {\n            int sum = nums[i] + nums[left] + nums[right];\n            \n            // Update closest sum if current sum is closer\n            if (Math.abs(sum - target) < Math.abs(closestSum - target)) {\n                closestSum = sum;\n            }\n            \n            // If we found exact target, return immediately\n            if (sum == target) {\n                return target;\n            }\n            \n            // Move pointers based on comparison with target\n            if (sum < target) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n    }\n    \n    return closestSum;\n}",
+        "python": "def three_sum_closest(nums, target):\n    nums.sort()\n    n = len(nums)\n    closest_sum = nums[0] + nums[1] + nums[2]\n    \n    for i in range(n - 2):\n        left, right = i + 1, n - 1\n        \n        while left < right:\n            current_sum = nums[i] + nums[left] + nums[right]\n            \n            # Update closest sum if current sum is closer\n            if abs(current_sum - target) < abs(closest_sum - target):\n                closest_sum = current_sum\n            \n            # If we found exact target, return immediately\n            if current_sum == target:\n                return target\n            \n            # Move pointers based on comparison with target\n            if current_sum < target:\n                left += 1\n            else:\n                right -= 1\n    \n    return closest_sum",
+        "javascript": "function threeSumClosest(nums, target) {\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    let closestSum = nums[0] + nums[1] + nums[2];\n    \n    for (let i = 0; i < n - 2; i++) {\n        let left = i + 1, right = n - 1;\n        \n        while (left < right) {\n            const sum = nums[i] + nums[left] + nums[right];\n            \n            // Update closest sum if current sum is closer\n            if (Math.abs(sum - target) < Math.abs(closestSum - target)) {\n                closestSum = sum;\n            }\n            \n            // If we found exact target, return immediately\n            if (sum === target) {\n                return target;\n            }\n            \n            // Move pointers based on comparison with target\n            if (sum < target) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n    }\n    \n    return closestSum;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not initializing closestSum properly (should use first three elements)",
+    "Forgetting to sort the array before using two pointers",
+    "Not returning immediately when exact target is found",
+    "Using wrong comparison logic for moving pointers",
+    "Integer overflow when calculating differences (use abs carefully)"
+  ],
+  "hints": [
+    "Sort the array first to enable the two pointers technique",
+    "For each fixed element, the problem becomes finding the closest two-sum",
+    "If the current sum equals the target, you can return immediately",
+    "Move the left pointer right if sum is too small, move right pointer left if sum is too large"
+  ],
+  "followUp": [
+    "What if the array can contain duplicates? How would you optimize?",
+    "Can you solve this without sorting?",
+    "What if you need to find k numbers (not just 3) whose sum is closest to target?",
+    "How would you handle very large numbers that might cause overflow?"
+  ],
+  "companies": [
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Bloomberg"
+  ],
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Sorting"
+  ],
+  "relatedProblems": [
+    "3Sum",
+    "4Sum",
+    "Two Sum",
+    "3Sum Smaller"
+  ]
+}

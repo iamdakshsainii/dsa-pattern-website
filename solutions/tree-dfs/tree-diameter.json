@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ed0",
+  "questionSlug": "tree-diameter",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/diameter-of-binary-tree/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

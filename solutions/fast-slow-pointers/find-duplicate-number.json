@@ -1,0 +1,185 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e87",
+  "questionSlug": "find-duplicate-number",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-the-duplicate-number/",
+    "videos": [
+      {
+        "title": "Find the Duplicate Number - Floyd's Algorithm",
+        "url": "https://www.youtube.com/watch?v=wjYnzkAhcNk",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Find Duplicate in Array using Cycle Detection",
+        "url": "https://www.youtube.com/watch?v=32Ll35mhWg0",
+        "channel": "takeUforward",
+        "duration": "12:40",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find the Duplicate Number Solution",
+        "url": "https://leetcode.com/problems/find-the-duplicate-number/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Find Duplicate in Array",
+        "url": "https://www.geeksforgeeks.org/find-duplicates-in-on-time-and-constant-extra-space/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Missing Number",
+        "url": "https://leetcode.com/problems/missing-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Set Mismatch",
+        "url": "https://leetcode.com/problems/set-mismatch/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Fast & Slow Pointers (Floyd's Algorithm) when array contains n+1 integers where each integer is between 1 and n, indicating one duplicate. Key indicators: values can be treated as indices creating linked list, must not modify array, O(1) space required, detecting duplicate in constrained array.",
+  "approaches": [
+    {
+      "name": "Sorting",
+      "order": 1,
+      "intuition": "Sort the array and find adjacent duplicate elements. The duplicate will appear consecutively after sorting.",
+      "approach": "Sort array and check each adjacent pair for duplicates.",
+      "steps": [
+        "Sort the array",
+        "Iterate through array from index 1 to n:",
+        "  If nums[i] equals nums[i-1]:",
+        "    Return nums[i] (duplicate found)",
+        "Return -1 (should not reach)"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1) or O(n)",
+        "timeExplanation": "Sorting takes O(n log n) time, then O(n) for linear scan",
+        "spaceExplanation": "O(1) if sorting in-place, O(n) if using additional space. Note: modifies original array."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findDuplicate(vector<int>& nums) {\n        // Sort the array\n        sort(nums.begin(), nums.end());\n        \n        // Find adjacent duplicates\n        for (int i = 1; i < nums.size(); i++) {\n            if (nums[i] == nums[i - 1]) {\n                return nums[i];\n            }\n        }\n        \n        return -1; // Should never reach here\n    }\n};",
+        "java": "class Solution {\n    public int findDuplicate(int[] nums) {\n        // Sort the array\n        Arrays.sort(nums);\n        \n        // Find adjacent duplicates\n        for (int i = 1; i < nums.length; i++) {\n            if (nums[i] == nums[i - 1]) {\n                return nums[i];\n            }\n        }\n        \n        return -1; // Should never reach here\n    }\n}",
+        "python": "def find_duplicate(nums):\n    # Sort the array\n    nums.sort()\n    \n    # Find adjacent duplicates\n    for i in range(1, len(nums)):\n        if nums[i] == nums[i - 1]:\n            return nums[i]\n    \n    return -1  # Should never reach here",
+        "javascript": "function findDuplicate(nums) {\n    // Sort the array\n    nums.sort((a, b) => a - b);\n    \n    // Find adjacent duplicates\n    for (let i = 1; i < nums.length; i++) {\n        if (nums[i] === nums[i - 1]) {\n            return nums[i];\n        }\n    }\n    \n    return -1; // Should never reach here\n}"
+      }
+    },
+    {
+      "name": "Hash Set",
+      "order": 2,
+      "intuition": "Track seen numbers in a hash set. The first number we see twice is the duplicate.",
+      "approach": "Iterate through array and add each number to hash set. If number already exists, it's the duplicate.",
+      "steps": [
+        "Create empty hash set",
+        "For each number in array:",
+        "  If number exists in set:",
+        "    Return number (duplicate found)",
+        "  Add number to set",
+        "Return -1 (should not reach)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array with O(1) hash set operations",
+        "spaceExplanation": "Hash set can store up to n elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findDuplicate(vector<int>& nums) {\n        unordered_set<int> seen;\n        \n        for (int num : nums) {\n            // If already seen, it's the duplicate\n            if (seen.count(num)) {\n                return num;\n            }\n            seen.insert(num);\n        }\n        \n        return -1; // Should never reach here\n    }\n};",
+        "java": "class Solution {\n    public int findDuplicate(int[] nums) {\n        Set<Integer> seen = new HashSet<>();\n        \n        for (int num : nums) {\n            // If already seen, it's the duplicate\n            if (seen.contains(num)) {\n                return num;\n            }\n            seen.add(num);\n        }\n        \n        return -1; // Should never reach here\n    }\n}",
+        "python": "def find_duplicate(nums):\n    seen = set()\n    \n    for num in nums:\n        # If already seen, it's the duplicate\n        if num in seen:\n            return num\n        seen.add(num)\n    \n    return -1  # Should never reach here",
+        "javascript": "function findDuplicate(nums) {\n    const seen = new Set();\n    \n    for (const num of nums) {\n        // If already seen, it's the duplicate\n        if (seen.has(num)) {\n            return num;\n        }\n        seen.add(num);\n    }\n    \n    return -1; // Should never reach here\n}"
+      }
+    },
+    {
+      "name": "Floyd's Cycle Detection (Optimal)",
+      "order": 3,
+      "intuition": "Treat array as a linked list where nums[i] points to index nums[i]. Since there's a duplicate, there must be a cycle. Use Floyd's algorithm to find the cycle entrance, which is the duplicate number. This works because the duplicate value creates multiple 'pointers' to the same index.",
+      "approach": "Phase 1: Detect cycle using fast and slow pointers. Phase 2: Find cycle entrance (the duplicate) by moving one pointer to start.",
+      "steps": [
+        "Phase 1: Find intersection point in cycle",
+        "  Initialize slow = nums[0], fast = nums[0]",
+        "  Do-while loop:",
+        "    slow = nums[slow] (move 1 step)",
+        "    fast = nums[nums[fast]] (move 2 steps)",
+        "    Until slow equals fast",
+        "Phase 2: Find entrance to cycle (duplicate)",
+        "  Initialize slow = nums[0]",
+        "  While slow not equals fast:",
+        "    slow = nums[slow]",
+        "    fast = nums[fast]",
+        "  Return slow (or fast, they're equal)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Phase 1 takes O(n) to find intersection, Phase 2 takes O(n) to find entrance. Total O(n).",
+        "spaceExplanation": "Only using two pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findDuplicate(vector<int>& nums) {\n        // Phase 1: Find intersection point in cycle\n        int slow = nums[0];\n        int fast = nums[0];\n        \n        do {\n            slow = nums[slow];           // Move 1 step\n            fast = nums[nums[fast]];     // Move 2 steps\n        } while (slow != fast);\n        \n        // Phase 2: Find entrance to cycle (duplicate number)\n        slow = nums[0];\n        while (slow != fast) {\n            slow = nums[slow];\n            fast = nums[fast];\n        }\n        \n        return slow;\n    }\n};",
+        "java": "class Solution {\n    public int findDuplicate(int[] nums) {\n        // Phase 1: Find intersection point in cycle\n        int slow = nums[0];\n        int fast = nums[0];\n        \n        do {\n            slow = nums[slow];           // Move 1 step\n            fast = nums[nums[fast]];     // Move 2 steps\n        } while (slow != fast);\n        \n        // Phase 2: Find entrance to cycle (duplicate number)\n        slow = nums[0];\n        while (slow != fast) {\n            slow = nums[slow];\n            fast = nums[fast];\n        }\n        \n        return slow;\n    }\n}",
+        "python": "def find_duplicate(nums):\n    # Phase 1: Find intersection point in cycle\n    slow = nums[0]\n    fast = nums[0]\n    \n    while True:\n        slow = nums[slow]           # Move 1 step\n        fast = nums[nums[fast]]     # Move 2 steps\n        if slow == fast:\n            break\n    \n    # Phase 2: Find entrance to cycle (duplicate number)\n    slow = nums[0]\n    while slow != fast:\n        slow = nums[slow]\n        fast = nums[fast]\n    \n    return slow",
+        "javascript": "function findDuplicate(nums) {\n    // Phase 1: Find intersection point in cycle\n    let slow = nums[0];\n    let fast = nums[0];\n    \n    do {\n        slow = nums[slow];           // Move 1 step\n        fast = nums[nums[fast]];     // Move 2 steps\n    } while (slow !== fast);\n    \n    // Phase 2: Find entrance to cycle (duplicate number)\n    slow = nums[0];\n    while (slow !== fast) {\n        slow = nums[slow];\n        fast = nums[fast];\n    }\n    \n    return slow;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding why array can be treated as linked list (values are indices)",
+    "Starting both pointers at index 0 instead of nums[0]",
+    "Forgetting Phase 2 of Floyd's algorithm (finding cycle entrance)",
+    "Using regular while loop instead of do-while in Phase 1",
+    "Moving pointers by indices instead of values (nums[i] not i)",
+    "Modifying the array when problem states you cannot"
+  ],
+  "hints": [
+    "Think of the array as a linked list where nums[i] is a pointer to index nums[i]",
+    "If there's a duplicate, multiple indices point to the same value, creating a cycle",
+    "Can you use the cycle detection algorithm from linked list problems?",
+    "The duplicate number is the entrance to the cycle",
+    "Phase 1: Detect cycle. Phase 2: Find where cycle begins",
+    "Why does the entrance to the cycle correspond to the duplicate?"
+  ],
+  "followUp": [
+    "Can you prove why Floyd's algorithm finds the duplicate?",
+    "What if there are multiple duplicates?",
+    "How would you find all duplicates in the array?",
+    "Can you solve this if numbers are in range [0, n] instead of [1, n]?",
+    "What if you're allowed to modify the array?",
+    "How would you handle negative numbers?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn",
+    "Uber",
+    "Oracle"
+  ],
+  "tags": [
+    "Array",
+    "Fast & Slow Pointers",
+    "Two Pointers",
+    "Binary Search",
+    "Bit Manipulation",
+    "Cycle Detection"
+  ],
+  "relatedProblems": [
+    "Missing Number",
+    "Find All Duplicates in an Array",
+    "Set Mismatch",
+    "Linked List Cycle II",
+    "First Missing Positive"
+  ]
+}

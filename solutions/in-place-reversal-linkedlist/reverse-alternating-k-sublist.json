@@ -1,0 +1,169 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eb3",
+  "questionSlug": "reverse-alternating-k-sublist",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/reverse-alternate-k-nodes-in-a-singly-linked-list/",
+    "videos": [
+      {
+        "title": "Reverse Alternate K Nodes in Linked List",
+        "url": "https://www.youtube.com/watch?v=CR2nzXN5qT0",
+        "channel": "TECH DOSE",
+        "duration": "15:30",
+        "language": "English"
+      },
+      {
+        "title": "Reverse Alternate Groups in Linked List",
+        "url": "https://www.youtube.com/watch?v=9M_Q1SV9F80",
+        "channel": "Pepcoding",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Linked List: Reverse Alternate K",
+        "url": "https://www.youtube.com/watch?v=qf6qp7GzD5Q",
+        "channel": "GeeksforGeeks",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Reverse Alternate K Nodes",
+        "url": "https://www.geeksforgeeks.org/reverse-alternate-k-nodes-in-a-singly-linked-list/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Reverse Alternate Groups in Linked List",
+        "url": "https://www.interviewbit.com/problems/reverse-alternate-k-nodes/",
+        "source": "InterviewBit"
+      },
+      {
+        "title": "Advanced Linked List Reversal Patterns",
+        "url": "https://www.educative.io/courses/grokking-coding-interview-patterns/reverse-alternating-k-element-sub-list",
+        "source": "Educative"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Reverse Nodes in k-Group",
+        "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Linked List II",
+        "url": "https://leetcode.com/problems/reverse-linked-list-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Swap Nodes in Pairs",
+        "url": "https://leetcode.com/problems/swap-nodes-in-pairs/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Nodes in Even Length Groups",
+        "url": "https://leetcode.com/problems/reverse-nodes-in-even-length-groups/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use In-place Reversal pattern when asked to reverse alternate groups of k nodes in linked list. Key indicators: reverse every other k-group, skip k nodes then reverse next k nodes, alternating reversal pattern, maintain O(1) space.",
+  "approaches": [
+    {
+      "name": "Iterative with Alternating Groups",
+      "order": 1,
+      "intuition": "Process the list in cycles of 2k nodes. For each cycle: reverse first k nodes (if they exist), then skip next k nodes. Repeat this pattern. The challenge is maintaining connections between reversed and non-reversed sections.",
+      "approach": "Use dummy node for easier handling. Alternate between reversing k nodes and skipping k nodes. Keep track of previous group end to reconnect. Continue until list ends.",
+      "steps": [
+        "Create dummy node pointing to head",
+        "Initialize prev = dummy",
+        "While nodes remain:",
+        "  Phase 1: Reverse next k nodes (if available)",
+        "  Phase 2: Skip next k nodes (if available)",
+        "Return dummy.next"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Visit each node once, O(n) where n is list length",
+        "spaceExplanation": "Only constant extra pointers used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseAlternateKGroup(ListNode* head, int k) {\n        if (!head || k == 1) return head;\n        \n        ListNode* dummy = new ListNode(0);\n        dummy->next = head;\n        ListNode* prev = dummy;\n        \n        while (true) {\n            ListNode* kth = getKth(prev, k);\n            if (!kth) break;\n            \n            ListNode* groupNext = kth->next;\n            ListNode* reversePrev = kth->next;\n            ListNode* curr = prev->next;\n            \n            while (curr != groupNext) {\n                ListNode* tmp = curr->next;\n                curr->next = reversePrev;\n                reversePrev = curr;\n                curr = tmp;\n            }\n            \n            ListNode* tail = prev->next;\n            prev->next = kth;\n            prev = tail;\n            \n            for (int i = 0; i < k && prev->next; i++) {\n                prev = prev->next;\n            }\n        }\n        \n        return dummy->next;\n    }\n    \n    ListNode* getKth(ListNode* curr, int k) {\n        while (curr && k > 0) {\n            curr = curr->next;\n            k--;\n        }\n        return curr;\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseAlternateKGroup(ListNode head, int k) {\n        if (head == null || k == 1) return head;\n        \n        ListNode dummy = new ListNode(0);\n        dummy.next = head;\n        ListNode prev = dummy;\n        \n        while (true) {\n            ListNode kth = getKth(prev, k);\n            if (kth == null) break;\n            \n            ListNode groupNext = kth.next;\n            ListNode reversePrev = kth.next;\n            ListNode curr = prev.next;\n            \n            while (curr != groupNext) {\n                ListNode tmp = curr.next;\n                curr.next = reversePrev;\n                reversePrev = curr;\n                curr = tmp;\n            }\n            \n            ListNode tail = prev.next;\n            prev.next = kth;\n            prev = tail;\n            \n            for (int i = 0; i < k && prev.next != null; i++) {\n                prev = prev.next;\n            }\n        }\n        \n        return dummy.next;\n    }\n    \n    private ListNode getKth(ListNode curr, int k) {\n        while (curr != null && k > 0) {\n            curr = curr.next;\n            k--;\n        }\n        return curr;\n    }\n}",
+        "python": "def reverseAlternateKGroup(head, k):\n    if not head or k == 1:\n        return head\n    \n    dummy = ListNode(0)\n    dummy.next = head\n    prev = dummy\n    \n    def get_kth(curr, k):\n        while curr and k > 0:\n            curr = curr.next\n            k -= 1\n        return curr\n    \n    while True:\n        kth = get_kth(prev, k)\n        if not kth:\n            break\n        \n        group_next = kth.next\n        reverse_prev = kth.next\n        curr = prev.next\n        \n        while curr != group_next:\n            tmp = curr.next\n            curr.next = reverse_prev\n            reverse_prev = curr\n            curr = tmp\n        \n        tail = prev.next\n        prev.next = kth\n        prev = tail\n        \n        for _ in range(k):\n            if not prev.next:\n                break\n            prev = prev.next\n    \n    return dummy.next",
+        "javascript": "function reverseAlternateKGroup(head, k) {\n    if (!head || k === 1) return head;\n    \n    const dummy = new ListNode(0);\n    dummy.next = head;\n    let prev = dummy;\n    \n    function getKth(curr, k) {\n        while (curr && k > 0) {\n            curr = curr.next;\n            k--;\n        }\n        return curr;\n    }\n    \n    while (true) {\n        const kth = getKth(prev, k);\n        if (!kth) break;\n        \n        const groupNext = kth.next;\n        let reversePrev = kth.next;\n        let curr = prev.next;\n        \n        while (curr !== groupNext) {\n            const tmp = curr.next;\n            curr.next = reversePrev;\n            reversePrev = curr;\n            curr = tmp;\n        }\n        \n        const tail = prev.next;\n        prev.next = kth;\n        prev = tail;\n        \n        for (let i = 0; i < k && prev.next; i++) {\n            prev = prev.next;\n        }\n    }\n    \n    return dummy.next;\n}"
+      }
+    },
+    {
+      "name": "Recursive Approach",
+      "order": 2,
+      "intuition": "Reverse first k nodes, skip next k nodes, then recursively handle the rest. The recursion naturally alternates between reversing and skipping. Base case is when fewer than k nodes remain.",
+      "approach": "Count k nodes. If available, reverse them. Then skip k nodes by moving pointer forward. Recursively call on remaining list. Connect reversed section, skipped section, and recursive result.",
+      "steps": [
+        "Check if k nodes exist from head",
+        "If no, return head (base case)",
+        "Reverse first k nodes, track new head and tail",
+        "Skip next k nodes (or reach end if fewer)",
+        "Recursively reverse alternate groups",
+        "Connect sections properly",
+        "Return new head of reversed section"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n/2k)",
+        "timeExplanation": "Visit each node once, O(n) total",
+        "spaceExplanation": "Recursion depth is O(n/2k) since we process 2k nodes per call"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseAlternateKGroup(ListNode* head, int k) {\n        ListNode* check = head;\n        int count = 0;\n        while (check && count < k) {\n            check = check->next;\n            count++;\n        }\n        \n        if (count < k) return head;\n        \n        ListNode* prev = nullptr;\n        ListNode* curr = head;\n        for (int i = 0; i < k; i++) {\n            ListNode* next = curr->next;\n            curr->next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        ListNode* skipTail = curr;\n        for (int i = 0; i < k - 1 && skipTail; i++) {\n            skipTail = skipTail->next;\n        }\n        \n        if (skipTail) {\n            head->next = skipTail->next;\n            skipTail->next = reverseAlternateKGroup(skipTail->next, k);\n        } else {\n            head->next = curr;\n        }\n        \n        return prev;\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseAlternateKGroup(ListNode head, int k) {\n        ListNode check = head;\n        int count = 0;\n        while (check != null && count < k) {\n            check = check.next;\n            count++;\n        }\n        \n        if (count < k) return head;\n        \n        ListNode prev = null;\n        ListNode curr = head;\n        for (int i = 0; i < k; i++) {\n            ListNode next = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        ListNode skipTail = curr;\n        for (int i = 0; i < k - 1 && skipTail != null; i++) {\n            skipTail = skipTail.next;\n        }\n        \n        if (skipTail != null) {\n            head.next = skipTail.next;\n            skipTail.next = reverseAlternateKGroup(skipTail.next, k);\n        } else {\n            head.next = curr;\n        }\n        \n        return prev;\n    }\n}",
+        "python": "def reverseAlternateKGroup(head, k):\n    check = head\n    count = 0\n    while check and count < k:\n        check = check.next\n        count += 1\n    \n    if count < k:\n        return head\n    \n    prev = None\n    curr = head\n    for _ in range(k):\n        next_node = curr.next\n        curr.next = prev\n        prev = curr\n        curr = next_node\n    \n    skip_tail = curr\n    for _ in range(k - 1):\n        if not skip_tail:\n            break\n        skip_tail = skip_tail.next\n    \n    if skip_tail:\n        head.next = skip_tail.next\n        skip_tail.next = reverseAlternateKGroup(skip_tail.next, k)\n    else:\n        head.next = curr\n    \n    return prev",
+        "javascript": "function reverseAlternateKGroup(head, k) {\n    let check = head;\n    let count = 0;\n    while (check && count < k) {\n        check = check.next;\n        count++;\n    }\n    \n    if (count < k) return head;\n    \n    let prev = null;\n    let curr = head;\n    for (let i = 0; i < k; i++) {\n        const next = curr.next;\n        curr.next = prev;\n        prev = curr;\n        curr = next;\n    }\n    \n    let skipTail = curr;\n    for (let i = 0; i < k - 1 && skipTail; i++) {\n        skipTail = skipTail.next;\n    }\n    \n    if (skipTail) {\n        head.next = skipTail.next;\n        skipTail.next = reverseAlternateKGroup(skipTail.next, k);\n    } else {\n        head.next = curr;\n    }\n    \n    return prev;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to skip k nodes after reversing",
+    "Not handling case where skipping goes past end of list",
+    "Losing connection between reversed and skipped sections",
+    "Off-by-one errors when counting k nodes",
+    "Not checking if k nodes exist before reversal",
+    "Incorrectly reconnecting sections"
+  ],
+  "hints": [
+    "Think in cycles: reverse k nodes, skip k nodes, repeat",
+    "Maintain connections between three sections",
+    "Use helper function to check if k nodes exist",
+    "Skip phase is simpler - just move pointer forward k times",
+    "For recursion, process 2k nodes in each call"
+  ],
+  "followUp": [
+    "What if you need to reverse k nodes and skip m nodes (different values)?",
+    "Can you modify to skip first k and reverse next k?",
+    "How to handle remaining nodes < k differently?",
+    "What if k can vary for each cycle?",
+    "Can you do it with tail recursion?",
+    "How for doubly linked list?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Adobe",
+    "Oracle",
+    "Samsung"
+  ],
+  "tags": [
+    "Linked List",
+    "Recursion",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Reverse Nodes in k-Group",
+    "Reverse Linked List II",
+    "Reverse Linked List",
+    "Swap Nodes in Pairs",
+    "Reverse Nodes in Even Length Groups",
+    "Reorder List"
+  ]}

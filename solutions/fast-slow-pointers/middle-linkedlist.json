@@ -1,0 +1,151 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e88",
+  "questionSlug": "middle-linkedlist",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/middle-of-the-linked-list/",
+    "videos": [
+      {
+        "title": "Middle of Linked List - Fast & Slow Pointers",
+        "url": "https://www.youtube.com/watch?v=A2_ldqM4QcY",
+        "channel": "NeetCode",
+        "duration": "4:12",
+        "language": "English"
+      },
+      {
+        "title": "Find Middle of Linked List",
+        "url": "https://www.youtube.com/watch?v=7LjQ57RqgEc",
+        "channel": "takeUforward",
+        "duration": "8:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Middle of the Linked List Solution",
+        "url": "https://leetcode.com/problems/middle-of-the-linked-list/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Find Middle of Linked List",
+        "url": "https://www.geeksforgeeks.org/write-a-c-function-to-print-the-middle-of-the-linked-list/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Palindrome Linked List",
+        "url": "https://leetcode.com/problems/palindrome-linked-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reorder List",
+        "url": "https://leetcode.com/problems/reorder-list/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Fast & Slow Pointers when you need to find the middle of a linked list in one pass. Key indicators: linked list traversal, finding middle element, O(1) space requirement, single pass constraint.",
+  "approaches": [
+    {
+      "name": "Two Pass (Count and Traverse)",
+      "order": 1,
+      "intuition": "First count the total number of nodes, then traverse to the middle (count/2) position.",
+      "approach": "Make two passes: first to count nodes, second to reach the middle node.",
+      "steps": [
+        "First pass: Count total nodes",
+        "  Initialize count = 0",
+        "  Traverse from head and increment count",
+        "Second pass: Go to middle",
+        "  Calculate middle = count / 2",
+        "  Start from head",
+        "  Move middle steps forward",
+        "  Return current node"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through linked list: O(n) + O(n/2) = O(n)",
+        "spaceExplanation": "Only using counter and pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* middleNode(ListNode* head) {\n        // First pass: count nodes\n        int count = 0;\n        ListNode* current = head;\n        while (current != nullptr) {\n            count++;\n            current = current->next;\n        }\n        \n        // Second pass: go to middle\n        int middle = count / 2;\n        current = head;\n        for (int i = 0; i < middle; i++) {\n            current = current->next;\n        }\n        \n        return current;\n    }\n};",
+        "java": "class Solution {\n    public ListNode middleNode(ListNode head) {\n        // First pass: count nodes\n        int count = 0;\n        ListNode current = head;\n        while (current != null) {\n            count++;\n            current = current.next;\n        }\n        \n        // Second pass: go to middle\n        int middle = count / 2;\n        current = head;\n        for (int i = 0; i < middle; i++) {\n            current = current.next;\n        }\n        \n        return current;\n    }\n}",
+        "python": "def middle_node(head):\n    # First pass: count nodes\n    count = 0\n    current = head\n    while current:\n        count += 1\n        current = current.next\n    \n    # Second pass: go to middle\n    middle = count // 2\n    current = head\n    for _ in range(middle):\n        current = current.next\n    \n    return current",
+        "javascript": "function middleNode(head) {\n    // First pass: count nodes\n    let count = 0;\n    let current = head;\n    while (current !== null) {\n        count++;\n        current = current.next;\n    }\n    \n    // Second pass: go to middle\n    const middle = Math.floor(count / 2);\n    current = head;\n    for (let i = 0; i < middle; i++) {\n        current = current.next;\n    }\n    \n    return current;\n}"
+      }
+    },
+    {
+      "name": "Fast & Slow Pointers (Optimal)",
+      "order": 2,
+      "intuition": "Use two pointers moving at different speeds. When the fast pointer (moving 2 steps) reaches the end, the slow pointer (moving 1 step) will be at the middle. This finds the middle in a single pass.",
+      "approach": "Move slow pointer one step and fast pointer two steps simultaneously. When fast reaches end, slow is at middle.",
+      "steps": [
+        "Initialize slow and fast pointers to head",
+        "While fast is not null and fast.next is not null:",
+        "  Move slow one step: slow = slow.next",
+        "  Move fast two steps: fast = fast.next.next",
+        "Return slow (it's at the middle)",
+        "For even length: returns second middle node"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through linked list. Fast pointer traverses n/2 nodes, slow pointer also traverses n/2 nodes.",
+        "spaceExplanation": "Only using two pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* middleNode(ListNode* head) {\n        // Initialize both pointers at head\n        ListNode* slow = head;\n        ListNode* fast = head;\n        \n        // Move fast by 2 and slow by 1\n        while (fast != nullptr && fast->next != nullptr) {\n            slow = slow->next;           // Move slow by 1\n            fast = fast->next->next;     // Move fast by 2\n        }\n        \n        // When fast reaches end, slow is at middle\n        return slow;\n    }\n};",
+        "java": "class Solution {\n    public ListNode middleNode(ListNode head) {\n        // Initialize both pointers at head\n        ListNode slow = head;\n        ListNode fast = head;\n        \n        // Move fast by 2 and slow by 1\n        while (fast != null && fast.next != null) {\n            slow = slow.next;           // Move slow by 1\n            fast = fast.next.next;      // Move fast by 2\n        }\n        \n        // When fast reaches end, slow is at middle\n        return slow;\n    }\n}",
+        "python": "def middle_node(head):\n    # Initialize both pointers at head\n    slow = head\n    fast = head\n    \n    # Move fast by 2 and slow by 1\n    while fast and fast.next:\n        slow = slow.next           # Move slow by 1\n        fast = fast.next.next      # Move fast by 2\n    \n    # When fast reaches end, slow is at middle\n    return slow",
+        "javascript": "function middleNode(head) {\n    // Initialize both pointers at head\n    let slow = head;\n    let fast = head;\n    \n    // Move fast by 2 and slow by 1\n    while (fast !== null && fast.next !== null) {\n        slow = slow.next;           // Move slow by 1\n        fast = fast.next.next;      // Move fast by 2\n    }\n    \n    // When fast reaches end, slow is at middle\n    return slow;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking fast.next before moving fast two steps (null pointer exception)",
+    "Returning the node before middle when list has even length",
+    "Starting pointers at different positions",
+    "Not handling empty list or single node",
+    "Confusing which middle node to return for even-length lists",
+    "Moving both pointers at the same speed"
+  ],
+  "hints": [
+    "Can you find the middle in a single pass?",
+    "What if one pointer moves twice as fast as another?",
+    "When the faster pointer reaches the end, where will the slower pointer be?",
+    "For a list of length n, when fast has moved n steps, how many steps has slow moved?",
+    "The fast pointer reaches the end in n/2 iterations",
+    "For even-length lists, return the second middle node"
+  ],
+  "followUp": [
+    "How would you return the first middle node for even-length lists?",
+    "Can you delete the middle node using this approach?",
+    "How would you find the node at 1/3rd position?",
+    "What if you need to find the kth node from the end?",
+    "Can you extend this to find any fractional position?",
+    "How would you find both middle nodes for even-length lists?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Oracle"
+  ],
+  "tags": [
+    "Linked List",
+    "Fast & Slow Pointers",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Linked List Cycle",
+    "Palindrome Linked List",
+    "Reorder List",
+    "Delete Middle Node of Linked List",
+    "Remove Nth Node From End of List"
+  ]
+}

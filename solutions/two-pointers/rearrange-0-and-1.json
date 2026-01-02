@@ -1,0 +1,155 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e79",
+  "questionSlug": "rearrange-0-and-1",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/problems/segregate-0s-and-1s5106/1",
+    "videos": [
+      {
+        "title": "Segregate 0s and 1s in an Array",
+        "url": "https://www.youtube.com/watch?v=rNbzg5UPFWQ",
+        "channel": "GeeksforGeeks",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Two Pointer Approach to Segregate 0s and 1s",
+        "url": "https://www.youtube.com/watch?v=6vU-FqgRw_Q",
+        "channel": "Pepcoding",
+        "duration": "10:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Segregate 0s and 1s in Array",
+        "url": "https://www.geeksforgeeks.org/segregate-0s-and-1s-in-an-array-by-traversing-array-once/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/problems/segregate-0s-and-1s5106/1",
+        "platform": "GeeksforGeeks"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Two Pointers when partitioning array into two sections based on a condition. Similar to Dutch National Flag but for two values.",
+  "approaches": [
+    {
+      "name": "Counting",
+      "order": 1,
+      "intuition": "Count the number of 0s and 1s, then overwrite the array with all 0s first, followed by all 1s.",
+      "approach": "Make two passes: first to count, second to write back the values.",
+      "steps": [
+        "Count the number of 0s in the array",
+        "Iterate through array:",
+        "  Fill first 'count0' positions with 0",
+        "  Fill remaining positions with 1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through the array",
+        "spaceExplanation": "Only counter variable used"
+      },
+      "code": {
+        "cpp": "void segregate0and1(vector<int>& nums) {\n    int count0 = 0;\n    \n    // Count 0s\n    for (int num : nums) {\n        if (num == 0) count0++;\n    }\n    \n    // Fill array with 0s then 1s\n    for (int i = 0; i < nums.size(); i++) {\n        nums[i] = (i < count0) ? 0 : 1;\n    }\n}",
+        "java": "public void segregate0and1(int[] nums) {\n    int count0 = 0;\n    \n    // Count 0s\n    for (int num : nums) {\n        if (num == 0) count0++;\n    }\n    \n    // Fill array with 0s then 1s\n    for (int i = 0; i < nums.length; i++) {\n        nums[i] = (i < count0) ? 0 : 1;\n    }\n}",
+        "python": "def segregate_0_and_1(nums):\n    count0 = nums.count(0)\n    \n    # Fill array with 0s then 1s\n    for i in range(len(nums)):\n        nums[i] = 0 if i < count0 else 1",
+        "javascript": "function segregate0and1(nums) {\n    let count0 = 0;\n    \n    // Count 0s\n    for (const num of nums) {\n        if (num === 0) count0++;\n    }\n    \n    // Fill array with 0s then 1s\n    for (let i = 0; i < nums.length; i++) {\n        nums[i] = (i < count0) ? 0 : 1;\n    }\n}"
+      }
+    },
+    {
+      "name": "Two Pointers (Optimal)",
+      "order": 2,
+      "intuition": "Use two pointers from both ends. Swap 1s from the left with 0s from the right to segregate them in one pass.",
+      "approach": "Use left pointer to find 1s and right pointer to find 0s, then swap them.",
+      "steps": [
+        "Initialize left = 0, right = n - 1",
+        "While left < right:",
+        "  If nums[left] is 0: increment left",
+        "  Else if nums[right] is 1: decrement right",
+        "  Else (nums[left] is 1 and nums[right] is 0):",
+        "    Swap nums[left] and nums[right]",
+        "    Increment left, decrement right"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass with two pointers",
+        "spaceExplanation": "Only two pointer variables"
+      },
+      "code": {
+        "cpp": "void segregate0and1(vector<int>& nums) {\n    int left = 0, right = nums.size() - 1;\n    \n    while (left < right) {\n        // Move left pointer forward if it points to 0\n        if (nums[left] == 0) {\n            left++;\n        }\n        // Move right pointer backward if it points to 1\n        else if (nums[right] == 1) {\n            right--;\n        }\n        // Swap when left points to 1 and right points to 0\n        else {\n            swap(nums[left], nums[right]);\n            left++;\n            right--;\n        }\n    }\n}",
+        "java": "public void segregate0and1(int[] nums) {\n    int left = 0, right = nums.length - 1;\n    \n    while (left < right) {\n        // Move left pointer forward if it points to 0\n        if (nums[left] == 0) {\n            left++;\n        }\n        // Move right pointer backward if it points to 1\n        else if (nums[right] == 1) {\n            right--;\n        }\n        // Swap when left points to 1 and right points to 0\n        else {\n            int temp = nums[left];\n            nums[left] = nums[right];\n            nums[right] = temp;\n            left++;\n            right--;\n        }\n    }\n}",
+        "python": "def segregate_0_and_1(nums):\n    left, right = 0, len(nums) - 1\n    \n    while left < right:\n        # Move left pointer forward if it points to 0\n        if nums[left] == 0:\n            left += 1\n        # Move right pointer backward if it points to 1\n        elif nums[right] == 1:\n            right -= 1\n        # Swap when left points to 1 and right points to 0\n        else:\n            nums[left], nums[right] = nums[right], nums[left]\n            left += 1\n            right -= 1",
+        "javascript": "function segregate0and1(nums) {\n    let left = 0, right = nums.length - 1;\n    \n    while (left < right) {\n        // Move left pointer forward if it points to 0\n        if (nums[left] === 0) {\n            left++;\n        }\n        // Move right pointer backward if it points to 1\n        else if (nums[right] === 1) {\n            right--;\n        }\n        // Swap when left points to 1 and right points to 0\n        else {\n            [nums[left], nums[right]] = [nums[right], nums[left]];\n            left++;\n            right--;\n        }\n    }\n}"
+      }
+    },
+    {
+      "name": "Partitioning (Alternative)",
+      "order": 3,
+      "intuition": "Similar to partition in quicksort. Keep all 0s on the left side using a boundary pointer.",
+      "approach": "Use a pointer to track the boundary between 0s and 1s.",
+      "steps": [
+        "Initialize boundary = 0 (next position for 0)",
+        "For each element at index i:",
+        "  If nums[i] is 0:",
+        "    Swap nums[i] with nums[boundary]",
+        "    Increment boundary",
+        "Result: all 0s before boundary, all 1s after"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through the array",
+        "spaceExplanation": "Only boundary pointer used"
+      },
+      "code": {
+        "cpp": "void segregate0and1(vector<int>& nums) {\n    int boundary = 0; // Next position for 0\n    \n    for (int i = 0; i < nums.size(); i++) {\n        if (nums[i] == 0) {\n            swap(nums[i], nums[boundary]);\n            boundary++;\n        }\n    }\n}",
+        "java": "public void segregate0and1(int[] nums) {\n    int boundary = 0; // Next position for 0\n    \n    for (int i = 0; i < nums.length; i++) {\n        if (nums[i] == 0) {\n            int temp = nums[i];\n            nums[i] = nums[boundary];\n            nums[boundary] = temp;\n            boundary++;\n        }\n    }\n}",
+        "python": "def segregate_0_and_1(nums):\n    boundary = 0  # Next position for 0\n    \n    for i in range(len(nums)):\n        if nums[i] == 0:\n            nums[i], nums[boundary] = nums[boundary], nums[i]\n            boundary += 1",
+        "javascript": "function segregate0and1(nums) {\n    let boundary = 0; // Next position for 0\n    \n    for (let i = 0; i < nums.length; i++) {\n        if (nums[i] === 0) {\n            [nums[i], nums[boundary]] = [nums[boundary], nums[i]];\n            boundary++;\n        }\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using wrong loop condition (should be left < right, not <=)",
+    "Not handling the case when both pointers point to correct values",
+    "Moving pointers at wrong times or not moving them after swap",
+    "Trying to maintain relative order (problem usually doesn't require it)",
+    "Not considering edge cases like all 0s or all 1s"
+  ],
+  "hints": [
+    "You don't need to maintain the relative order of elements",
+    "Think about partitioning the array into two sections",
+    "All 0s should be on the left, all 1s on the right",
+    "You can solve this in a single pass through the array",
+    "Similar to the partition step in quicksort"
+  ],
+  "followUp": [
+    "What if you need to maintain the relative order of elements?",
+    "How would you extend this to segregate 0s, 1s, and 2s (Dutch National Flag)?",
+    "Can you do this for a linked list instead of an array?",
+    "What if the array contains other values besides 0 and 1?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Adobe",
+    "Samsung"
+  ],
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Sorting"
+  ],
+  "relatedProblems": [
+    "Sort Colors",
+    "Move Zeroes",
+    "Segregate Even and Odd Numbers",
+    "Partition Array"
+  ]
+}

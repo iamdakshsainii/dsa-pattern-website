@@ -1,0 +1,198 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ef5",
+  "questionSlug": "two-single-numbers",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/single-number-iii/",
+    "videos": [
+      {
+        "title": "Single Number III - Bit Manipulation - Leetcode 260",
+        "url": "https://www.youtube.com/watch?v=kOMJAZ0t_F4",
+        "channel": "NeetCode",
+        "duration": "10:23",
+        "language": "English"
+      },
+      {
+        "title": "Single Number III | XOR Trick Explained",
+        "url": "https://www.youtube.com/watch?v=kOMJAZ0t_F4",
+        "channel": "takeUforward",
+        "duration": "12:47",
+        "language": "English"
+      },
+      {
+        "title": "LeetCode 260: Single Number III",
+        "url": "https://www.youtube.com/watch?v=R52vAfgGzRg",
+        "channel": "Back To Back SWE",
+        "duration": "9:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Single Number III - Solution",
+        "url": "https://leetcode.com/problems/single-number-iii/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Find two non-repeating elements",
+        "url": "https://www.geeksforgeeks.org/find-two-non-repeating-elements-in-an-array-of-repeating-elements/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Single Number",
+        "url": "https://leetcode.com/problems/single-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Single Number II",
+        "url": "https://leetcode.com/problems/single-number-ii/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Bitwise XOR pattern when you need to find two unique elements where all others appear in pairs. Key indicators: two elements appear once, all others twice, requires O(1) space, XOR partitioning based on rightmost set bit.",
+  "approaches": [
+    {
+      "name": "Brute Force (Nested Loop)",
+      "order": 1,
+      "intuition": "Check each element to see if it has a duplicate in the array. Collect elements that appear only once. Since we need exactly two such elements, we stop after finding them.",
+      "approach": "For each element, count its occurrences. If count is 1, add to result array. Return when we have two unique elements.",
+      "steps": [
+        "Create result array to store two unique numbers",
+        "Initialize result index = 0",
+        "For each element at index i:",
+        "  Initialize count = 0",
+        "  For each element at index j:",
+        "    If nums[i] == nums[j], increment count",
+        "  If count == 1:",
+        "    Add nums[i] to result",
+        "    Increment result index",
+        "    If we found 2 numbers, break",
+        "Return result array"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops checking each element against all others. Worst case: check all n elements with n comparisons each",
+        "spaceExplanation": "Only using result array of fixed size 2 and counter variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> singleNumber(vector<int>& nums) {\n        vector<int> result;\n        int n = nums.size();\n        \n        // Find each unique number\n        for (int i = 0; i < n && result.size() < 2; i++) {\n            int count = 0;\n            \n            // Count occurrences\n            for (int j = 0; j < n; j++) {\n                if (nums[i] == nums[j]) {\n                    count++;\n                }\n            }\n            \n            // If appears once, add to result\n            if (count == 1) {\n                result.push_back(nums[i]);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] singleNumber(int[] nums) {\n        int[] result = new int[2];\n        int resultIndex = 0;\n        int n = nums.length;\n        \n        // Find each unique number\n        for (int i = 0; i < n && resultIndex < 2; i++) {\n            int count = 0;\n            \n            // Count occurrences\n            for (int j = 0; j < n; j++) {\n                if (nums[i] == nums[j]) {\n                    count++;\n                }\n            }\n            \n            // If appears once, add to result\n            if (count == 1) {\n                result[resultIndex++] = nums[i];\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "def single_number(nums):\n    result = []\n    n = len(nums)\n    \n    # Find each unique number\n    for i in range(n):\n        if len(result) == 2:\n            break\n            \n        count = 0\n        \n        # Count occurrences\n        for j in range(n):\n            if nums[i] == nums[j]:\n                count += 1\n        \n        # If appears once, add to result\n        if count == 1:\n            result.append(nums[i])\n    \n    return result",
+        "javascript": "function singleNumber(nums) {\n    const result = [];\n    const n = nums.length;\n    \n    // Find each unique number\n    for (let i = 0; i < n && result.length < 2; i++) {\n        let count = 0;\n        \n        // Count occurrences\n        for (let j = 0; j < n; j++) {\n            if (nums[i] === nums[j]) {\n                count++;\n            }\n        }\n        \n        // If appears once, add to result\n        if (count === 1) {\n            result.push(nums[i]);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Better (Hash Map/Set)",
+      "order": 2,
+      "intuition": "Use a hash set to track numbers. Add numbers on first occurrence, remove on second occurrence. The two numbers remaining in the set are our answer. This avoids nested loops.",
+      "approach": "Iterate through array once, maintaining a set. Add new numbers, remove duplicates. Final set contains exactly two unique numbers.",
+      "steps": [
+        "Create an empty hash set",
+        "For each number in array:",
+        "  If number exists in set:",
+        "    Remove it (found its pair)",
+        "  Else:",
+        "    Add it to set (first occurrence)",
+        "After processing all numbers:",
+        "  Set contains exactly two numbers",
+        "Convert set to array and return"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array with O(1) hash set operations",
+        "spaceExplanation": "Hash set can store up to n/2 + 2 elements in worst case"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> singleNumber(vector<int>& nums) {\n        unordered_set<int> numSet;\n        \n        // Process each number\n        for (int num : nums) {\n            if (numSet.find(num) != numSet.end()) {\n                // Found duplicate, remove it\n                numSet.erase(num);\n            } else {\n                // First occurrence, add it\n                numSet.insert(num);\n            }\n        }\n        \n        // Convert set to vector\n        vector<int> result(numSet.begin(), numSet.end());\n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] singleNumber(int[] nums) {\n        Set<Integer> numSet = new HashSet<>();\n        \n        // Process each number\n        for (int num : nums) {\n            if (numSet.contains(num)) {\n                // Found duplicate, remove it\n                numSet.remove(num);\n            } else {\n                // First occurrence, add it\n                numSet.add(num);\n            }\n        }\n        \n        // Convert set to array\n        int[] result = new int[2];\n        int index = 0;\n        for (int num : numSet) {\n            result[index++] = num;\n        }\n        \n        return result;\n    }\n}",
+        "python": "def single_number(nums):\n    num_set = set()\n    \n    # Process each number\n    for num in nums:\n        if num in num_set:\n            # Found duplicate, remove it\n            num_set.remove(num)\n        else:\n            # First occurrence, add it\n            num_set.add(num)\n    \n    # Convert set to list\n    return list(num_set)",
+        "javascript": "function singleNumber(nums) {\n    const numSet = new Set();\n    \n    // Process each number\n    for (const num of nums) {\n        if (numSet.has(num)) {\n            // Found duplicate, remove it\n            numSet.delete(num);\n        } else {\n            // First occurrence, add it\n            numSet.add(num);\n        }\n    }\n    \n    // Convert set to array\n    return Array.from(numSet);\n}"
+      }
+    },
+    {
+      "name": "Optimal (XOR with Bit Partitioning)",
+      "order": 3,
+      "intuition": "XOR all numbers gives us a^b (where a and b are the two unique numbers), as pairs cancel out. Since a≠b, their XOR has at least one set bit. Use any set bit to partition numbers into two groups: one containing a, other containing b. XOR each group separately to get a and b.",
+      "approach": "Step 1: XOR all numbers to get a^b. Step 2: Find rightmost set bit in a^b. Step 3: Partition numbers based on this bit. Step 4: XOR each partition separately to get the two unique numbers.",
+      "steps": [
+        "XOR all numbers to get xor_result = a ^ b",
+        "Find rightmost set bit in xor_result:",
+        "  rightmost_bit = xor_result & (-xor_result)",
+        "  This isolates the rightmost 1 bit",
+        "Initialize num1 = 0, num2 = 0",
+        "Partition and XOR based on rightmost bit:",
+        "  For each number in array:",
+        "    If (number & rightmost_bit) == 0:",
+        "      num1 ^= number (group 1)",
+        "    Else:",
+        "      num2 ^= number (group 2)",
+        "Return [num1, num2]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through array: first to get XOR, second to partition and find both numbers",
+        "spaceExplanation": "Only using constant space for variables, no data structures"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> singleNumber(vector<int>& nums) {\n        // Step 1: XOR all numbers to get a^b\n        int xor_result = 0;\n        for (int num : nums) {\n            xor_result ^= num;\n        }\n        \n        // Step 2: Find rightmost set bit\n        // This bit differs between the two unique numbers\n        int rightmost_bit = xor_result & (-xor_result);\n        \n        // Step 3: Partition numbers and XOR each group\n        int num1 = 0, num2 = 0;\n        for (int num : nums) {\n            if (num & rightmost_bit) {\n                // Group 1: bit is set\n                num1 ^= num;\n            } else {\n                // Group 2: bit is not set\n                num2 ^= num;\n            }\n        }\n        \n        return {num1, num2};\n    }\n};",
+        "java": "class Solution {\n    public int[] singleNumber(int[] nums) {\n        // Step 1: XOR all numbers to get a^b\n        int xorResult = 0;\n        for (int num : nums) {\n            xorResult ^= num;\n        }\n        \n        // Step 2: Find rightmost set bit\n        int rightmostBit = xorResult & (-xorResult);\n        \n        // Step 3: Partition numbers and XOR each group\n        int num1 = 0, num2 = 0;\n        for (int num : nums) {\n            if ((num & rightmostBit) != 0) {\n                // Group 1: bit is set\n                num1 ^= num;\n            } else {\n                // Group 2: bit is not set\n                num2 ^= num;\n            }\n        }\n        \n        return new int[]{num1, num2};\n    }\n}",
+        "python": "def single_number(nums):\n    # Step 1: XOR all numbers to get a^b\n    xor_result = 0\n    for num in nums:\n        xor_result ^= num\n    \n    # Step 2: Find rightmost set bit\n    rightmost_bit = xor_result & (-xor_result)\n    \n    # Step 3: Partition numbers and XOR each group\n    num1, num2 = 0, 0\n    for num in nums:\n        if num & rightmost_bit:\n            # Group 1: bit is set\n            num1 ^= num\n        else:\n            # Group 2: bit is not set\n            num2 ^= num\n    \n    return [num1, num2]",
+        "javascript": "function singleNumber(nums) {\n    // Step 1: XOR all numbers to get a^b\n    let xorResult = 0;\n    for (const num of nums) {\n        xorResult ^= num;\n    }\n    \n    // Step 2: Find rightmost set bit\n    const rightmostBit = xorResult & (-xorResult);\n    \n    // Step 3: Partition numbers and XOR each group\n    let num1 = 0, num2 = 0;\n    for (const num of nums) {\n        if (num & rightmostBit) {\n            // Group 1: bit is set\n            num1 ^= num;\n        } else {\n            // Group 2: bit is not set\n            num2 ^= num;\n        }\n    }\n    \n    return [num1, num2];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding why XOR of all numbers gives a^b (forgetting pairs cancel to 0)",
+    "Trying to use any bit instead of rightmost set bit for partitioning",
+    "Not understanding the trick: x & (-x) isolates rightmost set bit",
+    "Forgetting that partitioning separates numbers into groups containing a and b",
+    "Confusing the two groups - both groups contain duplicates that cancel out",
+    "Not handling negative numbers correctly with two's complement"
+  ],
+  "hints": [
+    "Start by XORing all numbers. What do you get? (Hint: a ^ b)",
+    "If you have a ^ b, how can you distinguish between a and b?",
+    "At least one bit position must differ between a and b. Can you find it?",
+    "The rightmost set bit in a^b tells you how to partition the array",
+    "Numbers with that bit set go in one group, others in another group",
+    "Each group has duplicates that cancel out, leaving one unique number per group"
+  ],
+  "followUp": [
+    "What if there are three unique numbers and all others appear twice?",
+    "How would you handle if all numbers appear 3 times except two that appear once?",
+    "Can you extend this to find k unique numbers?",
+    "What if the array is very large and doesn't fit in memory (streaming)?",
+    "How would you optimize if numbers are in a specific range?",
+    "Can you solve it using only one pass through the array?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Array",
+    "Bit Manipulation",
+    "Bitwise XOR",
+    "Partitioning"
+  ],
+  "relatedProblems": [
+    "Single Number",
+    "Single Number II",
+    "Missing Number",
+    "Find the Duplicate Number",
+    "Find All Duplicates in an Array",
+    "Repeated DNA Sequences"
+  ]
+}

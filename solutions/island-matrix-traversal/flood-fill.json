@@ -1,0 +1,185 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ed8",
+  "questionSlug": "flood-fill",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/flood-fill/",
+    "videos": [
+      {
+        "title": "Flood Fill - Graph Theory - Leetcode 733",
+        "url": "https://www.youtube.com/watch?v=aehEcTEPtCs",
+        "channel": "NeetCode",
+        "duration": "6:20",
+        "language": "English"
+      },
+      {
+        "title": "Flood Fill Algorithm Explained",
+        "url": "https://www.youtube.com/watch?v=RwozX--B_Xs",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "Flood Fill - DFS and BFS Approach",
+        "url": "https://www.youtube.com/watch?v=C-2_uSRli8o",
+        "channel": "TECH DOSE",
+        "duration": "10:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Flood Fill Solution",
+        "url": "https://leetcode.com/problems/flood-fill/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Flood Fill Algorithm Explained",
+        "url": "https://algo.monster/liteproblems/733",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Flood Fill Algorithm",
+        "url": "https://www.geeksforgeeks.org/flood-fill-algorithm/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Number of Islands",
+        "url": "https://leetcode.com/problems/number-of-islands/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Max Area of Island",
+        "url": "https://leetcode.com/problems/max-area-of-island/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Coloring A Border",
+        "url": "https://leetcode.com/problems/coloring-a-border/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Island Perimeter",
+        "url": "https://leetcode.com/problems/island-perimeter/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Flood Fill pattern when asked to change color/value of connected region starting from a point. Key indicators: paint bucket tool, change connected pixels, replace color in region, 4-directional spread from starting point, modify connected same-value cells.",
+  "approaches": [
+    {
+      "name": "DFS with Color Change",
+      "order": 1,
+      "intuition": "Starting from the given pixel, recursively change the color of all connected pixels that have the same original color. Use DFS to explore in all 4 directions. Important edge case: if starting pixel already has the new color, no changes needed.",
+      "approach": "Check if starting pixel already has new color (edge case). Store original color, then perform DFS from starting position. In DFS, change current pixel to new color and recursively process all 4 neighbors that have the original color.",
+      "steps": [
+        "Extract starting pixel color (originalColor)",
+        "If originalColor == newColor, return image unchanged (important!)",
+        "Call DFS from starting position (sr, sc)",
+        "DFS function:",
+        "  - Check if out of bounds or pixel != originalColor",
+        "  - Change current pixel to newColor",
+        "  - Recursively call DFS on all 4 neighbors (up, down, left, right)",
+        "Return modified image"
+      ],
+      "complexity": {
+        "time": "O(m * n)",
+        "space": "O(m * n)",
+        "timeExplanation": "In worst case, visit all pixels if entire image is same color. m = rows, n = columns.",
+        "spaceExplanation": "Recursion stack can be m*n deep if entire image is one connected region of same color."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {\n        int originalColor = image[sr][sc];\n        \n        // Edge case: if starting color is same as new color\n        if (originalColor == color) return image;\n        \n        dfs(image, sr, sc, originalColor, color);\n        return image;\n    }\n    \nprivate:\n    void dfs(vector<vector<int>>& image, int i, int j, int originalColor, int newColor) {\n        // Check boundaries and if pixel has original color\n        if (i < 0 || i >= image.size() || j < 0 || j >= image[0].size() || \n            image[i][j] != originalColor) {\n            return;\n        }\n        \n        // Change color\n        image[i][j] = newColor;\n        \n        // Explore all 4 directions\n        dfs(image, i + 1, j, originalColor, newColor);  // down\n        dfs(image, i - 1, j, originalColor, newColor);  // up\n        dfs(image, i, j + 1, originalColor, newColor);  // right\n        dfs(image, i, j - 1, originalColor, newColor);  // left\n    }\n};",
+        "java": "class Solution {\n    public int[][] floodFill(int[][] image, int sr, int sc, int color) {\n        int originalColor = image[sr][sc];\n        \n        // Edge case: if starting color is same as new color\n        if (originalColor == color) return image;\n        \n        dfs(image, sr, sc, originalColor, color);\n        return image;\n    }\n    \n    private void dfs(int[][] image, int i, int j, int originalColor, int newColor) {\n        // Check boundaries and if pixel has original color\n        if (i < 0 || i >= image.length || j < 0 || j >= image[0].length || \n            image[i][j] != originalColor) {\n            return;\n        }\n        \n        // Change color\n        image[i][j] = newColor;\n        \n        // Explore all 4 directions\n        dfs(image, i + 1, j, originalColor, newColor);  // down\n        dfs(image, i - 1, j, originalColor, newColor);  // up\n        dfs(image, i, j + 1, originalColor, newColor);  // right\n        dfs(image, i, j - 1, originalColor, newColor);  // left\n    }\n}",
+        "python": "def floodFill(image, sr, sc, color):\n    original_color = image[sr][sc]\n    \n    # Edge case: if starting color is same as new color\n    if original_color == color:\n        return image\n    \n    rows, cols = len(image), len(image[0])\n    \n    def dfs(i, j):\n        # Check boundaries and if pixel has original color\n        if i < 0 or i >= rows or j < 0 or j >= cols or image[i][j] != original_color:\n            return\n        \n        # Change color\n        image[i][j] = color\n        \n        # Explore all 4 directions\n        dfs(i + 1, j)  # down\n        dfs(i - 1, j)  # up\n        dfs(i, j + 1)  # right\n        dfs(i, j - 1)  # left\n    \n    dfs(sr, sc)\n    return image",
+        "javascript": "function floodFill(image, sr, sc, color) {\n    const originalColor = image[sr][sc];\n    \n    // Edge case: if starting color is same as new color\n    if (originalColor === color) return image;\n    \n    const rows = image.length;\n    const cols = image[0].length;\n    \n    function dfs(i, j) {\n        // Check boundaries and if pixel has original color\n        if (i < 0 || i >= rows || j < 0 || j >= cols || image[i][j] !== originalColor) {\n            return;\n        }\n        \n        // Change color\n        image[i][j] = color;\n        \n        // Explore all 4 directions\n        dfs(i + 1, j);  // down\n        dfs(i - 1, j);  // up\n        dfs(i, j + 1);  // right\n        dfs(i, j - 1);  // left\n    }\n    \n    dfs(sr, sc);\n    return image;\n}"
+      }
+    },
+    {
+      "name": "BFS with Queue",
+      "order": 2,
+      "intuition": "Use BFS with a queue for iterative level-order traversal. Starting from given pixel, change its color and add to queue. Process queue by exploring all 4-directional neighbors with original color, changing them and adding to queue.",
+      "approach": "Check edge case first. Use queue initialized with starting position. While queue not empty, dequeue pixel, check all 4 neighbors, and if neighbor has original color, change it to new color and enqueue.",
+      "steps": [
+        "Get originalColor from starting pixel",
+        "If originalColor == newColor, return image",
+        "Initialize queue with starting position (sr, sc)",
+        "Change starting pixel to newColor",
+        "While queue not empty:",
+        "  - Dequeue current position",
+        "  - For each of 4 directions:",
+        "    - Calculate neighbor position",
+        "    - If valid and has originalColor:",
+        "      - Change to newColor",
+        "      - Add to queue",
+        "Return image"
+      ],
+      "complexity": {
+        "time": "O(m * n)",
+        "space": "O(m * n)",
+        "timeExplanation": "Visit each pixel at most once. m = rows, n = columns.",
+        "spaceExplanation": "Queue can hold up to m*n pixels in worst case (entire image same color)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {\n        int originalColor = image[sr][sc];\n        \n        // Edge case: if starting color is same as new color\n        if (originalColor == color) return image;\n        \n        int rows = image.size();\n        int cols = image[0].size();\n        \n        queue<pair<int, int>> q;\n        q.push({sr, sc});\n        image[sr][sc] = color;\n        \n        vector<pair<int, int>> directions = {{1,0}, {-1,0}, {0,1}, {0,-1}};\n        \n        while (!q.empty()) {\n            auto [i, j] = q.front();\n            q.pop();\n            \n            for (auto [di, dj] : directions) {\n                int ni = i + di;\n                int nj = j + dj;\n                \n                if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && \n                    image[ni][nj] == originalColor) {\n                    image[ni][nj] = color;\n                    q.push({ni, nj});\n                }\n            }\n        }\n        \n        return image;\n    }\n};",
+        "java": "class Solution {\n    public int[][] floodFill(int[][] image, int sr, int sc, int color) {\n        int originalColor = image[sr][sc];\n        \n        // Edge case: if starting color is same as new color\n        if (originalColor == color) return image;\n        \n        int rows = image.length;\n        int cols = image[0].length;\n        \n        Queue<int[]> queue = new LinkedList<>();\n        queue.offer(new int[]{sr, sc});\n        image[sr][sc] = color;\n        \n        int[][] directions = {{1,0}, {-1,0}, {0,1}, {0,-1}};\n        \n        while (!queue.isEmpty()) {\n            int[] curr = queue.poll();\n            int i = curr[0], j = curr[1];\n            \n            for (int[] dir : directions) {\n                int ni = i + dir[0];\n                int nj = j + dir[1];\n                \n                if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && \n                    image[ni][nj] == originalColor) {\n                    image[ni][nj] = color;\n                    queue.offer(new int[]{ni, nj});\n                }\n            }\n        }\n        \n        return image;\n    }\n}",
+        "python": "from collections import deque\n\ndef floodFill(image, sr, sc, color):\n    original_color = image[sr][sc]\n    \n    # Edge case: if starting color is same as new color\n    if original_color == color:\n        return image\n    \n    rows, cols = len(image), len(image[0])\n    queue = deque([(sr, sc)])\n    image[sr][sc] = color\n    \n    directions = [(1,0), (-1,0), (0,1), (0,-1)]\n    \n    while queue:\n        i, j = queue.popleft()\n        \n        for di, dj in directions:\n            ni, nj = i + di, j + dj\n            \n            if 0 <= ni < rows and 0 <= nj < cols and image[ni][nj] == original_color:\n                image[ni][nj] = color\n                queue.append((ni, nj))\n    \n    return image",
+        "javascript": "function floodFill(image, sr, sc, color) {\n    const originalColor = image[sr][sc];\n    \n    // Edge case: if starting color is same as new color\n    if (originalColor === color) return image;\n    \n    const rows = image.length;\n    const cols = image[0].length;\n    const queue = [[sr, sc]];\n    image[sr][sc] = color;\n    \n    const directions = [[1,0], [-1,0], [0,1], [0,-1]];\n    \n    while (queue.length > 0) {\n        const [i, j] = queue.shift();\n        \n        for (const [di, dj] of directions) {\n            const ni = i + di;\n            const nj = j + dj;\n            \n            if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && \n                image[ni][nj] === originalColor) {\n                image[ni][nj] = color;\n                queue.push([ni, nj]);\n            }\n        }\n    }\n    \n    return image;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "NOT checking if originalColor == newColor before starting - causes infinite loop!",
+    "Changing pixel color after checking neighbors instead of before, causing infinite loops",
+    "Not storing original color before starting DFS/BFS",
+    "Checking image[i][j] == newColor instead of originalColor in recursion condition",
+    "Forgetting boundary checks leading to array out of bounds errors",
+    "In BFS, not marking pixel as visited when adding to queue (mark immediately!)",
+    "Comparing with current color instead of original color during traversal"
+  ],
+  "hints": [
+    "CRITICAL: Check if starting pixel already has the new color - if yes, return immediately!",
+    "Store the original color at the start - you'll need to compare against it throughout",
+    "Mark pixels as the new color as soon as you visit them to avoid revisiting",
+    "This is similar to island problems but you're changing values instead of counting",
+    "Both DFS and BFS work - DFS is simpler to code, BFS uses less stack space",
+    "The termination condition is: out of bounds OR pixel doesn't have original color"
+  ],
+  "followUp": [
+    "What if you need to fill with a pattern or gradient instead of solid color?",
+    "How would you implement diagonal flood fill (8 directions)?",
+    "Can you add boundary detection to only fill within certain borders?",
+    "What if the image is very large - how would you optimize memory usage?",
+    "How would you implement flood fill with tolerance (similar colors within range)?",
+    "Can you extend this to 3D flood fill (voxels)?",
+    "How would you implement undo/redo functionality for flood fill operations?",
+    "What if you need to fill multiple starting points simultaneously?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Adobe",
+    "Bloomberg",
+    "Apple",
+    "Uber"
+  ],
+  "tags": [
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Array",
+    "Matrix"
+  ],
+  "relatedProblems": [
+    "Number of Islands",
+    "Max Area of Island",
+    "Coloring A Border",
+    "Island Perimeter",
+    "Number of Closed Islands",
+    "Surrounded Regions",
+    "Pacific Atlantic Water Flow"
+  ]
+}

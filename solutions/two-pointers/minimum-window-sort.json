@@ -1,0 +1,127 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e83",
+  "questionSlug": "minimum-window-sort",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/shortest-unsorted-continuous-subarray/",
+    "videos": [
+      {
+        "title": "Shortest Unsorted Continuous Subarray - Leetcode 581",
+        "url": "https://www.youtube.com/watch?v=GvAtQOMr8CQ",
+        "channel": "NeetCode",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Minimum Length Unsorted Subarray",
+        "url": "https://www.youtube.com/watch?v=gkrJukn0O2M",
+        "channel": "takeUforward",
+        "duration": "15:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Shortest Unsorted Continuous Subarray Solution",
+        "url": "https://leetcode.com/problems/shortest-unsorted-continuous-subarray/solution/",
+        "source": "LeetCode Editorial"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/minimum-length-unsorted-subarray-sorting-which-makes-the-complete-array-sorted/",
+        "platform": "GeeksforGeeks"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Two Pointers to find boundaries of unsorted section by scanning from both ends of array.",
+  "approaches": [
+    {
+      "name": "Sorting",
+      "order": 1,
+      "intuition": "Compare the original array with its sorted version to find where they differ.",
+      "approach": "Sort a copy of the array and find the leftmost and rightmost positions where arrays differ.",
+      "steps": [
+        "Create a sorted copy of the array",
+        "Find leftmost index where original and sorted arrays differ",
+        "Find rightmost index where original and sorted arrays differ",
+        "Return the length of subarray between these indices"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting takes O(n log n) time",
+        "spaceExplanation": "Need extra space for sorted copy"
+      },
+      "code": {
+        "cpp": "int findUnsortedSubarray(vector<int>& nums) {\n    vector<int> sorted(nums);\n    sort(sorted.begin(), sorted.end());\n    \n    int left = 0, right = nums.size() - 1;\n    \n    // Find leftmost position where arrays differ\n    while (left < nums.size() && nums[left] == sorted[left]) {\n        left++;\n    }\n    \n    // Already sorted\n    if (left == nums.size()) return 0;\n    \n    // Find rightmost position where arrays differ\n    while (right > left && nums[right] == sorted[right]) {\n        right--;\n    }\n    \n    return right - left + 1;\n}",
+        "java": "public int findUnsortedSubarray(int[] nums) {\n    int[] sorted = nums.clone();\n    Arrays.sort(sorted);\n    \n    int left = 0, right = nums.length - 1;\n    \n    // Find leftmost position where arrays differ\n    while (left < nums.length && nums[left] == sorted[left]) {\n        left++;\n    }\n    \n    // Already sorted\n    if (left == nums.length) return 0;\n    \n    // Find rightmost position where arrays differ\n    while (right > left && nums[right] == sorted[right]) {\n        right--;\n    }\n    \n    return right - left + 1;\n}",
+        "python": "def find_unsorted_subarray(nums):\n    sorted_nums = sorted(nums)\n    \n    left, right = 0, len(nums) - 1\n    \n    # Find leftmost position where arrays differ\n    while left < len(nums) and nums[left] == sorted_nums[left]:\n        left += 1\n    \n    # Already sorted\n    if left == len(nums):\n        return 0\n    \n    # Find rightmost position where arrays differ\n    while right > left and nums[right] == sorted_nums[right]:\n        right -= 1\n    \n    return right - left + 1",
+        "javascript": "function findUnsortedSubarray(nums) {\n    const sorted = [...nums].sort((a, b) => a - b);\n    \n    let left = 0, right = nums.length - 1;\n    \n    // Find leftmost position where arrays differ\n    while (left < nums.length && nums[left] === sorted[left]) {\n        left++;\n    }\n    \n    // Already sorted\n    if (left === nums.length) return 0;\n    \n    // Find rightmost position where arrays differ\n    while (right > left && nums[right] === sorted[right]) {\n        right--;\n    }\n    \n    return right - left + 1;\n}"
+      }
+    },
+    {
+      "name": "Two Pointers (Optimal)",
+      "order": 2,
+      "intuition": "Find the longest sorted prefix and suffix. The unsorted part lies between them. Then find the min and max in the unsorted part to determine exact boundaries.",
+      "approach": "Scan from left to find where sorted order breaks, scan from right similarly, then refine boundaries based on min/max values.",
+      "steps": [
+        "Scan from left to find where array stops being sorted (increasing)",
+        "Scan from right to find where array stops being sorted (decreasing)",
+        "If entire array is sorted, return 0",
+        "Find min and max in the unsorted middle section",
+        "Extend left boundary: while left >= 0 and nums[left] > min",
+        "Extend right boundary: while right < n and nums[right] < max",
+        "Return length of subarray from left to right"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Multiple linear scans through the array",
+        "spaceExplanation": "Only a few variables used"
+      },
+      "code": {
+        "cpp": "int findUnsortedSubarray(vector<int>& nums) {\n    int n = nums.size();\n    int left = 0, right = n - 1;\n    \n    // Find left boundary: scan from left until not sorted\n    while (left < n - 1 && nums[left] <= nums[left + 1]) {\n        left++;\n    }\n    \n    // Already sorted\n    if (left == n - 1) return 0;\n    \n    // Find right boundary: scan from right until not sorted\n    while (right > 0 && nums[right] >= nums[right - 1]) {\n        right--;\n    }\n    \n    // Find min and max in unsorted subarray\n    int subMin = INT_MAX, subMax = INT_MIN;\n    for (int i = left; i <= right; i++) {\n        subMin = min(subMin, nums[i]);\n        subMax = max(subMax, nums[i]);\n    }\n    \n    // Extend left: find where subMin should be inserted\n    while (left > 0 && nums[left - 1] > subMin) {\n        left--;\n    }\n    \n    // Extend right: find where subMax should be inserted\n    while (right < n - 1 && nums[right + 1] < subMax) {\n        right++;\n    }\n    \n    return right - left + 1;\n}",
+        "java": "public int findUnsortedSubarray(int[] nums) {\n    int n = nums.length;\n    int left = 0, right = n - 1;\n    \n    // Find left boundary: scan from left until not sorted\n    while (left < n - 1 && nums[left] <= nums[left + 1]) {\n        left++;\n    }\n    \n    // Already sorted\n    if (left == n - 1) return 0;\n    \n    // Find right boundary: scan from right until not sorted\n    while (right > 0 && nums[right] >= nums[right - 1]) {\n        right--;\n    }\n    \n    // Find min and max in unsorted subarray\n    int subMin = Integer.MAX_VALUE, subMax = Integer.MIN_VALUE;\n    for (int i = left; i <= right; i++) {\n        subMin = Math.min(subMin, nums[i]);\n        subMax = Math.max(subMax, nums[i]);\n    }\n    \n    // Extend left: find where subMin should be inserted\n    while (left > 0 && nums[left - 1] > subMin) {\n        left--;\n    }\n    \n    // Extend right: find where subMax should be inserted\n    while (right < n - 1 && nums[right + 1] < subMax) {\n        right++;\n    }\n    \n    return right - left + 1;\n}",
+        "python": "def find_unsorted_subarray(nums):\n    n = len(nums)\n    left, right = 0, n - 1\n    \n    # Find left boundary: scan from left until not sorted\n    while left < n - 1 and nums[left] <= nums[left + 1]:\n        left += 1\n    \n    # Already sorted\n    if left == n - 1:\n        return 0\n    \n    # Find right boundary: scan from right until not sorted\n    while right > 0 and nums[right] >= nums[right - 1]:\n        right -= 1\n    \n    # Find min and max in unsorted subarray\n    sub_min = min(nums[left:right + 1])\n    sub_max = max(nums[left:right + 1])\n    \n    # Extend left: find where sub_min should be inserted\n    while left > 0 and nums[left - 1] > sub_min:\n        left -= 1\n    \n    # Extend right: find where sub_max should be inserted\n    while right < n - 1 and nums[right + 1] < sub_max:\n        right += 1\n    \n    return right - left + 1",
+        "javascript": "function findUnsortedSubarray(nums) {\n    const n = nums.length;\n    let left = 0, right = n - 1;\n    \n    // Find left boundary: scan from left until not sorted\n    while (left < n - 1 && nums[left] <= nums[left + 1]) {\n        left++;\n    }\n    \n    // Already sorted\n    if (left === n - 1) return 0;\n    \n    // Find right boundary: scan from right until not sorted\n    while (right > 0 && nums[right] >= nums[right - 1]) {\n        right--;\n    }\n    \n    // Find min and max in unsorted subarray\n    let subMin = Infinity, subMax = -Infinity;\n    for (let i = left; i <= right; i++) {\n        subMin = Math.min(subMin, nums[i]);\n        subMax = Math.max(subMax, nums[i]);\n    }\n    \n    // Extend left: find where subMin should be inserted\n    while (left > 0 && nums[left - 1] > subMin) {\n        left--;\n    }\n    \n    // Extend right: find where subMax should be inserted\n    while (right < n - 1 && nums[right + 1] < subMax) {\n        right++;\n    }\n    \n    return right - left + 1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the already sorted array case",
+    "Forgetting to extend boundaries based on min/max values",
+    "Using wrong comparison operators (< vs <=)",
+    "Not checking array bounds when extending boundaries",
+    "Confusing left and right boundary logic"
+  ],
+  "hints": [
+    "Think about finding the longest sorted prefix and suffix",
+    "The unsorted part contains elements that need to be repositioned",
+    "The minimum value in the unsorted part determines where the left boundary should extend",
+    "The maximum value in the unsorted part determines where the right boundary should extend"
+  ],
+  "followUp": [
+    "Can you modify the array in-place to sort just the required subarray?",
+    "What if you need to return the actual subarray instead of its length?",
+    "How would you handle duplicate elements?",
+    "Can you solve this problem if the array can contain negative numbers?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft"
+  ],
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Greedy"
+  ],
+  "relatedProblems": [
+    "Valid Mountain Array",
+    "Move Zeroes",
+    "Sort Colors"
+  ]
+}

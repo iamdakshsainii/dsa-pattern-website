@@ -1,0 +1,210 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ec0",
+  "questionSlug": "longest-palindrome",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/longest-palindrome/",
+    "videos": [
+      {
+        "title": "Longest Palindrome - Leetcode 409",
+        "url": "https://www.youtube.com/watch?v=a_3XR6HYjO0",
+        "channel": "NeetCode",
+        "duration": "7:15",
+        "language": "English"
+      },
+      {
+        "title": "Longest Palindrome Length | Greedy Approach",
+        "url": "https://www.youtube.com/watch?v=Z9p5t57KpQs",
+        "channel": "TECH DOSE",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Build Longest Palindrome - Easy Solution",
+        "url": "https://www.youtube.com/watch?v=DTRZRfJTxfw",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Longest Palindrome Solution",
+        "url": "https://leetcode.com/problems/longest-palindrome/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Longest Palindrome Explained with Examples",
+        "url": "https://algo.monster/liteproblems/409",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Build Longest Palindrome from String",
+        "url": "https://www.geeksforgeeks.org/longest-palindrome-can-formed-using-characters-string/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Valid Palindrome",
+        "url": "https://leetcode.com/problems/valid-palindrome/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Palindrome Permutation",
+        "url": "https://leetcode.com/problems/palindrome-permutation/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Palindromic Substring",
+        "url": "https://leetcode.com/problems/longest-palindromic-substring/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Palindrome Pairs",
+        "url": "https://leetcode.com/problems/palindrome-pairs/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Greedy + Hash Table pattern when building palindrome from character frequencies. Key indicators: construct palindrome (not find), count character frequencies, use pairs of characters, at most one odd-frequency character in middle.",
+  "approaches": [
+    {
+      "name": "Frequency Count with Pair Logic",
+      "order": 1,
+      "intuition": "A palindrome can use pairs of characters (placed symmetrically) plus optionally one character in the middle. Count character frequencies and sum up all pairs, then add 1 if any character has odd frequency (for the middle).",
+      "approach": "Count frequency of each character. For each character, add floor(freq/2) * 2 to the length (using pairs). If any character has odd frequency, we can place one in the middle, so add 1 to the final length.",
+      "steps": [
+        "Create hash map to count frequency of each character",
+        "Iterate through string and count frequencies",
+        "Initialize length = 0",
+        "For each character frequency in the map:",
+        "  - Add (freq / 2) * 2 to length (pairs that can be used)",
+        "Check if any character has odd frequency",
+        "If odd frequency exists and current length is even, add 1 (for middle character)",
+        "Return the total length"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass to count frequencies O(n), then iterate through at most 52 characters (uppercase + lowercase)",
+        "spaceExplanation": "Hash map stores at most 52 characters (26 uppercase + 26 lowercase), which is O(1)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int longestPalindrome(string s) {\n        // Count frequency of each character\n        unordered_map<char, int> freq;\n        for (char c : s) {\n            freq[c]++;\n        }\n        \n        int length = 0;\n        bool hasOdd = false;\n        \n        // Add pairs of each character\n        for (auto& [ch, count] : freq) {\n            // Add all pairs (even part of the count)\n            length += (count / 2) * 2;\n            \n            // Track if there's any odd frequency\n            if (count % 2 == 1) {\n                hasOdd = true;\n            }\n        }\n        \n        // If there's any character with odd frequency, \n        // we can place one in the middle\n        if (hasOdd) {\n            length++;\n        }\n        \n        return length;\n    }\n};",
+        "java": "class Solution {\n    public int longestPalindrome(String s) {\n        // Count frequency of each character\n        Map<Character, Integer> freq = new HashMap<>();\n        for (char c : s.toCharArray()) {\n            freq.put(c, freq.getOrDefault(c, 0) + 1);\n        }\n        \n        int length = 0;\n        boolean hasOdd = false;\n        \n        // Add pairs of each character\n        for (int count : freq.values()) {\n            // Add all pairs (even part of the count)\n            length += (count / 2) * 2;\n            \n            // Track if there's any odd frequency\n            if (count % 2 == 1) {\n                hasOdd = true;\n            }\n        }\n        \n        // If there's any character with odd frequency,\n        // we can place one in the middle\n        if (hasOdd) {\n            length++;\n        }\n        \n        return length;\n    }\n}",
+        "python": "def longestPalindrome(s):\n    from collections import Counter\n    \n    # Count frequency of each character\n    freq = Counter(s)\n    \n    length = 0\n    has_odd = False\n    \n    # Add pairs of each character\n    for count in freq.values():\n        # Add all pairs (even part of the count)\n        length += (count // 2) * 2\n        \n        # Track if there's any odd frequency\n        if count % 2 == 1:\n            has_odd = True\n    \n    # If there's any character with odd frequency,\n    # we can place one in the middle\n    if has_odd:\n        length += 1\n    \n    return length",
+        "javascript": "function longestPalindrome(s) {\n    // Count frequency of each character\n    const freq = {};\n    for (const c of s) {\n        freq[c] = (freq[c] || 0) + 1;\n    }\n    \n    let length = 0;\n    let hasOdd = false;\n    \n    // Add pairs of each character\n    for (const count of Object.values(freq)) {\n        // Add all pairs (even part of the count)\n        length += Math.floor(count / 2) * 2;\n        \n        // Track if there's any odd frequency\n        if (count % 2 === 1) {\n            hasOdd = true;\n        }\n    }\n    \n    // If there's any character with odd frequency,\n    // we can place one in the middle\n    if (hasOdd) {\n        length++;\n    }\n    \n    return length;\n}"
+      }
+    },
+    {
+      "name": "Greedy - Count Odd Frequencies (Optimal)",
+      "order": 2,
+      "intuition": "Every character with even frequency can be fully used in palindrome. For characters with odd frequency, we can use (freq - 1) characters (making it even) plus one character in the middle. The key insight: length = total_length - odd_count + (1 if odd_count > 0).",
+      "approach": "Count all character frequencies. Count how many characters have odd frequencies. The palindrome length is the string length minus the number of odd frequencies, plus 1 if there are any odd frequencies (for the middle).",
+      "steps": [
+        "Count frequency of each character using hash map or array",
+        "Initialize oddCount = 0",
+        "For each character frequency:",
+        "  - If frequency is odd, increment oddCount",
+        "Calculate result:",
+        "  - If oddCount == 0, return s.length (all even frequencies)",
+        "  - Otherwise, return s.length - oddCount + 1",
+        "  - (Remove excess from odd chars, but keep 1 for middle)",
+        "Return the result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass to count frequencies, then iterate through at most 52 unique characters",
+        "spaceExplanation": "Hash map or array of fixed size (52 for case-sensitive or 26 for single case)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int longestPalindrome(string s) {\n        // Count frequency using array (for ASCII characters)\n        vector<int> freq(128, 0);\n        for (char c : s) {\n            freq[c]++;\n        }\n        \n        int oddCount = 0;\n        \n        // Count characters with odd frequency\n        for (int count : freq) {\n            if (count % 2 == 1) {\n                oddCount++;\n            }\n        }\n        \n        // If no odd frequencies, use entire string\n        // Otherwise, remove all but one odd character\n        if (oddCount == 0) {\n            return s.length();\n        }\n        \n        return s.length() - oddCount + 1;\n    }\n};",
+        "java": "class Solution {\n    public int longestPalindrome(String s) {\n        // Count frequency using array (for ASCII characters)\n        int[] freq = new int[128];\n        for (char c : s.toCharArray()) {\n            freq[c]++;\n        }\n        \n        int oddCount = 0;\n        \n        // Count characters with odd frequency\n        for (int count : freq) {\n            if (count % 2 == 1) {\n                oddCount++;\n            }\n        }\n        \n        // If no odd frequencies, use entire string\n        // Otherwise, remove all but one odd character\n        if (oddCount == 0) {\n            return s.length();\n        }\n        \n        return s.length() - oddCount + 1;\n    }\n}",
+        "python": "def longestPalindrome(s):\n    from collections import Counter\n    \n    # Count frequency of each character\n    freq = Counter(s)\n    \n    odd_count = 0\n    \n    # Count characters with odd frequency\n    for count in freq.values():\n        if count % 2 == 1:\n            odd_count += 1\n    \n    # If no odd frequencies, use entire string\n    # Otherwise, remove all but one odd character\n    if odd_count == 0:\n        return len(s)\n    \n    return len(s) - odd_count + 1",
+        "javascript": "function longestPalindrome(s) {\n    // Count frequency of each character\n    const freq = {};\n    for (const c of s) {\n        freq[c] = (freq[c] || 0) + 1;\n    }\n    \n    let oddCount = 0;\n    \n    // Count characters with odd frequency\n    for (const count of Object.values(freq)) {\n        if (count % 2 === 1) {\n            oddCount++;\n        }\n    }\n    \n    // If no odd frequencies, use entire string\n    // Otherwise, remove all but one odd character\n    if (oddCount === 0) {\n        return s.length;\n    }\n    \n    return s.length - oddCount + 1;\n}"
+      }
+    },
+    {
+      "name": "Set-based Approach",
+      "order": 3,
+      "intuition": "Use a set to track unpaired characters. When we see a character that's already in the set, we found a pair (remove from set). Characters left in the set at the end have odd frequencies.",
+      "approach": "Iterate through string. For each character, if it's in the set, remove it (found a pair). Otherwise, add it to the set. At the end, set contains characters with odd counts. Palindrome length = string length - set size + (1 if set is not empty).",
+      "steps": [
+        "Initialize empty set to track unpaired characters",
+        "Iterate through each character in string:",
+        "  - If character exists in set, remove it (found a pair)",
+        "  - Otherwise, add character to set (unpaired)",
+        "After loop, set contains characters appearing odd times",
+        "Calculate result:",
+        "  - pairs = s.length - set.size",
+        "  - If set is not empty, add 1 for middle character",
+        "Return pairs + (1 if set is not empty else 0)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through string with O(1) set operations",
+        "spaceExplanation": "Set contains at most 52 unique characters (case-sensitive), which is O(1)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int longestPalindrome(string s) {\n        unordered_set<char> oddChars;\n        \n        // Track unpaired characters\n        for (char c : s) {\n            if (oddChars.count(c)) {\n                // Found a pair, remove from set\n                oddChars.erase(c);\n            } else {\n                // Unpaired character, add to set\n                oddChars.insert(c);\n            }\n        }\n        \n        // All characters except those in set can be used\n        // Plus 1 if we have any odd character for middle\n        int length = s.length() - oddChars.size();\n        if (!oddChars.empty()) {\n            length++;\n        }\n        \n        return length;\n    }\n};",
+        "java": "class Solution {\n    public int longestPalindrome(String s) {\n        Set<Character> oddChars = new HashSet<>();\n        \n        // Track unpaired characters\n        for (char c : s.toCharArray()) {\n            if (oddChars.contains(c)) {\n                // Found a pair, remove from set\n                oddChars.remove(c);\n            } else {\n                // Unpaired character, add to set\n                oddChars.add(c);\n            }\n        }\n        \n        // All characters except those in set can be used\n        // Plus 1 if we have any odd character for middle\n        int length = s.length() - oddChars.size();\n        if (!oddChars.isEmpty()) {\n            length++;\n        }\n        \n        return length;\n    }\n}",
+        "python": "def longestPalindrome(s):\n    odd_chars = set()\n    \n    # Track unpaired characters\n    for c in s:\n        if c in odd_chars:\n            # Found a pair, remove from set\n            odd_chars.remove(c)\n        else:\n            # Unpaired character, add to set\n            odd_chars.add(c)\n    \n    # All characters except those in set can be used\n    # Plus 1 if we have any odd character for middle\n    length = len(s) - len(odd_chars)\n    if odd_chars:\n        length += 1\n    \n    return length",
+        "javascript": "function longestPalindrome(s) {\n    const oddChars = new Set();\n    \n    // Track unpaired characters\n    for (const c of s) {\n        if (oddChars.has(c)) {\n            // Found a pair, remove from set\n            oddChars.delete(c);\n        } else {\n            // Unpaired character, add to set\n            oddChars.add(c);\n        }\n    }\n    \n    // All characters except those in set can be used\n    // Plus 1 if we have any odd character for middle\n    let length = s.length - oddChars.size;\n    if (oddChars.size > 0) {\n        length++;\n    }\n    \n    return length;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting that we can place ONE character with odd frequency in the middle",
+    "Trying to actually build the palindrome instead of just calculating its length",
+    "Not handling the case where all characters have even frequencies",
+    "Adding 1 for every odd-frequency character instead of just once for the middle",
+    "Confusing this with 'Longest Palindromic Substring' which is a different problem",
+    "Not considering that both uppercase and lowercase letters are different characters",
+    "Incorrectly calculating pairs by using count / 2 instead of (count / 2) * 2"
+  ],
+  "hints": [
+    "A palindrome consists of letters that appear in pairs, plus possibly one letter in the middle",
+    "Think about character frequencies - which frequencies allow full usage in a palindrome?",
+    "For a character with frequency n, how many can you use in a palindrome?",
+    "You can use all characters with even frequency, and almost all with odd frequency",
+    "At most one character can appear an odd number of times (in the middle)"
+  ],
+  "followUp": [
+    "What if you need to actually construct the palindrome, not just find its length?",
+    "How would you solve this if you're given a stream of characters?",
+    "Can you find the lexicographically smallest palindrome of maximum length?",
+    "What if you can remove at most k characters - what's the longest palindrome?",
+    "How would you handle Unicode characters efficiently?",
+    "What if the string is very large and stored in a file?",
+    "Can you solve this with only O(1) extra space if characters are limited to lowercase?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "Adobe"
+  ],
+  "tags": [
+    "Hash Table",
+    "String",
+    "Greedy",
+    "Counting"
+  ],
+  "relatedProblems": [
+    "Valid Palindrome",
+    "Palindrome Permutation",
+    "Longest Palindromic Substring",
+    "Palindrome Pairs",
+    "Longest Palindrome by Concatenating Two Letter Words",
+    "Valid Palindrome II",
+    "Palindrome Linked List",
+    "Construct K Palindrome Strings"
+  ]
+}

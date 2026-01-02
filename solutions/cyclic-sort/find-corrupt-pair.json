@@ -1,0 +1,194 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ead",
+  "questionSlug": "find-corrupt-pair",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/set-mismatch/",
+    "videos": [
+      {
+        "title": "Set Mismatch - Leetcode 645",
+        "url": "https://www.youtube.com/watch?v=UrGDTZEBr6s",
+        "channel": "NeetCode",
+        "duration": "9:34",
+        "language": "English"
+      },
+      {
+        "title": "Find Duplicate and Missing Number",
+        "url": "https://www.youtube.com/watch?v=2D0D8HE6uak",
+        "channel": "takeUforward",
+        "duration": "13:22",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Set Mismatch Solution",
+        "url": "https://leetcode.com/problems/set-mismatch/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Find Corrupt Pair Article",
+        "url": "https://thecodingsimplified.com/find-currupt-pair/",
+        "source": "The Coding Simplified"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Missing Number",
+        "url": "https://leetcode.com/problems/missing-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find All Duplicates",
+        "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Cyclic Sort when you need to find both a duplicate and a missing number in array of size n with numbers [1,n]. Key indicators: one number repeated, one number missing, need both in O(n) time and O(1) space, set mismatch problem.",
+  "approaches": [
+    {
+      "name": "Brute Force (Nested Loops)",
+      "order": 1,
+      "intuition": "Find the duplicate by comparing each element with all others. Then check which number from 1 to n is not present in array - that's the missing number.",
+      "approach": "First find duplicate using nested loops. Then find missing by checking each number from 1 to n.",
+      "steps": [
+        "Find duplicate:",
+        "  For each index i:",
+        "    For each index j > i:",
+        "      If nums[i] == nums[j]:",
+        "        duplicate = nums[i]",
+        "        Break loops",
+        "Find missing:",
+        "  For each number from 1 to n:",
+        "    found = false",
+        "    For each element in array:",
+        "      If element == current number:",
+        "        found = true",
+        "    If not found:",
+        "      missing = current number",
+        "Return [duplicate, missing]"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Finding duplicate: O(n²) nested loops. Finding missing: O(n) * O(n) = O(n²). Total: O(n²)",
+        "spaceExplanation": "Only using constant variables to store duplicate and missing"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findErrorNums(vector<int>& nums) {\n        int n = nums.size();\n        int duplicate = -1, missing = -1;\n        \n        // Find duplicate\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (nums[i] == nums[j]) {\n                    duplicate = nums[i];\n                    break;\n                }\n            }\n            if (duplicate != -1) break;\n        }\n        \n        // Find missing\n        for (int num = 1; num <= n; num++) {\n            bool found = false;\n            for (int i = 0; i < n; i++) {\n                if (nums[i] == num) {\n                    found = true;\n                    break;\n                }\n            }\n            if (!found) {\n                missing = num;\n                break;\n            }\n        }\n        \n        return {duplicate, missing};\n    }\n};",
+        "java": "class Solution {\n    public int[] findErrorNums(int[] nums) {\n        int n = nums.length;\n        int duplicate = -1, missing = -1;\n        \n        // Find duplicate\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (nums[i] == nums[j]) {\n                    duplicate = nums[i];\n                    break;\n                }\n            }\n            if (duplicate != -1) break;\n        }\n        \n        // Find missing\n        for (int num = 1; num <= n; num++) {\n            boolean found = false;\n            for (int i = 0; i < n; i++) {\n                if (nums[i] == num) {\n                    found = true;\n                    break;\n                }\n            }\n            if (!found) {\n                missing = num;\n                break;\n            }\n        }\n        \n        return new int[]{duplicate, missing};\n    }\n}",
+        "python": "def find_error_nums(nums):\n    n = len(nums)\n    duplicate, missing = -1, -1\n    \n    # Find duplicate\n    for i in range(n):\n        for j in range(i + 1, n):\n            if nums[i] == nums[j]:\n                duplicate = nums[i]\n                break\n        if duplicate != -1:\n            break\n    \n    # Find missing\n    for num in range(1, n + 1):\n        if num not in nums:\n            missing = num\n            break\n    \n    return [duplicate, missing]",
+        "javascript": "function findErrorNums(nums) {\n    const n = nums.length;\n    let duplicate = -1, missing = -1;\n    \n    // Find duplicate\n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            if (nums[i] === nums[j]) {\n                duplicate = nums[i];\n                break;\n            }\n        }\n        if (duplicate !== -1) break;\n    }\n    \n    // Find missing\n    for (let num = 1; num <= n; num++) {\n        let found = false;\n        for (let i = 0; i < n; i++) {\n            if (nums[i] === num) {\n                found = true;\n                break;\n            }\n        }\n        if (!found) {\n            missing = num;\n            break;\n        }\n    }\n    \n    return [duplicate, missing];\n}"
+      }
+    },
+    {
+      "name": "Better (Hash Set/Frequency Map)",
+      "order": 2,
+      "intuition": "Use hash set or frequency map to track seen numbers in single pass. Number seen twice is duplicate. Then check which number from 1 to n is not in set - that's missing.",
+      "approach": "Build frequency map while iterating. Identify duplicate and missing based on frequencies.",
+      "steps": [
+        "Create hash map to store frequencies",
+        "Iterate through array:",
+        "  Increment frequency of each number",
+        "Initialize duplicate = -1, missing = -1",
+        "Check each number from 1 to n:",
+        "  If frequency == 2: duplicate found",
+        "  If frequency == 0 or not in map: missing found",
+        "Return [duplicate, missing]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass to build map O(n), single pass to check 1 to n O(n), total O(n)",
+        "spaceExplanation": "Hash map stores frequencies for up to n unique numbers"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findErrorNums(vector<int>& nums) {\n        int n = nums.size();\n        unordered_map<int, int> freq;\n        \n        // Build frequency map\n        for (int num : nums) {\n            freq[num]++;\n        }\n        \n        int duplicate = -1, missing = -1;\n        \n        // Find duplicate and missing\n        for (int num = 1; num <= n; num++) {\n            if (freq[num] == 2) {\n                duplicate = num;\n            }\n            if (freq[num] == 0) {\n                missing = num;\n            }\n        }\n        \n        return {duplicate, missing};\n    }\n};",
+        "java": "class Solution {\n    public int[] findErrorNums(int[] nums) {\n        int n = nums.length;\n        Map<Integer, Integer> freq = new HashMap<>();\n        \n        // Build frequency map\n        for (int num : nums) {\n            freq.put(num, freq.getOrDefault(num, 0) + 1);\n        }\n        \n        int duplicate = -1, missing = -1;\n        \n        // Find duplicate and missing\n        for (int num = 1; num <= n; num++) {\n            int count = freq.getOrDefault(num, 0);\n            if (count == 2) {\n                duplicate = num;\n            }\n            if (count == 0) {\n                missing = num;\n            }\n        }\n        \n        return new int[]{duplicate, missing};\n    }\n}",
+        "python": "def find_error_nums(nums):\n    n = len(nums)\n    freq = {}\n    \n    # Build frequency map\n    for num in nums:\n        freq[num] = freq.get(num, 0) + 1\n    \n    duplicate, missing = -1, -1\n    \n    # Find duplicate and missing\n    for num in range(1, n + 1):\n        count = freq.get(num, 0)\n        if count == 2:\n            duplicate = num\n        if count == 0:\n            missing = num\n    \n    return [duplicate, missing]",
+        "javascript": "function findErrorNums(nums) {\n    const n = nums.length;\n    const freq = new Map();\n    \n    // Build frequency map\n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    let duplicate = -1, missing = -1;\n    \n    // Find duplicate and missing\n    for (let num = 1; num <= n; num++) {\n        const count = freq.get(num) || 0;\n        if (count === 2) {\n            duplicate = num;\n        }\n        if (count === 0) {\n            missing = num;\n        }\n    }\n    \n    return [duplicate, missing];\n}"
+      }
+    },
+    {
+      "name": "Optimal (Cyclic Sort)",
+      "order": 3,
+      "intuition": "Use cyclic sort to place each number at index (number-1). After sorting, the position where nums[i] != i+1 will have the duplicate at that position, and i+1 will be the missing number. This achieves O(1) space.",
+      "approach": "Apply cyclic sort. After sorting, scan array to find index where value doesn't match expected. The value at that index is duplicate, the expected value (index+1) is missing.",
+      "steps": [
+        "Cyclic sort phase:",
+        "  While i < n:",
+        "    correct_idx = nums[i] - 1",
+        "    If nums[i] != nums[correct_idx]:",
+        "      Swap nums[i] with nums[correct_idx]",
+        "    Else: i++",
+        "Find corrupt pair:",
+        "  For each index i:",
+        "    If nums[i] != i + 1:",
+        "      duplicate = nums[i]",
+        "      missing = i + 1",
+        "      Return [duplicate, missing]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Cyclic sort O(n) where each element swapped at most once, plus O(n) scan = O(n)",
+        "spaceExplanation": "In-place sorting with only constant extra variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findErrorNums(vector<int>& nums) {\n        int i = 0;\n        int n = nums.size();\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            if (nums[i] != nums[correctIndex]) {\n                swap(nums[i], nums[correctIndex]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find duplicate and missing\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1) {\n                // nums[i] is duplicate, i+1 is missing\n                return {nums[i], i + 1};\n            }\n        }\n        \n        return {-1, -1}; // Should never reach here\n    }\n};",
+        "java": "class Solution {\n    public int[] findErrorNums(int[] nums) {\n        int i = 0;\n        int n = nums.length;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            if (nums[i] != nums[correctIndex]) {\n                // Swap\n                int temp = nums[i];\n                nums[i] = nums[correctIndex];\n                nums[correctIndex] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find duplicate and missing\n        for (int j = 0; j < n; j++) {\n            if (nums[j] != j + 1) {\n                // nums[j] is duplicate, j+1 is missing\n                return new int[]{nums[j], j + 1};\n            }\n        }\n        \n        return new int[]{-1, -1}; // Should never reach here\n    }\n}",
+        "python": "def find_error_nums(nums):\n    i = 0\n    n = len(nums)\n    \n    # Cyclic sort\n    while i < n:\n        correct_index = nums[i] - 1\n        \n        if nums[i] != nums[correct_index]:\n            nums[i], nums[correct_index] = nums[correct_index], nums[i]\n        else:\n            i += 1\n    \n    # Find duplicate and missing\n    for i in range(n):\n        if nums[i] != i + 1:\n            # nums[i] is duplicate, i+1 is missing\n            return [nums[i], i + 1]\n    \n    return [-1, -1]  # Should never reach here",
+        "javascript": "function findErrorNums(nums) {\n    let i = 0;\n    const n = nums.length;\n    \n    // Cyclic sort\n    while (i < n) {\n        const correctIndex = nums[i] - 1;\n        \n        if (nums[i] !== nums[correctIndex]) {\n            [nums[i], nums[correctIndex]] = [nums[correctIndex], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find duplicate and missing\n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== i + 1) {\n            // nums[i] is duplicate, i+1 is missing\n            return [nums[i], i + 1];\n        }\n    }\n    \n    return [-1, -1]; // Should never reach here\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Confusing which number is duplicate and which is missing after cyclic sort",
+    "Not understanding that duplicate will be at wrong position, and missing is the expected value",
+    "Creating infinite loop by not incrementing i when nums[i] == nums[correct_idx]",
+    "Returning [missing, duplicate] instead of [duplicate, missing]",
+    "Off-by-one errors with 1-indexed numbers and 0-indexed array",
+    "Not handling the case where duplicate is already at one of its positions"
+  ],
+  "hints": [
+    "After cyclic sort, numbers should be at index (number-1). What's special about wrong positions?",
+    "If position i has wrong number, what does that tell you?",
+    "The number at wrong position is the duplicate. What number should be there?",
+    "Can you find both numbers in a single scan after cyclic sort?",
+    "Think about invariant: exactly one position will have wrong number after sorting",
+    "The position with wrong value reveals both duplicate and missing"
+  ],
+  "followUp": [
+    "What if there are multiple corrupt pairs?",
+    "How would you solve if numbers are in range [0,n-1] instead of [1,n]?",
+    "Can you solve without modifying the input array?",
+    "What if array size is very large and cannot fit in memory?",
+    "How would you find corrupt triplet (two duplicates, one missing)?",
+    "Can you use XOR to solve this problem?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Cyclic Sort",
+    "Hash Table",
+    "Bit Manipulation",
+    "Math"
+  ],
+  "relatedProblems": [
+    "Missing Number",
+    "Find the Duplicate Number",
+    "Find All Duplicates in an Array",
+    "Find All Numbers Disappeared in an Array",
+    "First Missing Positive",
+    "Single Number"
+  ]
+}

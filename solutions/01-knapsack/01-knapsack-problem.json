@@ -1,0 +1,191 @@
+{
+  "questionId": "694d4a3a98494915f3bc8f0e",
+  "questionSlug": "01-knapsack-problem",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/",
+    "videos": [
+      {
+        "title": "0/1 Knapsack Problem - Dynamic Programming",
+        "url": "https://www.youtube.com/watch?v=8LusJS5-AGo",
+        "channel": "takeUforward",
+        "duration": "25:43",
+        "language": "English"
+      },
+      {
+        "title": "0-1 Knapsack Problem (DP)",
+        "url": "https://www.youtube.com/watch?v=GqOmJHQZivw",
+        "channel": "Abdul Bari",
+        "duration": "16:16",
+        "language": "English"
+      },
+      {
+        "title": "0/1 Knapsack - Dynamic Programming",
+        "url": "https://www.youtube.com/watch?v=xCbYmUPvc2Q",
+        "channel": "TECH DOSE",
+        "duration": "19:27",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "0-1 Knapsack Problem | DP-10",
+        "url": "https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Solving 0/1 Knapsack Using Dynamic Programming",
+        "url": "https://www.interviewbit.com/blog/0-1-knapsack-problem/",
+        "source": "InterviewBit"
+      }
+    ],
+    "practice": [
+      {
+        "title": "0 - 1 Knapsack Problem",
+        "url": "https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Partition Equal Subset Sum",
+        "url": "https://leetcode.com/problems/partition-equal-subset-sum/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use 0/1 Knapsack pattern when you need to select items with constraints (each item can be taken once) to maximize/minimize a value. Key indicators: limited capacity, each item has weight and value, cannot take fractional items, optimization problem (max profit/min cost).",
+  "approaches": [
+    {
+      "name": "Brute Force (Recursion)",
+      "order": 1,
+      "intuition": "For each item, we have two choices: include it in the knapsack or exclude it. We try all possible combinations recursively and return the maximum profit.",
+      "approach": "Use recursion to explore all possible combinations. At each step, we either include the current item (if weight allows) or exclude it. The base case is when we've processed all items or capacity becomes 0.",
+      "steps": [
+        "Base case: If no items left (index < 0) or capacity is 0, return 0",
+        "If current item's weight exceeds capacity, skip it and move to next item",
+        "Otherwise, we have two choices:",
+        "  Choice 1: Include current item - add its profit and reduce capacity by its weight",
+        "  Choice 2: Exclude current item - move to next item with same capacity",
+        "Return maximum of both choices",
+        "Start recursion from last item with full capacity"
+      ],
+      "complexity": {
+        "time": "O(2^n)",
+        "space": "O(n)",
+        "timeExplanation": "Each item has 2 choices (include/exclude), leading to 2^n recursive calls in worst case",
+        "spaceExplanation": "Recursion stack depth is O(n) for n items"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int helper(vector<int>& weights, vector<int>& values, int capacity, int index) {\n        // Base case: no items left or capacity is 0\n        if (index < 0 || capacity == 0) {\n            return 0;\n        }\n        \n        // If current item's weight exceeds capacity, skip it\n        if (weights[index] > capacity) {\n            return helper(weights, values, capacity, index - 1);\n        }\n        \n        // Include current item\n        int include = values[index] + helper(weights, values, capacity - weights[index], index - 1);\n        \n        // Exclude current item\n        int exclude = helper(weights, values, capacity, index - 1);\n        \n        // Return maximum profit\n        return max(include, exclude);\n    }\n    \n    int knapsack(vector<int>& weights, vector<int>& values, int capacity) {\n        int n = weights.size();\n        return helper(weights, values, capacity, n - 1);\n    }\n};",
+        "java": "class Solution {\n    public int helper(int[] weights, int[] values, int capacity, int index) {\n        // Base case: no items left or capacity is 0\n        if (index < 0 || capacity == 0) {\n            return 0;\n        }\n        \n        // If current item's weight exceeds capacity, skip it\n        if (weights[index] > capacity) {\n            return helper(weights, values, capacity, index - 1);\n        }\n        \n        // Include current item\n        int include = values[index] + helper(weights, values, capacity - weights[index], index - 1);\n        \n        // Exclude current item\n        int exclude = helper(weights, values, capacity, index - 1);\n        \n        // Return maximum profit\n        return Math.max(include, exclude);\n    }\n    \n    public int knapsack(int[] weights, int[] values, int capacity) {\n        int n = weights.length;\n        return helper(weights, values, capacity, n - 1);\n    }\n}",
+        "python": "def knapsack(weights, values, capacity):\n    def helper(index, remaining_capacity):\n        # Base case: no items left or capacity is 0\n        if index < 0 or remaining_capacity == 0:\n            return 0\n        \n        # If current item's weight exceeds capacity, skip it\n        if weights[index] > remaining_capacity:\n            return helper(index - 1, remaining_capacity)\n        \n        # Include current item\n        include = values[index] + helper(index - 1, remaining_capacity - weights[index])\n        \n        # Exclude current item\n        exclude = helper(index - 1, remaining_capacity)\n        \n        # Return maximum profit\n        return max(include, exclude)\n    \n    n = len(weights)\n    return helper(n - 1, capacity)",
+        "javascript": "function knapsack(weights, values, capacity) {\n    function helper(index, remainingCapacity) {\n        // Base case: no items left or capacity is 0\n        if (index < 0 || remainingCapacity === 0) {\n            return 0;\n        }\n        \n        // If current item's weight exceeds capacity, skip it\n        if (weights[index] > remainingCapacity) {\n            return helper(index - 1, remainingCapacity);\n        }\n        \n        // Include current item\n        const include = values[index] + helper(index - 1, remainingCapacity - weights[index]);\n        \n        // Exclude current item\n        const exclude = helper(index - 1, remainingCapacity);\n        \n        // Return maximum profit\n        return Math.max(include, exclude);\n    }\n    \n    const n = weights.length;\n    return helper(n - 1, capacity);\n}"
+      }
+    },
+    {
+      "name": "Better (Memoization - Top Down DP)",
+      "order": 2,
+      "intuition": "The recursive solution recalculates the same subproblems multiple times. We can optimize this by storing results of subproblems in a memoization table (2D array) indexed by item index and remaining capacity.",
+      "approach": "Use recursion with memoization. Store results of each (index, capacity) pair in a 2D DP table. Before calculating, check if result already exists in the table. This eliminates redundant calculations.",
+      "steps": [
+        "Create a 2D DP table of size (n+1) x (capacity+1), initialized with -1",
+        "Base case: If index < 0 or capacity is 0, return 0",
+        "Check if result for current (index, capacity) is already computed",
+        "If yes, return the stored result",
+        "If current item's weight exceeds capacity, skip it",
+        "Otherwise, calculate max of including and excluding current item",
+        "Store the result in DP table before returning",
+        "Return the computed maximum profit"
+      ],
+      "complexity": {
+        "time": "O(n * W)",
+        "space": "O(n * W)",
+        "timeExplanation": "We compute each subproblem once. There are n*W possible states where n is number of items and W is capacity",
+        "spaceExplanation": "2D DP table of size (n+1) x (W+1) plus recursion stack of O(n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int helper(vector<int>& weights, vector<int>& values, int capacity, int index, vector<vector<int>>& dp) {\n        // Base case\n        if (index < 0 || capacity == 0) {\n            return 0;\n        }\n        \n        // Check if already computed\n        if (dp[index][capacity] != -1) {\n            return dp[index][capacity];\n        }\n        \n        // If current item's weight exceeds capacity, skip it\n        if (weights[index] > capacity) {\n            return dp[index][capacity] = helper(weights, values, capacity, index - 1, dp);\n        }\n        \n        // Include current item\n        int include = values[index] + helper(weights, values, capacity - weights[index], index - 1, dp);\n        \n        // Exclude current item\n        int exclude = helper(weights, values, capacity, index - 1, dp);\n        \n        // Store and return maximum profit\n        return dp[index][capacity] = max(include, exclude);\n    }\n    \n    int knapsack(vector<int>& weights, vector<int>& values, int capacity) {\n        int n = weights.size();\n        vector<vector<int>> dp(n, vector<int>(capacity + 1, -1));\n        return helper(weights, values, capacity, n - 1, dp);\n    }\n};",
+        "java": "class Solution {\n    public int helper(int[] weights, int[] values, int capacity, int index, int[][] dp) {\n        // Base case\n        if (index < 0 || capacity == 0) {\n            return 0;\n        }\n        \n        // Check if already computed\n        if (dp[index][capacity] != -1) {\n            return dp[index][capacity];\n        }\n        \n        // If current item's weight exceeds capacity, skip it\n        if (weights[index] > capacity) {\n            return dp[index][capacity] = helper(weights, values, capacity, index - 1, dp);\n        }\n        \n        // Include current item\n        int include = values[index] + helper(weights, values, capacity - weights[index], index - 1, dp);\n        \n        // Exclude current item\n        int exclude = helper(weights, values, capacity, index - 1, dp);\n        \n        // Store and return maximum profit\n        return dp[index][capacity] = Math.max(include, exclude);\n    }\n    \n    public int knapsack(int[] weights, int[] values, int capacity) {\n        int n = weights.length;\n        int[][] dp = new int[n][capacity + 1];\n        for (int[] row : dp) {\n            Arrays.fill(row, -1);\n        }\n        return helper(weights, values, capacity, n - 1, dp);\n    }\n}",
+        "python": "def knapsack(weights, values, capacity):\n    n = len(weights)\n    # Create memoization table\n    dp = [[-1] * (capacity + 1) for _ in range(n)]\n    \n    def helper(index, remaining_capacity):\n        # Base case\n        if index < 0 or remaining_capacity == 0:\n            return 0\n        \n        # Check if already computed\n        if dp[index][remaining_capacity] != -1:\n            return dp[index][remaining_capacity]\n        \n        # If current item's weight exceeds capacity, skip it\n        if weights[index] > remaining_capacity:\n            dp[index][remaining_capacity] = helper(index - 1, remaining_capacity)\n            return dp[index][remaining_capacity]\n        \n        # Include current item\n        include = values[index] + helper(index - 1, remaining_capacity - weights[index])\n        \n        # Exclude current item\n        exclude = helper(index - 1, remaining_capacity)\n        \n        # Store and return maximum profit\n        dp[index][remaining_capacity] = max(include, exclude)\n        return dp[index][remaining_capacity]\n    \n    return helper(n - 1, capacity)",
+        "javascript": "function knapsack(weights, values, capacity) {\n    const n = weights.length;\n    // Create memoization table\n    const dp = Array(n).fill(null).map(() => Array(capacity + 1).fill(-1));\n    \n    function helper(index, remainingCapacity) {\n        // Base case\n        if (index < 0 || remainingCapacity === 0) {\n            return 0;\n        }\n        \n        // Check if already computed\n        if (dp[index][remainingCapacity] !== -1) {\n            return dp[index][remainingCapacity];\n        }\n        \n        // If current item's weight exceeds capacity, skip it\n        if (weights[index] > remainingCapacity) {\n            dp[index][remainingCapacity] = helper(index - 1, remainingCapacity);\n            return dp[index][remainingCapacity];\n        }\n        \n        // Include current item\n        const include = values[index] + helper(index - 1, remainingCapacity - weights[index]);\n        \n        // Exclude current item\n        const exclude = helper(index - 1, remainingCapacity);\n        \n        // Store and return maximum profit\n        dp[index][remainingCapacity] = Math.max(include, exclude);\n        return dp[index][remainingCapacity];\n    }\n    \n    return helper(n - 1, capacity);\n}"
+      }
+    },
+    {
+      "name": "Optimal (Tabulation - Bottom Up DP)",
+      "order": 3,
+      "intuition": "Instead of recursion, we can build the solution iteratively from bottom-up. Create a table where dp[i][w] represents maximum value achievable with first i items and weight capacity w.",
+      "approach": "Build a 2D DP table iteratively. For each item and each weight capacity, decide whether to include the item or not based on maximum profit. The final answer will be at dp[n][capacity].",
+      "steps": [
+        "Create a 2D DP table of size (n+1) x (capacity+1), initialized with 0",
+        "First row and column remain 0 (base case: 0 items or 0 capacity)",
+        "For each item i from 1 to n:",
+        "  For each capacity w from 1 to W:",
+        "    If weights[i-1] <= w (can include item):",
+        "      dp[i][w] = max(values[i-1] + dp[i-1][w-weights[i-1]], dp[i-1][w])",
+        "    Else (cannot include item):",
+        "      dp[i][w] = dp[i-1][w]",
+        "Return dp[n][capacity] as the maximum profit"
+      ],
+      "complexity": {
+        "time": "O(n * W)",
+        "space": "O(n * W)",
+        "timeExplanation": "Two nested loops: outer loop runs n times, inner loop runs W times",
+        "spaceExplanation": "2D DP table of size (n+1) x (W+1). Can be optimized to O(W) using 1D array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int knapsack(vector<int>& weights, vector<int>& values, int capacity) {\n        int n = weights.size();\n        // Create DP table\n        vector<vector<int>> dp(n + 1, vector<int>(capacity + 1, 0));\n        \n        // Build table bottom-up\n        for (int i = 1; i <= n; i++) {\n            for (int w = 1; w <= capacity; w++) {\n                // Current item's weight and value (0-indexed)\n                int itemWeight = weights[i - 1];\n                int itemValue = values[i - 1];\n                \n                if (itemWeight <= w) {\n                    // Can include this item\n                    int includeProfit = itemValue + dp[i - 1][w - itemWeight];\n                    int excludeProfit = dp[i - 1][w];\n                    dp[i][w] = max(includeProfit, excludeProfit);\n                } else {\n                    // Cannot include this item\n                    dp[i][w] = dp[i - 1][w];\n                }\n            }\n        }\n        \n        return dp[n][capacity];\n    }\n};",
+        "java": "class Solution {\n    public int knapsack(int[] weights, int[] values, int capacity) {\n        int n = weights.length;\n        // Create DP table\n        int[][] dp = new int[n + 1][capacity + 1];\n        \n        // Build table bottom-up\n        for (int i = 1; i <= n; i++) {\n            for (int w = 1; w <= capacity; w++) {\n                // Current item's weight and value (0-indexed)\n                int itemWeight = weights[i - 1];\n                int itemValue = values[i - 1];\n                \n                if (itemWeight <= w) {\n                    // Can include this item\n                    int includeProfit = itemValue + dp[i - 1][w - itemWeight];\n                    int excludeProfit = dp[i - 1][w];\n                    dp[i][w] = Math.max(includeProfit, excludeProfit);\n                } else {\n                    // Cannot include this item\n                    dp[i][w] = dp[i - 1][w];\n                }\n            }\n        }\n        \n        return dp[n][capacity];\n    }\n}",
+        "python": "def knapsack(weights, values, capacity):\n    n = len(weights)\n    # Create DP table\n    dp = [[0] * (capacity + 1) for _ in range(n + 1)]\n    \n    # Build table bottom-up\n    for i in range(1, n + 1):\n        for w in range(1, capacity + 1):\n            # Current item's weight and value (0-indexed)\n            item_weight = weights[i - 1]\n            item_value = values[i - 1]\n            \n            if item_weight <= w:\n                # Can include this item\n                include_profit = item_value + dp[i - 1][w - item_weight]\n                exclude_profit = dp[i - 1][w]\n                dp[i][w] = max(include_profit, exclude_profit)\n            else:\n                # Cannot include this item\n                dp[i][w] = dp[i - 1][w]\n    \n    return dp[n][capacity]",
+        "javascript": "function knapsack(weights, values, capacity) {\n    const n = weights.length;\n    // Create DP table\n    const dp = Array(n + 1).fill(null).map(() => Array(capacity + 1).fill(0));\n    \n    // Build table bottom-up\n    for (let i = 1; i <= n; i++) {\n        for (let w = 1; w <= capacity; w++) {\n            // Current item's weight and value (0-indexed)\n            const itemWeight = weights[i - 1];\n            const itemValue = values[i - 1];\n            \n            if (itemWeight <= w) {\n                // Can include this item\n                const includeProfit = itemValue + dp[i - 1][w - itemWeight];\n                const excludeProfit = dp[i - 1][w];\n                dp[i][w] = Math.max(includeProfit, excludeProfit);\n            } else {\n                // Cannot include this item\n                dp[i][w] = dp[i - 1][w];\n            }\n        }\n    }\n    \n    return dp[n][capacity];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using 1-indexed arrays in code but treating them as 0-indexed (off-by-one errors)",
+    "Forgetting to initialize the DP table with correct base cases (0s for tabulation, -1 for memoization)",
+    "Not checking if item weight exceeds current capacity before trying to include it",
+    "In memoization, forgetting to store the computed result before returning",
+    "Confusing row/column indices - dp[i][w] where i is items and w is capacity",
+    "Not handling edge cases: empty items array, zero capacity, or negative values"
+  ],
+  "hints": [
+    "Think about the choices you have for each item: include it or exclude it",
+    "What information do you need to make a decision? (current item, remaining capacity)",
+    "Can you identify overlapping subproblems that get recalculated?",
+    "Try drawing a small example with 3 items and see the recursive tree",
+    "The state can be represented by two parameters: which item you're at and remaining capacity",
+    "In tabulation, think about what dp[i][w] represents: max value with first i items and capacity w"
+  ],
+  "followUp": [
+    "How would you modify this to return the actual items selected, not just the maximum value?",
+    "Can you optimize the space complexity to O(W) instead of O(n*W)?",
+    "What if items can be taken multiple times (Unbounded Knapsack)?",
+    "What if you want to fill the knapsack completely (Subset Sum Problem)?",
+    "How would you handle fractional items (Fractional Knapsack - greedy approach)?",
+    "What if there are additional constraints like color or category of items?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Goldman Sachs",
+    "Flipkart",
+    "Adobe",
+    "Samsung",
+    "Oracle"
+  ],
+  "tags": [
+    "Dynamic Programming",
+    "Recursion",
+    "Memoization",
+    "Knapsack",
+    "Optimization"
+  ],
+  "relatedProblems": [
+    "Partition Equal Subset Sum",
+    "Target Sum",
+    "Coin Change",
+    "Unbounded Knapsack",
+    "Subset Sum Problem",
+    "Minimum Subset Sum Difference"
+  ]
+}

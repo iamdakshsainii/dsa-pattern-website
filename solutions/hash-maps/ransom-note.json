@@ -1,0 +1,199 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ec1",
+  "questionSlug": "ransom-note",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/ransom-note/",
+    "videos": [
+      {
+        "title": "Ransom Note - Leetcode 383",
+        "url": "https://www.youtube.com/watch?v=Ek7CN4f9g5U",
+        "channel": "NeetCode",
+        "duration": "4:30",
+        "language": "English"
+      },
+      {
+        "title": "Ransom Note Problem | Hash Table Solution",
+        "url": "https://www.youtube.com/watch?v=JaO2jVZhAhk",
+        "channel": "TECH DOSE",
+        "duration": "7:45",
+        "language": "English"
+      },
+      {
+        "title": "Can Construct Ransom Note - Simple Approach",
+        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "5:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Ransom Note Solution",
+        "url": "https://leetcode.com/problems/ransom-note/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Ransom Note Explained with Examples",
+        "url": "https://algo.monster/liteproblems/383",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Character Frequency Matching Pattern",
+        "url": "https://www.geeksforgeeks.org/ransom-note-problem/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find Words That Can Be Formed by Characters",
+        "url": "https://leetcode.com/problems/find-words-that-can-be-formed-by-characters/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Number of Balloons",
+        "url": "https://leetcode.com/problems/maximum-number-of-balloons/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Valid Anagram",
+        "url": "https://leetcode.com/problems/valid-anagram/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find the Difference",
+        "url": "https://leetcode.com/problems/find-the-difference/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Frequency Count pattern when checking if one string can be constructed from characters in another. Key indicators: character availability check, need to verify sufficient quantity of each character, matching/validation problem, no character reuse across instances.",
+  "approaches": [
+    {
+      "name": "Hash Map - Count and Verify",
+      "order": 1,
+      "intuition": "First count all available characters in the magazine, then iterate through ransom note and check if we have enough of each character. Decrement count as we use characters.",
+      "approach": "Build a frequency map of magazine characters. For each character in ransom note, check if it exists with sufficient count in the map. Decrement count after using. If any character is unavailable, return false.",
+      "steps": [
+        "Create hash map to count frequency of characters in magazine",
+        "Iterate through magazine string and populate frequency map",
+        "Iterate through ransom note:",
+        "  - For each character, check if it exists in map with count > 0",
+        "  - If not available, return false",
+        "  - If available, decrement its count in map",
+        "If all characters successfully found, return true"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "timeExplanation": "O(m) to build frequency map, O(n) to check ransom note, where m = magazine length, n = ransom note length",
+        "spaceExplanation": "Hash map stores at most 26 lowercase letters, which is O(1)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool canConstruct(string ransomNote, string magazine) {\n        // Count frequency of characters in magazine\n        unordered_map<char, int> charCount;\n        for (char c : magazine) {\n            charCount[c]++;\n        }\n        \n        // Check if we can construct ransom note\n        for (char c : ransomNote) {\n            if (charCount[c] <= 0) {\n                return false;  // Not enough of this character\n            }\n            charCount[c]--;\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean canConstruct(String ransomNote, String magazine) {\n        // Count frequency of characters in magazine\n        Map<Character, Integer> charCount = new HashMap<>();\n        for (char c : magazine.toCharArray()) {\n            charCount.put(c, charCount.getOrDefault(c, 0) + 1);\n        }\n        \n        // Check if we can construct ransom note\n        for (char c : ransomNote.toCharArray()) {\n            if (charCount.getOrDefault(c, 0) <= 0) {\n                return false;  // Not enough of this character\n            }\n            charCount.put(c, charCount.get(c) - 1);\n        }\n        \n        return true;\n    }\n}",
+        "python": "def canConstruct(ransomNote, magazine):\n    from collections import Counter\n    \n    # Count frequency of characters in magazine\n    char_count = Counter(magazine)\n    \n    # Check if we can construct ransom note\n    for c in ransomNote:\n        if char_count[c] <= 0:\n            return False  # Not enough of this character\n        char_count[c] -= 1\n    \n    return True",
+        "javascript": "function canConstruct(ransomNote, magazine) {\n    // Count frequency of characters in magazine\n    const charCount = {};\n    for (const c of magazine) {\n        charCount[c] = (charCount[c] || 0) + 1;\n    }\n    \n    // Check if we can construct ransom note\n    for (const c of ransomNote) {\n        if ((charCount[c] || 0) <= 0) {\n            return false;  // Not enough of this character\n        }\n        charCount[c]--;\n    }\n    \n    return true;\n}"
+      }
+    },
+    {
+      "name": "Array Frequency Map (Optimal)",
+      "order": 2,
+      "intuition": "Since we only have lowercase English letters, use a fixed-size array instead of hash map for better performance. Same logic but with array indexing.",
+      "approach": "Use array of size 26 to count character frequencies. Index by (char - 'a'). Build frequency array from magazine, then verify ransom note can be constructed.",
+      "steps": [
+        "Create array of size 26 initialized to 0",
+        "Count magazine characters: freq[c - 'a']++",
+        "Iterate through ransom note:",
+        "  - For each character, check if freq[c - 'a'] > 0",
+        "  - If count is 0, return false",
+        "  - Otherwise, decrement freq[c - 'a']",
+        "Return true if all characters found"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "timeExplanation": "O(m) to count magazine, O(n) to verify ransom note",
+        "spaceExplanation": "Array of fixed size 26, which is O(1)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool canConstruct(string ransomNote, string magazine) {\n        // Array to count character frequencies\n        vector<int> freq(26, 0);\n        \n        // Count characters in magazine\n        for (char c : magazine) {\n            freq[c - 'a']++;\n        }\n        \n        // Check if we can construct ransom note\n        for (char c : ransomNote) {\n            if (freq[c - 'a'] == 0) {\n                return false;\n            }\n            freq[c - 'a']--;\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean canConstruct(String ransomNote, String magazine) {\n        // Array to count character frequencies\n        int[] freq = new int[26];\n        \n        // Count characters in magazine\n        for (char c : magazine.toCharArray()) {\n            freq[c - 'a']++;\n        }\n        \n        // Check if we can construct ransom note\n        for (char c : ransomNote.toCharArray()) {\n            if (freq[c - 'a'] == 0) {\n                return false;\n            }\n            freq[c - 'a']--;\n        }\n        \n        return true;\n    }\n}",
+        "python": "def canConstruct(ransomNote, magazine):\n    # Array to count character frequencies\n    freq = [0] * 26\n    \n    # Count characters in magazine\n    for c in magazine:\n        freq[ord(c) - ord('a')] += 1\n    \n    # Check if we can construct ransom note\n    for c in ransomNote:\n        if freq[ord(c) - ord('a')] == 0:\n            return False\n        freq[ord(c) - ord('a')] -= 1\n    \n    return True",
+        "javascript": "function canConstruct(ransomNote, magazine) {\n    // Array to count character frequencies\n    const freq = new Array(26).fill(0);\n    \n    // Count characters in magazine\n    for (const c of magazine) {\n        freq[c.charCodeAt(0) - 'a'.charCodeAt(0)]++;\n    }\n    \n    // Check if we can construct ransom note\n    for (const c of ransomNote) {\n        if (freq[c.charCodeAt(0) - 'a'.charCodeAt(0)] === 0) {\n            return false;\n        }\n        freq[c.charCodeAt(0) - 'a'.charCodeAt(0)]--;\n    }\n    \n    return true;\n}"
+      }
+    },
+    {
+      "name": "Counter Comparison (Python-specific)",
+      "order": 3,
+      "intuition": "Use Python's Counter class to count frequencies, then check if ransom note's character counts are all less than or equal to magazine's counts.",
+      "approach": "Create Counter objects for both strings. Check if every character count in ransom note is less than or equal to the corresponding count in magazine using Counter subtraction or comparison.",
+      "steps": [
+        "Create Counter for ransomNote",
+        "Create Counter for magazine",
+        "Check if ransomNote counter is subset of magazine counter",
+        "In Python: use Counter subtraction or '&' operator",
+        "If all ransom note characters satisfied, return true"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "timeExplanation": "O(m) + O(n) to build both counters",
+        "spaceExplanation": "Counters store at most 26 characters each, which is O(1)"
+      },
+      "code": {
+        "cpp": "// This approach is most elegant in Python\n// C++ equivalent would be similar to approach 1\nclass Solution {\npublic:\n    bool canConstruct(string ransomNote, string magazine) {\n        unordered_map<char, int> noteCount, magCount;\n        \n        for (char c : ransomNote) noteCount[c]++;\n        for (char c : magazine) magCount[c]++;\n        \n        for (auto& [ch, count] : noteCount) {\n            if (magCount[ch] < count) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean canConstruct(String ransomNote, String magazine) {\n        Map<Character, Integer> noteCount = new HashMap<>();\n        Map<Character, Integer> magCount = new HashMap<>();\n        \n        for (char c : ransomNote.toCharArray()) {\n            noteCount.put(c, noteCount.getOrDefault(c, 0) + 1);\n        }\n        for (char c : magazine.toCharArray()) {\n            magCount.put(c, magCount.getOrDefault(c, 0) + 1);\n        }\n        \n        for (Map.Entry<Character, Integer> entry : noteCount.entrySet()) {\n            if (magCount.getOrDefault(entry.getKey(), 0) < entry.getValue()) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n}",
+        "python": "def canConstruct(ransomNote, magazine):\n    from collections import Counter\n    \n    # Count characters in both strings\n    note_count = Counter(ransomNote)\n    mag_count = Counter(magazine)\n    \n    # Check if magazine has enough of each character\n    # Using subtraction: if result has positive counts, not enough chars\n    return not (note_count - mag_count)\n    \n    # Alternative: check each character\n    # return all(mag_count[c] >= count for c, count in note_count.items())",
+        "javascript": "function canConstruct(ransomNote, magazine) {\n    const noteCount = {};\n    const magCount = {};\n    \n    for (const c of ransomNote) {\n        noteCount[c] = (noteCount[c] || 0) + 1;\n    }\n    for (const c of magazine) {\n        magCount[c] = (magCount[c] || 0) + 1;\n    }\n    \n    for (const [ch, count] of Object.entries(noteCount)) {\n        if ((magCount[ch] || 0) < count) {\n            return false;\n        }\n    }\n    \n    return true;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the case where a character in ransom note doesn't exist in magazine at all",
+    "Forgetting that each character can only be used once (not checking counts)",
+    "Comparing sorted strings instead of character frequencies (fails when counts differ)",
+    "Not decrementing the count after using a character",
+    "Using set comparison instead of frequency comparison",
+    "Assuming case-insensitive when problem specifies lowercase only"
+  ],
+  "hints": [
+    "You need to check if magazine has enough of each character needed for ransom note",
+    "Each character from magazine can only be used once",
+    "Think about counting character frequencies",
+    "You can use a hash map or array to track available characters",
+    "For lowercase English letters only, an array of size 26 is sufficient"
+  ],
+  "followUp": [
+    "What if characters can be reused? How does the solution change?",
+    "How would you handle case-insensitive matching?",
+    "Can you optimize for the case where magazine is very long and ransom note is short?",
+    "What if magazine is given as a stream of characters?",
+    "How would you solve this for Unicode characters?",
+    "What if you need to return which characters are missing?",
+    "Can you solve this in one pass without building the complete frequency map first?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe"
+  ],
+  "tags": [
+    "Hash Table",
+    "String",
+    "Counting"
+  ],
+  "relatedProblems": [
+    "Find Words That Can Be Formed by Characters",
+    "Maximum Number of Balloons",
+    "Valid Anagram",
+    "Find the Difference",
+    "Check if Word Equals Summation of Two Words",
+    "Minimum Number of Steps to Make Two Strings Anagram",
+    "Rearrange Characters to Make Target String"
+  ]
+}

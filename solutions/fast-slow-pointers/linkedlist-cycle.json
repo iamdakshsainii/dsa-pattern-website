@@ -1,0 +1,156 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e84",
+  "questionSlug": "linkedlist-cycle",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/linked-list-cycle/",
+    "videos": [
+      {
+        "title": "Linked List Cycle Detection - Floyd's Tortoise & Hare",
+        "url": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
+        "channel": "NeetCode",
+        "duration": "8:32",
+        "language": "English"
+      },
+      {
+        "title": "Detect a Cycle in Linked List",
+        "url": "https://www.youtube.com/watch?v=354J83hX7RI",
+        "channel": "takeUforward",
+        "duration": "10:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Linked List Cycle Solution",
+        "url": "https://leetcode.com/problems/linked-list-cycle/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Detect Loop in Linked List",
+        "url": "https://www.geeksforgeeks.org/detect-loop-in-a-linked-list/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Linked List Cycle II",
+        "url": "https://leetcode.com/problems/linked-list-cycle-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Happy Number",
+        "url": "https://leetcode.com/problems/happy-number/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Fast & Slow Pointers (Floyd's Cycle Detection) when you need to detect a cycle in a linked list or find the middle element. Key indicators: linked list traversal, cycle detection, finding meeting point, O(1) space requirement.",
+  "approaches": [
+    {
+      "name": "Hash Set (Brute Force)",
+      "order": 1,
+      "intuition": "Keep track of all visited nodes in a hash set. If we encounter a node that's already in the set, there's a cycle. If we reach null, there's no cycle.",
+      "approach": "Traverse the linked list and store each node in a hash set. Check if current node already exists in the set.",
+      "steps": [
+        "Create a hash set to store visited nodes",
+        "Start from head of linked list",
+        "While current node is not null:",
+        "  If current node exists in hash set:",
+        "    Return true (cycle detected)",
+        "  Add current node to hash set",
+        "  Move to next node",
+        "Return false (no cycle found)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each node once in worst case",
+        "spaceExplanation": "Hash set stores all nodes in worst case"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool hasCycle(ListNode *head) {\n        unordered_set<ListNode*> visited;\n        \n        ListNode* current = head;\n        while (current != nullptr) {\n            // If node already visited, cycle exists\n            if (visited.count(current)) {\n                return true;\n            }\n            \n            // Mark node as visited\n            visited.insert(current);\n            current = current->next;\n        }\n        \n        // Reached end without finding cycle\n        return false;\n    }\n};",
+        "java": "public class Solution {\n    public boolean hasCycle(ListNode head) {\n        Set<ListNode> visited = new HashSet<>();\n        \n        ListNode current = head;\n        while (current != null) {\n            // If node already visited, cycle exists\n            if (visited.contains(current)) {\n                return true;\n            }\n            \n            // Mark node as visited\n            visited.add(current);\n            current = current.next;\n        }\n        \n        // Reached end without finding cycle\n        return false;\n    }\n}",
+        "python": "def has_cycle(head):\n    visited = set()\n    \n    current = head\n    while current:\n        # If node already visited, cycle exists\n        if current in visited:\n            return True\n        \n        # Mark node as visited\n        visited.add(current)\n        current = current.next\n    \n    # Reached end without finding cycle\n    return False",
+        "javascript": "function hasCycle(head) {\n    const visited = new Set();\n    \n    let current = head;\n    while (current !== null) {\n        // If node already visited, cycle exists\n        if (visited.has(current)) {\n            return true;\n        }\n        \n        // Mark node as visited\n        visited.add(current);\n        current = current.next;\n    }\n    \n    // Reached end without finding cycle\n    return false;\n}"
+      }
+    },
+    {
+      "name": "Floyd's Cycle Detection (Fast & Slow Pointers - Optimal)",
+      "order": 2,
+      "intuition": "Use two pointers moving at different speeds. If there's a cycle, the faster pointer will eventually meet the slower pointer. If there's no cycle, the faster pointer will reach the end.",
+      "approach": "Initialize two pointers - slow (moves 1 step) and fast (moves 2 steps). If they meet, cycle exists. If fast reaches null, no cycle.",
+      "steps": [
+        "Initialize slow and fast pointers to head",
+        "While fast is not null and fast.next is not null:",
+        "  Move slow one step: slow = slow.next",
+        "  Move fast two steps: fast = fast.next.next",
+        "  If slow equals fast:",
+        "    Return true (cycle detected)",
+        "Return false (fast reached end, no cycle)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "In worst case with cycle, fast pointer needs at most n steps to catch slow pointer. Without cycle, fast reaches end in n/2 steps.",
+        "spaceExplanation": "Only using two pointer variables, no additional data structures"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool hasCycle(ListNode *head) {\n        // Edge case: empty list or single node\n        if (head == nullptr || head->next == nullptr) {\n            return false;\n        }\n        \n        // Initialize slow and fast pointers\n        ListNode* slow = head;\n        ListNode* fast = head;\n        \n        // Move pointers until fast reaches end or they meet\n        while (fast != nullptr && fast->next != nullptr) {\n            slow = slow->next;           // Move slow by 1\n            fast = fast->next->next;     // Move fast by 2\n            \n            // If they meet, cycle exists\n            if (slow == fast) {\n                return true;\n            }\n        }\n        \n        // Fast reached end, no cycle\n        return false;\n    }\n};",
+        "java": "public class Solution {\n    public boolean hasCycle(ListNode head) {\n        // Edge case: empty list or single node\n        if (head == null || head.next == null) {\n            return false;\n        }\n        \n        // Initialize slow and fast pointers\n        ListNode slow = head;\n        ListNode fast = head;\n        \n        // Move pointers until fast reaches end or they meet\n        while (fast != null && fast.next != null) {\n            slow = slow.next;           // Move slow by 1\n            fast = fast.next.next;      // Move fast by 2\n            \n            // If they meet, cycle exists\n            if (slow == fast) {\n                return true;\n            }\n        }\n        \n        // Fast reached end, no cycle\n        return false;\n    }\n}",
+        "python": "def has_cycle(head):\n    # Edge case: empty list or single node\n    if not head or not head.next:\n        return False\n    \n    # Initialize slow and fast pointers\n    slow = head\n    fast = head\n    \n    # Move pointers until fast reaches end or they meet\n    while fast and fast.next:\n        slow = slow.next           # Move slow by 1\n        fast = fast.next.next      # Move fast by 2\n        \n        # If they meet, cycle exists\n        if slow == fast:\n            return True\n    \n    # Fast reached end, no cycle\n    return False",
+        "javascript": "function hasCycle(head) {\n    // Edge case: empty list or single node\n    if (!head || !head.next) {\n        return false;\n    }\n    \n    // Initialize slow and fast pointers\n    let slow = head;\n    let fast = head;\n    \n    // Move pointers until fast reaches end or they meet\n    while (fast !== null && fast.next !== null) {\n        slow = slow.next;           // Move slow by 1\n        fast = fast.next.next;      // Move fast by 2\n        \n        // If they meet, cycle exists\n        if (slow === fast) {\n            return true;\n        }\n    }\n    \n    // Fast reached end, no cycle\n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if fast.next is null before moving fast two steps (causes null pointer exception)",
+    "Starting slow and fast at different positions instead of both at head",
+    "Checking if slow equals fast before moving pointers (will always be true at start)",
+    "Not handling edge cases: empty list or single node without cycle",
+    "Using fast.next.next without first checking fast and fast.next are not null",
+    "Comparing node values instead of node references"
+  ],
+  "hints": [
+    "Think about what happens when two runners run on a circular track at different speeds",
+    "If there's a cycle, will a faster pointer ever meet a slower pointer?",
+    "What happens to the fast pointer if there's no cycle?",
+    "Can you solve this without using extra space?",
+    "The fast pointer moves twice as fast as the slow pointer",
+    "If there's a cycle, the fast pointer will lap the slow pointer"
+  ],
+  "followUp": [
+    "Can you find where the cycle begins? (Linked List Cycle II)",
+    "What if you need to find the length of the cycle?",
+    "How would you remove the cycle from the linked list?",
+    "Can you detect a cycle if the fast pointer moves 3 steps instead of 2?",
+    "What's the mathematical proof that fast and slow pointers will meet in a cycle?",
+    "How would you handle a linked list with multiple cycles?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn",
+    "Oracle",
+    "Uber"
+  ],
+  "tags": [
+    "Linked List",
+    "Fast & Slow Pointers",
+    "Two Pointers",
+    "Cycle Detection",
+    "Floyd's Algorithm"
+  ],
+  "relatedProblems": [
+    "Linked List Cycle II",
+    "Happy Number",
+    "Find the Duplicate Number",
+    "Circular Array Loop",
+    "Middle of the Linked List"
+  ]
+}

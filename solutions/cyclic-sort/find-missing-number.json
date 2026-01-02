@@ -1,0 +1,182 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ea9",
+  "questionSlug": "find-missing-number",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/missing-number/",
+    "videos": [
+      {
+        "title": "Missing Number - XOR Bit Manipulation - Leetcode 268",
+        "url": "https://www.youtube.com/watch?v=WnPLSRLSANE",
+        "channel": "NeetCode",
+        "duration": "6:45",
+        "language": "English"
+      },
+      {
+        "title": "Missing Number - Multiple Solutions",
+        "url": "https://www.youtube.com/watch?v=bYWLJb3vCWY",
+        "channel": "takeUforward",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Missing Number Solution",
+        "url": "https://leetcode.com/problems/missing-number/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Find Missing Number in Array",
+        "url": "https://www.geeksforgeeks.org/find-the-missing-number/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "First Missing Positive",
+        "url": "https://leetcode.com/problems/first-missing-positive/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find All Numbers Disappeared",
+        "url": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Cyclic Sort or Math/XOR when array of n numbers contains [0,n-1] or [1,n] with one missing. Key indicators: consecutive numbers with one gap, O(1) space preferred, can use sum formula or XOR properties.",
+  "approaches": [
+    {
+      "name": "Brute Force (Linear Search)",
+      "order": 1,
+      "intuition": "Check for each number from 0 to n whether it exists in the array. The number that doesn't exist is the missing one.",
+      "approach": "For each number in range [0,n], search through array to see if it exists.",
+      "steps": [
+        "For each number from 0 to n:",
+        "  Initialize found = false",
+        "  For each element in array:",
+        "    If element equals current number:",
+        "      Set found = true",
+        "      Break",
+        "  If not found:",
+        "    Return current number (it's missing)",
+        "Return -1 (shouldn't reach)"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "For each of (n+1) numbers, search through array of size n: (n+1)*n = O(n²)",
+        "spaceExplanation": "Only using constant space for variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Check each number from 0 to n\n        for (int num = 0; num <= n; num++) {\n            bool found = false;\n            \n            // Search for num in array\n            for (int i = 0; i < n; i++) {\n                if (nums[i] == num) {\n                    found = true;\n                    break;\n                }\n            }\n            \n            // If not found, it's the missing number\n            if (!found) {\n                return num;\n            }\n        }\n        \n        return -1; // Should never reach here\n    }\n};",
+        "java": "class Solution {\n    public int missingNumber(int[] nums) {\n        int n = nums.length;\n        \n        // Check each number from 0 to n\n        for (int num = 0; num <= n; num++) {\n            boolean found = false;\n            \n            // Search for num in array\n            for (int i = 0; i < n; i++) {\n                if (nums[i] == num) {\n                    found = true;\n                    break;\n                }\n            }\n            \n            // If not found, it's the missing number\n            if (!found) {\n                return num;\n            }\n        }\n        \n        return -1; // Should never reach here\n    }\n}",
+        "python": "def missing_number(nums):\n    n = len(nums)\n    \n    # Check each number from 0 to n\n    for num in range(n + 1):\n        found = False\n        \n        # Search for num in array\n        for element in nums:\n            if element == num:\n                found = True\n                break\n        \n        # If not found, it's the missing number\n        if not found:\n            return num\n    \n    return -1  # Should never reach here",
+        "javascript": "function missingNumber(nums) {\n    const n = nums.length;\n    \n    // Check each number from 0 to n\n    for (let num = 0; num <= n; num++) {\n        let found = false;\n        \n        // Search for num in array\n        for (let i = 0; i < n; i++) {\n            if (nums[i] === num) {\n                found = true;\n                break;\n            }\n        }\n        \n        // If not found, it's the missing number\n        if (!found) {\n            return num;\n        }\n    }\n    \n    return -1; // Should never reach here\n}"
+      }
+    },
+    {
+      "name": "Better (Sum Formula / Hash Set)",
+      "order": 2,
+      "intuition": "The sum of numbers from 0 to n is n*(n+1)/2. Calculate this expected sum, then subtract the actual sum of array elements. The difference is the missing number. Alternative: use hash set for O(1) lookups.",
+      "approach": "Calculate expected sum using formula, calculate actual sum from array, return difference.",
+      "steps": [
+        "Calculate expected sum: expected = n * (n + 1) / 2",
+        "Calculate actual sum of array elements",
+        "Initialize actual_sum = 0",
+        "For each number in array:",
+        "  actual_sum += number",
+        "Return expected - actual_sum"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array to calculate sum",
+        "spaceExplanation": "Only using constant space for sum variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Calculate expected sum: 0+1+2+...+n = n*(n+1)/2\n        int expectedSum = n * (n + 1) / 2;\n        \n        // Calculate actual sum\n        int actualSum = 0;\n        for (int num : nums) {\n            actualSum += num;\n        }\n        \n        // Missing number is the difference\n        return expectedSum - actualSum;\n    }\n};",
+        "java": "class Solution {\n    public int missingNumber(int[] nums) {\n        int n = nums.length;\n        \n        // Calculate expected sum: 0+1+2+...+n = n*(n+1)/2\n        int expectedSum = n * (n + 1) / 2;\n        \n        // Calculate actual sum\n        int actualSum = 0;\n        for (int num : nums) {\n            actualSum += num;\n        }\n        \n        // Missing number is the difference\n        return expectedSum - actualSum;\n    }\n}",
+        "python": "def missing_number(nums):\n    n = len(nums)\n    \n    # Calculate expected sum: 0+1+2+...+n = n*(n+1)/2\n    expected_sum = n * (n + 1) // 2\n    \n    # Calculate actual sum\n    actual_sum = sum(nums)\n    \n    # Missing number is the difference\n    return expected_sum - actual_sum",
+        "javascript": "function missingNumber(nums) {\n    const n = nums.length;\n    \n    // Calculate expected sum: 0+1+2+...+n = n*(n+1)/2\n    const expectedSum = (n * (n + 1)) / 2;\n    \n    // Calculate actual sum\n    const actualSum = nums.reduce((sum, num) => sum + num, 0);\n    \n    // Missing number is the difference\n    return expectedSum - actualSum;\n}"
+      }
+    },
+    {
+      "name": "Optimal (XOR or Cyclic Sort)",
+      "order": 3,
+      "intuition": "XOR approach: XOR all numbers from 0 to n with all array elements. Duplicates cancel out (a^a=0), leaving only the missing number. Cyclic Sort: Place each number at its index, then find which index has wrong number.",
+      "approach": "XOR all indices (0 to n) with all array values. The result is the missing number due to XOR cancellation property.",
+      "steps": [
+        "Initialize result = n (start with n)",
+        "For each index i from 0 to n-1:",
+        "  XOR result with i: result ^= i",
+        "  XOR result with nums[i]: result ^= nums[i]",
+        "All present numbers cancel out",
+        "Only missing number remains",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array with constant time XOR operations",
+        "spaceExplanation": "Only using one variable to store result"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        int n = nums.size();\n        int result = n; // Start with n\n        \n        // XOR all indices and values\n        for (int i = 0; i < n; i++) {\n            result ^= i;        // XOR with index\n            result ^= nums[i];  // XOR with value\n        }\n        \n        // Result contains the missing number\n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int missingNumber(int[] nums) {\n        int n = nums.length;\n        int result = n; // Start with n\n        \n        // XOR all indices and values\n        for (int i = 0; i < n; i++) {\n            result ^= i;        // XOR with index\n            result ^= nums[i];  // XOR with value\n        }\n        \n        // Result contains the missing number\n        return result;\n    }\n}",
+        "python": "def missing_number(nums):\n    n = len(nums)\n    result = n  # Start with n\n    \n    # XOR all indices and values\n    for i in range(n):\n        result ^= i         # XOR with index\n        result ^= nums[i]   # XOR with value\n    \n    # Result contains the missing number\n    return result",
+        "javascript": "function missingNumber(nums) {\n    const n = nums.length;\n    let result = n; // Start with n\n    \n    // XOR all indices and values\n    for (let i = 0; i < n; i++) {\n        result ^= i;        // XOR with index\n        result ^= nums[i];  // XOR with value\n    }\n    \n    // Result contains the missing number\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting that numbers are from 0 to n (not 1 to n) so there are n+1 total numbers",
+    "Integer overflow when calculating sum for large n (use long or XOR instead)",
+    "Not initializing result with n when using XOR approach",
+    "Confusing index i with value nums[i] in XOR approach",
+    "Using wrong sum formula: should be n*(n+1)/2 not n*(n-1)/2",
+    "Not handling edge case when n=0 (array is empty, missing is 0)"
+  ],
+  "hints": [
+    "Numbers are from 0 to n, but array has only n elements. What's missing?",
+    "Can you use the mathematical sum formula for consecutive numbers?",
+    "Think about XOR properties: a^a = 0 and a^0 = a",
+    "If you XOR all numbers 0 to n with all array values, what cancels out?",
+    "Can you solve it without calculating any sums?",
+    "The missing number appears once, all others appear twice (once in range, once in array)"
+  ],
+  "followUp": [
+    "What if there are multiple missing numbers?",
+    "How would you handle if numbers are in range [1,n+1] instead of [0,n]?",
+    "Can you solve it without using arithmetic operations (only XOR)?",
+    "What if array is very large and doesn't fit in memory?",
+    "How would you find k missing numbers efficiently?",
+    "Can you apply cyclic sort to solve this problem?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Array",
+    "Math",
+    "Bit Manipulation",
+    "XOR",
+    "Cyclic Sort"
+  ],
+  "relatedProblems": [
+    "First Missing Positive",
+    "Find All Numbers Disappeared in an Array",
+    "Find the Duplicate Number",
+    "Single Number",
+    "Set Mismatch",
+    "Missing Ranges"
+  ]
+}

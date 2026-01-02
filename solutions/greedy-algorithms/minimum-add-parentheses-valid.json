@@ -1,0 +1,163 @@
+{
+  "questionId": "694d4a3a98494915f3bc8f0a",
+  "questionSlug": "minimum-add-parentheses-valid",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/",
+    "videos": [
+      {
+        "title": "Minimum Add to Make Parentheses Valid - Leetcode 921",
+        "url": "https://www.youtube.com/watch?v=4KY5JgkKBYo",
+        "channel": "NeetCode",
+        "duration": "5:47",
+        "language": "English"
+      },
+      {
+        "title": "Minimum Add to Make Parentheses Valid | Stack Approach",
+        "url": "https://www.youtube.com/watch?v=CvTnhsZ-YKw",
+        "channel": "TECH DOSE",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Leetcode 921: Minimum Add to Make Parentheses Valid",
+        "url": "https://www.youtube.com/watch?v=qhXS3YRaji0",
+        "channel": "Nick White",
+        "duration": "7:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Minimum Add to Make Parentheses Valid Solution",
+        "url": "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Minimum Parentheses Addition Explained",
+        "url": "https://algo.monster/liteproblems/921",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Valid Parentheses",
+        "url": "https://leetcode.com/problems/valid-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Remove to Make Valid Parentheses",
+        "url": "https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Stack or Counter pattern when dealing with balanced parentheses problems. Key indicators: matching pairs, need to track unmatched elements, counting operations needed to balance, single pass solution possible.",
+  "approaches": [
+    {
+      "name": "Stack Approach",
+      "order": 1,
+      "intuition": "Use a stack to track unmatched opening parentheses. When we see '(', push to stack. When we see ')', if stack has '(', pop it (matched pair). Otherwise, it's an unmatched ')'. Count remaining unmatched '(' in stack and unmatched ')' encountered.",
+      "approach": "Iterate through the string using a stack to match parentheses. Track unmatched closing parentheses separately. At the end, sum of unmatched opening (in stack) and unmatched closing parentheses gives the answer.",
+      "steps": [
+        "Initialize an empty stack and unmatchedClose counter = 0",
+        "Iterate through each character in the string:",
+        "  If character is '(':",
+        "    Push to stack",
+        "  If character is ')':",
+        "    If stack is not empty:",
+        "      Pop from stack (matched pair)",
+        "    Else:",
+        "      Increment unmatchedClose (unmatched ')')",
+        "After iteration, unmatchedOpen = stack size",
+        "Return unmatchedOpen + unmatchedClose"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through the string of length n",
+        "spaceExplanation": "Stack can grow up to n in worst case (all opening parentheses)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minAddToMakeValid(string s) {\n        stack<char> st;\n        int unmatchedClose = 0;\n        \n        for (char c : s) {\n            if (c == '(') {\n                // Push opening parenthesis\n                st.push(c);\n            } else {\n                // c == ')'\n                if (!st.empty()) {\n                    // Match with opening parenthesis\n                    st.pop();\n                } else {\n                    // No matching opening parenthesis\n                    unmatchedClose++;\n                }\n            }\n        }\n        \n        // Unmatched opening parentheses in stack\n        int unmatchedOpen = st.size();\n        \n        // Total additions needed\n        return unmatchedOpen + unmatchedClose;\n    }\n};",
+        "java": "class Solution {\n    public int minAddToMakeValid(String s) {\n        Stack<Character> stack = new Stack<>();\n        int unmatchedClose = 0;\n        \n        for (char c : s.toCharArray()) {\n            if (c == '(') {\n                // Push opening parenthesis\n                stack.push(c);\n            } else {\n                // c == ')'\n                if (!stack.isEmpty()) {\n                    // Match with opening parenthesis\n                    stack.pop();\n                } else {\n                    // No matching opening parenthesis\n                    unmatchedClose++;\n                }\n            }\n        }\n        \n        // Unmatched opening parentheses in stack\n        int unmatchedOpen = stack.size();\n        \n        // Total additions needed\n        return unmatchedOpen + unmatchedClose;\n    }\n}",
+        "python": "def minAddToMakeValid(s):\n    stack = []\n    unmatched_close = 0\n    \n    for c in s:\n        if c == '(':\n            # Push opening parenthesis\n            stack.append(c)\n        else:\n            # c == ')'\n            if stack:\n                # Match with opening parenthesis\n                stack.pop()\n            else:\n                # No matching opening parenthesis\n                unmatched_close += 1\n    \n    # Unmatched opening parentheses in stack\n    unmatched_open = len(stack)\n    \n    # Total additions needed\n    return unmatched_open + unmatched_close",
+        "javascript": "function minAddToMakeValid(s) {\n    const stack = [];\n    let unmatchedClose = 0;\n    \n    for (const c of s) {\n        if (c === '(') {\n            // Push opening parenthesis\n            stack.push(c);\n        } else {\n            // c === ')'\n            if (stack.length > 0) {\n                // Match with opening parenthesis\n                stack.pop();\n            } else {\n                // No matching opening parenthesis\n                unmatchedClose++;\n            }\n        }\n    }\n    \n    // Unmatched opening parentheses in stack\n    const unmatchedOpen = stack.length;\n    \n    // Total additions needed\n    return unmatchedOpen + unmatchedClose;\n}"
+      }
+    },
+    {
+      "name": "Counter Approach (Optimal)",
+      "order": 2,
+      "intuition": "We don't actually need a stack - just count unmatched parentheses. Keep a counter for opening parentheses. When we see ')', if counter > 0, decrement it (matched). Otherwise, it's unmatched ')'. At the end, counter holds unmatched '('.",
+      "approach": "Use two counters: one for unmatched opening parentheses and one for unmatched closing parentheses. This eliminates the need for a stack while achieving the same result with O(1) space.",
+      "steps": [
+        "Initialize openCount = 0 and closeCount = 0",
+        "Iterate through each character in string:",
+        "  If character is '(':",
+        "    Increment openCount",
+        "  If character is ')':",
+        "    If openCount > 0:",
+        "      Decrement openCount (matched pair)",
+        "    Else:",
+        "      Increment closeCount (unmatched ')')",
+        "Return openCount + closeCount as minimum additions needed"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through the string of length n",
+        "spaceExplanation": "Only using two integer variables regardless of input size"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minAddToMakeValid(string s) {\n        int openCount = 0;   // Unmatched '('\n        int closeCount = 0;  // Unmatched ')'\n        \n        for (char c : s) {\n            if (c == '(') {\n                openCount++;\n            } else {\n                // c == ')'\n                if (openCount > 0) {\n                    // Match with previous '('\n                    openCount--;\n                } else {\n                    // No matching '(' available\n                    closeCount++;\n                }\n            }\n        }\n        \n        // Total additions = unmatched '(' + unmatched ')'\n        return openCount + closeCount;\n    }\n};",
+        "java": "class Solution {\n    public int minAddToMakeValid(String s) {\n        int openCount = 0;   // Unmatched '('\n        int closeCount = 0;  // Unmatched ')'\n        \n        for (char c : s.toCharArray()) {\n            if (c == '(') {\n                openCount++;\n            } else {\n                // c == ')'\n                if (openCount > 0) {\n                    // Match with previous '('\n                    openCount--;\n                } else {\n                    // No matching '(' available\n                    closeCount++;\n                }\n            }\n        }\n        \n        // Total additions = unmatched '(' + unmatched ')'\n        return openCount + closeCount;\n    }\n}",
+        "python": "def minAddToMakeValid(s):\n    open_count = 0   # Unmatched '('\n    close_count = 0  # Unmatched ')'\n    \n    for c in s:\n        if c == '(':\n            open_count += 1\n        else:\n            # c == ')'\n            if open_count > 0:\n                # Match with previous '('\n                open_count -= 1\n            else:\n                # No matching '(' available\n                close_count += 1\n    \n    # Total additions = unmatched '(' + unmatched ')'\n    return open_count + close_count",
+        "javascript": "function minAddToMakeValid(s) {\n    let openCount = 0;   // Unmatched '('\n    let closeCount = 0;  // Unmatched ')'\n    \n    for (const c of s) {\n        if (c === '(') {\n            openCount++;\n        } else {\n            // c === ')'\n            if (openCount > 0) {\n                // Match with previous '('\n                openCount--;\n            } else {\n                // No matching '(' available\n                closeCount++;\n            }\n        }\n    }\n    \n    // Total additions = unmatched '(' + unmatched ')'\n    return openCount + closeCount;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Only counting one type of unmatched parenthesis (either '(' or ')')",
+    "Not handling the case when stack is empty and we encounter ')'",
+    "Forgetting to count remaining elements in stack after iteration",
+    "Trying to use complex string manipulation instead of simple counting",
+    "Confusing this problem with removing parentheses (different operations)",
+    "Not realizing that O(1) space solution is possible without a stack"
+  ],
+  "hints": [
+    "Do you really need to store the actual parentheses or just count them?",
+    "What happens when you see '(' vs when you see ')'?",
+    "Think about what conditions cause an unmatched '(' vs unmatched ')'",
+    "Can you solve this in a single pass without using extra space?",
+    "Consider: at any point, how many unmatched opening parentheses do you have?"
+  ],
+  "followUp": [
+    "What if you need to return the positions where parentheses should be added?",
+    "How would you solve this if there are multiple types of brackets [{()}]?",
+    "Can you modify this to return the minimum removals instead of additions?",
+    "What if the string contains other characters besides parentheses?",
+    "How would you handle nested different bracket types with different priorities?",
+    "Can you solve this recursively? What would be the base cases?"
+  ],
+  "companies": [
+    "Facebook",
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Apple",
+    "Bloomberg"
+  ],
+  "tags": [
+    "Stack",
+    "String",
+    "Greedy",
+    "Parentheses"
+  ],
+  "relatedProblems": [
+    "Valid Parentheses",
+    "Minimum Remove to Make Valid Parentheses",
+    "Remove Invalid Parentheses",
+    "Longest Valid Parentheses",
+    "Generate Parentheses"
+  ]
+}

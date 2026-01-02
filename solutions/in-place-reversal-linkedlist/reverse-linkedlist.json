@@ -1,0 +1,199 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eb0",
+  "questionSlug": "reverse-linkedlist",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/reverse-linked-list/",
+    "videos": [
+      {
+        "title": "Reverse Linked List - Iterative AND Recursive",
+        "url": "https://www.youtube.com/watch?v=G0_I-ZF0S38",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Reverse a Linked List | Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=iRtLEoL-r-g",
+        "channel": "TECH DOSE",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Reverse Linked List Solution Explained",
+        "url": "https://www.youtube.com/watch?v=XIdigk956u0",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Reverse Linked List Solution",
+        "url": "https://leetcode.com/problems/reverse-linked-list/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Reverse Linked List - Detailed Explanation",
+        "url": "https://algo.monster/liteproblems/206",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "How to Reverse a Linked List",
+        "url": "https://www.geeksforgeeks.org/reverse-a-linked-list/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Reverse Linked List II",
+        "url": "https://leetcode.com/problems/reverse-linked-list-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Palindrome Linked List",
+        "url": "https://leetcode.com/problems/palindrome-linked-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Nodes in k-Group",
+        "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Swap Nodes in Pairs",
+        "url": "https://leetcode.com/problems/swap-nodes-in-pairs/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use In-place Reversal pattern when asked to reverse a linked list or part of it. Key indicators: reverse/flip/invert a linked list, need to change direction of pointers, maintain constant space, work with node.next pointers.",
+  "approaches": [
+    {
+      "name": "Iterative Three-Pointer Approach",
+      "order": 1,
+      "intuition": "Iterate through the list and reverse each pointer one at a time using three pointers: previous, current, and next. This maintains the connection while we reverse direction.",
+      "approach": "Use three pointers to track previous, current, and next nodes. For each node, save the next node, reverse the current node's pointer to previous, then move all three pointers forward. Continue until current becomes null.",
+      "steps": [
+        "Initialize prev = null, curr = head",
+        "While curr is not null:",
+        "  - Save next node: next = curr.next",
+        "  - Reverse current node's pointer: curr.next = prev",
+        "  - Move prev forward: prev = curr",
+        "  - Move curr forward: curr = next",
+        "Return prev (new head of reversed list)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through all n nodes",
+        "spaceExplanation": "Only three pointer variables used, no recursion stack"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        ListNode* prev = nullptr;\n        ListNode* curr = head;\n        \n        while (curr != nullptr) {\n            ListNode* next = curr->next;  // Save next node\n            curr->next = prev;             // Reverse pointer\n            prev = curr;                   // Move prev forward\n            curr = next;                   // Move curr forward\n        }\n        \n        return prev;  // New head\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        ListNode curr = head;\n        \n        while (curr != null) {\n            ListNode next = curr.next;  // Save next node\n            curr.next = prev;           // Reverse pointer\n            prev = curr;                // Move prev forward\n            curr = next;                // Move curr forward\n        }\n        \n        return prev;  // New head\n    }\n}",
+        "python": "def reverseList(head):\n    prev = None\n    curr = head\n    \n    while curr:\n        next_node = curr.next  # Save next node\n        curr.next = prev       # Reverse pointer\n        prev = curr            # Move prev forward\n        curr = next_node       # Move curr forward\n    \n    return prev  # New head",
+        "javascript": "function reverseList(head) {\n    let prev = null;\n    let curr = head;\n    \n    while (curr !== null) {\n        const next = curr.next;  // Save next node\n        curr.next = prev;        // Reverse pointer\n        prev = curr;             // Move prev forward\n        curr = next;             // Move curr forward\n    }\n    \n    return prev;  // New head\n}"
+      }
+    },
+    {
+      "name": "Recursive Approach",
+      "order": 2,
+      "intuition": "Recursively reverse the rest of the list first, then fix the current node's pointers. The recursion naturally handles the reversal from the end backwards.",
+      "approach": "Recursively call reverse on the rest of the list. When returning from recursion, make the next node point back to current node, and set current node's next to null. The base case returns when we reach the end.",
+      "steps": [
+        "Base case: if head is null or head.next is null, return head",
+        "Recursively reverse the rest: newHead = reverseList(head.next)",
+        "Make next node point back: head.next.next = head",
+        "Remove current node's forward pointer: head.next = null",
+        "Return newHead (which is the new head from recursion)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each node once during recursion",
+        "spaceExplanation": "Recursion stack depth is O(n) for n nodes"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        // Base case: empty list or single node\n        if (head == nullptr || head->next == nullptr) {\n            return head;\n        }\n        \n        // Reverse the rest of the list\n        ListNode* newHead = reverseList(head->next);\n        \n        // Fix pointers: make next node point back to current\n        head->next->next = head;\n        head->next = nullptr;\n        \n        return newHead;\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        // Base case: empty list or single node\n        if (head == null || head.next == null) {\n            return head;\n        }\n        \n        // Reverse the rest of the list\n        ListNode newHead = reverseList(head.next);\n        \n        // Fix pointers: make next node point back to current\n        head.next.next = head;\n        head.next = null;\n        \n        return newHead;\n    }\n}",
+        "python": "def reverseList(head):\n    # Base case: empty list or single node\n    if not head or not head.next:\n        return head\n    \n    # Reverse the rest of the list\n    new_head = reverseList(head.next)\n    \n    # Fix pointers: make next node point back to current\n    head.next.next = head\n    head.next = None\n    \n    return new_head",
+        "javascript": "function reverseList(head) {\n    // Base case: empty list or single node\n    if (head === null || head.next === null) {\n        return head;\n    }\n    \n    // Reverse the rest of the list\n    const newHead = reverseList(head.next);\n    \n    // Fix pointers: make next node point back to current\n    head.next.next = head;\n    head.next = null;\n    \n    return newHead;\n}"
+      }
+    },
+    {
+      "name": "Stack-Based Approach",
+      "order": 3,
+      "intuition": "Push all nodes onto a stack, then pop them off to rebuild the list in reverse order. The stack naturally reverses the order due to LIFO property.",
+      "approach": "Traverse the list and push all nodes onto a stack. Then pop nodes one by one and rebuild connections. The last popped node should point to null.",
+      "steps": [
+        "Push all nodes onto stack while traversing",
+        "Pop first node to get new head",
+        "Keep popping and connecting: curr.next = stack.pop()",
+        "Set last node's next to null",
+        "Return new head"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes: one to push, one to pop",
+        "spaceExplanation": "Stack stores all n nodes"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        if (!head) return nullptr;\n        \n        stack<ListNode*> st;\n        ListNode* curr = head;\n        \n        // Push all nodes onto stack\n        while (curr) {\n            st.push(curr);\n            curr = curr->next;\n        }\n        \n        // Pop to get new head\n        ListNode* newHead = st.top();\n        st.pop();\n        curr = newHead;\n        \n        // Rebuild connections\n        while (!st.empty()) {\n            curr->next = st.top();\n            st.pop();\n            curr = curr->next;\n        }\n        curr->next = nullptr;\n        \n        return newHead;\n    }\n};",
+        "java": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        if (head == null) return null;\n        \n        Stack<ListNode> stack = new Stack<>();\n        ListNode curr = head;\n        \n        // Push all nodes onto stack\n        while (curr != null) {\n            stack.push(curr);\n            curr = curr.next;\n        }\n        \n        // Pop to get new head\n        ListNode newHead = stack.pop();\n        curr = newHead;\n        \n        // Rebuild connections\n        while (!stack.isEmpty()) {\n            curr.next = stack.pop();\n            curr = curr.next;\n        }\n        curr.next = null;\n        \n        return newHead;\n    }\n}",
+        "python": "def reverseList(head):\n    if not head:\n        return None\n    \n    stack = []\n    curr = head\n    \n    # Push all nodes onto stack\n    while curr:\n        stack.append(curr)\n        curr = curr.next\n    \n    # Pop to get new head\n    new_head = stack.pop()\n    curr = new_head\n    \n    # Rebuild connections\n    while stack:\n        curr.next = stack.pop()\n        curr = curr.next\n    curr.next = None\n    \n    return new_head",
+        "javascript": "function reverseList(head) {\n    if (!head) return null;\n    \n    const stack = [];\n    let curr = head;\n    \n    // Push all nodes onto stack\n    while (curr) {\n        stack.push(curr);\n        curr = curr.next;\n    }\n    \n    // Pop to get new head\n    const newHead = stack.pop();\n    curr = newHead;\n    \n    // Rebuild connections\n    while (stack.length > 0) {\n        curr.next = stack.pop();\n        curr = curr.next;\n    }\n    curr.next = null;\n    \n    return newHead;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Losing reference to the next node before reversing the pointer",
+    "Forgetting to set the last node's next to null (creates cycle)",
+    "Not handling empty list or single node edge cases",
+    "In recursive approach, not returning the newHead from recursion",
+    "Confusing which pointer to return (should return prev/newHead, not curr)",
+    "Not updating all three pointers in correct order in iterative approach"
+  ],
+  "hints": [
+    "You need to reverse the direction of next pointers",
+    "Think about what information you need to keep track of to avoid losing nodes",
+    "The iterative approach needs three pointers: previous, current, and next",
+    "For recursion, think about reversing the rest first, then fixing current",
+    "The new head will be the last node of the original list"
+  ],
+  "followUp": [
+    "Can you reverse only part of the list (positions m to n)?",
+    "How would you reverse the list in groups of k?",
+    "Can you detect if reversing creates a cycle?",
+    "How would you reverse alternate k nodes?",
+    "Can you do it with tail recursion?",
+    "What if you need to preserve the original list?",
+    "How would you reverse in place with O(1) space using only recursion?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Oracle",
+    "Goldman Sachs"
+  ],
+  "tags": [
+    "Linked List",
+    "Recursion",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Reverse Linked List II",
+    "Reverse Nodes in k-Group",
+    "Swap Nodes in Pairs",
+    "Palindrome Linked List",
+    "Reverse Nodes in Even Length Groups",
+    "Maximum Twin Sum of a Linked List",
+    "Reverse Nodes in Alternate Groups"
+  ]
+}

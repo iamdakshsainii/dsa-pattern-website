@@ -1,0 +1,162 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e85",
+  "questionSlug": "start-linkedlist-cycle",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/linked-list-cycle-ii/",
+    "videos": [
+      {
+        "title": "Linked List Cycle II - Floyd's Algorithm",
+        "url": "https://www.youtube.com/watch?v=QfbOhn0WZ88",
+        "channel": "NeetCode",
+        "duration": "10:25",
+        "language": "English"
+      },
+      {
+        "title": "Detect Cycle Start in Linked List",
+        "url": "https://www.youtube.com/watch?v=2Kd0KKmmHFc",
+        "channel": "takeUforward",
+        "duration": "15:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Linked List Cycle II Solution",
+        "url": "https://leetcode.com/problems/linked-list-cycle-ii/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Find Start of Loop in Linked List",
+        "url": "https://www.geeksforgeeks.org/find-first-node-of-loop-in-a-linked-list/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Linked List Cycle",
+        "url": "https://leetcode.com/problems/linked-list-cycle/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find the Duplicate Number",
+        "url": "https://leetcode.com/problems/find-the-duplicate-number/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Fast & Slow Pointers (Floyd's Cycle Detection) to find the start of a cycle in a linked list. Key indicators: linked list with cycle, need to find cycle entrance, O(1) space requirement, two-phase Floyd's algorithm.",
+  "approaches": [
+    {
+      "name": "Hash Set Approach",
+      "order": 1,
+      "intuition": "Store all visited nodes in a hash set. The first node we encounter that's already in the set is the start of the cycle.",
+      "approach": "Traverse the list and store each node. Return the first duplicate node encountered.",
+      "steps": [
+        "Create empty hash set to store visited nodes",
+        "Start from head",
+        "While current node is not null:",
+        "  If current node exists in hash set:",
+        "    Return current node (cycle start)",
+        "  Add current node to hash set",
+        "  Move to next node",
+        "Return null (no cycle)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each node once until we find the cycle start or reach end",
+        "spaceExplanation": "Hash set can store up to n nodes in worst case"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode *detectCycle(ListNode *head) {\n        unordered_set<ListNode*> visited;\n        \n        ListNode* current = head;\n        while (current != nullptr) {\n            // If node already visited, it's the cycle start\n            if (visited.count(current)) {\n                return current;\n            }\n            \n            visited.insert(current);\n            current = current->next;\n        }\n        \n        // No cycle found\n        return nullptr;\n    }\n};",
+        "java": "public class Solution {\n    public ListNode detectCycle(ListNode head) {\n        Set<ListNode> visited = new HashSet<>();\n        \n        ListNode current = head;\n        while (current != null) {\n            // If node already visited, it's the cycle start\n            if (visited.contains(current)) {\n                return current;\n            }\n            \n            visited.add(current);\n            current = current.next;\n        }\n        \n        // No cycle found\n        return null;\n    }\n}",
+        "python": "def detect_cycle(head):\n    visited = set()\n    \n    current = head\n    while current:\n        # If node already visited, it's the cycle start\n        if current in visited:\n            return current\n        \n        visited.add(current)\n        current = current.next\n    \n    # No cycle found\n    return None",
+        "javascript": "function detectCycle(head) {\n    const visited = new Set();\n    \n    let current = head;\n    while (current !== null) {\n        // If node already visited, it's the cycle start\n        if (visited.has(current)) {\n            return current;\n        }\n        \n        visited.add(current);\n        current = current.next;\n    }\n    \n    // No cycle found\n    return null;\n}"
+      }
+    },
+    {
+      "name": "Floyd's Cycle Detection (Two-Phase - Optimal)",
+      "order": 2,
+      "intuition": "Use Floyd's algorithm in two phases. Phase 1: Detect if cycle exists using fast and slow pointers. Phase 2: Find cycle start by moving one pointer to head and moving both at same speed until they meet. The meeting point is the cycle start.",
+      "approach": "Phase 1 detects cycle, Phase 2 finds the entrance. Mathematical proof: if fast and slow meet at distance k from start, moving one pointer to head and advancing both by 1 will meet at cycle entrance.",
+      "steps": [
+        "Phase 1: Detect if cycle exists",
+        "  Initialize slow = head, fast = head",
+        "  While fast and fast.next are not null:",
+        "    Move slow by 1 step",
+        "    Move fast by 2 steps",
+        "    If slow equals fast:",
+        "      Cycle detected, break",
+        "  If no cycle found, return null",
+        "Phase 2: Find cycle start",
+        "  Move slow back to head",
+        "  Move both slow and fast by 1 step until they meet",
+        "  The meeting point is the cycle start",
+        "Return meeting point"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Phase 1 takes O(n) to detect cycle, Phase 2 takes O(n) to find start. Total O(n).",
+        "spaceExplanation": "Only using two pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode *detectCycle(ListNode *head) {\n        if (head == nullptr || head->next == nullptr) {\n            return nullptr;\n        }\n        \n        // Phase 1: Detect if cycle exists\n        ListNode* slow = head;\n        ListNode* fast = head;\n        bool hasCycle = false;\n        \n        while (fast != nullptr && fast->next != nullptr) {\n            slow = slow->next;\n            fast = fast->next->next;\n            \n            if (slow == fast) {\n                hasCycle = true;\n                break;\n            }\n        }\n        \n        // No cycle found\n        if (!hasCycle) {\n            return nullptr;\n        }\n        \n        // Phase 2: Find cycle start\n        // Move slow to head, keep fast at meeting point\n        slow = head;\n        \n        // Move both at same speed until they meet\n        while (slow != fast) {\n            slow = slow->next;\n            fast = fast->next;\n        }\n        \n        // Meeting point is the cycle start\n        return slow;\n    }\n};",
+        "java": "public class Solution {\n    public ListNode detectCycle(ListNode head) {\n        if (head == null || head.next == null) {\n            return null;\n        }\n        \n        // Phase 1: Detect if cycle exists\n        ListNode slow = head;\n        ListNode fast = head;\n        boolean hasCycle = false;\n        \n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n            \n            if (slow == fast) {\n                hasCycle = true;\n                break;\n            }\n        }\n        \n        // No cycle found\n        if (!hasCycle) {\n            return null;\n        }\n        \n        // Phase 2: Find cycle start\n        // Move slow to head, keep fast at meeting point\n        slow = head;\n        \n        // Move both at same speed until they meet\n        while (slow != fast) {\n            slow = slow.next;\n            fast = fast.next;\n        }\n        \n        // Meeting point is the cycle start\n        return slow;\n    }\n}",
+        "python": "def detect_cycle(head):\n    if not head or not head.next:\n        return None\n    \n    # Phase 1: Detect if cycle exists\n    slow = head\n    fast = head\n    has_cycle = False\n    \n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        \n        if slow == fast:\n            has_cycle = True\n            break\n    \n    # No cycle found\n    if not has_cycle:\n        return None\n    \n    # Phase 2: Find cycle start\n    # Move slow to head, keep fast at meeting point\n    slow = head\n    \n    # Move both at same speed until they meet\n    while slow != fast:\n        slow = slow.next\n        fast = fast.next\n    \n    # Meeting point is the cycle start\n    return slow",
+        "javascript": "function detectCycle(head) {\n    if (!head || !head.next) {\n        return null;\n    }\n    \n    // Phase 1: Detect if cycle exists\n    let slow = head;\n    let fast = head;\n    let hasCycle = false;\n    \n    while (fast !== null && fast.next !== null) {\n        slow = slow.next;\n        fast = fast.next.next;\n        \n        if (slow === fast) {\n            hasCycle = true;\n            break;\n        }\n    }\n    \n    // No cycle found\n    if (!hasCycle) {\n        return null;\n    }\n    \n    // Phase 2: Find cycle start\n    // Move slow to head, keep fast at meeting point\n    slow = head;\n    \n    // Move both at same speed until they meet\n    while (slow !== fast) {\n        slow = slow.next;\n        fast = fast.next;\n    }\n    \n    // Meeting point is the cycle start\n    return slow;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking for null or single node before starting algorithm",
+    "Forgetting Phase 2 after detecting cycle (only detecting cycle but not finding start)",
+    "Moving both pointers at different speeds in Phase 2 (should both move by 1)",
+    "Not breaking after detecting cycle in Phase 1",
+    "Comparing node values instead of node references",
+    "Moving slow to head but also moving fast to head (fast should stay at meeting point)"
+  ],
+  "hints": [
+    "First detect if a cycle exists using fast and slow pointers",
+    "After detecting cycle, you need a second phase to find the start",
+    "In Phase 2, move one pointer back to head",
+    "Move both pointers at the same speed (1 step each) in Phase 2",
+    "The point where they meet in Phase 2 is the cycle start",
+    "Mathematical proof: If meeting point is k steps from start, then cycle start is also k steps from head"
+  ],
+  "followUp": [
+    "Can you prove why Floyd's algorithm works mathematically?",
+    "What if you need to find the length of the cycle?",
+    "How would you remove the cycle from the linked list?",
+    "Can you solve this if nodes can have duplicate values?",
+    "What if you need to find the kth node in the cycle?",
+    "How would you handle multiple cycles in the same linked list?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn",
+    "Uber",
+    "Oracle"
+  ],
+  "tags": [
+    "Linked List",
+    "Fast & Slow Pointers",
+    "Two Pointers",
+    "Cycle Detection",
+    "Floyd's Algorithm"
+  ],
+  "relatedProblems": [
+    "Linked List Cycle",
+    "Happy Number",
+    "Find the Duplicate Number",
+    "Intersection of Two Linked Lists",
+    "Remove Nth Node From End of List"
+  ]
+}

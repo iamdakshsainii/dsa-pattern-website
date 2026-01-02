@@ -1,0 +1,148 @@
+{
+  "questionId": "694d4a3a98494915f3bc8f0c",
+  "questionSlug": "largest-palindromic-number",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/largest-palindromic-number/",
+    "videos": [
+      {
+        "title": "Largest Palindromic Number - Leetcode 2384",
+        "url": "https://www.youtube.com/watch?v=kKRK7o-wFXI",
+        "channel": "NeetCode",
+        "duration": "11:23",
+        "language": "English"
+      },
+      {
+        "title": "Largest Palindromic Number | String Manipulation",
+        "url": "https://www.youtube.com/watch?v=qZ8zLWwH8Vg",
+        "channel": "TECH DOSE",
+        "duration": "15:47",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Largest Palindromic Number Solution",
+        "url": "https://leetcode.com/problems/largest-palindromic-number/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Largest Palindromic Number Explained",
+        "url": "https://algo.monster/liteproblems/2384",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Palindrome Number",
+        "url": "https://leetcode.com/problems/palindrome-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Valid Palindrome",
+        "url": "https://leetcode.com/problems/valid-palindrome/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Greedy pattern when you need to construct the largest/smallest number with constraints. Key indicators: optimization problem (max/min), digit frequency counting, palindrome construction, string manipulation with specific rules.",
+  "approaches": [
+    {
+      "name": "Brute Force",
+      "order": 1,
+      "intuition": "Generate all possible palindromes using the given digits and return the largest one. This involves trying all permutations and checking which ones form valid palindromes.",
+      "approach": "Count frequency of each digit, then try to build all possible palindromes by placing digits symmetrically. For each valid palindrome, compare and track the maximum.",
+      "steps": [
+        "Count frequency of each digit (0-9) in the input string",
+        "Generate all possible combinations of digits that can form palindromes",
+        "For each combination, create a palindrome by mirroring digits",
+        "Check if the palindrome is valid (no leading zeros except '0')",
+        "Track the maximum palindrome found",
+        "Return the largest palindrome as a string"
+      ],
+      "complexity": {
+        "time": "O(n! * n)",
+        "space": "O(n)",
+        "timeExplanation": "Generating all permutations takes O(n!) time, and checking each palindrome takes O(n)",
+        "spaceExplanation": "Space for storing frequency map and temporary strings"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string largestPalindromic(string num) {\n        // Count frequency of each digit\n        vector<int> freq(10, 0);\n        for (char c : num) {\n            freq[c - '0']++;\n        }\n        \n        string result = \"\";\n        string maxPalindrome = \"0\";\n        \n        // Try all possible combinations (brute force)\n        // This is inefficient - just for demonstration\n        function<void(string, vector<int>&)> generatePalindromes = [&](string current, vector<int>& f) {\n            if (current.length() >= num.length()) {\n                // Create palindrome\n                string palindrome = current;\n                string rev = current;\n                reverse(rev.begin(), rev.end());\n                palindrome += rev;\n                \n                // Check validity and update max\n                if (palindrome[0] != '0' || palindrome == \"0\") {\n                    if (palindrome.length() > maxPalindrome.length() || \n                        (palindrome.length() == maxPalindrome.length() && palindrome > maxPalindrome)) {\n                        maxPalindrome = palindrome;\n                    }\n                }\n                return;\n            }\n            \n            // Try each digit\n            for (int i = 9; i >= 0; i--) {\n                if (f[i] >= 2) {\n                    f[i] -= 2;\n                    generatePalindromes(current + char('0' + i), f);\n                    f[i] += 2;\n                }\n            }\n        };\n        \n        generatePalindromes(\"\", freq);\n        return maxPalindrome;\n    }\n};",
+        "java": "class Solution {\n    private String maxPalindrome = \"0\";\n    \n    public String largestPalindromic(String num) {\n        // Count frequency of each digit\n        int[] freq = new int[10];\n        for (char c : num.toCharArray()) {\n            freq[c - '0']++;\n        }\n        \n        // Try all combinations (brute force)\n        generatePalindromes(\"\", freq, num.length());\n        return maxPalindrome;\n    }\n    \n    private void generatePalindromes(String current, int[] freq, int targetLen) {\n        if (current.length() >= targetLen / 2) {\n            // Create palindrome\n            StringBuilder sb = new StringBuilder(current);\n            String reversed = new StringBuilder(current).reverse().toString();\n            sb.append(reversed);\n            String palindrome = sb.toString();\n            \n            // Check validity and update max\n            if (palindrome.charAt(0) != '0' || palindrome.equals(\"0\")) {\n                if (palindrome.length() > maxPalindrome.length() || \n                    (palindrome.length() == maxPalindrome.length() && palindrome.compareTo(maxPalindrome) > 0)) {\n                    maxPalindrome = palindrome;\n                }\n            }\n            return;\n        }\n        \n        // Try each digit from largest\n        for (int i = 9; i >= 0; i--) {\n            if (freq[i] >= 2) {\n                freq[i] -= 2;\n                generatePalindromes(current + (char)('0' + i), freq, targetLen);\n                freq[i] += 2;\n            }\n        }\n    }\n}",
+        "python": "def largestPalindromic(num):\n    # Count frequency of each digit\n    freq = [0] * 10\n    for c in num:\n        freq[int(c)] += 1\n    \n    max_palindrome = [\"0\"]\n    \n    def generate_palindromes(current, f, target_len):\n        if len(current) >= target_len // 2:\n            # Create palindrome\n            palindrome = current + current[::-1]\n            \n            # Check validity and update max\n            if palindrome[0] != '0' or palindrome == \"0\":\n                if (len(palindrome) > len(max_palindrome[0]) or \n                    (len(palindrome) == len(max_palindrome[0]) and palindrome > max_palindrome[0])):\n                    max_palindrome[0] = palindrome\n            return\n        \n        # Try each digit from largest\n        for i in range(9, -1, -1):\n            if f[i] >= 2:\n                f[i] -= 2\n                generate_palindromes(current + str(i), f, target_len)\n                f[i] += 2\n    \n    generate_palindromes(\"\", freq, len(num))\n    return max_palindrome[0]",
+        "javascript": "function largestPalindromic(num) {\n    // Count frequency of each digit\n    const freq = new Array(10).fill(0);\n    for (const c of num) {\n        freq[parseInt(c)]++;\n    }\n    \n    let maxPalindrome = \"0\";\n    \n    function generatePalindromes(current, f, targetLen) {\n        if (current.length >= Math.floor(targetLen / 2)) {\n            // Create palindrome\n            const palindrome = current + current.split('').reverse().join('');\n            \n            // Check validity and update max\n            if (palindrome[0] !== '0' || palindrome === \"0\") {\n                if (palindrome.length > maxPalindrome.length || \n                    (palindrome.length === maxPalindrome.length && palindrome > maxPalindrome)) {\n                    maxPalindrome = palindrome;\n                }\n            }\n            return;\n        }\n        \n        // Try each digit from largest\n        for (let i = 9; i >= 0; i--) {\n            if (f[i] >= 2) {\n                f[i] -= 2;\n                generatePalindromes(current + i, f, targetLen);\n                f[i] += 2;\n            }\n        }\n    }\n    \n    generatePalindromes(\"\", freq, num.length);\n    return maxPalindrome;\n}"
+      }
+    },
+    {
+      "name": "Greedy (Optimal)",
+      "order": 2,
+      "intuition": "To maximize the palindrome, place largest digits on the outside. Use pairs of digits symmetrically, and if any digit has odd frequency, use the largest odd-frequency digit in the middle.",
+      "approach": "Count digit frequencies. Build first half by greedily selecting largest digits with pairs. Find the largest middle digit from odd-frequency digits. Mirror the first half to create the palindrome. Handle edge case of leading zeros.",
+      "steps": [
+        "Count frequency of each digit (0-9) from input string",
+        "Build first half of palindrome by iterating digits from 9 to 0",
+        "For each digit, use floor(freq/2) pairs in the first half",
+        "Skip leading zeros - don't add '0' to empty first half",
+        "Find largest digit with odd frequency for middle position",
+        "Construct result: firstHalf + middle + reverse(firstHalf)",
+        "Handle edge case: if result has leading zeros, return '0'",
+        "Return the final palindrome string"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass to count frequencies O(n), constant time to build palindrome (at most 10 digits)",
+        "spaceExplanation": "Frequency array of size 10 and result string, which is O(n) but frequency array is O(1)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string largestPalindromic(string num) {\n        // Count frequency of each digit\n        vector<int> freq(10, 0);\n        for (char c : num) {\n            freq[c - '0']++;\n        }\n        \n        string firstHalf = \"\";\n        string middle = \"\";\n        \n        // Build first half greedily from largest digits\n        for (int i = 9; i >= 0; i--) {\n            if (i == 0 && firstHalf.empty()) {\n                // Skip leading zeros\n                continue;\n            }\n            \n            // Add pairs of digit i to first half\n            int pairs = freq[i] / 2;\n            firstHalf += string(pairs, '0' + i);\n        }\n        \n        // Find largest digit with odd frequency for middle\n        for (int i = 9; i >= 0; i--) {\n            if (freq[i] % 2 == 1) {\n                middle = char('0' + i);\n                break;\n            }\n        }\n        \n        // Construct palindrome\n        string secondHalf = firstHalf;\n        reverse(secondHalf.begin(), secondHalf.end());\n        string result = firstHalf + middle + secondHalf;\n        \n        // Handle edge case: if result is empty or all zeros\n        if (result.empty() || result[0] == '0') {\n            return \"0\";\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public String largestPalindromic(String num) {\n        // Count frequency of each digit\n        int[] freq = new int[10];\n        for (char c : num.toCharArray()) {\n            freq[c - '0']++;\n        }\n        \n        StringBuilder firstHalf = new StringBuilder();\n        String middle = \"\";\n        \n        // Build first half greedily from largest digits\n        for (int i = 9; i >= 0; i--) {\n            if (i == 0 && firstHalf.length() == 0) {\n                // Skip leading zeros\n                continue;\n            }\n            \n            // Add pairs of digit i to first half\n            int pairs = freq[i] / 2;\n            for (int j = 0; j < pairs; j++) {\n                firstHalf.append((char)('0' + i));\n            }\n        }\n        \n        // Find largest digit with odd frequency for middle\n        for (int i = 9; i >= 0; i--) {\n            if (freq[i] % 2 == 1) {\n                middle = String.valueOf((char)('0' + i));\n                break;\n            }\n        }\n        \n        // Construct palindrome\n        String secondHalf = firstHalf.reverse().toString();\n        firstHalf.reverse(); // Reverse back\n        String result = firstHalf.toString() + middle + secondHalf;\n        \n        // Handle edge case: if result is empty or all zeros\n        if (result.isEmpty() || result.charAt(0) == '0') {\n            return \"0\";\n        }\n        \n        return result;\n    }\n}",
+        "python": "def largestPalindromic(num):\n    # Count frequency of each digit\n    freq = [0] * 10\n    for c in num:\n        freq[int(c)] += 1\n    \n    first_half = []\n    middle = \"\"\n    \n    # Build first half greedily from largest digits\n    for i in range(9, -1, -1):\n        if i == 0 and not first_half:\n            # Skip leading zeros\n            continue\n        \n        # Add pairs of digit i to first half\n        pairs = freq[i] // 2\n        first_half.extend([str(i)] * pairs)\n    \n    # Find largest digit with odd frequency for middle\n    for i in range(9, -1, -1):\n        if freq[i] % 2 == 1:\n            middle = str(i)\n            break\n    \n    # Construct palindrome\n    first_half_str = ''.join(first_half)\n    second_half = first_half_str[::-1]\n    result = first_half_str + middle + second_half\n    \n    # Handle edge case: if result is empty or all zeros\n    if not result or result[0] == '0':\n        return \"0\"\n    \n    return result",
+        "javascript": "function largestPalindromic(num) {\n    // Count frequency of each digit\n    const freq = new Array(10).fill(0);\n    for (const c of num) {\n        freq[parseInt(c)]++;\n    }\n    \n    let firstHalf = \"\";\n    let middle = \"\";\n    \n    // Build first half greedily from largest digits\n    for (let i = 9; i >= 0; i--) {\n        if (i === 0 && firstHalf === \"\") {\n            // Skip leading zeros\n            continue;\n        }\n        \n        // Add pairs of digit i to first half\n        const pairs = Math.floor(freq[i] / 2);\n        firstHalf += String(i).repeat(pairs);\n    }\n    \n    // Find largest digit with odd frequency for middle\n    for (let i = 9; i >= 0; i--) {\n        if (freq[i] % 2 === 1) {\n            middle = String(i);\n            break;\n        }\n    }\n    \n    // Construct palindrome\n    const secondHalf = firstHalf.split('').reverse().join('');\n    const result = firstHalf + middle + secondHalf;\n    \n    // Handle edge case: if result is empty or all zeros\n    if (!result || result[0] === '0') {\n        return \"0\";\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the leading zero case - returning '000' instead of '0'",
+    "Forgetting to check if first half is empty before adding zeros",
+    "Not properly selecting the largest digit for the middle position",
+    "Using all occurrences of a digit instead of just pairs for the first half",
+    "Incorrectly reversing the first half when building the second half",
+    "Not handling edge case when input is all same digit like '000'"
+  ],
+  "hints": [
+    "To maximize the number, place larger digits on the outside of the palindrome",
+    "Think about how many times you can use each digit - pairs go on both sides",
+    "What should you do with digits that appear an odd number of times?",
+    "Special case: what happens if you try to start with '0'?",
+    "Consider building the first half, finding a middle, then mirroring"
+  ],
+  "followUp": [
+    "What if you need to find the smallest palindromic number instead?",
+    "How would you solve this if leading zeros were allowed?",
+    "Can you modify this to find the k-th largest palindromic number?",
+    "What if you need to use exactly all digits (no digit can be left out)?",
+    "How would you handle very large inputs with millions of digits efficiently?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg"
+  ],
+  "tags": [
+    "String",
+    "Greedy",
+    "Hash Table",
+    "Palindrome"
+  ],
+  "relatedProblems": [
+    "Palindrome Number",
+    "Valid Palindrome",
+    "Longest Palindromic Substring",
+    "Construct K Palindrome Strings",
+    "Largest Number"
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "questionId": "694d4a3a98494915f3bc8e7f",
+  "questionSlug": "subarrays-product-less-target",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/subarray-product-less-than-k/",
+    "videos": [
+      {
+        "title": "Subarray Product Less Than K - Leetcode 713",
+        "url": "https://www.youtube.com/watch?v=SxtxCSfSGlo",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Sliding Window | Subarray Product Less Than K",
+        "url": "https://www.youtube.com/watch?v=2Sm_pKdhtzw",
+        "channel": "takeUforward",
+        "duration": "13:40",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Subarray Product Less Than K Solution",
+        "url": "https://leetcode.com/problems/subarray-product-less-than-k/solution/",
+        "source": "LeetCode Editorial"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/number-subarrays-product-less-k/",
+        "platform": "GeeksforGeeks"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Sliding Window with Two Pointers when counting subarrays with a product/sum condition. Expand window with right pointer, shrink with left when condition is violated.",
+  "approaches": [
+    {
+      "name": "Brute Force",
+      "order": 1,
+      "intuition": "Check all possible subarrays and count those with product less than k.",
+      "approach": "Use two nested loops to generate all subarrays and calculate their products.",
+      "steps": [
+        "Initialize count to 0",
+        "For each starting index i:",
+        "  Initialize product to 1",
+        "  For each ending index j from i:",
+        "    Multiply product by nums[j]",
+        "    If product < k: increment count",
+        "    Else: break (no need to extend further)",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops check all subarrays",
+        "spaceExplanation": "Only a few variables used"
+      },
+      "code": {
+        "cpp": "int numSubarrayProductLessThanK(vector<int>& nums, int k) {\n    if (k <= 1) return 0;\n    \n    int count = 0;\n    int n = nums.size();\n    \n    for (int i = 0; i < n; i++) {\n        int product = 1;\n        for (int j = i; j < n; j++) {\n            product *= nums[j];\n            if (product < k) {\n                count++;\n            } else {\n                break; // Product will only increase\n            }\n        }\n    }\n    \n    return count;\n}",
+        "java": "public int numSubarrayProductLessThanK(int[] nums, int k) {\n    if (k <= 1) return 0;\n    \n    int count = 0;\n    int n = nums.length;\n    \n    for (int i = 0; i < n; i++) {\n        int product = 1;\n        for (int j = i; j < n; j++) {\n            product *= nums[j];\n            if (product < k) {\n                count++;\n            } else {\n                break; // Product will only increase\n            }\n        }\n    }\n    \n    return count;\n}",
+        "python": "def num_subarray_product_less_than_k(nums, k):\n    if k <= 1:\n        return 0\n    \n    count = 0\n    n = len(nums)\n    \n    for i in range(n):\n        product = 1\n        for j in range(i, n):\n            product *= nums[j]\n            if product < k:\n                count += 1\n            else:\n                break  # Product will only increase\n    \n    return count",
+        "javascript": "function numSubarrayProductLessThanK(nums, k) {\n    if (k <= 1) return 0;\n    \n    let count = 0;\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        let product = 1;\n        for (let j = i; j < n; j++) {\n            product *= nums[j];\n            if (product < k) {\n                count++;\n            } else {\n                break; // Product will only increase\n            }\n        }\n    }\n    \n    return count;\n}"
+      }
+    },
+    {
+      "name": "Sliding Window (Optimal)",
+      "order": 2,
+      "intuition": "Use a sliding window with two pointers. Expand window by adding elements from right, shrink from left when product exceeds k. For each valid window, count all subarrays ending at right pointer.",
+      "approach": "Maintain a window with product < k. For each position, the number of new subarrays is (right - left + 1).",
+      "steps": [
+        "Handle edge case: if k <= 1, return 0",
+        "Initialize left = 0, product = 1, count = 0",
+        "For right from 0 to n-1:",
+        "  Multiply product by nums[right]",
+        "  While product >= k and left <= right:",
+        "    Divide product by nums[left]",
+        "    Increment left",
+        "  Add (right - left + 1) to count",
+        "  This counts all subarrays ending at right",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element is visited at most twice (once by right, once by left)",
+        "spaceExplanation": "Only a few variables used"
+      },
+      "code": {
+        "cpp": "int numSubarrayProductLessThanK(vector<int>& nums, int k) {\n    if (k <= 1) return 0;\n    \n    int count = 0;\n    int product = 1;\n    int left = 0;\n    \n    for (int right = 0; right < nums.size(); right++) {\n        product *= nums[right];\n        \n        // Shrink window while product >= k\n        while (product >= k && left <= right) {\n            product /= nums[left];\n            left++;\n        }\n        \n        // Count all subarrays ending at right\n        // [left...right], [left+1...right], ..., [right]\n        count += right - left + 1;\n    }\n    \n    return count;\n}",
+        "java": "public int numSubarrayProductLessThanK(int[] nums, int k) {\n    if (k <= 1) return 0;\n    \n    int count = 0;\n    int product = 1;\n    int left = 0;\n    \n    for (int right = 0; right < nums.length; right++) {\n        product *= nums[right];\n        \n        // Shrink window while product >= k\n        while (product >= k && left <= right) {\n            product /= nums[left];\n            left++;\n        }\n        \n        // Count all subarrays ending at right\n        // [left...right], [left+1...right], ..., [right]\n        count += right - left + 1;\n    }\n    \n    return count;\n}",
+        "python": "def num_subarray_product_less_than_k(nums, k):\n    if k <= 1:\n        return 0\n    \n    count = 0\n    product = 1\n    left = 0\n    \n    for right in range(len(nums)):\n        product *= nums[right]\n        \n        # Shrink window while product >= k\n        while product >= k and left <= right:\n            product //= nums[left]\n            left += 1\n        \n        # Count all subarrays ending at right\n        # [left...right], [left+1...right], ..., [right]\n        count += right - left + 1\n    \n    return count",
+        "javascript": "function numSubarrayProductLessThanK(nums, k) {\n    if (k <= 1) return 0;\n    \n    let count = 0;\n    let product = 1;\n    let left = 0;\n    \n    for (let right = 0; right < nums.length; right++) {\n        product *= nums[right];\n        \n        // Shrink window while product >= k\n        while (product >= k && left <= right) {\n            product /= nums[left];\n            left++;\n        }\n        \n        // Count all subarrays ending at right\n        // [left...right], [left+1...right], ..., [right]\n        count += right - left + 1;\n    }\n    \n    return count;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the edge case when k <= 1",
+    "Forgetting that all numbers are positive (important for the algorithm)",
+    "Not understanding why we add (right - left + 1) to count",
+    "Moving the left pointer incorrectly",
+    "Integer division issues in some languages"
+  ],
+  "hints": [
+    "All numbers in the array are positive, so the product only increases when adding elements",
+    "Use a sliding window that maintains product < k",
+    "For each valid window ending at position right, there are (right - left + 1) valid subarrays",
+    "Think about how many new subarrays are formed when you add one element to the right"
+  ],
+  "followUp": [
+    "What if the array can contain zeros?",
+    "How would you modify this to find subarrays with product exactly equal to k?",
+    "Can you extend this to find the maximum length subarray with product less than k?",
+    "What if you need to return the actual subarrays instead of just counting them?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Google",
+    "Microsoft"
+  ],
+  "tags": [
+    "Array",
+    "Sliding Window",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Subarray Sum Equals K",
+    "Maximum Product Subarray",
+    "Minimum Size Subarray Sum"
+  ]
+}

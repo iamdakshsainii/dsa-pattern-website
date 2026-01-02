@@ -1,0 +1,187 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eaa",
+  "questionSlug": "find-all-missing-numbers",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/",
+    "videos": [
+      {
+        "title": "Find All Numbers Disappeared in an Array - Leetcode 448",
+        "url": "https://www.youtube.com/watch?v=8i-f24YFWC4",
+        "channel": "NeetCode",
+        "duration": "8:12",
+        "language": "English"
+      },
+      {
+        "title": "Find Missing Numbers Using Cyclic Sort",
+        "url": "https://www.youtube.com/watch?v=WJLr5TXWx-o",
+        "channel": "takeUforward",
+        "duration": "10:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find All Numbers Disappeared",
+        "url": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Find Missing Elements in Range",
+        "url": "https://www.geeksforgeeks.org/find-missing-elements-of-a-range/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Missing Number",
+        "url": "https://leetcode.com/problems/missing-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "First Missing Positive",
+        "url": "https://leetcode.com/problems/first-missing-positive/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Cyclic Sort pattern when array of size n contains numbers in range [1,n] with some missing, need to find all missing numbers in O(n) time and O(1) space. Key indicators: array size n, numbers from 1 to n, some duplicates or missing, in-place solution needed.",
+  "approaches": [
+    {
+      "name": "Brute Force (Linear Search for Each)",
+      "order": 1,
+      "intuition": "Check for each number from 1 to n whether it exists in the array by linear search. If not found, add to missing numbers list.",
+      "approach": "For each number in range [1,n], search through entire array to check if it exists. Collect all numbers that don't exist.",
+      "steps": [
+        "Create empty result list",
+        "For each number from 1 to n:",
+        "  Initialize found = false",
+        "  For each element in array:",
+        "    If element equals current number:",
+        "      Set found = true",
+        "      Break inner loop",
+        "  If not found:",
+        "    Add current number to result",
+        "Return result list"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "For each of n numbers, we search through array of size n: n * n = O(n²)",
+        "spaceExplanation": "Only using result list for output (not counted as extra space) and constant variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findDisappearedNumbers(vector<int>& nums) {\n        vector<int> result;\n        int n = nums.size();\n        \n        // Check each number from 1 to n\n        for (int num = 1; num <= n; num++) {\n            bool found = false;\n            \n            // Search for num in array\n            for (int i = 0; i < n; i++) {\n                if (nums[i] == num) {\n                    found = true;\n                    break;\n                }\n            }\n            \n            // If not found, it's missing\n            if (!found) {\n                result.push_back(num);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDisappearedNumbers(int[] nums) {\n        List<Integer> result = new ArrayList<>();\n        int n = nums.length;\n        \n        // Check each number from 1 to n\n        for (int num = 1; num <= n; num++) {\n            boolean found = false;\n            \n            // Search for num in array\n            for (int i = 0; i < n; i++) {\n                if (nums[i] == num) {\n                    found = true;\n                    break;\n                }\n            }\n            \n            // If not found, it's missing\n            if (!found) {\n                result.add(num);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "def find_disappeared_numbers(nums):\n    result = []\n    n = len(nums)\n    \n    # Check each number from 1 to n\n    for num in range(1, n + 1):\n        found = False\n        \n        # Search for num in array\n        for element in nums:\n            if element == num:\n                found = True\n                break\n        \n        # If not found, it's missing\n        if not found:\n            result.append(num)\n    \n    return result",
+        "javascript": "function findDisappearedNumbers(nums) {\n    const result = [];\n    const n = nums.length;\n    \n    // Check each number from 1 to n\n    for (let num = 1; num <= n; num++) {\n        let found = false;\n        \n        // Search for num in array\n        for (let i = 0; i < n; i++) {\n            if (nums[i] === num) {\n                found = true;\n                break;\n            }\n        }\n        \n        // If not found, it's missing\n        if (!found) {\n            result.push(num);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Better (Hash Set)",
+      "order": 2,
+      "intuition": "Create a hash set of all numbers in array for O(1) lookup. Then check which numbers from 1 to n are not in the set. This avoids repeated linear searches.",
+      "approach": "First pass: add all array elements to hash set. Second pass: check each number 1 to n in the set.",
+      "steps": [
+        "Create hash set and add all array elements to it",
+        "Create empty result list",
+        "For each number from 1 to n:",
+        "  If number not in set:",
+        "    Add to result (it's missing)",
+        "Return result list"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "O(n) to build set + O(n) to check each number from 1 to n = O(n)",
+        "spaceExplanation": "Hash set stores all n elements from array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findDisappearedNumbers(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Add all numbers to set\n        unordered_set<int> numSet(nums.begin(), nums.end());\n        \n        // Find missing numbers\n        vector<int> result;\n        for (int num = 1; num <= n; num++) {\n            if (numSet.find(num) == numSet.end()) {\n                result.push_back(num);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDisappearedNumbers(int[] nums) {\n        int n = nums.length;\n        \n        // Add all numbers to set\n        Set<Integer> numSet = new HashSet<>();\n        for (int num : nums) {\n            numSet.add(num);\n        }\n        \n        // Find missing numbers\n        List<Integer> result = new ArrayList<>();\n        for (int num = 1; num <= n; num++) {\n            if (!numSet.contains(num)) {\n                result.add(num);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "def find_disappeared_numbers(nums):\n    n = len(nums)\n    \n    # Add all numbers to set\n    num_set = set(nums)\n    \n    # Find missing numbers\n    result = []\n    for num in range(1, n + 1):\n        if num not in num_set:\n            result.append(num)\n    \n    return result",
+        "javascript": "function findDisappearedNumbers(nums) {\n    const n = nums.length;\n    \n    // Add all numbers to set\n    const numSet = new Set(nums);\n    \n    // Find missing numbers\n    const result = [];\n    for (let num = 1; num <= n; num++) {\n        if (!numSet.has(num)) {\n            result.push(num);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Optimal (Cyclic Sort)",
+      "order": 3,
+      "intuition": "Use cyclic sort to place each number at its correct index (number k at index k-1). After sorting, any index i where nums[i] != i+1 indicates that number i+1 is missing. This achieves O(1) space by sorting in-place.",
+      "approach": "Apply cyclic sort to rearrange numbers to their correct positions. Then scan to find indices where number doesn't match expected value.",
+      "steps": [
+        "Cyclic sort phase:",
+        "  Initialize i = 0",
+        "  While i < n:",
+        "    Calculate correct_idx = nums[i] - 1",
+        "    If nums[i] in valid range and not at correct position:",
+        "      Swap nums[i] with nums[correct_idx]",
+        "    Else: i++",
+        "Find missing numbers:",
+        "  Create result list",
+        "  For each index i from 0 to n-1:",
+        "    If nums[i] != i + 1:",
+        "      Add (i + 1) to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Cyclic sort O(n) + linear scan O(n) = O(n). Each element swapped at most once",
+        "spaceExplanation": "In-place sorting, only result array for output (not counted as extra space)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findDisappearedNumbers(vector<int>& nums) {\n        int i = 0;\n        int n = nums.size();\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            // Check if number is in valid range and not at correct position\n            if (nums[i] >= 1 && nums[i] <= n && nums[i] != nums[correctIndex]) {\n                swap(nums[i], nums[correctIndex]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find missing numbers\n        vector<int> result;\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1) {\n                result.push_back(i + 1);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDisappearedNumbers(int[] nums) {\n        int i = 0;\n        int n = nums.length;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            // Check if number is in valid range and not at correct position\n            if (nums[i] >= 1 && nums[i] <= n && nums[i] != nums[correctIndex]) {\n                // Swap\n                int temp = nums[i];\n                nums[i] = nums[correctIndex];\n                nums[correctIndex] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find missing numbers\n        List<Integer> result = new ArrayList<>();\n        for (int j = 0; j < n; j++) {\n            if (nums[j] != j + 1) {\n                result.add(j + 1);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "def find_disappeared_numbers(nums):\n    i = 0\n    n = len(nums)\n    \n    # Cyclic sort\n    while i < n:\n        correct_index = nums[i] - 1\n        \n        # Check if number is in valid range and not at correct position\n        if 1 <= nums[i] <= n and nums[i] != nums[correct_index]:\n            nums[i], nums[correct_index] = nums[correct_index], nums[i]\n        else:\n            i += 1\n    \n    # Find missing numbers\n    result = []\n    for i in range(n):\n        if nums[i] != i + 1:\n            result.append(i + 1)\n    \n    return result",
+        "javascript": "function findDisappearedNumbers(nums) {\n    let i = 0;\n    const n = nums.length;\n    \n    // Cyclic sort\n    while (i < n) {\n        const correctIndex = nums[i] - 1;\n        \n        // Check if number is in valid range and not at correct position\n        if (nums[i] >= 1 && nums[i] <= n && nums[i] !== nums[correctIndex]) {\n            [nums[i], nums[correctIndex]] = [nums[correctIndex], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find missing numbers\n    const result = [];\n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== i + 1) {\n            result.push(i + 1);\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling duplicates properly during cyclic sort (can cause infinite loop)",
+    "Forgetting that array is 1-indexed (numbers 1 to n) but indices are 0 to n-1",
+    "Off-by-one error when checking missing: using i instead of i+1",
+    "Not checking if nums[i] is in valid range [1,n] before using as index",
+    "Trying to access nums[nums[i]-1] without bounds checking",
+    "Incrementing i even when swap is successful in cyclic sort"
+  ],
+  "hints": [
+    "If all numbers from 1 to n were present, where should each number be?",
+    "Number k should ideally be at index k-1. Can you place them there?",
+    "After placing numbers at correct positions, how do you identify missing ones?",
+    "Can you solve this without using extra space besides the output array?",
+    "Think about what it means when nums[i] != i+1 after cyclic sort",
+    "You need to handle duplicates gracefully to avoid infinite loops"
+  ],
+  "followUp": [
+    "What if array has numbers in range [0,n-1] instead of [1,n]?",
+    "How would you find missing numbers if array has both negative and positive numbers?",
+    "Can you find the first k missing positive integers?",
+    "What if you need to find missing numbers without modifying the input array?",
+    "How would you solve if array can have numbers outside [1,n] range?",
+    "Can you extend this to find both missing and duplicate numbers together?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Cyclic Sort",
+    "Hash Table",
+    "In-Place"
+  ],
+  "relatedProblems": [
+    "Missing Number",
+    "Find All Duplicates in an Array",
+    "First Missing Positive",
+    "Set Mismatch",
+    "Find the Duplicate Number",
+    "Couples Holding Hands"
+  ]
+}

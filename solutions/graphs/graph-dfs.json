@@ -1,0 +1,159 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ed2",
+  "questionSlug": "graph-dfs",
+  "resources": {
+    "leetcode": "",
+    "videos": [
+      {
+        "title": "Graph DFS Traversal Explained",
+        "url": "https://www.youtube.com/watch?v=7fujbpJ0LB4",
+        "channel": "Abdul Bari",
+        "duration": "18:20",
+        "language": "English"
+      },
+      {
+        "title": "DFS Graph Algorithm",
+        "url": "https://www.youtube.com/watch?v=PMMc4VsIacU",
+        "channel": "Back To Back SWE",
+        "duration": "14:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Depth First Search",
+        "url": "https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "DFS Algorithm",
+        "url": "https://en.wikipedia.org/wiki/Depth-first_search",
+        "source": "Wikipedia"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Number of Islands",
+        "url": "https://leetcode.com/problems/number-of-islands/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Clone Graph",
+        "url": "https://leetcode.com/problems/clone-graph/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use DFS for graph traversal when you need to explore as deep as possible before backtracking, detect cycles, find connected components, or solve maze/path problems. Key indicators: exploring all paths, backtracking, topological sort, cycle detection, recursion preferred.",
+  "approaches": [
+    {
+      "name": "Recursive DFS (Standard)",
+      "order": 1,
+      "intuition": "DFS explores graph by going as deep as possible along each branch before backtracking. Recursion naturally implements the stack behavior needed for DFS.",
+      "approach": "Use recursion to visit nodes. Mark nodes as visited to avoid cycles. Recursively visit all unvisited neighbors.",
+      "steps": [
+        "Create adjacency list representation",
+        "Create visited array/set",
+        "Define recursive DFS function:",
+        "  Mark current node as visited",
+        "  Process current node (add to result)",
+        "  For each unvisited neighbor:",
+        "    Recursively call DFS on neighbor",
+        "Call DFS starting from source node",
+        "Return traversal result"
+      ],
+      "complexity": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "timeExplanation": "Visit each vertex once (V) and explore each edge once (E)",
+        "spaceExplanation": "Recursion stack can go up to V depth, visited set stores V vertices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> dfsTraversal(int vertices, vector<vector<int>>& edges, int start) {\n        // Build adjacency list\n        vector<vector<int>> graph(vertices);\n        for (auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n            // For undirected graph, add reverse edge\n            // graph[edge[1]].push_back(edge[0]);\n        }\n        \n        vector<int> result;\n        vector<bool> visited(vertices, false);\n        \n        // Start DFS from starting node\n        dfs(start, graph, visited, result);\n        \n        return result;\n    }\n    \nprivate:\n    void dfs(int node, vector<vector<int>>& graph, \n             vector<bool>& visited, vector<int>& result) {\n        // Mark current node as visited\n        visited[node] = true;\n        result.push_back(node);\n        \n        // Visit all unvisited neighbors\n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(neighbor, graph, visited, result);\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> dfsTraversal(int vertices, int[][] edges, int start) {\n        // Build adjacency list\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < vertices; i++) {\n            graph.add(new ArrayList<>());\n        }\n        for (int[] edge : edges) {\n            graph.get(edge[0]).add(edge[1]);\n            // For undirected graph, add reverse edge\n            // graph.get(edge[1]).add(edge[0]);\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        boolean[] visited = new boolean[vertices];\n        \n        // Start DFS from starting node\n        dfs(start, graph, visited, result);\n        \n        return result;\n    }\n    \n    private void dfs(int node, List<List<Integer>> graph, \n                     boolean[] visited, List<Integer> result) {\n        // Mark current node as visited\n        visited[node] = true;\n        result.add(node);\n        \n        // Visit all unvisited neighbors\n        for (int neighbor : graph.get(node)) {\n            if (!visited[neighbor]) {\n                dfs(neighbor, graph, visited, result);\n            }\n        }\n    }\n}",
+        "python": "def dfs_traversal(vertices, edges, start):\n    # Build adjacency list\n    graph = [[] for _ in range(vertices)]\n    for u, v in edges:\n        graph[u].append(v)\n        # For undirected graph, add reverse edge\n        # graph[v].append(u)\n    \n    result = []\n    visited = [False] * vertices\n    \n    def dfs(node):\n        # Mark current node as visited\n        visited[node] = True\n        result.append(node)\n        \n        # Visit all unvisited neighbors\n        for neighbor in graph[node]:\n            if not visited[neighbor]:\n                dfs(neighbor)\n    \n    # Start DFS from starting node\n    dfs(start)\n    \n    return result",
+        "javascript": "function dfsTraversal(vertices, edges, start) {\n    // Build adjacency list\n    const graph = Array.from({ length: vertices }, () => []);\n    for (const [u, v] of edges) {\n        graph[u].push(v);\n        // For undirected graph, add reverse edge\n        // graph[v].push(u);\n    }\n    \n    const result = [];\n    const visited = new Array(vertices).fill(false);\n    \n    function dfs(node) {\n        // Mark current node as visited\n        visited[node] = true;\n        result.push(node);\n        \n        // Visit all unvisited neighbors\n        for (const neighbor of graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(neighbor);\n            }\n        }\n    }\n    \n    // Start DFS from starting node\n    dfs(start);\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Iterative DFS (Using Stack)",
+      "order": 2,
+      "intuition": "Implement DFS iteratively using an explicit stack instead of recursion. This is useful when recursion depth might be too large or when you need more control over the traversal.",
+      "approach": "Use a stack to simulate the recursion call stack. Push starting node, then repeatedly pop and process nodes while pushing unvisited neighbors.",
+      "steps": [
+        "Build adjacency list",
+        "Create visited set and stack",
+        "Push starting node to stack",
+        "While stack is not empty:",
+        "  Pop node from stack",
+        "  If node not visited:",
+        "    Mark as visited",
+        "    Process node (add to result)",
+        "    Push all unvisited neighbors to stack",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "timeExplanation": "Visit each vertex once and explore each edge once",
+        "spaceExplanation": "Stack can store up to V vertices, visited set stores V vertices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> dfsIterative(int vertices, vector<vector<int>>& edges, int start) {\n        // Build adjacency list\n        vector<vector<int>> graph(vertices);\n        for (auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n        }\n        \n        vector<int> result;\n        vector<bool> visited(vertices, false);\n        stack<int> stk;\n        \n        // Start DFS from starting node\n        stk.push(start);\n        \n        while (!stk.empty()) {\n            int node = stk.top();\n            stk.pop();\n            \n            if (!visited[node]) {\n                visited[node] = true;\n                result.push_back(node);\n                \n                // Push neighbors in reverse order for correct traversal\n                for (int i = graph[node].size() - 1; i >= 0; i--) {\n                    int neighbor = graph[node][i];\n                    if (!visited[neighbor]) {\n                        stk.push(neighbor);\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> dfsIterative(int vertices, int[][] edges, int start) {\n        // Build adjacency list\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < vertices; i++) {\n            graph.add(new ArrayList<>());\n        }\n        for (int[] edge : edges) {\n            graph.get(edge[0]).add(edge[1]);\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        boolean[] visited = new boolean[vertices];\n        Stack<Integer> stack = new Stack<>();\n        \n        // Start DFS from starting node\n        stack.push(start);\n        \n        while (!stack.isEmpty()) {\n            int node = stack.pop();\n            \n            if (!visited[node]) {\n                visited[node] = true;\n                result.add(node);\n                \n                // Push neighbors in reverse order for correct traversal\n                List<Integer> neighbors = graph.get(node);\n                for (int i = neighbors.size() - 1; i >= 0; i--) {\n                    int neighbor = neighbors.get(i);\n                    if (!visited[neighbor]) {\n                        stack.push(neighbor);\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "def dfs_iterative(vertices, edges, start):\n    # Build adjacency list\n    graph = [[] for _ in range(vertices)]\n    for u, v in edges:\n        graph[u].append(v)\n    \n    result = []\n    visited = [False] * vertices\n    stack = [start]\n    \n    while stack:\n        node = stack.pop()\n        \n        if not visited[node]:\n            visited[node] = True\n            result.append(node)\n            \n            # Push neighbors in reverse order for correct traversal\n            for neighbor in reversed(graph[node]):\n                if not visited[neighbor]:\n                    stack.append(neighbor)\n    \n    return result",
+        "javascript": "function dfsIterative(vertices, edges, start) {\n    // Build adjacency list\n    const graph = Array.from({ length: vertices }, () => []);\n    for (const [u, v] of edges) {\n        graph[u].push(v);\n    }\n    \n    const result = [];\n    const visited = new Array(vertices).fill(false);\n    const stack = [start];\n    \n    while (stack.length > 0) {\n        const node = stack.pop();\n        \n        if (!visited[node]) {\n            visited[node] = true;\n            result.push(node);\n            \n            // Push neighbors in reverse order for correct traversal\n            for (let i = graph[node].length - 1; i >= 0; i--) {\n                const neighbor = graph[node][i];\n                if (!visited[neighbor]) {\n                    stack.push(neighbor);\n                }\n            }\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not marking nodes as visited (causes infinite loops in graphs with cycles)",
+    "Using queue instead of stack (that would be BFS, not DFS)",
+    "Forgetting to handle disconnected components",
+    "In iterative version, not pushing neighbors in reverse order",
+    "For undirected graphs, not adding edges in both directions",
+    "Stack overflow in recursive version for very deep graphs"
+  ],
+  "hints": [
+    "DFS uses a stack (LIFO) - either explicit or implicit via recursion",
+    "DFS goes as deep as possible before backtracking",
+    "Mark nodes as visited to avoid infinite loops",
+    "Recursive DFS is more intuitive but can cause stack overflow",
+    "Iterative DFS gives you more control and avoids stack overflow",
+    "For disconnected graphs, you may need multiple DFS calls"
+  ],
+  "followUp": [
+    "How would you detect a cycle using DFS?",
+    "Can you implement topological sort using DFS?",
+    "How would you find all paths between two nodes?",
+    "What's the difference between pre-order and post-order DFS?",
+    "How would you handle a graph with disconnected components?",
+    "Can you modify DFS to find strongly connected components?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Graph",
+    "DFS",
+    "Stack",
+    "Recursion",
+    "Traversal",
+    "Backtracking"
+  ],
+  "relatedProblems": [
+    "Number of Islands",
+    "Clone Graph",
+    "Path Sum",
+    "Course Schedule",
+    "Pacific Atlantic Water Flow"
+  ]
+}

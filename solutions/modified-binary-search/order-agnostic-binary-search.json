@@ -1,0 +1,19 @@
+{
+  "questionId": "694d4a3a98494915f3bc8ee6",
+  "questionSlug": "order-agnostic-binary-search",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/order-agnostic-binary-search/",
+    "videos": [],
+    "articles": [],
+    "practice": [],
+    "discussions": []
+  },
+  "patternTriggers": "",
+  "approaches": [],
+  "commonMistakes": [],
+  "hints": [],
+  "followUp": [],
+  "companies": [],
+  "tags": [],
+  "relatedProblems": []
+}

@@ -1,0 +1,193 @@
+{
+  "questionId": "694d4a3a98494915f3bc8eae",
+  "questionSlug": "first-k-missing-positive",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/kth-missing-positive-number/",
+    "videos": [
+      {
+        "title": "Kth Missing Positive Number - Leetcode 1539",
+        "url": "https://www.youtube.com/watch?v=qbJa8qLnHws",
+        "channel": "NeetCode",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "Find Kth Missing Positive - Binary Search",
+        "url": "https://www.youtube.com/watch?v=qbJa8qLnHws",
+        "channel": "takeUforward",
+        "duration": "12:40",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth Missing Positive Number",
+        "url": "https://leetcode.com/problems/kth-missing-positive-number/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Finding Missing Positive Numbers",
+        "url": "https://www.geeksforgeeks.org/find-the-first-missing-number/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "First Missing Positive",
+        "url": "https://leetcode.com/problems/first-missing-positive/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Missing Element in Sorted Array",
+        "url": "https://leetcode.com/problems/missing-element-in-sorted-array/",
+        "platform": "LeetCode"
+      }
+    ],
+    "discussions": []
+  },
+  "patternTriggers": "Use Cyclic Sort pattern when finding first k missing positive numbers. Key indicators: need k missing numbers, array may have negatives, positives not necessarily consecutive, in-place O(1) space solution needed.",
+  "approaches": [
+    {
+      "name": "Brute Force (Check Each Positive)",
+      "order": 1,
+      "intuition": "Start from 1 and check each positive number to see if it exists in array. Count missing numbers until we find k missing ones.",
+      "approach": "Iterate from 1 onwards, for each number check if it exists in array. Collect first k missing numbers.",
+      "steps": [
+        "Initialize result list, missing_count = 0",
+        "Initialize current = 1 (start checking from 1)",
+        "While missing_count < k:",
+        "  Check if current exists in array:",
+        "    found = false",
+        "    For each element in array:",
+        "      If element == current: found = true, break",
+        "  If not found:",
+        "    Add current to result",
+        "    Increment missing_count",
+        "  Increment current",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(k * n)",
+        "space": "O(k)",
+        "timeExplanation": "For each of k missing numbers, we search through array of size n: k*n comparisons",
+        "spaceExplanation": "Result array stores k missing numbers"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findKMissing(vector<int>& nums, int k) {\n        vector<int> result;\n        int missingCount = 0;\n        int current = 1;\n        \n        while (missingCount < k) {\n            bool found = false;\n            \n            // Check if current exists in array\n            for (int num : nums) {\n                if (num == current) {\n                    found = true;\n                    break;\n                }\n            }\n            \n            // If not found, it's missing\n            if (!found) {\n                result.push_back(current);\n                missingCount++;\n            }\n            \n            current++;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findKMissing(int[] nums, int k) {\n        List<Integer> result = new ArrayList<>();\n        int missingCount = 0;\n        int current = 1;\n        \n        while (missingCount < k) {\n            boolean found = false;\n            \n            // Check if current exists in array\n            for (int num : nums) {\n                if (num == current) {\n                    found = true;\n                    break;\n                }\n            }\n            \n            // If not found, it's missing\n            if (!found) {\n                result.add(current);\n                missingCount++;\n            }\n            \n            current++;\n        }\n        \n        return result;\n    }\n}",
+        "python": "def find_k_missing(nums, k):\n    result = []\n    missing_count = 0\n    current = 1\n    \n    while missing_count < k:\n        # Check if current exists in array\n        if current not in nums:\n            result.append(current)\n            missing_count += 1\n        \n        current += 1\n    \n    return result",
+        "javascript": "function findKMissing(nums, k) {\n    const result = [];\n    let missingCount = 0;\n    let current = 1;\n    \n    while (missingCount < k) {\n        // Check if current exists in array\n        if (!nums.includes(current)) {\n            result.push(current);\n            missingCount++;\n        }\n        \n        current++;\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Better (Hash Set)",
+      "order": 2,
+      "intuition": "Create a hash set of all positive numbers in array for O(1) lookup. Then iterate from 1 onwards, checking set instead of array each time. This is much faster.",
+      "approach": "Build set of positive numbers, then iterate from 1 checking set membership until k missing found.",
+      "steps": [
+        "Create hash set and add all positive numbers from array",
+        "Initialize result list, missing_count = 0",
+        "Initialize current = 1",
+        "While missing_count < k:",
+        "  If current not in set:",
+        "    Add current to result",
+        "    Increment missing_count",
+        "  Increment current",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n + k)",
+        "space": "O(n)",
+        "timeExplanation": "O(n) to build set, O(k) to find k missing numbers with O(1) set lookup",
+        "spaceExplanation": "Hash set stores up to n positive numbers from array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findKMissing(vector<int>& nums, int k) {\n        // Build set of positive numbers\n        unordered_set<int> numSet;\n        for (int num : nums) {\n            if (num > 0) {\n                numSet.insert(num);\n            }\n        }\n        \n        vector<int> result;\n        int missingCount = 0;\n        int current = 1;\n        \n        // Find k missing positive numbers\n        while (missingCount < k) {\n            if (numSet.find(current) == numSet.end()) {\n                result.push_back(current);\n                missingCount++;\n            }\n            current++;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findKMissing(int[] nums, int k) {\n        // Build set of positive numbers\n        Set<Integer> numSet = new HashSet<>();\n        for (int num : nums) {\n            if (num > 0) {\n                numSet.add(num);\n            }\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        int missingCount = 0;\n        int current = 1;\n        \n        // Find k missing positive numbers\n        while (missingCount < k) {\n            if (!numSet.contains(current)) {\n                result.add(current);\n                missingCount++;\n            }\n            current++;\n        }\n        \n        return result;\n    }\n}",
+        "python": "def find_k_missing(nums, k):\n    # Build set of positive numbers\n    num_set = {num for num in nums if num > 0}\n    \n    result = []\n    missing_count = 0\n    current = 1\n    \n    # Find k missing positive numbers\n    while missing_count < k:\n        if current not in num_set:\n            result.append(current)\n            missing_count += 1\n        current += 1\n    \n    return result",
+        "javascript": "function findKMissing(nums, k) {\n    // Build set of positive numbers\n    const numSet = new Set(nums.filter(num => num > 0));\n    \n    const result = [];\n    let missingCount = 0;\n    let current = 1;\n    \n    // Find k missing positive numbers\n    while (missingCount < k) {\n        if (!numSet.has(current)) {\n            result.push(current);\n            missingCount++;\n        }\n        current++;\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Optimal (Cyclic Sort)",
+      "order": 3,
+      "intuition": "Use cyclic sort to place positive numbers at their correct indices (number n at index n-1). Ignore non-positive and out-of-range numbers. After sorting, scan to find first k indices where expected number is missing.",
+      "approach": "Apply cyclic sort for positive numbers in range [1,n]. After sorting, collect first k positions where nums[i] != i+1.",
+      "steps": [
+        "Cyclic sort phase:",
+        "  Initialize i = 0, n = array length",
+        "  While i < n:",
+        "    If nums[i] is positive, in range [1,n], and not at correct position:",
+        "      correct_idx = nums[i] - 1",
+        "      If nums[i] != nums[correct_idx]:",
+        "        Swap nums[i] with nums[correct_idx]",
+        "      Else: i++",
+        "    Else: i++",
+        "Find missing:",
+        "  Initialize result list, current = 1",
+        "  For each index i while result.size < k:",
+        "    If i < n and nums[i] != i+1: add i+1",
+        "    Else if i >= n: add current++",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n + k)",
+        "space": "O(1)",
+        "timeExplanation": "Cyclic sort O(n), then finding k missing numbers O(k), total O(n+k)",
+        "spaceExplanation": "In-place sorting, only result array for output (not counted as extra space)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findKMissing(vector<int>& nums, int k) {\n        int i = 0;\n        int n = nums.size();\n        \n        // Cyclic sort for positive numbers\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            // Check if number is positive, in range, and not at correct position\n            if (nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctIndex]) {\n                swap(nums[i], nums[correctIndex]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find first k missing positive numbers\n        vector<int> result;\n        int current = n + 1; // For numbers beyond array range\n        \n        for (int i = 0; i < n && result.size() < k; i++) {\n            if (nums[i] != i + 1) {\n                result.push_back(i + 1);\n            }\n        }\n        \n        // If still need more numbers, add from n+1 onwards\n        while (result.size() < k) {\n            result.push_back(current++);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findKMissing(int[] nums, int k) {\n        int i = 0;\n        int n = nums.length;\n        \n        // Cyclic sort for positive numbers\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            // Check if number is positive, in range, and not at correct position\n            if (nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctIndex]) {\n                // Swap\n                int temp = nums[i];\n                nums[i] = nums[correctIndex];\n                nums[correctIndex] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find first k missing positive numbers\n        List<Integer> result = new ArrayList<>();\n        int current = n + 1;\n        \n        for (int j = 0; j < n && result.size() < k; j++) {\n            if (nums[j] != j + 1) {\n                result.add(j + 1);\n            }\n        }\n        \n        // If still need more numbers, add from n+1 onwards\n        while (result.size() < k) {\n            result.add(current++);\n        }\n        \n        return result;\n    }\n}",
+        "python": "def find_k_missing(nums, k):\n    i = 0\n    n = len(nums)\n    \n    # Cyclic sort for positive numbers\n    while i < n:\n        correct_index = nums[i] - 1\n        \n        # Check if number is positive, in range, and not at correct position\n        if 0 < nums[i] <= n and nums[i] != nums[correct_index]:\n            nums[i], nums[correct_index] = nums[correct_index], nums[i]\n        else:\n            i += 1\n    \n    # Find first k missing positive numbers\n    result = []\n    current = n + 1\n    \n    for i in range(n):\n        if len(result) >= k:\n            break\n        if nums[i] != i + 1:\n            result.append(i + 1)\n    \n    # If still need more numbers, add from n+1 onwards\n    while len(result) < k:\n        result.append(current)\n        current += 1\n    \n    return result",
+        "javascript": "function findKMissing(nums, k) {\n    let i = 0;\n    const n = nums.length;\n    \n    // Cyclic sort for positive numbers\n    while (i < n) {\n        const correctIndex = nums[i] - 1;\n        \n        // Check if number is positive, in range, and not at correct position\n        if (nums[i] > 0 && nums[i] <= n && nums[i] !== nums[correctIndex]) {\n            [nums[i], nums[correctIndex]] = [nums[correctIndex], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find first k missing positive numbers\n    const result = [];\n    let current = n + 1;\n    \n    for (let i = 0; i < n && result.length < k; i++) {\n        if (nums[i] !== i + 1) {\n            result.push(i + 1);\n        }\n    }\n    \n    // If still need more numbers, add from n+1 onwards\n    while (result.length < k) {\n        result.push(current++);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling negative numbers and zeros during cyclic sort",
+    "Forgetting that we might need numbers beyond array length (n+1, n+2, ...)",
+    "Not checking if nums[i] is in valid range [1,n] before using as index",
+    "Creating infinite loop when nums[i] == nums[correct_idx] but not incrementing i",
+    "Not handling k > number of missing positives in array range",
+    "Off-by-one error: checking nums[i] != i instead of nums[i] != i+1"
+  ],
+  "hints": [
+    "Positive numbers from 1 to n should be at indices 0 to n-1. Can you place them there?",
+    "What about negative numbers and zeros? Should you process them?",
+    "After cyclic sort, where will missing numbers be indicated?",
+    "What if k is larger than missing numbers in array's range?",
+    "You might need to return numbers beyond n (like n+1, n+2, ...)",
+    "Cyclic sort only works for numbers in range [1,n], ignore others"
+  ],
+  "followUp": [
+    "What if array is sorted? Can you use binary search?",
+    "How would you find first k missing numbers in range [L, R]?",
+    "Can you solve without modifying the input array?",
+    "What if k is very large (k > n)? How to optimize?",
+    "How would you handle if array can have duplicates?",
+    "Can you stream the missing numbers instead of storing all k?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg"
+  ],
+  "tags": [
+    "Array",
+    "Cyclic Sort",
+    "Hash Table",
+    "Binary Search"
+  ],
+  "relatedProblems": [
+    "First Missing Positive",
+    "Kth Missing Positive Number",
+    "Missing Number",
+    "Find All Numbers Disappeared in an Array",
+    "Missing Element in Sorted Array",
+    "Find the Smallest Divisor"
+  ]
+}
