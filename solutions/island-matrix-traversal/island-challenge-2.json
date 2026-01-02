@@ -2,18 +2,190 @@
   "questionId": "694d4a3a98494915f3bc8edb",
   "questionSlug": "island-challenge-2",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/number-of-enclaves/",
+    "videos": [
+      {
+        "title": "Number of Enclaves - Leetcode 1020",
+        "url": "https://www.youtube.com/watch?v=rxKcepXQgU4",
+        "channel": "NeetCode",
+        "duration": "9:25",
+        "language": "English"
+      },
+      {
+        "title": "Number of Enclaves Explained",
+        "url": "https://www.youtube.com/watch?v=ELMfKnujWeI",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:40",
+        "language": "English"
+      },
+      {
+        "title": "Count Land Cells Not Connected to Border",
+        "url": "https://www.youtube.com/watch?v=pV2kpPD66nE",
+        "channel": "TECH DOSE",
+        "duration": "12:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Number of Enclaves Solution",
+        "url": "https://leetcode.com/problems/number-of-enclaves/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Number of Enclaves - DFS Approach",
+        "url": "https://algo.monster/liteproblems/1020",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Count Enclaves in a Grid",
+        "url": "https://www.geeksforgeeks.org/number-of-enclaves/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Number of Islands",
+        "url": "https://leetcode.com/problems/number-of-islands/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Number of Closed Islands",
+        "url": "https://leetcode.com/problems/number-of-closed-islands/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Surrounded Regions",
+        "url": "https://leetcode.com/problems/surrounded-regions/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Max Area of Island",
+        "url": "https://leetcode.com/problems/max-area-of-island/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Border Elimination with Counting pattern when asked to count cells in enclosed regions. Key indicators: count land cells that can't reach boundary, trapped/enclosed cells, cells not connected to border, eliminate border-reachable cells then count.",
+  "approaches": [
+    {
+      "name": "Border DFS Elimination then Count",
+      "order": 1,
+      "intuition": "Enclaves are land cells that cannot walk off the grid boundary. First eliminate all land cells connected to borders (they can escape). Then count all remaining land cells - these are trapped and form enclaves.",
+      "approach": "Two-pass solution: Pass 1 - DFS from all border land cells to mark all border-connected land as visited/water. Pass 2 - Count all remaining land cells in the grid.",
+      "steps": [
+        "Pass 1 - Mark border-connected land:",
+        "  - Iterate through top and bottom rows",
+        "  - Iterate through left and right columns",
+        "  - For each border land cell (1), call DFS",
+        "  - DFS marks entire connected component as 0 (water/visited)",
+        "Pass 2 - Count remaining land cells:",
+        "  - Initialize count = 0",
+        "  - Iterate through entire grid",
+        "  - Count all cells with value 1",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(m * n)",
+        "space": "O(m * n)",
+        "timeExplanation": "Pass 1 touches border cells and connected lands O(m*n). Pass 2 scans entire grid O(m*n). Total O(m*n) where m=rows, n=cols.",
+        "spaceExplanation": "DFS recursion stack can be O(m*n) in worst case if entire grid is connected land."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numEnclaves(vector<vector<int>>& grid) {\n        int rows = grid.size();\n        int cols = grid[0].size();\n        \n        // Pass 1: Eliminate border-connected land\n        // Top and bottom rows\n        for (int j = 0; j < cols; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[rows-1][j] == 1) dfs(grid, rows-1, j);\n        }\n        \n        // Left and right columns\n        for (int i = 0; i < rows; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][cols-1] == 1) dfs(grid, i, cols-1);\n        }\n        \n        // Pass 2: Count remaining land cells (enclaves)\n        int enclaves = 0;\n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == 1) {\n                    enclaves++;\n                }\n            }\n        }\n        \n        return enclaves;\n    }\n    \nprivate:\n    void dfs(vector<vector<int>>& grid, int i, int j) {\n        if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size() || grid[i][j] == 0) {\n            return;\n        }\n        \n        grid[i][j] = 0;  // Mark as visited/water\n        \n        dfs(grid, i+1, j);\n        dfs(grid, i-1, j);\n        dfs(grid, i, j+1);\n        dfs(grid, i, j-1);\n    }\n};",
+        "java": "class Solution {\n    public int numEnclaves(int[][] grid) {\n        int rows = grid.length;\n        int cols = grid[0].length;\n        \n        // Pass 1: Eliminate border-connected land\n        // Top and bottom rows\n        for (int j = 0; j < cols; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[rows-1][j] == 1) dfs(grid, rows-1, j);\n        }\n        \n        // Left and right columns\n        for (int i = 0; i < rows; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][cols-1] == 1) dfs(grid, i, cols-1);\n        }\n        \n        // Pass 2: Count remaining land cells (enclaves)\n        int enclaves = 0;\n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == 1) {\n                    enclaves++;\n                }\n            }\n        }\n        \n        return enclaves;\n    }\n    \n    private void dfs(int[][] grid, int i, int j) {\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] == 0) {\n            return;\n        }\n        \n        grid[i][j] = 0;  // Mark as visited/water\n        \n        dfs(grid, i+1, j);\n        dfs(grid, i-1, j);\n        dfs(grid, i, j+1);\n        dfs(grid, i, j-1);\n    }\n}",
+        "python": "def numEnclaves(grid):\n    rows, cols = len(grid), len(grid[0])\n    \n    def dfs(i, j):\n        if i < 0 or i >= rows or j < 0 or j >= cols or grid[i][j] == 0:\n            return\n        \n        grid[i][j] = 0  # Mark as visited/water\n        \n        dfs(i+1, j)\n        dfs(i-1, j)\n        dfs(i, j+1)\n        dfs(i, j-1)\n    \n    # Pass 1: Eliminate border-connected land\n    # Top and bottom rows\n    for j in range(cols):\n        if grid[0][j] == 1:\n            dfs(0, j)\n        if grid[rows-1][j] == 1:\n            dfs(rows-1, j)\n    \n    # Left and right columns\n    for i in range(rows):\n        if grid[i][0] == 1:\n            dfs(i, 0)\n        if grid[i][cols-1] == 1:\n            dfs(i, cols-1)\n    \n    # Pass 2: Count remaining land cells (enclaves)\n    enclaves = 0\n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == 1:\n                enclaves += 1\n    \n    return enclaves",
+        "javascript": "function numEnclaves(grid) {\n    const rows = grid.length;\n    const cols = grid[0].length;\n    \n    function dfs(i, j) {\n        if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] === 0) {\n            return;\n        }\n        \n        grid[i][j] = 0;  // Mark as visited/water\n        \n        dfs(i+1, j);\n        dfs(i-1, j);\n        dfs(i, j+1);\n        dfs(i, j-1);\n    }\n    \n    // Pass 1: Eliminate border-connected land\n    // Top and bottom rows\n    for (let j = 0; j < cols; j++) {\n        if (grid[0][j] === 1) dfs(0, j);\n        if (grid[rows-1][j] === 1) dfs(rows-1, j);\n    }\n    \n    // Left and right columns\n    for (let i = 0; i < rows; i++) {\n        if (grid[i][0] === 1) dfs(i, 0);\n        if (grid[i][cols-1] === 1) dfs(i, cols-1);\n    }\n    \n    // Pass 2: Count remaining land cells (enclaves)\n    let enclaves = 0;\n    for (let i = 0; i < rows; i++) {\n        for (let j = 0; j < cols; j++) {\n            if (grid[i][j] === 1) {\n                enclaves++;\n            }\n        }\n    }\n    \n    return enclaves;\n}"
+      }
+    },
+    {
+      "name": "Single Pass with Boundary Flag",
+      "order": 2,
+      "intuition": "For each unvisited land cell, perform DFS and count cells while tracking if boundary is reached. If DFS reaches boundary, discard the count. If DFS completes without reaching boundary, add count to total enclaves.",
+      "approach": "DFS returns a pair: (cell count, reached boundary flag). Only add count if boundary wasn't reached. This avoids marking in first pass and counting in second pass.",
+      "steps": [
+        "Initialize total enclaves count = 0",
+        "Iterate through grid",
+        "For each unvisited land cell:",
+        "  - Call DFS which returns (count, reachedBoundary)",
+        "  - If !reachedBoundary, add count to total",
+        "DFS function:",
+        "  - If out of bounds: return (0, true) - reached boundary",
+        "  - If water or visited: return (0, false)",
+        "  - Mark cell as visited",
+        "  - Initialize count = 1, reachedBoundary = false",
+        "  - For each 4 directions:",
+        "    - Get (subCount, subReached) from recursive call",
+        "    - Add subCount to count",
+        "    - reachedBoundary |= subReached",
+        "  - Return (count, reachedBoundary)",
+        "Return total enclaves"
+      ],
+      "complexity": {
+        "time": "O(m * n)",
+        "space": "O(m * n)",
+        "timeExplanation": "Visit each cell once in single pass. m=rows, n=cols.",
+        "spaceExplanation": "DFS recursion stack O(m*n) worst case."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numEnclaves(vector<vector<int>>& grid) {\n        int rows = grid.size();\n        int cols = grid[0].size();\n        int totalEnclaves = 0;\n        \n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == 1) {\n                    auto [count, reachedBoundary] = dfs(grid, i, j);\n                    if (!reachedBoundary) {\n                        totalEnclaves += count;\n                    }\n                }\n            }\n        }\n        \n        return totalEnclaves;\n    }\n    \nprivate:\n    pair<int, bool> dfs(vector<vector<int>>& grid, int i, int j) {\n        // Out of bounds means reached boundary\n        if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size()) {\n            return {0, true};\n        }\n        \n        // Water or visited\n        if (grid[i][j] == 0) {\n            return {0, false};\n        }\n        \n        grid[i][j] = 0;  // Mark visited\n        \n        int count = 1;\n        bool reachedBoundary = false;\n        \n        auto [c1, r1] = dfs(grid, i+1, j);\n        auto [c2, r2] = dfs(grid, i-1, j);\n        auto [c3, r3] = dfs(grid, i, j+1);\n        auto [c4, r4] = dfs(grid, i, j-1);\n        \n        count += c1 + c2 + c3 + c4;\n        reachedBoundary = r1 || r2 || r3 || r4;\n        \n        return {count, reachedBoundary};\n    }\n};",
+        "java": "class Solution {\n    public int numEnclaves(int[][] grid) {\n        int rows = grid.length;\n        int cols = grid[0].length;\n        int totalEnclaves = 0;\n        \n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == 1) {\n                    int[] result = dfs(grid, i, j);\n                    if (result[1] == 0) {  // Not reached boundary\n                        totalEnclaves += result[0];\n                    }\n                }\n            }\n        }\n        \n        return totalEnclaves;\n    }\n    \n    private int[] dfs(int[][] grid, int i, int j) {\n        // Out of bounds means reached boundary\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length) {\n            return new int[]{0, 1};  // count=0, reachedBoundary=1\n        }\n        \n        // Water or visited\n        if (grid[i][j] == 0) {\n            return new int[]{0, 0};\n        }\n        \n        grid[i][j] = 0;  // Mark visited\n        \n        int count = 1;\n        int reachedBoundary = 0;\n        \n        int[] r1 = dfs(grid, i+1, j);\n        int[] r2 = dfs(grid, i-1, j);\n        int[] r3 = dfs(grid, i, j+1);\n        int[] r4 = dfs(grid, i, j-1);\n        \n        count += r1[0] + r2[0] + r3[0] + r4[0];\n        reachedBoundary = r1[1] | r2[1] | r3[1] | r4[1];\n        \n        return new int[]{count, reachedBoundary};\n    }\n}",
+        "python": "def numEnclaves(grid):\n    rows, cols = len(grid), len(grid[0])\n    \n    def dfs(i, j):\n        # Out of bounds means reached boundary\n        if i < 0 or i >= rows or j < 0 or j >= cols:\n            return (0, True)\n        \n        # Water or visited\n        if grid[i][j] == 0:\n            return (0, False)\n        \n        grid[i][j] = 0  # Mark visited\n        \n        count = 1\n        reached_boundary = False\n        \n        c1, r1 = dfs(i+1, j)\n        c2, r2 = dfs(i-1, j)\n        c3, r3 = dfs(i, j+1)\n        c4, r4 = dfs(i, j-1)\n        \n        count += c1 + c2 + c3 + c4\n        reached_boundary = r1 or r2 or r3 or r4\n        \n        return (count, reached_boundary)\n    \n    total_enclaves = 0\n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == 1:\n                count, reached_boundary = dfs(i, j)\n                if not reached_boundary:\n                    total_enclaves += count\n    \n    return total_enclaves",
+        "javascript": "function numEnclaves(grid) {\n    const rows = grid.length;\n    const cols = grid[0].length;\n    \n    function dfs(i, j) {\n        // Out of bounds means reached boundary\n        if (i < 0 || i >= rows || j < 0 || j >= cols) {\n            return [0, true];\n        }\n        \n        // Water or visited\n        if (grid[i][j] === 0) {\n            return [0, false];\n        }\n        \n        grid[i][j] = 0;  // Mark visited\n        \n        let count = 1;\n        let reachedBoundary = false;\n        \n        const [c1, r1] = dfs(i+1, j);\n        const [c2, r2] = dfs(i-1, j);\n        const [c3, r3] = dfs(i, j+1);\n        const [c4, r4] = dfs(i, j-1);\n        \n        count += c1 + c2 + c3 + c4;\n        reachedBoundary = r1 || r2 || r3 || r4;\n        \n        return [count, reachedBoundary];\n    }\n    \n    let totalEnclaves = 0;\n    for (let i = 0; i < rows; i++) {\n        for (let j = 0; j < cols; j++) {\n            if (grid[i][j] === 1) {\n                const [count, reachedBoundary] = dfs(i, j);\n                if (!reachedBoundary) {\n                    totalEnclaves += count;\n                }\n            }\n        }\n    }\n    \n    return totalEnclaves;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not eliminating all four border edges - missing top, bottom, left, or right",
+    "In single-pass approach, counting border cells as enclaves",
+    "Forgetting that reaching boundary in ANY direction makes entire island non-enclave",
+    "Not propagating the boundary flag correctly through recursive calls",
+    "Counting cells before checking if they reach boundary",
+    "Using OR instead of AND when checking if island is enclosed (should be AND)",
+    "Not marking cells as visited, causing infinite loops or double counting"
+  ],
+  "hints": [
+    "An enclave is land that cannot 'walk off' the grid boundary",
+    "Any land connected to the border can walk off, so it's NOT an enclave",
+    "Easiest approach: eliminate border-connected land first, then count what remains",
+    "Alternative: during DFS, check if you ever go out of bounds (reached boundary)",
+    "This is very similar to 'Number of Closed Islands' but counting cells instead of islands",
+    "Two-pass approach is simpler and cleaner than single-pass with flag tracking"
+  ],
+  "followUp": [
+    "What if you need to find the largest enclave instead of total cell count?",
+    "How would you handle weighted cells (different values) and find max weight?",
+    "Can you solve without modifying the input grid?",
+    "What if diagonal connections also count (8-directional)?",
+    "How would you extend this to 3D (trapped volumes in 3D grid)?",
+    "Can you identify all cells that can reach the boundary?",
+    "What if you're given starting positions and need to check if they're trapped?",
+    "How would you find the minimum moves to escape from an enclave cell?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Bloomberg",
+    "Uber",
+    "Apple"
+  ],
+  "tags": [
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Union Find",
+    "Array",
+    "Matrix"
+  ],
+  "relatedProblems": [
+    "Number of Islands",
+    "Number of Closed Islands",
+    "Surrounded Regions",
+    "Max Area of Island",
+    "Walls and Gates",
+    "Pacific Atlantic Water Flow",
+    "Number of Distinct Islands"
+  ]
 }

@@ -1,19 +1,187 @@
 {
-  "questionId": "694d4a3a98494915f3bc8eda",
-  "questionSlug": "island-challenge-1",
+  "questionId": "694d4a3a98494915f3bc8ed9",
+  "questionSlug": "number-closed-islands",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/number-of-closed-islands/",
+    "videos": [
+      {
+        "title": "Number of Closed Islands - Leetcode 1254",
+        "url": "https://www.youtube.com/watch?v=0ZW-xMHyWDo",
+        "channel": "NeetCode",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Number of Closed Islands Explained",
+        "url": "https://www.youtube.com/watch?v=jwEP-iKZaB8",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Closed Islands - DFS Solution",
+        "url": "https://www.youtube.com/watch?v=lH4xXpKHwpM",
+        "channel": "TECH DOSE",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Number of Closed Islands Solution",
+        "url": "https://leetcode.com/problems/number-of-closed-islands/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Number of Closed Islands Explained",
+        "url": "https://algo.monster/liteproblems/1254",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Count Closed Islands in Matrix",
+        "url": "https://www.geeksforgeeks.org/number-of-closed-islands/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Number of Islands",
+        "url": "https://leetcode.com/problems/number-of-islands/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Number of Enclaves",
+        "url": "https://leetcode.com/problems/number-of-enclaves/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Surrounded Regions",
+        "url": "https://leetcode.com/problems/surrounded-regions/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Max Area of Island",
+        "url": "https://leetcode.com/problems/max-area-of-island/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Border Elimination pattern when asked to find islands/regions that don't touch boundaries. Key indicators: closed/enclosed islands, islands not touching edges, surrounded regions, eliminate border-connected components first.",
+  "approaches": [
+    {
+      "name": "Border DFS Elimination then Count",
+      "order": 1,
+      "intuition": "A closed island is completely surrounded by water and doesn't touch the grid boundary. First eliminate all islands connected to borders by DFS from all border cells. Then count remaining islands normally. Any island touching border is 'open', so remove it first.",
+      "approach": "Two-pass approach: Pass 1 - DFS from all border cells to mark/eliminate border-connected land. Pass 2 - Count remaining islands using standard island counting. Only islands that survived pass 1 are closed islands.",
+      "steps": [
+        "Pass 1 - Eliminate border-connected islands:",
+        "  - Iterate through top and bottom rows",
+        "  - Iterate through left and right columns",
+        "  - For each land cell (0) on border, call DFS to mark entire connected island as water (1)",
+        "Pass 2 - Count closed islands:",
+        "  - Iterate through entire grid",
+        "  - For each remaining land cell (0):",
+        "    - Increment island count",
+        "    - Call DFS to mark island as visited",
+        "Return island count"
+      ],
+      "complexity": {
+        "time": "O(m * n)",
+        "space": "O(m * n)",
+        "timeExplanation": "Two passes through grid. First pass touches border cells and connected lands. Second pass counts remaining islands. Total O(m*n) where m=rows, n=cols.",
+        "spaceExplanation": "DFS recursion stack can be O(m*n) in worst case if entire grid is one island."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int closedIsland(vector<vector<int>>& grid) {\n        int rows = grid.size();\n        int cols = grid[0].size();\n        \n        // Pass 1: Eliminate border-connected islands\n        // Top and bottom rows\n        for (int j = 0; j < cols; j++) {\n            if (grid[0][j] == 0) dfs(grid, 0, j);\n            if (grid[rows-1][j] == 0) dfs(grid, rows-1, j);\n        }\n        \n        // Left and right columns\n        for (int i = 0; i < rows; i++) {\n            if (grid[i][0] == 0) dfs(grid, i, 0);\n            if (grid[i][cols-1] == 0) dfs(grid, i, cols-1);\n        }\n        \n        // Pass 2: Count closed islands\n        int closedIslands = 0;\n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == 0) {\n                    closedIslands++;\n                    dfs(grid, i, j);\n                }\n            }\n        }\n        \n        return closedIslands;\n    }\n    \nprivate:\n    void dfs(vector<vector<int>>& grid, int i, int j) {\n        if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size() || grid[i][j] == 1) {\n            return;\n        }\n        \n        grid[i][j] = 1;  // Mark as water/visited\n        \n        dfs(grid, i+1, j);\n        dfs(grid, i-1, j);\n        dfs(grid, i, j+1);\n        dfs(grid, i, j-1);\n    }\n};",
+        "java": "class Solution {\n    public int closedIsland(int[][] grid) {\n        int rows = grid.length;\n        int cols = grid[0].length;\n        \n        // Pass 1: Eliminate border-connected islands\n        // Top and bottom rows\n        for (int j = 0; j < cols; j++) {\n            if (grid[0][j] == 0) dfs(grid, 0, j);\n            if (grid[rows-1][j] == 0) dfs(grid, rows-1, j);\n        }\n        \n        // Left and right columns\n        for (int i = 0; i < rows; i++) {\n            if (grid[i][0] == 0) dfs(grid, i, 0);\n            if (grid[i][cols-1] == 0) dfs(grid, i, cols-1);\n        }\n        \n        // Pass 2: Count closed islands\n        int closedIslands = 0;\n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == 0) {\n                    closedIslands++;\n                    dfs(grid, i, j);\n                }\n            }\n        }\n        \n        return closedIslands;\n    }\n    \n    private void dfs(int[][] grid, int i, int j) {\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] == 1) {\n            return;\n        }\n        \n        grid[i][j] = 1;  // Mark as water/visited\n        \n        dfs(grid, i+1, j);\n        dfs(grid, i-1, j);\n        dfs(grid, i, j+1);\n        dfs(grid, i, j-1);\n    }\n}",
+        "python": "def closedIsland(grid):\n    rows, cols = len(grid), len(grid[0])\n    \n    def dfs(i, j):\n        if i < 0 or i >= rows or j < 0 or j >= cols or grid[i][j] == 1:\n            return\n        \n        grid[i][j] = 1  # Mark as water/visited\n        \n        dfs(i+1, j)\n        dfs(i-1, j)\n        dfs(i, j+1)\n        dfs(i, j-1)\n    \n    # Pass 1: Eliminate border-connected islands\n    # Top and bottom rows\n    for j in range(cols):\n        if grid[0][j] == 0:\n            dfs(0, j)\n        if grid[rows-1][j] == 0:\n            dfs(rows-1, j)\n    \n    # Left and right columns\n    for i in range(rows):\n        if grid[i][0] == 0:\n            dfs(i, 0)\n        if grid[i][cols-1] == 0:\n            dfs(i, cols-1)\n    \n    # Pass 2: Count closed islands\n    closed_islands = 0\n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == 0:\n                closed_islands += 1\n                dfs(i, j)\n    \n    return closed_islands",
+        "javascript": "function closedIsland(grid) {\n    const rows = grid.length;\n    const cols = grid[0].length;\n    \n    function dfs(i, j) {\n        if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] === 1) {\n            return;\n        }\n        \n        grid[i][j] = 1;  // Mark as water/visited\n        \n        dfs(i+1, j);\n        dfs(i-1, j);\n        dfs(i, j+1);\n        dfs(i, j-1);\n    }\n    \n    // Pass 1: Eliminate border-connected islands\n    // Top and bottom rows\n    for (let j = 0; j < cols; j++) {\n        if (grid[0][j] === 0) dfs(0, j);\n        if (grid[rows-1][j] === 0) dfs(rows-1, j);\n    }\n    \n    // Left and right columns\n    for (let i = 0; i < rows; i++) {\n        if (grid[i][0] === 0) dfs(i, 0);\n        if (grid[i][cols-1] === 0) dfs(i, cols-1);\n    }\n    \n    // Pass 2: Count closed islands\n    let closedIslands = 0;\n    for (let i = 0; i < rows; i++) {\n        for (let j = 0; j < cols; j++) {\n            if (grid[i][j] === 0) {\n                closedIslands++;\n                dfs(i, j);\n            }\n        }\n    }\n    \n    return closedIslands;\n}"
+      }
+    },
+    {
+      "name": "Single Pass with Boundary Check",
+      "order": 2,
+      "intuition": "During DFS for each island, check if any cell touches the boundary. If yes, the island is open. Use a flag to track boundary contact. Only increment count if DFS completes without touching boundary.",
+      "approach": "For each unvisited land cell, perform DFS and track if boundary is touched. DFS returns boolean indicating if island is closed. Only count islands where DFS returns true.",
+      "steps": [
+        "Initialize closed island count",
+        "Iterate through grid (skip border cells)",
+        "For each unvisited land cell:",
+        "  - Call DFS which returns isClosed boolean",
+        "  - If isClosed, increment count",
+        "DFS function returns boolean:",
+        "  - If out of bounds: return false (touches boundary)",
+        "  - If water or visited: return true (valid termination)",
+        "  - Mark as visited",
+        "  - Recursively check all 4 neighbors",
+        "  - Return true only if all directions are closed",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(m * n)",
+        "space": "O(m * n)",
+        "timeExplanation": "Single pass through grid, each cell visited once. m=rows, n=cols.",
+        "spaceExplanation": "DFS recursion stack O(m*n) worst case."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int closedIsland(vector<vector<int>>& grid) {\n        int rows = grid.size();\n        int cols = grid[0].size();\n        int closedIslands = 0;\n        \n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == 0) {\n                    if (dfs(grid, i, j)) {\n                        closedIslands++;\n                    }\n                }\n            }\n        }\n        \n        return closedIslands;\n    }\n    \nprivate:\n    bool dfs(vector<vector<int>>& grid, int i, int j) {\n        // Out of bounds means touches boundary - not closed\n        if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size()) {\n            return false;\n        }\n        \n        // Water or already visited - valid termination\n        if (grid[i][j] == 1) {\n            return true;\n        }\n        \n        // Mark as visited\n        grid[i][j] = 1;\n        \n        // Check all 4 directions - all must be closed\n        bool down = dfs(grid, i+1, j);\n        bool up = dfs(grid, i-1, j);\n        bool right = dfs(grid, i, j+1);\n        bool left = dfs(grid, i, j-1);\n        \n        return down && up && right && left;\n    }\n};",
+        "java": "class Solution {\n    public int closedIsland(int[][] grid) {\n        int rows = grid.length;\n        int cols = grid[0].length;\n        int closedIslands = 0;\n        \n        for (int i = 0; i < rows; i++) {\n            for (int j = 0; j < cols; j++) {\n                if (grid[i][j] == 0) {\n                    if (dfs(grid, i, j)) {\n                        closedIslands++;\n                    }\n                }\n            }\n        }\n        \n        return closedIslands;\n    }\n    \n    private boolean dfs(int[][] grid, int i, int j) {\n        // Out of bounds means touches boundary - not closed\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length) {\n            return false;\n        }\n        \n        // Water or already visited - valid termination\n        if (grid[i][j] == 1) {\n            return true;\n        }\n        \n        // Mark as visited\n        grid[i][j] = 1;\n        \n        // Check all 4 directions - all must be closed\n        boolean down = dfs(grid, i+1, j);\n        boolean up = dfs(grid, i-1, j);\n        boolean right = dfs(grid, i, j+1);\n        boolean left = dfs(grid, i, j-1);\n        \n        return down && up && right && left;\n    }\n}",
+        "python": "def closedIsland(grid):\n    rows, cols = len(grid), len(grid[0])\n    \n    def dfs(i, j):\n        # Out of bounds means touches boundary - not closed\n        if i < 0 or i >= rows or j < 0 or j >= cols:\n            return False\n        \n        # Water or already visited - valid termination\n        if grid[i][j] == 1:\n            return True\n        \n        # Mark as visited\n        grid[i][j] = 1\n        \n        # Check all 4 directions - all must be closed\n        down = dfs(i+1, j)\n        up = dfs(i-1, j)\n        right = dfs(i, j+1)\n        left = dfs(i, j-1)\n        \n        return down and up and right and left\n    \n    closed_islands = 0\n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == 0:\n                if dfs(i, j):\n                    closed_islands += 1\n    \n    return closed_islands",
+        "javascript": "function closedIsland(grid) {\n    const rows = grid.length;\n    const cols = grid[0].length;\n    \n    function dfs(i, j) {\n        // Out of bounds means touches boundary - not closed\n        if (i < 0 || i >= rows || j < 0 || j >= cols) {\n            return false;\n        }\n        \n        // Water or already visited - valid termination\n        if (grid[i][j] === 1) {\n            return true;\n        }\n        \n        // Mark as visited\n        grid[i][j] = 1;\n        \n        // Check all 4 directions - all must be closed\n        const down = dfs(i+1, j);\n        const up = dfs(i-1, j);\n        const right = dfs(i, j+1);\n        const left = dfs(i, j-1);\n        \n        return down && up && right && left;\n    }\n    \n    let closedIslands = 0;\n    for (let i = 0; i < rows; i++) {\n        for (let j = 0; j < cols; j++) {\n            if (grid[i][j] === 0) {\n                if (dfs(i, j)) {\n                    closedIslands++;\n                }\n            }\n        }\n    }\n    \n    return closedIslands;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not eliminating border-connected islands, counting them as closed",
+    "In single-pass approach, using || instead of && when combining boundary checks",
+    "Forgetting to check all four boundary edges (top, bottom, left, right)",
+    "Starting island count from internal cells but not properly checking boundary connectivity",
+    "Not marking visited cells, causing infinite loops",
+    "In approach 2, marking cell before boundary check instead of after",
+    "Confusing 0 (land) with 1 (water) in logic"
+  ],
+  "hints": [
+    "A closed island cannot touch any of the four boundaries of the grid",
+    "First eliminate all islands connected to borders - they are definitely open",
+    "After eliminating border islands, any remaining island is guaranteed to be closed",
+    "Alternative: during DFS, track if you ever go out of bounds (touches border)",
+    "Think of it as 'Number of Islands' but with an extra boundary constraint",
+    "Border elimination is cleaner and easier to understand than single-pass checking"
+  ],
+  "followUp": [
+    "What if you need to find the largest closed island instead of counting?",
+    "How would you handle a grid where islands can have different integer values?",
+    "Can you solve it without modifying the input grid?",
+    "What if diagonal connections also count (8-directional)?",
+    "How would you find the perimeter of all closed islands combined?",
+    "Can you identify which specific borders each open island touches?",
+    "What if you need to find islands that touch exactly 1, 2, or 3 borders?",
+    "How would you extend this to 3D (closed volumes in a 3D grid)?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Bloomberg",
+    "Apple",
+    "Adobe"
+  ],
+  "tags": [
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Union Find",
+    "Array",
+    "Matrix"
+  ],
+  "relatedProblems": [
+    "Number of Islands",
+    "Number of Enclaves",
+    "Surrounded Regions",
+    "Max Area of Island",
+    "Number of Distinct Islands",
+    "Count Sub Islands",
+    "Pacific Atlantic Water Flow"
+  ]
 }
