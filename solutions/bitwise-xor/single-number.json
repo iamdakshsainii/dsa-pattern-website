@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8ef4",
   "questionSlug": "single-number",
   "title": "Single Number",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/single-number/",
     "videos": [

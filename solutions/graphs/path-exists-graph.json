@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8ed4",
   "questionSlug": "path-exists-graph",
   "title": "Path Exists Graph",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-if-path-exists-in-graph/",
     "videos": [

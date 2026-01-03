@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8f04",
   "questionSlug": "merge-k-sorted-lists",
   "title": "Merge K Sorted Lists",
-  "difficulty": "Medium",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://leetcode.com/problems/merge-k-sorted-lists/",
     "videos": [

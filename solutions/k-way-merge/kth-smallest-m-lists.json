@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8f05",
   "questionSlug": "kth-smallest-m-lists",
   "title": "Kth Smallest M Lists",
-  "difficulty": "Medium",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/find-m-th-smallest-value-in-k-sorted-arrays/",
     "videos": [

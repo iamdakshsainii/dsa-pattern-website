@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8eae",
   "questionSlug": "smallest-missing-positive",
   "title": "Smallest Missing Positive",
-  "difficulty": "Medium",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://leetcode.com/problems/first-missing-positive/",
     "videos": [

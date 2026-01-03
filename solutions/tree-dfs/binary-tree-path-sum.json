@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8ecb",
   "questionSlug": "binary-tree-path-sum",
   "title": "Binary Tree Path Sum",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/path-sum/",
     "videos": [

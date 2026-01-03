@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8ea1",
   "questionSlug": "count-range-sum",
   "title": "Count Range Sum",
-  "difficulty": "Medium",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://leetcode.com/problems/count-of-range-sum/description/",
     "videos": [

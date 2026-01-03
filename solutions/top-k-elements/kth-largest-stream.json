@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8efe",
   "questionSlug": "kth-largest-stream",
   "title": "Kth Largest Stream",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
     "videos": [

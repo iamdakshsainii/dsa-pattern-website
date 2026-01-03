@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8ee6",
   "questionSlug": "order-agnostic-binary-search",
   "title": "Order Agnostic Binary Search",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/order-agnostic-binary-search/",
     "videos": [

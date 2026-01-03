@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8eb5",
   "questionSlug": "remove-adjacent-duplicates",
   "title": "Remove Adjacent Duplicates",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
     "videos": [

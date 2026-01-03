@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8eef",
   "questionSlug": "rotation-count",
   "title": "Rotation Count",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
     "videos": [

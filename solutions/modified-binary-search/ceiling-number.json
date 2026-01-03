@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8ee7",
   "questionSlug": "ceiling-number",
   "title": "Ceiling Number",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/ceiling-in-a-sorted-array/",
     "videos": [

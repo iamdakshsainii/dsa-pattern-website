@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8edf",
   "questionSlug": "maximum-sum-combinations",
   "title": "Maximum Sum Combinations",
-  "difficulty": "Medium",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://www.interviewbit.com/problems/maximum-sum-combinations/",
     "videos": [

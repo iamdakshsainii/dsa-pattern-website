@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8ed1",
   "questionSlug": "path-maximum-sum",
   "title": "Path Maximum Sum",
-  "difficulty": "Medium",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
     "videos": [

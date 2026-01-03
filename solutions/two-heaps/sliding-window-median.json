@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8edd",
   "questionSlug": "sliding-window-median",
   "title": "Sliding Window Median",
-  "difficulty": "Medium",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://leetcode.com/problems/sliding-window-median/",
     "videos": [

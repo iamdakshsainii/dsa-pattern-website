@@ -2,7 +2,7 @@
   "questionId": "694d4a3a98494915f3bc8ec8",
   "questionSlug": "level-order-successor",
   "title": "Level Order Successor",
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/level-order-successor-of-a-node-in-binary-tree/",
     "videos": [
