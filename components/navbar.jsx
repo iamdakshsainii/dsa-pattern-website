@@ -23,17 +23,45 @@ import {
   Bookmark,
   StickyNote,
   ChevronDown,
+  Edit,
+  FileText,
+  ClipboardCheck,
+  MessageCircle,
+  Layers,
 } from "lucide-react"
 import { useState, useEffect } from "react"
+import ProfileAvatar from "./profile/profile-avatar"
 
 export default function Navbar({ currentUser }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [profileData, setProfileData] = useState(null)
   const pathname = usePathname()
   const router = useRouter()
 
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchProfile()
+    }
+  }, [currentUser])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch('/api/profile', {
+        credentials: 'include',
+        cache: 'no-store'
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setProfileData(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch profile:', error)
+    }
+  }
 
   const handleLogout = async () => {
     try {
@@ -67,7 +95,6 @@ export default function Navbar({ currentUser }) {
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary">
             <span className="text-primary-foreground font-bold text-lg">D</span>
@@ -75,7 +102,6 @@ export default function Navbar({ currentUser }) {
           <span className="font-bold text-xl hidden sm:inline">DSA Patterns</span>
         </Link>
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           {navItems.map((item) => {
             const Icon = item.icon
@@ -94,9 +120,55 @@ export default function Navbar({ currentUser }) {
               </Link>
             )
           })}
+
+          {currentUser && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+                  <Layers className="h-4 w-4" />
+                  More
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link href="/resume" className="cursor-pointer flex items-center">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Resume Manager
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <Link href="/interview-prep" className="cursor-pointer flex items-center">
+                    <ClipboardCheck className="h-4 w-4 mr-2" />
+                    Interview Prep
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <Link href="/bookmarks" className="cursor-pointer flex items-center">
+                    <Bookmark className="h-4 w-4 mr-2" />
+                    Bookmarks
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <Link href="/notes" className="cursor-pointer flex items-center">
+                    <StickyNote className="h-4 w-4 mr-2" />
+                    Saved Notes
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <Link href="/community" className="cursor-pointer flex items-center">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Join Community
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
-        {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-3">
           {currentUser ? (
             <>
@@ -111,39 +183,59 @@ export default function Navbar({ currentUser }) {
                 </Button>
               </Link>
 
-              {/* User Dropdown Menu - FIXED ALIGNMENT */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <User className="h-4 w-4" />
-                    {currentUser.name}
-                    <ChevronDown className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" className="h-10 w-10 rounded-full p-0">
+                    <ProfileAvatar
+                      src={profileData?.profile?.avatar}
+                      name={currentUser.name}
+                      size="sm"
+                    />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="w-64">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-3">
+                        <ProfileAvatar
+                          src={profileData?.profile?.avatar}
+                          name={currentUser.name}
+                          size="md"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{currentUser.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{currentUser.email}</p>
+                        </div>
+                      </div>
+                      {profileData?.completionPercentage !== undefined && (
+                        <div className="mt-2">
+                          <div className="flex items-center justify-between text-xs mb-1">
+                            <span className="text-gray-600">Profile Completion</span>
+                            <span className="font-medium">{profileData.completionPercentage}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-1.5">
+                            <div
+                              className="bg-green-500 h-1.5 rounded-full transition-all"
+                              style={{ width: `${profileData.completionPercentage}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem asChild>
-                    <Link href="/bookmarks" className="cursor-pointer flex items-center">
-                      <Bookmark className="h-4 w-4 mr-2" />
-                      Bookmarks
+                    <Link href="/profile" className="cursor-pointer flex items-center">
+                      <User className="h-4 w-4 mr-2" />
+                      View Profile
                     </Link>
                   </DropdownMenuItem>
 
                   <DropdownMenuItem asChild>
-                    <Link href="/notes" className="cursor-pointer flex items-center">
-                      <StickyNote className="h-4 w-4 mr-2" />
-                      Saved Notes
-                    </Link>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSeparator />
-
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="cursor-pointer flex items-center">
-                      <LayoutDashboard className="h-4 w-4 mr-2" />
-                      Dashboard
+                    <Link href="/profile/edit" className="cursor-pointer flex items-center">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Profile
                     </Link>
                   </DropdownMenuItem>
 
@@ -173,7 +265,6 @@ export default function Navbar({ currentUser }) {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           className="md:hidden p-2 hover:bg-accent rounded-lg"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -187,11 +278,31 @@ export default function Navbar({ currentUser }) {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t bg-background">
           <div className="container px-4 py-4 space-y-3">
-            {/* Navigation Links */}
+            {currentUser && (
+              <>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <ProfileAvatar
+                    src={profileData?.profile?.avatar}
+                    name={currentUser.name}
+                    size="lg"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{currentUser.name}</p>
+                    <p className="text-sm text-gray-500 truncate">{currentUser.email}</p>
+                    {profileData?.completionPercentage !== undefined && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Profile: {profileData.completionPercentage}% complete
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="border-t my-2" />
+              </>
+            )}
+
             {navItems.map((item) => {
               const Icon = item.icon
               return (
@@ -215,6 +326,18 @@ export default function Navbar({ currentUser }) {
                 <div className="border-t my-2" />
 
                 <Link
+                  href="/profile"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/profile"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <User className="h-5 w-5" />
+                  Profile
+                </Link>
+
+                <Link
                   href="/dashboard"
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     pathname === "/dashboard"
@@ -224,6 +347,30 @@ export default function Navbar({ currentUser }) {
                 >
                   <LayoutDashboard className="h-5 w-5" />
                   Dashboard
+                </Link>
+
+                <Link
+                  href="/resume"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/resume"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <FileText className="h-5 w-5" />
+                  Resume Manager
+                </Link>
+
+                <Link
+                  href="/interview-prep"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/interview-prep"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <ClipboardCheck className="h-5 w-5" />
+                  Interview Prep
                 </Link>
 
                 <Link
@@ -249,12 +396,23 @@ export default function Navbar({ currentUser }) {
                   <StickyNote className="h-5 w-5" />
                   Saved Notes
                 </Link>
+
+                <Link
+                  href="/community"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/community"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  Join Community
+                </Link>
               </>
             )}
 
             <div className="border-t my-2" />
 
-            {/* Auth Buttons */}
             {currentUser ? (
               <button
                 onClick={handleLogout}

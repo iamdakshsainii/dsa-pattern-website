@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import {
   Target, CheckCircle2, Circle,
   BookMarked, ArrowLeft, RefreshCw, Flame,
-  Calendar, Grid3x3, ChevronDown, ChevronLeft, ChevronRight
+  Calendar, Grid3x3, ChevronDown, FileText, ClipboardCheck
 } from 'lucide-react'
 import {
   DropdownMenu,
@@ -18,6 +18,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+// Phase 2 Components
+import ProfileCompletionWidget from './dashboard/profile-completion-widget'
+import AchievementShowcase from './dashboard/achievement-showcase'
+import DailyChallengeCard from './dashboard/daily-challenge-card'
+import SkillsChart from './dashboard/skills-chart'
+import PatternProgressGrid from './dashboard/pattern-progress-grid'
+import { BadgeToastManager } from './achievements/badge-unlock-toast'
+
+// ✨ PHASE 4: Community Components
+import CommunityBanner from './community/community-banner'
+import WhatsAppWidget from './community/whatsapp-widget'
+
 export default function DashboardRealTime({ userId, userName, userEmail }) {
   const [stats, setStats] = useState(null)
   const [heatmapData, setHeatmapData] = useState([])
@@ -25,8 +37,6 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const patternsPerPage = 3
 
   useEffect(() => {
     recordVisit()
@@ -98,12 +108,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
       })
       if (response.ok) {
         const data = await response.json()
-        console.log('All Patterns API Response:', data)
-        console.log('Patterns array:', data.patterns)
-        console.log('Patterns length:', data.patterns?.length)
         setAllPatterns(data.patterns || [])
-      } else {
-        console.error('Failed to fetch patterns, status:', response.status)
       }
     } catch (error) {
       console.error('Error fetching patterns:', error)
@@ -125,10 +130,6 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
 
   const handleYearChange = (year) => {
     setSelectedYear(year)
-  }
-
-  const handlePageChange = (page) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)))
   }
 
   if (loading) {
@@ -170,29 +171,13 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
     return d.date === today
   })?.count || 0
 
-  // Pagination
-  const totalPages = Math.ceil(allPatterns.length / patternsPerPage)
-  const startIndex = (currentPage - 1) * patternsPerPage
-  const currentPatterns = allPatterns.slice(startIndex, startIndex + patternsPerPage)
-
-  const getPageNumbers = () => {
-    const pages = []
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i)
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, 4, '...', totalPages)
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages)
-      } else {
-        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages)
-      }
-    }
-    return pages
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <BadgeToastManager />
+
+      {/* ✨ PHASE 4: Community Banner */}
+      <CommunityBanner />
+
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
@@ -205,7 +190,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
             </Link>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {userName}
+                👋 Welcome back, {userName}!
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">
                 {userEmail}
@@ -271,6 +256,9 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
+            <ProfileCompletionWidget />
+            <AchievementShowcase stats={stats} />
+
             {/* Activity Heatmap */}
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -345,7 +333,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
               </div>
             </Card>
 
-            {/* Solved Problems Progress */}
+            {/* Solved Problems */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Solved Problems</h3>
               <div className="space-y-4">
@@ -381,109 +369,17 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
               </div>
             </Card>
 
-            {/* Skills (Paginated Patterns) */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Skills</h3>
-                <Link href="/patterns">
-                  <Button variant="ghost" size="sm">View All</Button>
-                </Link>
-              </div>
-
-              <div className="space-y-4">
-                {allPatterns.length > 0 ? (
-                  <>
-                    <p className="text-xs text-gray-500 mb-2">
-                      Showing {currentPatterns.length} of {allPatterns.length} patterns (Page {currentPage} of {totalPages})
-                    </p>
-                    {currentPatterns.map((pattern) => (
-                      <Link
-                        key={pattern.slug}
-                        href={`/patterns/${pattern.slug}`}
-                        className="block p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border border-gray-200 dark:border-gray-700"
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="font-semibold text-base">{pattern.name}</span>
-                          <Badge variant="outline" className="ml-2">
-                            {pattern.solved}/{pattern.total}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Progress value={pattern.percentage} className="flex-1 h-2.5" />
-                          <span className="text-sm font-semibold w-12 text-right text-gray-700 dark:text-gray-300">
-                            {Math.round(pattern.percentage)}%
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                          {pattern.solved > 0
-                            ? `${pattern.solved} solved • ${Math.max(0, pattern.total - pattern.solved)} remaining`
-                            : `${pattern.total} problems to solve`
-                          }
-                        </p>
-                      </Link>
-                    ))}
-
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                      <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 1}
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-
-                        {getPageNumbers().map((page, idx) => (
-                          page === '...' ? (
-                            <span key={`ellipsis-${idx}`} className="px-2">...</span>
-                          ) : (
-                            <Button
-                              key={page}
-                              variant={currentPage === page ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => handlePageChange(page)}
-                              className="min-w-[36px]"
-                            >
-                              {page}
-                            </Button>
-                          )
-                        ))}
-
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">No patterns available</p>
-                    <p className="text-xs text-gray-400 mt-2">
-                      Total patterns fetched: {allPatterns.length}
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-4"
-                      onClick={fetchAllPatterns}
-                    >
-                      Retry Loading Patterns
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </Card>
+            <SkillsChart patterns={allPatterns} />
+            <PatternProgressGrid patterns={allPatterns} />
           </div>
 
           {/* Right Column */}
           <div className="space-y-6">
+            <DailyChallengeCard userProgress={{ completed: stats.recentActivity?.map(a => a.problemId) || [] }} />
+
+            {/* ✨ PHASE 4: WhatsApp Widget */}
+            <WhatsAppWidget />
+
             {/* Recent Submissions */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Recent Submissions</h3>
@@ -555,6 +451,19 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
                   <Button className="w-full justify-start" variant="outline">
                     <BookMarked className="h-4 w-4 mr-2" />
                     Bookmarks
+                  </Button>
+                </Link>
+                {/* ✨ PHASE 3: Career Links */}
+                <Link href="/resume">
+                  <Button className="w-full justify-start" variant="outline">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Resume Manager
+                  </Button>
+                </Link>
+                <Link href="/interview-prep">
+                  <Button className="w-full justify-start" variant="outline">
+                    <ClipboardCheck className="h-4 w-4 mr-2" />
+                    Interview Prep
                   </Button>
                 </Link>
               </div>
