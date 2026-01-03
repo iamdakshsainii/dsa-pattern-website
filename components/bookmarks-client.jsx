@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Circle,
   Clock,
+  ExternalLink,
   BookmarkX,
   ArrowLeft
 } from "lucide-react"
@@ -21,15 +22,16 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
   const [loading, setLoading] = useState({})
 
   useEffect(() => {
-    // Load fresh bookmarks on mount
-    fetchBookmarks()
-
+    // Listen for bookmark updates
     const handleRefresh = () => {
       fetchBookmarks()
     }
 
     window.addEventListener('dashboard-refresh', handleRefresh)
-    return () => window.removeEventListener('dashboard-refresh', handleRefresh)
+
+    return () => {
+      window.removeEventListener('dashboard-refresh', handleRefresh)
+    }
   }, [])
 
   const fetchBookmarks = async () => {
@@ -40,15 +42,28 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
 
       if (response.ok) {
         const data = await response.json()
-        console.log('Bookmarks data:', data)
 
-        // Use questions from the API response
-        setQuestions(data.questions || [])
+        // Fetch full question details
+        const questionIds = data.bookmarkIds || []
+        if (questionIds.length > 0) {
+          const questionsResponse = await fetch('/api/questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ questionIds })
+          })
 
-        // Update progress
+          if (questionsResponse.ok) {
+            const questionsData = await questionsResponse.json()
+            setQuestions(questionsData.questions || [])
+          }
+        } else {
+          setQuestions([])
+        }
+
         setUserProgress(prev => ({
           ...prev,
-          bookmarks: data.bookmarkIds || []
+          bookmarks: questionIds
         }))
       }
     } catch (error) {
@@ -99,20 +114,20 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
   }
 
   const getStatusIcon = (questionId) => {
-    if (userProgress.completed?.includes(questionId)) {
+    if (userProgress.completed.includes(questionId)) {
       return <CheckCircle2 className="h-5 w-5 text-green-600" />
     }
-    if (userProgress.inProgress?.includes(questionId)) {
+    if (userProgress.inProgress.includes(questionId)) {
       return <Clock className="h-5 w-5 text-yellow-600" />
     }
     return <Circle className="h-5 w-5 text-gray-400" />
   }
 
   const getStatusText = (questionId) => {
-    if (userProgress.completed?.includes(questionId)) {
+    if (userProgress.completed.includes(questionId)) {
       return { text: "Completed", color: "text-green-600" }
     }
-    if (userProgress.inProgress?.includes(questionId)) {
+    if (userProgress.inProgress.includes(questionId)) {
       return { text: "In Progress", color: "text-yellow-600" }
     }
     return { text: "Not Started", color: "text-gray-600" }
@@ -152,13 +167,13 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
             <Card className="p-6 bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
               <p className="text-sm text-muted-foreground mb-1">Completed</p>
               <p className="text-4xl font-bold text-green-600">
-                {questions.filter((q) => userProgress.completed?.includes(q._id)).length}
+                {questions.filter((q) => userProgress.completed.includes(q._id)).length}
               </p>
             </Card>
             <Card className="p-6 bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800">
               <p className="text-sm text-muted-foreground mb-1">Remaining</p>
               <p className="text-4xl font-bold text-orange-600">
-                {questions.filter((q) => !userProgress.completed?.includes(q._id)).length}
+                {questions.filter((q) => !userProgress.completed.includes(q._id)).length}
               </p>
             </Card>
           </div>
@@ -189,8 +204,6 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
           <div className="grid gap-4">
             {questions.map((question) => {
               const status = getStatusText(question._id)
-              const patternSlug = question.pattern_id || question.pattern || 'unknown'
-
               return (
                 <Card
                   key={question._id}
@@ -212,7 +225,7 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
                         </span>
                       </div>
 
-                      <Link href={`/patterns/${patternSlug}/questions/${question._id}`}>
+                      <Link href={`/questions/${question._id}`}>
                         <h3 className="text-xl font-semibold mb-2 hover:text-primary transition-colors">
                           {question.title}
                         </h3>
@@ -225,9 +238,9 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
                       )}
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        {patternSlug && patternSlug !== 'unknown' && (
+                        {question.pattern && (
                           <span className="flex items-center gap-1">
-                            Pattern: <strong className="capitalize">{patternSlug.replace(/-/g, ' ')}</strong>
+                            Pattern: <strong>{question.pattern.replace(/-/g, ' ')}</strong>
                           </span>
                         )}
                       </div>
@@ -235,7 +248,7 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
 
                     {/* Right Side - Actions */}
                     <div className="flex flex-col gap-2">
-                      <Link href={`/patterns/${patternSlug}/questions/${question._id}`}>
+                      <Link href={`/questions/${question._id}`}>
                         <Button size="sm" className="gap-2 w-full">
                           Solve
                           <ArrowRight className="h-4 w-4" />

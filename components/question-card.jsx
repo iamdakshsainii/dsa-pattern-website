@@ -1,27 +1,49 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Youtube, FileText, Bookmark, CheckCircle2, Circle, BookmarkCheck } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  ExternalLink,
+  Youtube,
+  FileText,
+  Bookmark,
+  BookmarkCheck
+} from "lucide-react"
 
-export default function QuestionCard({ question, userProgress = null }) {
-  const [isCompleted, setIsCompleted] = useState(false)
-  const [isBookmarked, setIsBookmarked] = useState(false)
+export default function QuestionCard({
+  question,
+  solution,
+  patternSlug,
+  isCompleted,
+  isBookmarked,
+  currentUser,
+  onProgressUpdate,
+  onBookmarkUpdate
+}) {
+  const [localCompleted, setLocalCompleted] = useState(isCompleted)
+  const [localBookmarked, setLocalBookmarked] = useState(isBookmarked)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (userProgress) {
-      setIsCompleted(userProgress.completed?.includes(question._id) || false)
-      setIsBookmarked(userProgress.bookmarks?.includes(question._id) || false)
-    }
-  }, [userProgress, question._id])
+  const difficultyColors = {
+    Easy: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+    Medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+    Hard: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  }
 
-  const handleCheckboxChange = async () => {
+  const handleCheckboxClick = async (e) => {
+    e.preventDefault()
+    if (!currentUser) {
+      alert("Please login to track your progress!")
+      return
+    }
+
     setLoading(true)
-    const newStatus = !isCompleted
+    const newStatus = !localCompleted
+    setLocalCompleted(newStatus)
 
     try {
       const response = await fetch("/api/progress", {
@@ -31,21 +53,40 @@ export default function QuestionCard({ question, userProgress = null }) {
         body: JSON.stringify({
           questionId: question._id,
           status: newStatus ? "completed" : "not_started",
+          difficulty: question.difficulty,
+          pattern: patternSlug,
+          problemName: question.title
         }),
       })
 
       if (response.ok) {
-        setIsCompleted(newStatus)
+        window.dispatchEvent(new Event("dashboard-refresh"))
+        window.dispatchEvent(new CustomEvent("pattern-progress-update", {
+          detail: { patternSlug, questionId: question._id, completed: newStatus }
+        }))
+        if (onProgressUpdate) onProgressUpdate()
+      } else {
+        setLocalCompleted(!newStatus)
+        alert("Failed to update progress")
       }
     } catch (error) {
       console.error("Failed to update progress:", error)
+      setLocalCompleted(!newStatus)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleBookmark = async () => {
+  const handleBookmarkClick = async (e) => {
+    e.preventDefault()
+    if (!currentUser) {
+      alert("Please login to bookmark questions!")
+      return
+    }
+
     setLoading(true)
+    const newBookmarked = !localBookmarked
+    setLocalBookmarked(newBookmarked)
 
     try {
       const response = await fetch("/api/bookmarks", {
@@ -54,108 +95,126 @@ export default function QuestionCard({ question, userProgress = null }) {
         credentials: "include",
         body: JSON.stringify({
           questionId: question._id,
+          difficulty: question.difficulty,
+          pattern: patternSlug,
+          problemName: question.title
         }),
       })
 
       if (response.ok) {
-        const data = await response.json()
-        setIsBookmarked(data.bookmarked)
+        window.dispatchEvent(new Event("dashboard-refresh"))
+        if (onBookmarkUpdate) onBookmarkUpdate()
+      } else {
+        setLocalBookmarked(!newBookmarked)
+        alert("Failed to update bookmark")
       }
     } catch (error) {
       console.error("Failed to update bookmark:", error)
+      setLocalBookmarked(!newBookmarked)
     } finally {
       setLoading(false)
     }
   }
 
-  const difficultyColors = {
-    Easy: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-    Medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-    Hard: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-  }
-
   return (
-    <Card
-      className={`p-6 transition-all duration-200 hover:shadow-md ${
-        isCompleted ? "bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800" : ""
-      }`}
-    >
-      <div className="flex items-start gap-4">
-        <button
-          onClick={handleCheckboxChange}
-          disabled={loading || !userProgress}
-          className="mt-1 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+    <Card className="p-6 hover:shadow-lg transition-shadow">
+      <div className="flex gap-4">
+        {/* Checkbox */}
+        <div
+          onClick={handleCheckboxClick}
+          className={`flex-shrink-0 mt-1 ${!currentUser ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
         >
-          {isCompleted ? (
-            <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-400" />
-          ) : (
-            <Circle className="w-6 h-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-          )}
-        </button>
+          <Checkbox
+            checked={localCompleted}
+            disabled={loading || !currentUser}
+          />
+        </div>
 
+        {/* Content */}
         <div className="flex-1 min-w-0">
+          {/* Title and Difficulty */}
           <div className="flex items-start justify-between gap-4 mb-3">
-            <h3 className={`text-lg font-semibold ${isCompleted ? "line-through text-gray-500" : ""}`}>
-              {question.title}
-            </h3>
-            <button
-              onClick={handleBookmark}
-              disabled={loading || !userProgress}
-              className="flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isBookmarked ? (
-                <BookmarkCheck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              ) : (
-                <Bookmark className="w-5 h-5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-2">
+                {question.title}
+              </h3>
+              <div className="flex items-center gap-2">
+                <Badge className={difficultyColors[question.difficulty]}>
+                  {question.difficulty}
+                </Badge>
+                {localCompleted && (
+                  <Badge variant="outline" className="text-green-600 border-green-600">
+                    ✓ Completed
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Tags */}
+          {solution?.tags && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {solution.tags.slice(0, 3).map((tag) => (
+                <Badge key={tag} variant="secondary">
+                  {tag}
+                </Badge>
+              ))}
+              {solution.tags.length > 3 && (
+                <Badge variant="secondary">
+                  +{solution.tags.length - 3} more
+                </Badge>
               )}
-            </button>
-          </div>
-
-          <div className="flex flex-wrap gap-2 mb-3">
-            <Badge className={difficultyColors[question.difficulty] || difficultyColors.Medium}>
-              {question.difficulty}
-            </Badge>
-            {question.topics?.map((topic) => (
-              <Badge key={topic} variant="outline">
-                {topic}
-              </Badge>
-            ))}
-          </div>
-
-          {question.pattern_trigger && (
-            <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
-              <p className="text-sm">
-                <span className="font-semibold text-blue-900 dark:text-blue-300">Pattern Trigger: </span>
-                <span className="text-blue-800 dark:text-blue-200">{question.pattern_trigger}</span>
-              </p>
             </div>
           )}
 
-          <div className="flex flex-wrap gap-2">
-            {question.leetcode_link && (
-              <Button variant="outline" size="sm" asChild>
-                <a href={question.leetcode_link} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="w-4 h-4 mr-1" />
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* External Links */}
+            {solution?.resources?.leetcode && (
+              <Link href={solution.resources.leetcode} target="_blank">
+                <Button variant="outline" size="sm">
+                  <ExternalLink className="h-4 w-4 mr-1" />
                   LeetCode
-                </a>
-              </Button>
+                </Button>
+              </Link>
             )}
-            {question.video_solution && (
-              <Button variant="outline" size="sm" asChild>
-                <a href={question.video_solution} target="_blank" rel="noopener noreferrer">
-                  <Youtube className="w-4 h-4 mr-1" />
+
+            {solution?.resources?.videos?.[0] && (
+              <Link href={solution.resources.videos[0].url} target="_blank">
+                <Button variant="outline" size="sm">
+                  <Youtube className="h-4 w-4 mr-1" />
                   Video
-                </a>
-              </Button>
+                </Button>
+              </Link>
             )}
-            {question.article_link && (
-              <Button variant="outline" size="sm" asChild>
-                <a href={question.article_link} target="_blank" rel="noopener noreferrer">
-                  <FileText className="w-4 h-4 mr-1" />
-                  Article
-                </a>
+
+            {/* Bookmark Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBookmarkClick}
+              disabled={loading || !currentUser}
+            >
+              {localBookmarked ? (
+                <>
+                  <BookmarkCheck className="h-4 w-4 mr-1" />
+                  Bookmarked
+                </>
+              ) : (
+                <>
+                  <Bookmark className="h-4 w-4 mr-1" />
+                  Bookmark
+                </>
+              )}
+            </Button>
+
+            {/* View Solution */}
+            <Link href={`/patterns/${patternSlug}/questions/${question._id}`}>
+              <Button size="sm">
+                <FileText className="h-4 w-4 mr-1" />
+                View Solution
               </Button>
-            )}
+            </Link>
           </div>
         </div>
       </div>

@@ -54,7 +54,7 @@ export default async function QuestionPage({ params }) {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-background/95 backdrop-blur sticky top-0 z-10">
-        <div className="container flex h-16 items-center gap-4 px-4">
+        <div className="container mx-auto flex h-16 items-center gap-4 px-4 max-w-6xl">
           <BackNavigation label={pattern?.name || "Back"} href={`/patterns/${pattern?.slug || ""}`} />
           <div className="flex items-center gap-3 flex-1">
             <h1 className="text-xl font-bold truncate">{question.title}</h1>
@@ -63,7 +63,7 @@ export default async function QuestionPage({ params }) {
         </div>
       </header>
 
-      <main className="container px-4 py-8 max-w-6xl space-y-8">
+      <main className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
         {/* Resources from JSON (PRIMARY) or Fallback to MongoDB */}
         {solution?.resources ? (
           <ResourcesSection resources={solution.resources} />

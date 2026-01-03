@@ -1,5 +1,6 @@
-import { getPattern, getQuestionsByPattern, getSolution, getUserProgress } from "@/lib/db"
+import { getPattern, getQuestionsByPattern, getSolution } from "@/lib/db"
 import { getCurrentUser } from "@/lib/auth"
+import clientPromise from "@/lib/mongodb"
 import PatternDetailPage from "@/components/pattern-detail-page"
 
 export default async function PatternPage({ params }) {
@@ -25,7 +26,34 @@ export default async function PatternPage({ params }) {
   let userProgress = null
 
   if (currentUser) {
-    userProgress = await getUserProgress(currentUser.userId)
+    // Fetch progress from MongoDB directly
+    const client = await clientPromise
+    const db = client.db("dsa_patterns")
+    const progressCollection = db.collection("progress")
+
+    const allProgress = await progressCollection
+      .find({ userId: currentUser.id })
+      .toArray()
+
+    // Get question IDs for THIS pattern only
+    const patternQuestionIds = questions.map(q => q._id)
+
+    // Filter progress to only include questions in this pattern
+    const completed = allProgress
+      .filter(p => p.completed && patternQuestionIds.includes(p.questionId || p.problemId))
+      .map(p => p.questionId || p.problemId)
+
+    const bookmarks = allProgress
+      .filter(p => p.bookmarked)
+      .map(p => p.questionId || p.problemId)
+
+    userProgress = {
+      completed,
+      bookmarks,
+      inProgress: allProgress
+        .filter(p => !p.completed && p.attempts > 0 && patternQuestionIds.includes(p.questionId || p.problemId))
+        .map(p => p.questionId || p.problemId)
+    }
   }
 
   return (
@@ -35,6 +63,7 @@ export default async function PatternPage({ params }) {
       solutions={solutions}
       userProgress={userProgress}
       currentUser={currentUser}
+      patternSlug={slug}
     />
   )
 }

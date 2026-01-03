@@ -1,168 +1,300 @@
-"use client"
+'use client'
 
 import { useState } from "react"
-import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 import { Card } from "@/components/ui/card"
-import { Lightbulb, AlertCircle, Target, CheckCircle2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  ArrowLeft,
+  Lightbulb,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
+  Target
+} from "lucide-react"
 import QuestionList from "@/components/question-list"
-import BackNavigation from "@/components/back-navigation"
+import PatternProgress from "@/components/pattern-progress"
 
-export default function PatternDetailPage({ pattern, questions, solutions, userProgress, currentUser }) {
-  const [completedQuestions, setCompletedQuestions] = useState(userProgress?.completed || [])
+export default function PatternDetailPage({
+  pattern,
+  questions,
+  solutions,
+  userProgress,
+  currentUser,
+  patternSlug
+}) {
+  const [localProgress, setLocalProgress] = useState(userProgress?.completed || [])
 
-  // Calculate progress statistics
+  const handleProgressUpdate = (newProgress) => {
+    setLocalProgress(newProgress)
+  }
+
+  if (!pattern) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Pattern not found</h2>
+          <Link href="/patterns">
+            <Button>Back to Patterns</Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const totalQuestions = questions.length
-  const completedCount = completedQuestions.filter(qId =>
-    questions.some(q => q._id === qId)
-  ).length
+  const solvedQuestions = localProgress.length
   const progressPercentage = totalQuestions > 0
-    ? Math.round((completedCount / totalQuestions) * 100)
+    ? Math.round((solvedQuestions / totalQuestions) * 100)
     : 0
 
-  // Update local state when progress changes
-  const handleProgressUpdate = (newProgress) => {
-    setCompletedQuestions(newProgress)
+  // Calculate difficulty breakdown
+  const difficultyCount = {
+    Easy: questions.filter(q => q.difficulty === "Easy").length,
+    Medium: questions.filter(q => q.difficulty === "Medium").length,
+    Hard: questions.filter(q => q.difficulty === "Hard").length
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="border-b bg-background/95 backdrop-blur sticky top-0 z-10">
-        <div className="container flex h-16 items-center gap-4 px-4 max-w-7xl mx-auto">
-          <BackNavigation label="Patterns" href="/patterns" />
-          <h1 className="text-2xl font-bold">{pattern.name}</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      {/* Header */}
+      <header className="border-b bg-background/95 backdrop-blur sticky top-0 z-10">
+        <div className="container mx-auto max-w-7xl px-4 py-4">
+          <div className="flex items-center gap-4 mb-2">
+            <Link href="/patterns">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Patterns
+              </Button>
+            </Link>
+          </div>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">{pattern.name}</h1>
+              <p className="text-muted-foreground max-w-3xl">
+                {pattern.description}
+              </p>
+            </div>
+            <Badge variant="outline" className="text-lg px-4 py-2">
+              {totalQuestions} Problems
+            </Badge>
+          </div>
         </div>
-      </div>
+      </header>
 
-      <main className="container px-4 py-8 max-w-5xl mx-auto space-y-8">
-        {/* Progress Card (Only show if user is logged in) */}
-        {currentUser && (
-          <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                  <h3 className="font-semibold text-lg">Your Progress</h3>
-                </div>
-                <Badge variant="secondary" className="text-lg px-4 py-1">
-                  {completedCount}/{totalQuestions} solved
-                </Badge>
+      <main className="container mx-auto max-w-7xl px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Left Sidebar - Pattern Info */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Progress Card */}
+            <Card className="p-6 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+              <div className="flex items-center gap-2 mb-4">
+                <Target className="h-5 w-5" />
+                <h3 className="font-semibold">Your Progress</h3>
               </div>
-
-              {/* Progress Bar */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>{progressPercentage}% complete</span>
-                  <span>{totalQuestions - completedCount} remaining</span>
+              <div className="text-center">
+                <div className="text-5xl font-bold mb-2">
+                  {progressPercentage}%
                 </div>
-                <div className="h-3 bg-white/50 dark:bg-gray-800/50 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 ease-out"
-                    style={{ width: `${progressPercentage}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Motivational Message */}
-              {progressPercentage === 100 && (
-                <p className="text-sm text-green-700 dark:text-green-400 font-medium">
-                  🎉 Congratulations! You've completed all questions in this pattern!
-                </p>
-              )}
-              {progressPercentage >= 50 && progressPercentage < 100 && (
-                <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
-                  🔥 Great progress! Keep going!
-                </p>
-              )}
-              {progressPercentage > 0 && progressPercentage < 50 && (
-                <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
-                  💪 You're on your way! Keep practicing!
-                </p>
-              )}
-            </div>
-          </Card>
-        )}
-
-        {/* Login Prompt (Only show if user is NOT logged in) */}
-        {!currentUser && (
-          <Card className="p-6 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
-            <div className="flex items-start gap-3">
-              <Target className="h-5 w-5 text-amber-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold mb-1">Track Your Progress</h3>
-                <p className="text-sm text-muted-foreground">
-                  Login to mark questions as complete, bookmark your favorites, and track your learning journey!
+                <p className="text-blue-100 text-sm">
+                  {solvedQuestions}/{totalQuestions} completed
                 </p>
               </div>
-            </div>
-          </Card>
-        )}
+              <div className="mt-4 pt-4 border-t border-blue-400">
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-100">Remaining</span>
+                  <span className="font-semibold">
+                    {totalQuestions - solvedQuestions}
+                  </span>
+                </div>
+              </div>
+            </Card>
 
-        {/* Pattern Explanation */}
-        <Card className="p-6 bg-primary/5 border-primary/20">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <Lightbulb className="h-5 w-5 text-primary" />
-            When to Use This Pattern
-          </h2>
-          <p className="text-muted-foreground mb-4 leading-relaxed">{pattern.description}</p>
-
-          {pattern.whenToUse && (
-            <div className="space-y-2">
-              <h3 className="font-medium text-sm">Pattern Triggers:</h3>
-              <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                {pattern.whenToUse.map((trigger, i) => (
-                  <li key={i}>{trigger}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {pattern.commonMistakes && (
-            <div className="mt-6 space-y-2">
-              <h3 className="font-medium text-sm flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-amber-500" />
-                Common Mistakes to Avoid:
+            {/* Difficulty Breakdown */}
+            <Card className="p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                Difficulty Breakdown
               </h3>
-              <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                {pattern.commonMistakes.map((mistake, i) => (
-                  <li key={i}>{mistake}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {pattern.complexity && (
-            <div className="mt-6 flex gap-8 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Time Complexity:</span>
-                <Badge variant="outline" className="font-mono">{pattern.complexity.time}</Badge>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="text-sm">Easy</span>
+                  </div>
+                  <Badge variant="outline" className="text-green-600">
+                    {difficultyCount.Easy}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <span className="text-sm">Medium</span>
+                  </div>
+                  <Badge variant="outline" className="text-yellow-600">
+                    {difficultyCount.Medium}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <span className="text-sm">Hard</span>
+                  </div>
+                  <Badge variant="outline" className="text-red-600">
+                    {difficultyCount.Hard}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Space Complexity:</span>
-                <Badge variant="outline" className="font-mono">{pattern.complexity.space}</Badge>
-              </div>
-            </div>
-          )}
-        </Card>
+            </Card>
 
-        {/* Questions Section */}
-        <div>
-          <div className="mb-6">
-            <h2 className="text-2xl font-semibold mb-2">
-              Practice Problems
-            </h2>
-            <p className="text-muted-foreground">
-              {questions.length} {questions.length === 1 ? 'problem' : 'problems'} to master this pattern
-            </p>
+            {/* When to Use Pattern */}
+            {pattern.when_to_use && (
+              <Card className="p-6 bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
+                <div className="flex items-start gap-3">
+                  <Lightbulb className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold mb-2">When to Use This Pattern</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {pattern.when_to_use}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Time Complexity */}
+            {pattern.time_complexity && (
+              <Card className="p-6">
+                <div className="flex items-start gap-3">
+                  <Clock className="h-5 w-5 text-primary mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold mb-2">Typical Complexity</h3>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Time: </span>
+                        <Badge variant="outline" className="font-mono">
+                          {pattern.time_complexity}
+                        </Badge>
+                      </div>
+                      {pattern.space_complexity && (
+                        <div>
+                          <span className="text-muted-foreground">Space: </span>
+                          <Badge variant="outline" className="font-mono">
+                            {pattern.space_complexity}
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Key Points */}
+            {pattern.key_points && pattern.key_points.length > 0 && (
+              <Card className="p-6">
+                <h3 className="font-semibold mb-3">Key Points</h3>
+                <ul className="space-y-2">
+                  {pattern.key_points.map((point, index) => (
+                    <li key={index} className="text-sm text-muted-foreground flex gap-2">
+                      <span className="text-primary">•</span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            )}
           </div>
 
-          <QuestionList
-            questions={questions}
-            patternSlug={pattern.slug}
-            solutions={solutions}
-            userProgress={{ completed: completedQuestions, bookmarks: userProgress?.bookmarks || [] }}
-            currentUser={currentUser}
-            onProgressUpdate={handleProgressUpdate}
-          />
+          {/* Main Content - Questions */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Pattern Progress Tracker */}
+            <PatternProgress
+              questions={questions}
+              patternSlug={patternSlug}
+              initialProgress={localProgress}
+            />
+
+            {/* Quick Stats */}
+            {currentUser && (
+              <div className="grid grid-cols-3 gap-4">
+                <Card className="p-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="h-8 w-8 text-green-600" />
+                    <div>
+                      <p className="text-2xl font-bold">{solvedQuestions}</p>
+                      <p className="text-sm text-muted-foreground">Solved</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-8 w-8 text-yellow-600" />
+                    <div>
+                      <p className="text-2xl font-bold">
+                        {userProgress?.inProgress?.length || 0}
+                      </p>
+                      <p className="text-sm text-muted-foreground">In Progress</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Target className="h-8 w-8 text-blue-600" />
+                    <div>
+                      <p className="text-2xl font-bold">
+                        {totalQuestions - solvedQuestions}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Remaining</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            )}
+
+            {/* Practice Problems Header */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">Practice Problems</h2>
+                <p className="text-muted-foreground">
+                  {totalQuestions} problems to master this pattern
+                </p>
+              </div>
+              {!currentUser && (
+                <Link href="/auth/login">
+                  <Button>
+                    Login to Track Progress
+                  </Button>
+                </Link>
+              )}
+            </div>
+
+            {/* Questions List */}
+            {questions.length > 0 ? (
+              <QuestionList
+                questions={questions}
+                patternSlug={patternSlug}
+                solutions={solutions}
+                userProgress={userProgress}
+                currentUser={currentUser}
+                onProgressUpdate={handleProgressUpdate}
+              />
+            ) : (
+              <Card className="p-12">
+                <div className="text-center">
+                  <p className="text-muted-foreground mb-4">
+                    No problems found for this pattern yet.
+                  </p>
+                  <Link href="/patterns">
+                    <Button variant="outline">
+                      Browse Other Patterns
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            )}
+          </div>
         </div>
       </main>
     </div>
