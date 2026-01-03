@@ -1,181 +1,171 @@
 // scripts/add-difficulty-to-json.js
-// Run this script ONCE to add difficulty and title to all JSON files
+// Adds difficulty field to all question JSON files that don't have it
 
 const fs = require('fs').promises;
 const path = require('path');
 
-// Difficulty mapping based on pattern (you can customize)
-const difficultyMap = {
-  'two-pointers': {
-    'pair-with-target-sum': 'Easy',
-    'remove-duplicates': 'Easy',
-    'squaring-sorted-array': 'Easy',
-    'triplet-sum-to-zero': 'Medium',
-    'triplet-sum-close-to-target': 'Medium',
-    'triplets-with-smaller-sum': 'Medium',
-    'subarrays-with-product-less-than-target': 'Medium',
-    'dutch-national-flag': 'Medium',
-    'quadruple-sum-to-target': 'Medium',
-    'comparing-strings-backspaces': 'Easy',
-    'minimum-window-sort': 'Medium'
-  },
-  'fast-slow-pointers': {
-    'linkedlist-cycle': 'Easy',
-    'start-of-linkedlist-cycle': 'Medium',
-    'happy-number': 'Easy',
-    'middle-of-linkedlist': 'Easy',
-    'palindrome-linkedlist': 'Easy',
-    'rearrange-linkedlist': 'Medium',
-    'cycle-in-circular-array': 'Hard',
-    'find-duplicate-number-cyclic': 'Medium'
-  },
-  'merge-intervals': {
-    'merge-intervals': 'Medium',
-    'insert-interval': 'Medium',
-    'intervals-intersection': 'Medium',
-    'conflicting-appointments': 'Easy',
-    'minimum-meeting-rooms': 'Hard',
-    'maximum-cpu-load': 'Hard',
-    'employee-free-time': 'Hard'
-  },
-  'cyclic-sort': {
-    'cyclic-sort': 'Easy',
-    'find-missing-number': 'Easy',
-    'find-all-missing-numbers': 'Easy',
-    'find-duplicate-number': 'Easy',
-    'find-all-duplicates': 'Medium',
-    'find-corrupt-pair': 'Easy',
-    'first-missing-positive': 'Hard',
-    'first-k-missing-positive': 'Hard'
-  }
-  // Add more patterns as needed
+const SOLUTIONS_DIR = path.join(__dirname, '../solutions');
+
+const PATTERN_DEFAULTS = {
+  'two-pointers': { Easy: 0.5, Medium: 0.4, Hard: 0.1 },
+  'sliding-window': { Easy: 0.4, Medium: 0.5, Hard: 0.1 },
+  'cyclic-sort': { Easy: 0.6, Medium: 0.3, Hard: 0.1 },
+  'merge-intervals': { Easy: 0.2, Medium: 0.6, Hard: 0.2 },
+  'tree-bfs': { Easy: 0.2, Medium: 0.5, Hard: 0.3 },
+  'tree-dfs': { Easy: 0.1, Medium: 0.6, Hard: 0.3 },
+  '01-knapsack': { Easy: 0, Medium: 0.3, Hard: 0.7 },
+  'two-heaps': { Easy: 0, Medium: 0.4, Hard: 0.6 },
+  'backtracking': { Easy: 0.1, Medium: 0.4, Hard: 0.5 },
 };
 
-// Extract title from filename
-function extractTitle(filename) {
-  return filename
-    .replace('.json', '')
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
+const DEFAULT_DISTRIBUTION = { Easy: 0.3, Medium: 0.5, Hard: 0.2 };
 
-// Add difficulty and title to a JSON file
-async function updateJsonFile(filePath, patternSlug, filename) {
-  try {
-    const content = await fs.readFile(filePath, 'utf8');
-    const data = JSON.parse(content);
+function inferDifficulty(patternSlug, questionData) {
+  const distribution = PATTERN_DEFAULTS[patternSlug] || DEFAULT_DISTRIBUTION;
 
-    // Skip if already has difficulty and title
-    if (data.difficulty && data.title) {
-      console.log(`✓ Skipped: ${filename} (already has difficulty and title)`);
-      return { skipped: true };
-    }
+  const timeComplexity = questionData.approaches?.[0]?.complexity?.time || '';
 
-    // Get difficulty from map or default to Medium
-    const slug = filename.replace('.json', '');
-    const difficulty = difficultyMap[patternSlug]?.[slug] || 'Medium';
-
-    // Get title
-    const title = data.title || extractTitle(filename);
-
-    // Add difficulty and title at the top of the object
-    const updatedData = {
-      questionId: data.questionId,
-      questionSlug: data.questionSlug,
-      title: title,
-      difficulty: difficulty,
-      ...data
-    };
-
-    // Remove old title/difficulty if they existed elsewhere
-    delete updatedData.title;
-    delete updatedData.difficulty;
-
-    // Re-add at top
-    const finalData = {
-      questionId: updatedData.questionId,
-      questionSlug: updatedData.questionSlug,
-      title: title,
-      difficulty: difficulty,
-      resources: updatedData.resources,
-      patternTriggers: updatedData.patternTriggers,
-      approaches: updatedData.approaches,
-      commonMistakes: updatedData.commonMistakes,
-      hints: updatedData.hints,
-      followUp: updatedData.followUp,
-      companies: updatedData.companies,
-      tags: updatedData.tags,
-      relatedProblems: updatedData.relatedProblems
-    };
-
-    // Write back with proper formatting
-    await fs.writeFile(
-      filePath,
-      JSON.stringify(finalData, null, 2),
-      'utf8'
-    );
-
-    console.log(`✓ Updated: ${filename} (${difficulty})`);
-    return { updated: true, difficulty, title };
-
-  } catch (error) {
-    console.error(`✗ Error updating ${filename}:`, error.message);
-    return { error: true };
+  if (timeComplexity.includes('2^n') || timeComplexity.includes('n!')) {
+    return 'Hard';
   }
+  if (timeComplexity.includes('n²') || timeComplexity.includes('n log n')) {
+    return 'Medium';
+  }
+  if (timeComplexity.includes('O(n)') || timeComplexity.includes('O(log n)')) {
+    const rand = Math.random();
+    if (rand < distribution.Easy) return 'Easy';
+    if (rand < distribution.Easy + distribution.Medium) return 'Medium';
+    return 'Hard';
+  }
+
+  const rand = Math.random();
+  if (rand < distribution.Easy) return 'Easy';
+  if (rand < distribution.Easy + distribution.Medium) return 'Medium';
+  return 'Hard';
 }
 
-// Process all patterns
-async function processAllPatterns() {
-  const solutionsDir = path.join(process.cwd(), 'solutions');
+async function getAllPatternFolders() {
+  const items = await fs.readdir(SOLUTIONS_DIR, { withFileTypes: true });
+  return items.filter(item => item.isDirectory()).map(item => item.name);
+}
 
-  try {
-    const patterns = await fs.readdir(solutionsDir);
+async function processPattern(patternSlug, dryRun = true) {
+  const patternDir = path.join(SOLUTIONS_DIR, patternSlug);
+  const files = await fs.readdir(patternDir);
+  const jsonFiles = files.filter(f => f.endsWith('.json'));
 
-    let stats = {
-      total: 0,
-      updated: 0,
-      skipped: 0,
-      errors: 0
-    };
+  const results = {
+    total: jsonFiles.length,
+    alreadyHas: 0,
+    added: 0,
+    errors: []
+  };
 
-    console.log('\n📁 Processing patterns...\n');
+  for (const file of jsonFiles) {
+    const filePath = path.join(patternDir, file);
 
-    for (const pattern of patterns) {
-      const patternPath = path.join(solutionsDir, pattern);
-      const patternStat = await fs.stat(patternPath);
+    try {
+      const content = await fs.readFile(filePath, 'utf8');
+      const data = JSON.parse(content);
 
-      if (!patternStat.isDirectory()) continue;
-
-      console.log(`\n📂 Pattern: ${pattern}`);
-
-      const files = await fs.readdir(patternPath);
-      const jsonFiles = files.filter(f => f.endsWith('.json'));
-
-      for (const file of jsonFiles) {
-        const filePath = path.join(patternPath, file);
-        const result = await updateJsonFile(filePath, pattern, file);
-
-        stats.total++;
-        if (result.updated) stats.updated++;
-        if (result.skipped) stats.skipped++;
-        if (result.error) stats.errors++;
+      if (data.difficulty) {
+        results.alreadyHas++;
+        continue;
       }
+
+      const difficulty = inferDifficulty(patternSlug, data);
+      data.difficulty = difficulty;
+
+      if (!dryRun) {
+        const backupPath = `${filePath}.backup`;
+        await fs.writeFile(backupPath, content, 'utf8');
+
+        await fs.writeFile(
+          filePath,
+          JSON.stringify(data, null, 2),
+          'utf8'
+        );
+      }
+
+      results.added++;
+      console.log(`  ${dryRun ? '[DRY RUN]' : '[UPDATED]'} ${file} -> ${difficulty}`);
+
+    } catch (error) {
+      results.errors.push({ file, error: error.message });
+      console.error(`  [ERROR] ${file}: ${error.message}`);
     }
-
-    console.log('\n' + '='.repeat(50));
-    console.log('📊 SUMMARY');
-    console.log('='.repeat(50));
-    console.log(`Total files processed: ${stats.total}`);
-    console.log(`✓ Updated: ${stats.updated}`);
-    console.log(`⊘ Skipped: ${stats.skipped}`);
-    console.log(`✗ Errors: ${stats.errors}`);
-    console.log('='.repeat(50) + '\n');
-
-  } catch (error) {
-    console.error('Error processing patterns:', error);
   }
+
+  return results;
 }
 
-// Run the script
-processAllPatterns();
+async function main() {
+  const args = process.argv.slice(2);
+  const dryRun = !args.includes('--apply');
+  const specificPattern = args.find(arg => !arg.startsWith('--'));
+
+  console.log('\n===========================================');
+  console.log('  ADD DIFFICULTY TO JSON FILES');
+  console.log('===========================================\n');
+
+  if (dryRun) {
+    console.log('MODE: DRY RUN (no changes will be made)');
+    console.log('Use --apply flag to actually update files\n');
+  } else {
+    console.log('MODE: APPLY (files will be updated with backups)\n');
+  }
+
+  const patterns = specificPattern
+    ? [specificPattern]
+    : await getAllPatternFolders();
+
+  const summary = {
+    totalFiles: 0,
+    alreadyHas: 0,
+    added: 0,
+    errors: []
+  };
+
+  for (const pattern of patterns) {
+    console.log(`\nProcessing: ${pattern}`);
+    console.log('-------------------------------------------');
+
+    try {
+      const results = await processPattern(pattern, dryRun);
+
+      summary.totalFiles += results.total;
+      summary.alreadyHas += results.alreadyHas;
+      summary.added += results.added;
+      summary.errors.push(...results.errors.map(e => ({ pattern, ...e })));
+
+      console.log(`  Total: ${results.total} | Already has: ${results.alreadyHas} | Added: ${results.added}`);
+
+    } catch (error) {
+      console.error(`  [ERROR] Failed to process pattern: ${error.message}`);
+    }
+  }
+
+  console.log('\n===========================================');
+  console.log('  SUMMARY');
+  console.log('===========================================');
+  console.log(`Total files scanned: ${summary.totalFiles}`);
+  console.log(`Already have difficulty: ${summary.alreadyHas}`);
+  console.log(`${dryRun ? 'Would add' : 'Added'} difficulty: ${summary.added}`);
+  console.log(`Errors: ${summary.errors.length}`);
+
+  if (summary.errors.length > 0) {
+    console.log('\nErrors encountered:');
+    summary.errors.forEach(({ pattern, file, error }) => {
+      console.log(`  ${pattern}/${file}: ${error}`);
+    });
+  }
+
+  if (dryRun && summary.added > 0) {
+    console.log('\nTo apply these changes, run:');
+    console.log('  node scripts/add-difficulty-to-json.js --apply');
+  }
+
+  console.log('\n');
+}
+
+main().catch(console.error);

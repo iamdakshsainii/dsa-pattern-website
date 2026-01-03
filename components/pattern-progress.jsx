@@ -11,25 +11,41 @@ export default function PatternProgress({ questions, patternSlug, initialProgres
     // Load progress when component mounts
     loadProgress()
 
-    // Listen for progress updates
+    // Listen for progress updates - FIXED: Handle both event types
     const handleProgressUpdate = (event) => {
-      if (event.detail?.pattern === patternSlug) {
-        setCompletedQuestions(event.detail.completed)
+      // Method 1: Custom event with detail
+      if (event.detail) {
+        if (event.detail.pattern === patternSlug || event.detail.patternSlug === patternSlug) {
+          // Reload from server to ensure accuracy
+          loadProgress()
+        }
+      } else {
+        // Method 2: Generic dashboard-refresh event
+        loadProgress()
       }
     }
 
     window.addEventListener('pattern-progress-update', handleProgressUpdate)
+    window.addEventListener('dashboard-refresh', handleProgressUpdate)
 
     return () => {
       window.removeEventListener('pattern-progress-update', handleProgressUpdate)
+      window.removeEventListener('dashboard-refresh', handleProgressUpdate)
     }
   }, [patternSlug])
 
   const loadProgress = async () => {
     try {
       const response = await fetch('/api/progress', {
-        credentials: 'include'
+        credentials: 'include',
+        cache: 'no-store' // FIXED: Prevent caching
       })
+
+      // If user is not logged in (401), just return silently
+      if (response.status === 401) {
+        setCompletedQuestions([])
+        return
+      }
 
       if (response.ok) {
         const data = await response.json()
@@ -43,7 +59,10 @@ export default function PatternProgress({ questions, patternSlug, initialProgres
         setCompletedQuestions(completedInThisPattern)
       }
     } catch (error) {
-      console.error('Failed to load progress:', error)
+      // Only log unexpected errors, not 401s
+      if (!error.message?.includes('401')) {
+        console.error('Failed to load progress:', error)
+      }
     }
   }
 

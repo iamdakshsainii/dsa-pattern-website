@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Lightbulb, BookOpen, ListOrdered, Info } from "lucide-react"
-import ComplexityBadge from "./complexity-badge"
+import ComplexityBadge from "../components/questions/complexity-badge"
 import CodeViewer from "./code-viewer"
 
 export default function ApproachCard({ approach, number, total }) {
