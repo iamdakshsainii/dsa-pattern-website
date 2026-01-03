@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import QuestionCard from "@/components/questions/question-card"
-
+export const dynamic = 'force-dynamic'
 export default function QuestionList({
   questions,
   patternSlug,
