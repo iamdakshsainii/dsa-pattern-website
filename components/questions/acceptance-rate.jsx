@@ -1,4 +1,4 @@
-// components/questions/acceptance-rate.jsx
+
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 
 export default function AcceptanceRate({ rate, showIcon = false, variant = "default" }) {

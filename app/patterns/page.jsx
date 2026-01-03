@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import Link from "next/link"
 import { getPatterns } from "@/lib/db"
 import { getCurrentUser } from "@/lib/auth"
