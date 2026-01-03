@@ -1,5 +1,4 @@
-// Replace: app/patterns/[slug]/page.jsx
-// ⚡ SPEED OPTIMIZATION: Parallel queries instead of sequential
+
 
 import { getPattern, getQuestionsByPattern } from "@/lib/db"
 import { getCurrentUser } from "@/lib/auth"

@@ -5,7 +5,7 @@ import QuestionCard from "@/components/questions/question-card"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle2, FileSpreadsheet } from "lucide-react"
-
+export const dynamic = 'force-dynamic'
 export default async function SheetPage({ params }) {
   const { slug } = await params
 
