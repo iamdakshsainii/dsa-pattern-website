@@ -1,3 +1,6 @@
+// Replace: components/question-list.jsx
+// ✅ FIX: Correct URL path for question detail page
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -158,7 +161,6 @@ export default function QuestionList({ questions, patternSlug, solutions, userPr
         const isCheckboxLoading = loading[question._id]
         const isBookmarkLoading = loading[`bookmark-${question._id}`]
 
-        // FIX: Use combination of _id and slug for unique key
         const uniqueKey = `${question._id}-${question.slug || question.title}`
 
         return (
@@ -263,9 +265,9 @@ export default function QuestionList({ questions, patternSlug, solutions, userPr
                     {isBookmarked ? "Bookmarked" : "Bookmark"}
                   </Button>
 
-                  {/* FIX: Correct URL path */}
+                  {/* ✅ FIXED: Correct URL path */}
                   <Button variant="default" size="sm" asChild>
-                    <Link href={`/patterns/${patternSlug}/questions/${question._id}`}>
+                    <Link href={`/questions/${question._id}`}>
                       <Code className="w-4 h-4 mr-1" />
                       View Solution
                     </Link>

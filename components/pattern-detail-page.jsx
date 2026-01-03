@@ -1,3 +1,5 @@
+// Replace: components/pattern-detail-page.jsx
+
 'use client'
 
 import { useState, useMemo } from "react"
@@ -41,10 +43,10 @@ export default function PatternDetailPage({
 }) {
   const searchParams = useSearchParams()
 
-  // Initialize filters from URL or defaults
+  // Initialize filters from URL (NO status by default)
   const [filters, setFilters] = useState({
     difficulty: searchParams.get('difficulty') || 'All',
-    status: searchParams.get('status') || 'All',
+    status: searchParams.get('status') || 'All', // Keep for compatibility
     company: searchParams.get('company') || 'All',
     tag: searchParams.get('tag') || 'All',
     search: searchParams.get('search') || ''
@@ -53,13 +55,13 @@ export default function PatternDetailPage({
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'Default')
   const [localProgress, setLocalProgress] = useState(userProgress?.completed || [])
 
-  // Update URL when filters change (optimized - no router push)
   const updateFilters = (newFilters) => {
     setFilters(newFilters)
 
-    // Update URL params without navigation (faster)
     const params = new URLSearchParams()
     Object.entries(newFilters).forEach(([key, value]) => {
+      // Don't include status in URL
+      if (key === 'status') return
       if (value && value !== 'All' && value !== '') {
         params.set(key, value)
       }
@@ -71,21 +73,17 @@ export default function PatternDetailPage({
     const queryString = params.toString()
     const newUrl = `/patterns/${patternSlug}${queryString ? `?${queryString}` : ''}`
 
-    // Use window.history instead of router.push for instant updates
     window.history.replaceState(null, '', newUrl)
   }
 
   const updateSort = (value) => {
     setSortBy(value)
-
-    // Update URL without navigation
     const params = new URLSearchParams(searchParams)
     if (value !== 'Default') {
       params.set('sort', value)
     } else {
       params.delete('sort')
     }
-
     const newUrl = `/patterns/${patternSlug}?${params.toString()}`
     window.history.replaceState(null, '', newUrl)
   }
@@ -94,7 +92,6 @@ export default function PatternDetailPage({
     setLocalProgress(newProgress)
   }
 
-  // Get unique companies and tags (from questions directly - already loaded)
   const companies = useMemo(() => {
     const allCompanies = new Set()
     questions.forEach(q => {
@@ -115,7 +112,6 @@ export default function PatternDetailPage({
     return Array.from(allTags).sort()
   }, [questions])
 
-  // Apply filters and sorting (use questions directly - no need to enrich)
   const progressData = useMemo(() => ({
     completed: localProgress,
     inProgress: userProgress?.inProgress || [],
@@ -127,7 +123,6 @@ export default function PatternDetailPage({
     return sortQuestions(filtered, sortBy, progressData)
   }, [questions, filters, sortBy, progressData])
 
-  // Calculate statistics
   const stats = useMemo(() => {
     return getFilterStats(filteredQuestions, progressData)
   }, [filteredQuestions, progressData])
@@ -154,13 +149,6 @@ export default function PatternDetailPage({
   const progressPercentage = totalQuestions > 0
     ? Math.round((solvedQuestions / totalQuestions) * 100)
     : 0
-
-  // Calculate difficulty breakdown
-  const difficultyCount = {
-    Easy: questions.filter(q => q.difficulty === "Easy").length,
-    Medium: questions.filter(q => q.difficulty === "Medium").length,
-    Hard: questions.filter(q => q.difficulty === "Hard").length
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
@@ -191,85 +179,61 @@ export default function PatternDetailPage({
 
       <main className="container mx-auto max-w-7xl px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left Sidebar - Pattern Info */}
+          {/* Left Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Progress Card */}
             <Card className="p-6 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
               <div className="flex items-center gap-2 mb-4">
                 <Target className="h-5 w-5" />
                 <h3 className="font-semibold">Your Progress</h3>
               </div>
               <div className="text-center">
-                <div className="text-5xl font-bold mb-2">
-                  {progressPercentage}%
-                </div>
-                <p className="text-blue-100 text-sm">
-                  {solvedQuestions}/{totalQuestions} completed
-                </p>
+                <div className="text-5xl font-bold mb-2">{progressPercentage}%</div>
+                <p className="text-blue-100 text-sm">{solvedQuestions}/{totalQuestions} completed</p>
               </div>
               <div className="mt-4 pt-4 border-t border-blue-400">
                 <div className="flex justify-between text-sm">
                   <span className="text-blue-100">Remaining</span>
-                  <span className="font-semibold">
-                    {totalQuestions - solvedQuestions}
-                  </span>
+                  <span className="font-semibold">{totalQuestions - solvedQuestions}</span>
                 </div>
               </div>
             </Card>
 
-            {/* Difficulty Breakdown */}
             <Card className="p-6">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
                 Difficulty Breakdown
               </h3>
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span className="text-sm">Easy</span>
-                  </div>
-                  <Badge variant="outline" className="text-green-600">
-                    {totalStats.completedByDifficulty.Easy}/{totalStats.byDifficulty.Easy}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <span className="text-sm">Medium</span>
-                  </div>
-                  <Badge variant="outline" className="text-yellow-600">
-                    {totalStats.completedByDifficulty.Medium}/{totalStats.byDifficulty.Medium}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <span className="text-sm">Hard</span>
-                  </div>
-                  <Badge variant="outline" className="text-red-600">
-                    {totalStats.completedByDifficulty.Hard}/{totalStats.byDifficulty.Hard}
-                  </Badge>
-                </div>
+                {['Easy', 'Medium', 'Hard'].map((diff, idx) => {
+                  const colors = ['green', 'yellow', 'red']
+                  const color = colors[idx]
+                  return (
+                    <div key={diff} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full bg-${color}-500`}></div>
+                        <span className="text-sm">{diff}</span>
+                      </div>
+                      <Badge variant="outline" className={`text-${color}-600`}>
+                        {totalStats.completedByDifficulty[diff]}/{totalStats.byDifficulty[diff]}
+                      </Badge>
+                    </div>
+                  )
+                })}
               </div>
             </Card>
 
-            {/* When to Use Pattern */}
             {pattern.when_to_use && (
               <Card className="p-6 bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
                 <div className="flex items-start gap-3">
                   <Lightbulb className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold mb-2">When to Use This Pattern</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {pattern.when_to_use}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{pattern.when_to_use}</p>
                   </div>
                 </div>
               </Card>
             )}
 
-            {/* Time Complexity */}
             {pattern.time_complexity && (
               <Card className="p-6">
                 <div className="flex items-start gap-3">
@@ -297,7 +261,6 @@ export default function PatternDetailPage({
               </Card>
             )}
 
-            {/* Key Points */}
             {pattern.key_points && pattern.key_points.length > 0 && (
               <Card className="p-6">
                 <h3 className="font-semibold mb-3">Key Points</h3>
@@ -313,16 +276,14 @@ export default function PatternDetailPage({
             )}
           </div>
 
-          {/* Main Content - Questions with Filters */}
+          {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Pattern Progress Tracker */}
             <PatternProgress
               questions={questions}
               patternSlug={patternSlug}
               initialProgress={localProgress}
             />
 
-            {/* Quick Stats */}
             {currentUser && (
               <div className="grid grid-cols-3 gap-4">
                 <Card className="p-4">
@@ -338,9 +299,7 @@ export default function PatternDetailPage({
                   <div className="flex items-center gap-3">
                     <Clock className="h-8 w-8 text-yellow-600" />
                     <div>
-                      <p className="text-2xl font-bold">
-                        {userProgress?.inProgress?.length || 0}
-                      </p>
+                      <p className="text-2xl font-bold">{userProgress?.inProgress?.length || 0}</p>
                       <p className="text-sm text-muted-foreground">In Progress</p>
                     </div>
                   </div>
@@ -349,9 +308,7 @@ export default function PatternDetailPage({
                   <div className="flex items-center gap-3">
                     <Target className="h-8 w-8 text-blue-600" />
                     <div>
-                      <p className="text-2xl font-bold">
-                        {totalQuestions - solvedQuestions}
-                      </p>
+                      <p className="text-2xl font-bold">{totalQuestions - solvedQuestions}</p>
                       <p className="text-sm text-muted-foreground">Remaining</p>
                     </div>
                   </div>
@@ -359,15 +316,15 @@ export default function PatternDetailPage({
               </div>
             )}
 
-            {/* Filter Bar */}
+            {/* ✅ FILTER BAR with hideStatus=true */}
             <FilterBar
               filters={filters}
               onFilterChange={updateFilters}
               companies={companies}
               tags={tags}
+              hideStatus={true}
             />
 
-            {/* Results Header with Sort */}
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold">Practice Problems</h2>
@@ -393,7 +350,6 @@ export default function PatternDetailPage({
               </div>
             </div>
 
-            {/* Questions List */}
             {filteredQuestions.length > 0 ? (
               <QuestionList
                 questions={filteredQuestions}
@@ -406,9 +362,7 @@ export default function PatternDetailPage({
             ) : (
               <Card className="p-12">
                 <div className="text-center">
-                  <p className="text-muted-foreground mb-4">
-                    No problems match your filters.
-                  </p>
+                  <p className="text-muted-foreground mb-4">No problems match your filters.</p>
                   <Button
                     variant="outline"
                     onClick={() => updateFilters({

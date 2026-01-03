@@ -11,27 +11,30 @@ import {
   CheckCircle2,
   Circle,
   Clock,
-  ExternalLink,
   BookmarkX,
   ArrowLeft
 } from "lucide-react"
 
 export default function BookmarksClient({ questions: initialQuestions, userProgress: initialProgress, userId }) {
-  const [questions, setQuestions] = useState(initialQuestions)
-  const [userProgress, setUserProgress] = useState(initialProgress)
+  // ✅ FIX: Ensure userProgress always has required arrays
+  const [questions, setQuestions] = useState(initialQuestions || [])
+  const [userProgress, setUserProgress] = useState({
+    completed: initialProgress?.completed || [],
+    inProgress: initialProgress?.inProgress || [],
+    bookmarks: initialProgress?.bookmarks || []
+  })
   const [loading, setLoading] = useState({})
 
   useEffect(() => {
-    // Listen for bookmark updates
+    // Load fresh bookmarks on mount
+    fetchBookmarks()
+
     const handleRefresh = () => {
       fetchBookmarks()
     }
 
     window.addEventListener('dashboard-refresh', handleRefresh)
-
-    return () => {
-      window.removeEventListener('dashboard-refresh', handleRefresh)
-    }
+    return () => window.removeEventListener('dashboard-refresh', handleRefresh)
   }, [])
 
   const fetchBookmarks = async () => {
@@ -42,28 +45,16 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
 
       if (response.ok) {
         const data = await response.json()
+        console.log('Bookmarks data:', data)
 
-        // Fetch full question details
-        const questionIds = data.bookmarkIds || []
-        if (questionIds.length > 0) {
-          const questionsResponse = await fetch('/api/questions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ questionIds })
-          })
+        // ✅ FIX: Use questions from API, keep existing progress
+        setQuestions(data.questions || [])
 
-          if (questionsResponse.ok) {
-            const questionsData = await questionsResponse.json()
-            setQuestions(questionsData.questions || [])
-          }
-        } else {
-          setQuestions([])
-        }
-
+        // ✅ FIX: Keep the completed/inProgress from initial state, only update bookmarks
         setUserProgress(prev => ({
-          ...prev,
-          bookmarks: questionIds
+          completed: prev.completed || [], // Keep existing completed status
+          inProgress: prev.inProgress || [], // Keep existing inProgress status
+          bookmarks: data.bookmarkIds || [] // Update bookmarks list
         }))
       }
     } catch (error) {
@@ -87,7 +78,7 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
         setQuestions(prev => prev.filter(q => q._id !== questionId))
         setUserProgress(prev => ({
           ...prev,
-          bookmarks: prev.bookmarks.filter(id => id !== questionId)
+          bookmarks: (prev.bookmarks || []).filter(id => id !== questionId)
         }))
 
         // Emit event for dashboard refresh
@@ -114,20 +105,22 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
   }
 
   const getStatusIcon = (questionId) => {
-    if (userProgress.completed.includes(questionId)) {
+    // ✅ FIX: Safe array access with optional chaining
+    if (userProgress?.completed?.includes(questionId)) {
       return <CheckCircle2 className="h-5 w-5 text-green-600" />
     }
-    if (userProgress.inProgress.includes(questionId)) {
+    if (userProgress?.inProgress?.includes(questionId)) {
       return <Clock className="h-5 w-5 text-yellow-600" />
     }
     return <Circle className="h-5 w-5 text-gray-400" />
   }
 
   const getStatusText = (questionId) => {
-    if (userProgress.completed.includes(questionId)) {
+    // ✅ FIX: Safe array access with optional chaining
+    if (userProgress?.completed?.includes(questionId)) {
       return { text: "Completed", color: "text-green-600" }
     }
-    if (userProgress.inProgress.includes(questionId)) {
+    if (userProgress?.inProgress?.includes(questionId)) {
       return { text: "In Progress", color: "text-yellow-600" }
     }
     return { text: "Not Started", color: "text-gray-600" }
@@ -157,8 +150,8 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
           </p>
         </div>
 
-        {/* Stats */}
-        {questions.length > 0 && (
+        {/* Stats - ✅ FIX: Safe array access */}
+        {questions?.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <Card className="p-6 bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
               <p className="text-sm text-muted-foreground mb-1">Total Bookmarked</p>
@@ -167,20 +160,20 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
             <Card className="p-6 bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
               <p className="text-sm text-muted-foreground mb-1">Completed</p>
               <p className="text-4xl font-bold text-green-600">
-                {questions.filter((q) => userProgress.completed.includes(q._id)).length}
+                {questions.filter((q) => userProgress?.completed?.includes(q._id)).length}
               </p>
             </Card>
             <Card className="p-6 bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800">
               <p className="text-sm text-muted-foreground mb-1">Remaining</p>
               <p className="text-4xl font-bold text-orange-600">
-                {questions.filter((q) => !userProgress.completed.includes(q._id)).length}
+                {questions.filter((q) => !userProgress?.completed?.includes(q._id)).length}
               </p>
             </Card>
           </div>
         )}
 
         {/* Bookmarks List */}
-        {questions.length === 0 ? (
+        {!questions || questions.length === 0 ? (
           <Card className="p-12 bg-white dark:bg-slate-900">
             <div className="text-center">
               <div className="flex justify-center mb-4">
@@ -204,6 +197,8 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
           <div className="grid gap-4">
             {questions.map((question) => {
               const status = getStatusText(question._id)
+              const patternSlug = question.pattern_id || question.pattern || 'unknown'
+
               return (
                 <Card
                   key={question._id}
@@ -238,9 +233,9 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
                       )}
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        {question.pattern && (
+                        {patternSlug && patternSlug !== 'unknown' && (
                           <span className="flex items-center gap-1">
-                            Pattern: <strong>{question.pattern.replace(/-/g, ' ')}</strong>
+                            Pattern: <strong className="capitalize">{patternSlug.replace(/-/g, ' ')}</strong>
                           </span>
                         )}
                       </div>

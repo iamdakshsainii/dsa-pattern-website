@@ -1,3 +1,5 @@
+// Replace: components/filters/filter-bar.jsx
+
 'use client'
 
 import { Card } from "@/components/ui/card"
@@ -16,7 +18,8 @@ export default function FilterBar({
   counts = {},
   showSearch = true,
   showCompany = true,
-  showTag = true
+  showTag = true,
+  hideStatus = false // ✅ NEW PROP to hide status filter
 }) {
   const updateFilter = (key, value) => {
     onFilterChange({ ...filters, [key]: value })
@@ -35,7 +38,7 @@ export default function FilterBar({
   const clearAllFilters = () => {
     onFilterChange({
       difficulty: 'All',
-      status: 'All',
+      status: hideStatus ? undefined : 'All', // Don't include status if hidden
       company: 'All',
       tag: 'All',
       search: ''
@@ -43,7 +46,8 @@ export default function FilterBar({
   }
 
   return (
-    <Card className="p-4 space-y-4">
+    // ✅ CENTERED with max-w-4xl and mx-auto
+    <Card className="p-4 space-y-4 max-w-4xl mx-auto">
       {/* Search Row */}
       {showSearch && (
         <div className="flex items-center gap-4">
@@ -54,24 +58,27 @@ export default function FilterBar({
         </div>
       )}
 
-      {/* Filter Pills Row */}
-      <div className="flex flex-wrap gap-4">
+      {/* Filter Pills Row - CENTERED */}
+      <div className="flex flex-wrap gap-4 justify-center">
         <DifficultyFilter
           selected={filters.difficulty}
           onChange={(value) => updateFilter('difficulty', value)}
           counts={counts.difficulty}
         />
 
-        <StatusFilter
-          selected={filters.status}
-          onChange={(value) => updateFilter('status', value)}
-          counts={counts.status}
-        />
+        {/* ✅ ONLY show status filter if NOT hidden */}
+        {!hideStatus && (
+          <StatusFilter
+            selected={filters.status}
+            onChange={(value) => updateFilter('status', value)}
+            counts={counts.status}
+          />
+        )}
       </div>
 
-      {/* Dropdown Filters Row */}
+      {/* Dropdown Filters Row - CENTERED */}
       {(showCompany || showTag) && (companies.length > 0 || tags.length > 0) && (
-        <div className="flex flex-wrap gap-4 items-center">
+        <div className="flex flex-wrap gap-4 items-center justify-center">
           {showCompany && companies.length > 0 && (
             <CompanyFilter
               selected={filters.company}
@@ -90,12 +97,15 @@ export default function FilterBar({
         </div>
       )}
 
-      {/* Active Filters */}
-      <ActiveFilters
-        filters={filters}
-        onRemove={removeFilter}
-        onClearAll={clearAllFilters}
-      />
+      {/* Active Filters - CENTERED */}
+      <div className="flex justify-center">
+        <ActiveFilters
+          filters={filters}
+          onRemove={removeFilter}
+          onClearAll={clearAllFilters}
+          hideStatus={hideStatus}
+        />
+      </div>
     </Card>
   )
 }
