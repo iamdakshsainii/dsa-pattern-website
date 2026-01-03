@@ -3,17 +3,191 @@
   "questionSlug": "longest-substring-same-letters-replacement",
   "resources": {
     "leetcode": "https://leetcode.com/problems/longest-repeating-character-replacement/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Longest Repeating Character Replacement",
+        "url": "https://www.youtube.com/watch?v=gqXU1UyA8pk",
+        "channel": "NeetCode",
+        "duration": "12:35",
+        "language": "English"
+      },
+      {
+        "title": "Character Replacement Sliding Window",
+        "url": "https://www.youtube.com/watch?v=00FmUN1pkGE",
+        "channel": "take U forward",
+        "duration": "19:40",
+        "language": "English"
+      },
+      {
+        "title": "K Replacements Pattern",
+        "url": "https://www.youtube.com/watch?v=_eNhaDCr6P0",
+        "channel": "Aditya Verma",
+        "duration": "22:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Longest Repeating Character Replacement",
+        "url": "https://leetcode.com/problems/longest-repeating-character-replacement/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Character Replacement with Sliding Window",
+        "url": "https://www.geeksforgeeks.org/longest-substring-of-all-same-characters-after-k-changes/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Max Frequency with K Operations",
+        "url": "https://algo.monster/problems/character_replacement",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Max Consecutive Ones III",
+        "url": "https://leetcode.com/problems/max-consecutive-ones-iii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Substring with At Most K Distinct Characters",
+        "url": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Number of Flips to Make Binary String Alternating",
+        "url": "https://leetcode.com/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Get Equal Substrings Within Budget",
+        "url": "https://leetcode.com/problems/get-equal-substrings-within-budget/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Longest Substring Same Letters Replacement when: can replace at most K characters, maximize length of same character, variable window, track max frequency. Keywords: 'k replacements', 'same character', 'longest substring'.",
+  "approaches": [
+    {
+      "name": "Sliding Window with Max Frequency (Optimal)",
+      "order": 1,
+      "intuition": "Key insight: window is valid if (windowSize - maxFrequency) <= k, meaning we can replace non-majority characters. Track character frequencies. Expand right, shrink when replacements needed > k. MaxFreq doesn't need to decrease - we only care about finding larger valid windows. O(n) time.",
+      "approach": "Two pointers with frequency map. Track max frequency seen. Valid window: (right - left + 1) - maxFreq <= k. Shrink left when invalid.",
+      "steps": [
+        "Initialize left = 0, maxLength = 0, maxFreq = 0",
+        "Initialize charCount = HashMap",
+        "For right from 0 to n-1:",
+        "  - Increment charCount[s[right]]",
+        "  - Update maxFreq = max(maxFreq, charCount[s[right]])",
+        "  - Calculate replacementsNeeded = (right - left + 1) - maxFreq",
+        "  - While replacementsNeeded > k:",
+        "    - Decrement charCount[s[left]]",
+        "    - Increment left",
+        "    - Recalculate replacementsNeeded",
+        "  - Update maxLength = max(maxLength, right - left + 1)",
+        "Return maxLength"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each character visited at most twice (once by right, once by left): O(2n) = O(n).",
+        "spaceExplanation": "HashMap stores at most 26 uppercase letters: O(26) = O(1) constant space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int characterReplacement(string s, int k) {\n        int n = s.length();\n        int left = 0;\n        int maxLength = 0;\n        int maxFreq = 0;\n        unordered_map<char, int> charCount;\n        \n        for (int right = 0; right < n; right++) {\n            charCount[s[right]]++;\n            maxFreq = max(maxFreq, charCount[s[right]]);\n            \n            int replacementsNeeded = (right - left + 1) - maxFreq;\n            \n            while (replacementsNeeded > k) {\n                charCount[s[left]]--;\n                left++;\n                replacementsNeeded = (right - left + 1) - maxFreq;\n            }\n            \n            maxLength = max(maxLength, right - left + 1);\n        }\n        \n        return maxLength;\n    }\n};",
+        "java": "class Solution {\n    public int characterReplacement(String s, int k) {\n        int n = s.length();\n        int left = 0;\n        int maxLength = 0;\n        int maxFreq = 0;\n        Map<Character, Integer> charCount = new HashMap<>();\n        \n        for (int right = 0; right < n; right++) {\n            char rightChar = s.charAt(right);\n            charCount.put(rightChar, charCount.getOrDefault(rightChar, 0) + 1);\n            maxFreq = Math.max(maxFreq, charCount.get(rightChar));\n            \n            int replacementsNeeded = (right - left + 1) - maxFreq;\n            \n            while (replacementsNeeded > k) {\n                char leftChar = s.charAt(left);\n                charCount.put(leftChar, charCount.get(leftChar) - 1);\n                left++;\n                replacementsNeeded = (right - left + 1) - maxFreq;\n            }\n            \n            maxLength = Math.max(maxLength, right - left + 1);\n        }\n        \n        return maxLength;\n    }\n}",
+        "python": "class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        n = len(s)\n        left = 0\n        max_length = 0\n        max_freq = 0\n        char_count = {}\n        \n        for right in range(n):\n            char_count[s[right]] = char_count.get(s[right], 0) + 1\n            max_freq = max(max_freq, char_count[s[right]])\n            \n            replacements_needed = (right - left + 1) - max_freq\n            \n            while replacements_needed > k:\n                char_count[s[left]] -= 1\n                left += 1\n                replacements_needed = (right - left + 1) - max_freq\n            \n            max_length = max(max_length, right - left + 1)\n        \n        return max_length",
+        "javascript": "function characterReplacement(s, k) {\n    const n = s.length;\n    let left = 0;\n    let maxLength = 0;\n    let maxFreq = 0;\n    const charCount = new Map();\n    \n    for (let right = 0; right < n; right++) {\n        const rightChar = s[right];\n        charCount.set(rightChar, (charCount.get(rightChar) || 0) + 1);\n        maxFreq = Math.max(maxFreq, charCount.get(rightChar));\n        \n        let replacementsNeeded = (right - left + 1) - maxFreq;\n        \n        while (replacementsNeeded > k) {\n            const leftChar = s[left];\n            charCount.set(leftChar, charCount.get(leftChar) - 1);\n            left++;\n            replacementsNeeded = (right - left + 1) - maxFreq;\n        }\n        \n        maxLength = Math.max(maxLength, right - left + 1);\n    }\n    \n    return maxLength;\n}"
+      }
+    },
+    {
+      "name": "Optimized Without Recalculating MaxFreq",
+      "order": 2,
+      "intuition": "Optimization: maxFreq doesn't need to decrease when shrinking. We only care about finding larger valid windows, not smaller ones. If current maxFreq can't give us a larger window, we skip. Slightly more optimized in practice.",
+      "approach": "Same as approach 1, but don't recalculate maxFreq when shrinking. Use if instead of while for shrinking.",
+      "steps": [
+        "Initialize left = 0, maxLength = 0, maxFreq = 0",
+        "Initialize charCount = HashMap",
+        "For right from 0 to n-1:",
+        "  - Increment charCount[s[right]]",
+        "  - Update maxFreq = max(maxFreq, charCount[s[right]])",
+        "  - If (right - left + 1) - maxFreq > k:",
+        "    - Decrement charCount[s[left]]",
+        "    - Increment left",
+        "  - Update maxLength = max(maxLength, right - left + 1)",
+        "Return maxLength"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through string with O(1) operations per character: O(n).",
+        "spaceExplanation": "HashMap stores at most 26 characters: O(26) = O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int characterReplacement(string s, int k) {\n        int n = s.length();\n        int left = 0;\n        int maxLength = 0;\n        int maxFreq = 0;\n        unordered_map<char, int> charCount;\n        \n        for (int right = 0; right < n; right++) {\n            charCount[s[right]]++;\n            maxFreq = max(maxFreq, charCount[s[right]]);\n            \n            // Use if instead of while - more optimized\n            if ((right - left + 1) - maxFreq > k) {\n                charCount[s[left]]--;\n                left++;\n            }\n            \n            maxLength = max(maxLength, right - left + 1);\n        }\n        \n        return maxLength;\n    }\n};",
+        "java": "class Solution {\n    public int characterReplacement(String s, int k) {\n        int n = s.length();\n        int left = 0;\n        int maxLength = 0;\n        int maxFreq = 0;\n        Map<Character, Integer> charCount = new HashMap<>();\n        \n        for (int right = 0; right < n; right++) {\n            char rightChar = s.charAt(right);\n            charCount.put(rightChar, charCount.getOrDefault(rightChar, 0) + 1);\n            maxFreq = Math.max(maxFreq, charCount.get(rightChar));\n            \n            if ((right - left + 1) - maxFreq > k) {\n                char leftChar = s.charAt(left);\n                charCount.put(leftChar, charCount.get(leftChar) - 1);\n                left++;\n            }\n            \n            maxLength = Math.max(maxLength, right - left + 1);\n        }\n        \n        return maxLength;\n    }\n}",
+        "python": "class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        n = len(s)\n        left = 0\n        max_length = 0\n        max_freq = 0\n        char_count = {}\n        \n        for right in range(n):\n            char_count[s[right]] = char_count.get(s[right], 0) + 1\n            max_freq = max(max_freq, char_count[s[right]])\n            \n            if (right - left + 1) - max_freq > k:\n                char_count[s[left]] -= 1\n                left += 1\n            \n            max_length = max(max_length, right - left + 1)\n        \n        return max_length",
+        "javascript": "function characterReplacement(s, k) {\n    const n = s.length;\n    let left = 0;\n    let maxLength = 0;\n    let maxFreq = 0;\n    const charCount = new Map();\n    \n    for (let right = 0; right < n; right++) {\n        const rightChar = s[right];\n        charCount.set(rightChar, (charCount.get(rightChar) || 0) + 1);\n        maxFreq = Math.max(maxFreq, charCount.get(rightChar));\n        \n        if ((right - left + 1) - maxFreq > k) {\n            const leftChar = s[left];\n            charCount.set(leftChar, charCount.get(leftChar) - 1);\n            left++;\n        }\n        \n        maxLength = Math.max(maxLength, right - left + 1);\n    }\n    \n    return maxLength;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Recalculating maxFreq from scratch every time (makes it O(n * 26))",
+    "Not understanding that replacements = windowSize - maxFreq",
+    "Trying to decrease maxFreq when shrinking window",
+    "Using wrong condition: maxFreq > k instead of (windowSize - maxFreq) > k",
+    "Forgetting to track character frequencies",
+    "Using set instead of map (loses frequency information)",
+    "Not handling k = 0 edge case properly",
+    "Updating maxLength before shrinking window"
+  ],
+  "hints": [
+    "Key formula: replacements needed = windowSize - maxFrequency",
+    "Window is valid when (right - left + 1) - maxFreq <= k",
+    "MaxFreq doesn't need to decrease - we only want larger windows",
+    "Track frequency of each character in current window",
+    "Each character processed at most twice: O(n) time",
+    "Space is O(26) = O(1) for uppercase English letters",
+    "Similar to Max Consecutive Ones III but with characters",
+    "Can use if instead of while for optimization"
+  ],
+  "followUp": [
+    "What if k is very large (k >= n)?",
+    "Can you handle lowercase letters too?",
+    "What about finding shortest substring needing k replacements?",
+    "How to count all valid substrings?",
+    "What if different characters have different replacement costs?",
+    "Can you extend to allow k insertions/deletions?",
+    "What about handling Unicode characters?",
+    "How to optimize for very small k values?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "LinkedIn",
+    "Airbnb"
+  ],
+  "tags": [
+    "Sliding Window",
+    "HashMap",
+    "String",
+    "Two Pointers",
+    "Variable Window"
+  ],
+  "relatedProblems": [
+    "Max Consecutive Ones III",
+    "Longest Substring with At Most K Distinct Characters",
+    "Longest Substring Without Repeating Characters",
+    "Fruit Into Baskets",
+    "Minimum Window Substring",
+    "Get Equal Substrings Within Budget",
+    "Maximum Number of Vowels in a Substring of Given Length",
+    "Count Number of Nice Subarrays"
+  ]
 }

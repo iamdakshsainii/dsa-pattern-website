@@ -2,18 +2,188 @@
   "questionId": "694d4a3a98494915f3bc8f03",
   "questionSlug": "rearrange-string-k-distance",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/rearrange-string-k-distance-apart/",
+    "videos": [
+      {
+        "title": "Rearrange String K Distance Apart",
+        "url": "https://www.youtube.com/watch?v=vY6pKKi5brM",
+        "channel": "NeetCode",
+        "duration": "13:40",
+        "language": "English"
+      },
+      {
+        "title": "Task Scheduler Pattern Complete",
+        "url": "https://www.youtube.com/watch?v=lPRlmvXN9qA",
+        "channel": "TECH DOSE",
+        "duration": "18:25",
+        "language": "English"
+      },
+      {
+        "title": "K Distance Apart Heap Solution",
+        "url": "https://www.youtube.com/watch?v=eGf-26OTI-A",
+        "channel": "take U forward",
+        "duration": "21:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Rearrange String K Distance Apart Solution",
+        "url": "https://leetcode.com/problems/rearrange-string-k-distance-apart/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Rearrange Characters K Distance Apart",
+        "url": "https://www.geeksforgeeks.org/rearrange-a-string-so-that-all-same-characters-become-at-least-d-distance-away/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Task Scheduling Pattern",
+        "url": "https://algo.monster/problems/rearrange_string_k_distance",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Task Scheduler",
+        "url": "https://leetcode.com/problems/task-scheduler/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reorganize String",
+        "url": "https://leetcode.com/problems/reorganize-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Happy String",
+        "url": "https://leetcode.com/problems/longest-happy-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Distant Barcodes",
+        "url": "https://leetcode.com/problems/distant-barcodes/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Rearrange K Distance Apart pattern when characters need k positions separation. Key indicators: k distance constraint, max heap + queue, cooldown period, task scheduling with gaps.",
+  "approaches": [
+    {
+      "name": "Max Heap + Queue (Optimal)",
+      "order": 1,
+      "intuition": "Use max heap to always pick most frequent available character. After using a character, it becomes unavailable for k positions. Use queue to track when characters become available again. Add to queue, remove from front after k steps.",
+      "approach": "Count frequencies. Use max heap for available characters. Use queue for cooldown tracking. Each step: pick most frequent from heap, add to result, push to queue. When queue size reaches k, pop front and add back to heap.",
+      "steps": [
+        "Count character frequencies using HashMap",
+        "Build max heap from frequencies",
+        "Initialize result string, queue for cooldown",
+        "While heap not empty OR queue not empty:",
+        " - If heap empty and queue not empty: return '' (impossible)",
+        " - Extract most frequent character from heap",
+        " - Append to result",
+        " - Decrease frequency, push to queue with (char, freq)",
+        " - If queue.size >= k:",
+        "   - Pop from queue front",
+        "   - If frequency > 0: add back to heap",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Process n characters. Each heap operation is O(log k) where k is unique chars. Queue operations are O(1). Total: O(n log k).",
+        "spaceExplanation": "Heap stores at most k characters. Queue stores at most k elements. Total: O(k)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string rearrangeString(string s, int k) {\n        if (k == 0) return s;\n        \n        unordered_map<char, int> freq;\n        for (char c : s) {\n            freq[c]++;\n        }\n        \n        auto comp = [](const pair<char,int>& a, const pair<char,int>& b) {\n            return a.second < b.second;\n        };\n        priority_queue<pair<char,int>, vector<pair<char,int>>, decltype(comp)> maxHeap(comp);\n        \n        for (auto& [ch, count] : freq) {\n            maxHeap.push({ch, count});\n        }\n        \n        string result;\n        queue<pair<char,int>> waitQueue;\n        \n        while (!maxHeap.empty()) {\n            auto [ch, count] = maxHeap.top();\n            maxHeap.pop();\n            \n            result += ch;\n            count--;\n            waitQueue.push({ch, count});\n            \n            if (waitQueue.size() >= k) {\n                auto front = waitQueue.front();\n                waitQueue.pop();\n                if (front.second > 0) {\n                    maxHeap.push(front);\n                }\n            }\n        }\n        \n        return result.length() == s.length() ? result : \"\";\n    }\n};",
+        "java": "class Solution {\n    public String rearrangeString(String s, int k) {\n        if (k == 0) return s;\n        \n        Map<Character, Integer> freq = new HashMap<>();\n        for (char c : s.toCharArray()) {\n            freq.put(c, freq.getOrDefault(c, 0) + 1);\n        }\n        \n        PriorityQueue<Map.Entry<Character, Integer>> maxHeap = \n            new PriorityQueue<>((a, b) -> b.getValue() - a.getValue());\n        maxHeap.addAll(freq.entrySet());\n        \n        StringBuilder result = new StringBuilder();\n        Queue<Map.Entry<Character, Integer>> waitQueue = new LinkedList<>();\n        \n        while (!maxHeap.isEmpty()) {\n            Map.Entry<Character, Integer> curr = maxHeap.poll();\n            result.append(curr.getKey());\n            curr.setValue(curr.getValue() - 1);\n            waitQueue.offer(curr);\n            \n            if (waitQueue.size() >= k) {\n                Map.Entry<Character, Integer> front = waitQueue.poll();\n                if (front.getValue() > 0) {\n                    maxHeap.offer(front);\n                }\n            }\n        }\n        \n        return result.length() == s.length() ? result.toString() : \"\";\n    }\n}",
+        "python": "from collections import Counter, deque\nimport heapq\n\nclass Solution:\n    def rearrangeString(self, s: str, k: int) -> str:\n        if k == 0:\n            return s\n        \n        freq = Counter(s)\n        \n        # Max heap (use negative for max)\n        max_heap = [(-count, char) for char, count in freq.items()]\n        heapq.heapify(max_heap)\n        \n        result = []\n        wait_queue = deque()\n        \n        while max_heap:\n            count, char = heapq.heappop(max_heap)\n            result.append(char)\n            count += 1  # Was negative, so +1 decreases magnitude\n            wait_queue.append((count, char))\n            \n            if len(wait_queue) >= k:\n                front_count, front_char = wait_queue.popleft()\n                if front_count < 0:\n                    heapq.heappush(max_heap, (front_count, front_char))\n        \n        return ''.join(result) if len(result) == len(s) else \"\"",
+        "javascript": "class MaxHeap {\n    constructor(compareFn) {\n        this.heap = [];\n        this.compare = compareFn;\n    }\n    \n    push(val) {\n        this.heap.push(val);\n        this.bubbleUp(this.heap.length - 1);\n    }\n    \n    pop() {\n        if (this.heap.length === 0) return null;\n        if (this.heap.length === 1) return this.heap.pop();\n        \n        const max = this.heap[0];\n        this.heap[0] = this.heap.pop();\n        this.bubbleDown(0);\n        return max;\n    }\n    \n    isEmpty() {\n        return this.heap.length === 0;\n    }\n    \n    bubbleUp(idx) {\n        while (idx > 0) {\n            const parent = Math.floor((idx - 1) / 2);\n            if (this.compare(this.heap[parent], this.heap[idx]) >= 0) break;\n            [this.heap[parent], this.heap[idx]] = [this.heap[idx], this.heap[parent]];\n            idx = parent;\n        }\n    }\n    \n    bubbleDown(idx) {\n        while (true) {\n            const left = 2 * idx + 1;\n            const right = 2 * idx + 2;\n            let largest = idx;\n            \n            if (left < this.heap.length && this.compare(this.heap[left], this.heap[largest]) > 0) {\n                largest = left;\n            }\n            if (right < this.heap.length && this.compare(this.heap[right], this.heap[largest]) > 0) {\n                largest = right;\n            }\n            if (largest === idx) break;\n            \n            [this.heap[idx], this.heap[largest]] = [this.heap[largest], this.heap[idx]];\n            idx = largest;\n        }\n    }\n}\n\nfunction rearrangeString(s, k) {\n    if (k === 0) return s;\n    \n    const freq = new Map();\n    for (const char of s) {\n        freq.set(char, (freq.get(char) || 0) + 1);\n    }\n    \n    const maxHeap = new MaxHeap((a, b) => a[1] - b[1]);\n    for (const [char, count] of freq.entries()) {\n        maxHeap.push([char, count]);\n    }\n    \n    let result = '';\n    const waitQueue = [];\n    \n    while (!maxHeap.isEmpty()) {\n        const [char, count] = maxHeap.pop();\n        result += char;\n        waitQueue.push([char, count - 1]);\n        \n        if (waitQueue.length >= k) {\n            const [frontChar, frontCount] = waitQueue.shift();\n            if (frontCount > 0) {\n                maxHeap.push([frontChar, frontCount]);\n            }\n        }\n    }\n    \n    return result.length === s.length ? result : \"\";\n}"
+      }
+    },
+    {
+      "name": "Greedy with Position Tracking",
+      "order": 2,
+      "intuition": "Track last used position of each character. Always try to use most frequent character whose last position is at least k away from current position. If no such character exists, return empty string.",
+      "approach": "Count frequencies. Track last used index for each character. Greedily pick most frequent character that satisfies k distance constraint.",
+      "steps": [
+        "Count character frequencies",
+        "Create map for last used position of each char (initialize to -k)",
+        "Initialize result string",
+        "For position 0 to n-1:",
+        " - Find character with max frequency that was last used >= k positions ago",
+        " - If no such character: return ''",
+        " - Append character to result",
+        " - Update last used position",
+        " - Decrease frequency",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n * k)",
+        "space": "O(k)",
+        "timeExplanation": "For each of n positions, scan through up to k unique characters. Total: O(n * k).",
+        "spaceExplanation": "Store frequency and last position for up to k characters. O(k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string rearrangeString(string s, int k) {\n        if (k == 0) return s;\n        \n        unordered_map<char, int> freq;\n        for (char c : s) {\n            freq[c]++;\n        }\n        \n        unordered_map<char, int> lastPos;\n        for (auto& [ch, _] : freq) {\n            lastPos[ch] = -k;\n        }\n        \n        string result;\n        for (int pos = 0; pos < s.length(); pos++) {\n            char bestChar = '#';\n            int maxFreq = 0;\n            \n            for (auto& [ch, count] : freq) {\n                if (count > 0 && pos - lastPos[ch] >= k && count > maxFreq) {\n                    maxFreq = count;\n                    bestChar = ch;\n                }\n            }\n            \n            if (bestChar == '#') {\n                return \"\";\n            }\n            \n            result += bestChar;\n            freq[bestChar]--;\n            lastPos[bestChar] = pos;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public String rearrangeString(String s, int k) {\n        if (k == 0) return s;\n        \n        Map<Character, Integer> freq = new HashMap<>();\n        for (char c : s.toCharArray()) {\n            freq.put(c, freq.getOrDefault(c, 0) + 1);\n        }\n        \n        Map<Character, Integer> lastPos = new HashMap<>();\n        for (char ch : freq.keySet()) {\n            lastPos.put(ch, -k);\n        }\n        \n        StringBuilder result = new StringBuilder();\n        for (int pos = 0; pos < s.length(); pos++) {\n            char bestChar = '#';\n            int maxFreq = 0;\n            \n            for (Map.Entry<Character, Integer> entry : freq.entrySet()) {\n                char ch = entry.getKey();\n                int count = entry.getValue();\n                \n                if (count > 0 && pos - lastPos.get(ch) >= k && count > maxFreq) {\n                    maxFreq = count;\n                    bestChar = ch;\n                }\n            }\n            \n            if (bestChar == '#') {\n                return \"\";\n            }\n            \n            result.append(bestChar);\n            freq.put(bestChar, freq.get(bestChar) - 1);\n            lastPos.put(bestChar, pos);\n        }\n        \n        return result.toString();\n    }\n}",
+        "python": "from collections import Counter\n\nclass Solution:\n    def rearrangeString(self, s: str, k: int) -> str:\n        if k == 0:\n            return s\n        \n        freq = Counter(s)\n        last_pos = {ch: -k for ch in freq}\n        \n        result = []\n        for pos in range(len(s)):\n            best_char = None\n            max_freq = 0\n            \n            for ch, count in freq.items():\n                if count > 0 and pos - last_pos[ch] >= k and count > max_freq:\n                    max_freq = count\n                    best_char = ch\n            \n            if best_char is None:\n                return \"\"\n            \n            result.append(best_char)\n            freq[best_char] -= 1\n            last_pos[best_char] = pos\n        \n        return ''.join(result)",
+        "javascript": "function rearrangeString(s, k) {\n    if (k === 0) return s;\n    \n    const freq = new Map();\n    for (const char of s) {\n        freq.set(char, (freq.get(char) || 0) + 1);\n    }\n    \n    const lastPos = new Map();\n    for (const char of freq.keys()) {\n        lastPos.set(char, -k);\n    }\n    \n    let result = '';\n    for (let pos = 0; pos < s.length; pos++) {\n        let bestChar = null;\n        let maxFreq = 0;\n        \n        for (const [char, count] of freq.entries()) {\n            if (count > 0 && pos - lastPos.get(char) >= k && count > maxFreq) {\n                maxFreq = count;\n                bestChar = char;\n            }\n        }\n        \n        if (bestChar === null) {\n            return \"\";\n        }\n        \n        result += bestChar;\n        freq.set(bestChar, freq.get(bestChar) - 1);\n        lastPos.set(bestChar, pos);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling k=0 case (should return original string)",
+    "Not using queue to track cooldown period",
+    "Comparing queue size with wrong value (should be >= k)",
+    "Not checking if rearrangement is possible early",
+    "Forgetting to decrease frequency after using character",
+    "Not adding character back to heap after cooldown",
+    "Wrong heap comparator (using min instead of max)",
+    "Not handling case when heap is empty but result incomplete"
+  ],
+  "hints": [
+    "Use max heap to always pick most frequent available character",
+    "Queue tracks characters in cooldown (unavailable for k positions)",
+    "When queue size reaches k, front character becomes available",
+    "Similar to task scheduler with cooldown period",
+    "If heap empty and result incomplete, rearrangement impossible",
+    "Track last used position to enforce k distance constraint",
+    "Greedy: always use most frequent available character"
+  ],
+  "followUp": [
+    "What if k can vary for different characters?",
+    "How to maximize result length if impossible to use all?",
+    "What if some characters have higher priority?",
+    "How to find minimum k that makes rearrangement possible?",
+    "What if we need lexicographically smallest result?",
+    "How to handle if string is streaming?",
+    "What if we need to count all valid rearrangements?",
+    "How to optimize for very large k?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "LinkedIn",
+    "Uber",
+    "Snapchat"
+  ],
+  "tags": [
+    "String",
+    "Hash Table",
+    "Heap",
+    "Greedy",
+    "Queue",
+    "Counting"
+  ],
+  "relatedProblems": [
+    "Task Scheduler",
+    "Reorganize String",
+    "Longest Happy String",
+    "Distant Barcodes",
+    "Rearrange Barcodes",
+    "Maximum Length of a Concatenated String"
+  ]
 }

@@ -3,17 +3,187 @@
   "questionSlug": "simplify-path",
   "resources": {
     "leetcode": "https://leetcode.com/problems/simplify-path/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Simplify Path - Stack Solution",
+        "url": "https://www.youtube.com/watch?v=qYlHrAKJfyA",
+        "channel": "NeetCode",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "Unix Path Simplification Using Stack",
+        "url": "https://www.youtube.com/watch?v=7hFWIU8oS9k",
+        "channel": "TECH DOSE",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Canonical Path Problem",
+        "url": "https://www.youtube.com/watch?v=XNZvlQBDxqY",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Simplify Path Solution",
+        "url": "https://leetcode.com/problems/simplify-path/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Unix Path Simplification Guide",
+        "url": "https://www.geeksforgeeks.org/simplify-directory-path-unix-like/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Path Resolution Pattern",
+        "url": "https://algo.monster/problems/simplify_path",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Remove Adjacent Duplicates",
+        "url": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Valid Parentheses",
+        "url": "https://leetcode.com/problems/valid-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Crawler Log Folder",
+        "url": "https://leetcode.com/problems/crawler-log-folder/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Number of Frogs Croaking",
+        "url": "https://leetcode.com/problems/minimum-number-of-frogs-croaking/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Simplify Path when processing directory navigation. Key indicators: unix path, canonical path, directory traversal, .. parent directory, . current directory, stack for navigation.",
+  "approaches": [
+    {
+      "name": "Stack with Split (Optimal)",
+      "order": 1,
+      "intuition": "Split path by '/' to get components. Use stack to track directory hierarchy. Push valid directories, pop on '..' (go parent), ignore '.' and empty. Build canonical path from stack.",
+      "approach": "Split by '/'. Process each component: push directories, pop for '..', ignore '.'/empty. Join stack with '/'.",
+      "steps": [
+        "Split path by '/' to get components",
+        "Create empty stack",
+        "For each component:",
+        " - If component is '..' and stack not empty:",
+        "   - Pop from stack (go to parent)",
+        " - Else if component is valid directory name:",
+        "   - Push to stack",
+        " - Skip if component is '.', '', or '..' with empty stack",
+        "Join stack components with '/'",
+        "Return '/' + joined path (or just '/' if empty)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Split path: O(n). Process each component: O(n). Join result: O(n). Total: O(n).",
+        "spaceExplanation": "Stack stores at most n/2 directories. Split array stores components. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string simplifyPath(string path) {\n        vector<string> stack;\n        stringstream ss(path);\n        string component;\n        \n        // Split by '/'\n        while (getline(ss, component, '/')) {\n            if (component == \"..\" && !stack.empty()) {\n                stack.pop_back();\n            } else if (component != \"\" && component != \".\" && component != \"..\") {\n                stack.push_back(component);\n            }\n        }\n        \n        // Build result\n        string result = \"/\";\n        for (int i = 0; i < stack.size(); i++) {\n            result += stack[i];\n            if (i < stack.size() - 1) {\n                result += \"/\";\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public String simplifyPath(String path) {\n        Stack<String> stack = new Stack<>();\n        String[] components = path.split(\"/\");\n        \n        for (String component : components) {\n            if (component.equals(\"..\")) {\n                if (!stack.isEmpty()) {\n                    stack.pop();\n                }\n            } else if (!component.isEmpty() && !component.equals(\".\")) {\n                stack.push(component);\n            }\n        }\n        \n        // Build result\n        if (stack.isEmpty()) return \"/\";\n        \n        StringBuilder result = new StringBuilder();\n        for (String dir : stack) {\n            result.append(\"/\").append(dir);\n        }\n        \n        return result.toString();\n    }\n}",
+        "python": "class Solution:\n    def simplifyPath(self, path: str) -> str:\n        stack = []\n        components = path.split('/')\n        \n        for component in components:\n            if component == '..':\n                if stack:\n                    stack.pop()\n            elif component and component != '.':\n                stack.append(component)\n        \n        return '/' + '/'.join(stack)",
+        "javascript": "function simplifyPath(path) {\n    const stack = [];\n    const components = path.split('/');\n    \n    for (const component of components) {\n        if (component === '..') {\n            if (stack.length > 0) {\n                stack.pop();\n            }\n        } else if (component && component !== '.') {\n            stack.push(component);\n        }\n    }\n    \n    return '/' + stack.join('/');\n}"
+      }
+    },
+    {
+      "name": "Manual Parsing (Alternative)",
+      "order": 2,
+      "intuition": "Parse path character by character, building components manually. More control over parsing but more code. Useful when split is not available or custom parsing needed.",
+      "approach": "Iterate through path, extract directories between slashes. Apply same stack logic.",
+      "steps": [
+        "Create empty stack and current component string",
+        "For each character in path:",
+        " - If character is '/':",
+        "   - Process current component (push/pop/ignore)",
+        "   - Reset current component",
+        " - Else: append character to current component",
+        "Process last component if exists",
+        "Build result from stack with '/' separators",
+        "Return canonical path"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through string. Each operation O(1). Total: O(n).",
+        "spaceExplanation": "Stack and component strings store O(n) data. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string simplifyPath(string path) {\n        vector<string> stack;\n        string component = \"\";\n        \n        path += \"/\"; // Add trailing slash for easier processing\n        \n        for (char c : path) {\n            if (c == '/') {\n                if (component == \"..\") {\n                    if (!stack.empty()) stack.pop_back();\n                } else if (!component.empty() && component != \".\") {\n                    stack.push_back(component);\n                }\n                component = \"\";\n            } else {\n                component += c;\n            }\n        }\n        \n        // Build result\n        if (stack.empty()) return \"/\";\n        \n        string result = \"\";\n        for (const string& dir : stack) {\n            result += \"/\" + dir;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public String simplifyPath(String path) {\n        Stack<String> stack = new Stack<>();\n        StringBuilder component = new StringBuilder();\n        \n        path += \"/\"; // Add trailing slash\n        \n        for (char c : path.toCharArray()) {\n            if (c == '/') {\n                String comp = component.toString();\n                if (comp.equals(\"..\")) {\n                    if (!stack.isEmpty()) stack.pop();\n                } else if (!comp.isEmpty() && !comp.equals(\".\")) {\n                    stack.push(comp);\n                }\n                component = new StringBuilder();\n            } else {\n                component.append(c);\n            }\n        }\n        \n        // Build result\n        if (stack.isEmpty()) return \"/\";\n        \n        StringBuilder result = new StringBuilder();\n        for (String dir : stack) {\n            result.append(\"/\").append(dir);\n        }\n        \n        return result.toString();\n    }\n}",
+        "python": "class Solution:\n    def simplifyPath(self, path: str) -> str:\n        stack = []\n        component = ''\n        \n        path += '/'  # Add trailing slash\n        \n        for char in path:\n            if char == '/':\n                if component == '..':\n                    if stack:\n                        stack.pop()\n                elif component and component != '.':\n                    stack.append(component)\n                component = ''\n            else:\n                component += char\n        \n        return '/' + '/'.join(stack)",
+        "javascript": "function simplifyPath(path) {\n    const stack = [];\n    let component = '';\n    \n    path += '/'; // Add trailing slash\n    \n    for (const char of path) {\n        if (char === '/') {\n            if (component === '..') {\n                if (stack.length > 0) {\n                    stack.pop();\n                }\n            } else if (component && component !== '.') {\n                stack.push(component);\n            }\n            component = '';\n        } else {\n            component += char;\n        }\n    }\n    \n    return '/' + stack.join('/');\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling '..' with empty stack (can't go above root)",
+    "Forgetting to ignore '.' (current directory)",
+    "Not filtering empty strings from split",
+    "Not starting result with '/'",
+    "Treating '...' as parent navigation (it's a directory name)",
+    "Not handling multiple consecutive slashes",
+    "Building path without '/' separators",
+    "Not handling edge case of root path '/'"
+  ],
+  "hints": [
+    "Stack represents current directory path",
+    "Split by '/' to get path components",
+    "'..' means pop (go to parent)",
+    "'.' means do nothing (current directory)",
+    "Empty components from consecutive slashes should be ignored",
+    "Can't go above root - don't pop empty stack",
+    "Result always starts with '/'",
+    "Any other string is a valid directory name"
+  ],
+  "followUp": [
+    "How to handle relative paths?",
+    "What if path can have symlinks?",
+    "How to validate if path exists in filesystem?",
+    "What about Windows paths with backslashes?",
+    "How to normalize paths with different separators?",
+    "Can we handle URLs similarly?",
+    "What if paths have spaces or special characters?",
+    "How to compare if two paths point to same location?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Google",
+    "Bloomberg",
+    "Apple",
+    "Adobe",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Stack",
+    "String",
+    "Path",
+    "Directory",
+    "Unix"
+  ],
+  "relatedProblems": [
+    "Remove Adjacent Duplicates",
+    "Valid Parentheses",
+    "Crawler Log Folder",
+    "Backspace String Compare",
+    "Remove K Digits",
+    "Decode String",
+    "Basic Calculator",
+    "Evaluate Reverse Polish Notation"
+  ]
 }

@@ -3,17 +3,200 @@
   "questionSlug": "max-sum-circular-array",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum Sum Circular Subarray - Leetcode 918",
+        "url": "https://www.youtube.com/watch?v=Q1TYVUEr-wY",
+        "channel": "NeetCode",
+        "duration": "12:35",
+        "language": "English"
+      },
+      {
+        "title": "Max Circular Subarray Sum Explained",
+        "url": "https://www.youtube.com/watch?v=aBsFJp3pK6E",
+        "channel": "TECH DOSE",
+        "duration": "18:45",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Sum in Circular Array",
+        "url": "https://www.youtube.com/watch?v=fxT9KjakYPM",
+        "channel": "take U forward",
+        "duration": "16:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Sum Circular Subarray Solution",
+        "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Max Circular Subarray Sum",
+        "url": "https://algo.monster/liteproblems/918",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Maximum Circular Subarray Sum Explained",
+        "url": "https://www.geeksforgeeks.org/maximum-contiguous-circular-sum/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Subarray",
+        "url": "https://leetcode.com/problems/maximum-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Subarray Sum",
+        "url": "https://www.geeksforgeeks.org/problems/smallest-sum-contiguous-subarray/1",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "K Concatenation Maximum Sum",
+        "url": "https://leetcode.com/problems/k-concatenation-maximum-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Subarray Sum with One Deletion",
+        "url": "https://leetcode.com/problems/maximum-subarray-sum-with-one-deletion/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Max Kadane + Min Kadane pattern when finding maximum sum in circular array. Key indicators: circular array, last connects to first, maximum subarray sum, need to consider wrap-around case, compare non-wrap vs wrap scenarios.",
+  "approaches": [
+    {
+      "name": "Max Kadane + Min Kadane (Total - Min Subarray)",
+      "order": 1,
+      "intuition": "Maximum circular subarray sum can be: (1) non-wrapping (standard Kadane's), or (2) wrapping (total sum - minimum subarray sum). The wrapping case means we take everything except the minimum subarray in the middle. Return max of both cases. Handle edge case where all elements are negative.",
+      "approach": "Find maximum subarray sum (non-wrapping case). Find minimum subarray sum. Calculate wrapping case as totalSum - minSubarraySum. Return maximum of both cases. Special case: if all negative, return maxSubarraySum.",
+      "steps": [
+        "Calculate totalSum = sum of all elements",
+        "",
+        "Find maxSum using standard Kadane's:",
+        "  - maxSum = nums[0], currentMax = nums[0]",
+        "  - For i from 1 to n-1:",
+        "    - currentMax = max(nums[i], currentMax + nums[i])",
+        "    - maxSum = max(maxSum, currentMax)",
+        "",
+        "Find minSum using modified Kadane's:",
+        "  - minSum = nums[0], currentMin = nums[0]",
+        "  - For i from 1 to n-1:",
+        "    - currentMin = min(nums[i], currentMin + nums[i])",
+        "    - minSum = min(minSum, currentMin)",
+        "",
+        "If maxSum < 0: return maxSum  // all elements negative",
+        "Else: return max(maxSum, totalSum - minSum)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Calculate total: O(n), max Kadane's: O(n), min Kadane's: O(n). Total: O(n).",
+        "spaceExplanation": "Only constant variables. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxSubarraySumCircular(vector<int>& nums) {\n        int totalSum = 0;\n        int maxSum = nums[0], currentMax = nums[0];\n        int minSum = nums[0], currentMin = nums[0];\n        \n        totalSum = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            totalSum += nums[i];\n            \n            // Standard Kadane's for max\n            currentMax = max(nums[i], currentMax + nums[i]);\n            maxSum = max(maxSum, currentMax);\n            \n            // Modified Kadane's for min\n            currentMin = min(nums[i], currentMin + nums[i]);\n            minSum = min(minSum, currentMin);\n        }\n        \n        // If all elements are negative, return maxSum\n        if (maxSum < 0) {\n            return maxSum;\n        }\n        \n        // Return max of non-wrapping and wrapping cases\n        return max(maxSum, totalSum - minSum);\n    }\n};",
+        "java": "class Solution {\n    public int maxSubarraySumCircular(int[] nums) {\n        int totalSum = 0;\n        int maxSum = nums[0], currentMax = nums[0];\n        int minSum = nums[0], currentMin = nums[0];\n        \n        totalSum = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            totalSum += nums[i];\n            \n            // Standard Kadane's for max\n            currentMax = Math.max(nums[i], currentMax + nums[i]);\n            maxSum = Math.max(maxSum, currentMax);\n            \n            // Modified Kadane's for min\n            currentMin = Math.min(nums[i], currentMin + nums[i]);\n            minSum = Math.min(minSum, currentMin);\n        }\n        \n        // If all elements are negative, return maxSum\n        if (maxSum < 0) {\n            return maxSum;\n        }\n        \n        // Return max of non-wrapping and wrapping cases\n        return Math.max(maxSum, totalSum - minSum);\n    }\n}",
+        "python": "def maxSubarraySumCircular(nums):\n    total_sum = 0\n    max_sum = nums[0]\n    current_max = nums[0]\n    min_sum = nums[0]\n    current_min = nums[0]\n    \n    total_sum = nums[0]\n    \n    for i in range(1, len(nums)):\n        total_sum += nums[i]\n        \n        # Standard Kadane's for max\n        current_max = max(nums[i], current_max + nums[i])\n        max_sum = max(max_sum, current_max)\n        \n        # Modified Kadane's for min\n        current_min = min(nums[i], current_min + nums[i])\n        min_sum = min(min_sum, current_min)\n    \n    # If all elements are negative, return max_sum\n    if max_sum < 0:\n        return max_sum\n    \n    # Return max of non-wrapping and wrapping cases\n    return max(max_sum, total_sum - min_sum)",
+        "javascript": "function maxSubarraySumCircular(nums) {\n    let totalSum = 0;\n    let maxSum = nums[0], currentMax = nums[0];\n    let minSum = nums[0], currentMin = nums[0];\n    \n    totalSum = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        totalSum += nums[i];\n        \n        // Standard Kadane's for max\n        currentMax = Math.max(nums[i], currentMax + nums[i]);\n        maxSum = Math.max(maxSum, currentMax);\n        \n        // Modified Kadane's for min\n        currentMin = Math.min(nums[i], currentMin + nums[i]);\n        minSum = Math.min(minSum, currentMin);\n    }\n    \n    // If all elements are negative, return maxSum\n    if (maxSum < 0) {\n        return maxSum;\n    }\n    \n    // Return max of non-wrapping and wrapping cases\n    return Math.max(maxSum, totalSum - minSum);\n}"
+      }
+    },
+    {
+      "name": "Prefix and Suffix Maximum Sums",
+      "order": 2,
+      "intuition": "For circular case, maximum can wrap around. This means best prefix sum + best suffix sum. Compute maximum prefix sum ending at each position. Compute maximum suffix sum starting at each position. For each split point, consider prefix[i] + suffix[i+1]. Also compare with non-wrapping max subarray.",
+      "approach": "Calculate maxPrefix[i] = maximum sum of subarray from start to position i. Calculate maxSuffix[i] = maximum sum of subarray from position i to end. For each split, maxPrefix[i] + maxSuffix[i+1] gives wrapping sum. Return max of non-wrapping Kadane's and best wrapping sum.",
+      "steps": [
+        "Calculate maxSum using standard Kadane's (non-wrapping case)",
+        "",
+        "Calculate maxPrefix[i] = max prefix sum ending at i:",
+        "  - maxPrefix[0] = nums[0], prefixSum = nums[0]",
+        "  - For i from 1 to n-1:",
+        "    - prefixSum += nums[i]",
+        "    - maxPrefix[i] = max(maxPrefix[i-1], prefixSum)",
+        "",
+        "Calculate maxSuffix[i] = max suffix sum starting at i:",
+        "  - maxSuffix[n-1] = nums[n-1], suffixSum = nums[n-1]",
+        "  - For i from n-2 to 0:",
+        "    - suffixSum += nums[i]",
+        "    - maxSuffix[i] = max(maxSuffix[i+1], suffixSum)",
+        "",
+        "Find best wrapping sum:",
+        "  - For i from 0 to n-2:",
+        "    - wrapSum = maxPrefix[i] + maxSuffix[i+1]",
+        "    - maxSum = max(maxSum, wrapSum)",
+        "",
+        "Return maxSum"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Kadane's: O(n), prefix calculation: O(n), suffix calculation: O(n), checking wraps: O(n). Total: O(n).",
+        "spaceExplanation": "Two arrays of size n for prefix and suffix. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxSubarraySumCircular(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Non-wrapping case: standard Kadane's\n        int maxSum = nums[0], currentMax = nums[0];\n        for (int i = 1; i < n; i++) {\n            currentMax = max(nums[i], currentMax + nums[i]);\n            maxSum = max(maxSum, currentMax);\n        }\n        \n        // Calculate max prefix sums\n        vector<int> maxPrefix(n);\n        maxPrefix[0] = nums[0];\n        int prefixSum = nums[0];\n        for (int i = 1; i < n; i++) {\n            prefixSum += nums[i];\n            maxPrefix[i] = max(maxPrefix[i-1], prefixSum);\n        }\n        \n        // Calculate max suffix sums\n        vector<int> maxSuffix(n);\n        maxSuffix[n-1] = nums[n-1];\n        int suffixSum = nums[n-1];\n        for (int i = n-2; i >= 0; i--) {\n            suffixSum += nums[i];\n            maxSuffix[i] = max(maxSuffix[i+1], suffixSum);\n        }\n        \n        // Find best wrapping sum\n        for (int i = 0; i < n - 1; i++) {\n            int wrapSum = maxPrefix[i] + maxSuffix[i+1];\n            maxSum = max(maxSum, wrapSum);\n        }\n        \n        return maxSum;\n    }\n};",
+        "java": "class Solution {\n    public int maxSubarraySumCircular(int[] nums) {\n        int n = nums.length;\n        \n        // Non-wrapping case: standard Kadane's\n        int maxSum = nums[0], currentMax = nums[0];\n        for (int i = 1; i < n; i++) {\n            currentMax = Math.max(nums[i], currentMax + nums[i]);\n            maxSum = Math.max(maxSum, currentMax);\n        }\n        \n        // Calculate max prefix sums\n        int[] maxPrefix = new int[n];\n        maxPrefix[0] = nums[0];\n        int prefixSum = nums[0];\n        for (int i = 1; i < n; i++) {\n            prefixSum += nums[i];\n            maxPrefix[i] = Math.max(maxPrefix[i-1], prefixSum);\n        }\n        \n        // Calculate max suffix sums\n        int[] maxSuffix = new int[n];\n        maxSuffix[n-1] = nums[n-1];\n        int suffixSum = nums[n-1];\n        for (int i = n-2; i >= 0; i--) {\n            suffixSum += nums[i];\n            maxSuffix[i] = Math.max(maxSuffix[i+1], suffixSum);\n        }\n        \n        // Find best wrapping sum\n        for (int i = 0; i < n - 1; i++) {\n            int wrapSum = maxPrefix[i] + maxSuffix[i+1];\n            maxSum = Math.max(maxSum, wrapSum);\n        }\n        \n        return maxSum;\n    }\n}",
+        "python": "def maxSubarraySumCircular(nums):\n    n = len(nums)\n    \n    # Non-wrapping case: standard Kadane's\n    max_sum = nums[0]\n    current_max = nums[0]\n    for i in range(1, n):\n        current_max = max(nums[i], current_max + nums[i])\n        max_sum = max(max_sum, current_max)\n    \n    # Calculate max prefix sums\n    max_prefix = [0] * n\n    max_prefix[0] = nums[0]\n    prefix_sum = nums[0]\n    for i in range(1, n):\n        prefix_sum += nums[i]\n        max_prefix[i] = max(max_prefix[i-1], prefix_sum)\n    \n    # Calculate max suffix sums\n    max_suffix = [0] * n\n    max_suffix[n-1] = nums[n-1]\n    suffix_sum = nums[n-1]\n    for i in range(n-2, -1, -1):\n        suffix_sum += nums[i]\n        max_suffix[i] = max(max_suffix[i+1], suffix_sum)\n    \n    # Find best wrapping sum\n    for i in range(n - 1):\n        wrap_sum = max_prefix[i] + max_suffix[i+1]\n        max_sum = max(max_sum, wrap_sum)\n    \n    return max_sum",
+        "javascript": "function maxSubarraySumCircular(nums) {\n    const n = nums.length;\n    \n    // Non-wrapping case: standard Kadane's\n    let maxSum = nums[0], currentMax = nums[0];\n    for (let i = 1; i < n; i++) {\n        currentMax = Math.max(nums[i], currentMax + nums[i]);\n        maxSum = Math.max(maxSum, currentMax);\n    }\n    \n    // Calculate max prefix sums\n    const maxPrefix = new Array(n);\n    maxPrefix[0] = nums[0];\n    let prefixSum = nums[0];\n    for (let i = 1; i < n; i++) {\n        prefixSum += nums[i];\n        maxPrefix[i] = Math.max(maxPrefix[i-1], prefixSum);\n    }\n    \n    // Calculate max suffix sums\n    const maxSuffix = new Array(n);\n    maxSuffix[n-1] = nums[n-1];\n    let suffixSum = nums[n-1];\n    for (let i = n-2; i >= 0; i--) {\n        suffixSum += nums[i];\n        maxSuffix[i] = Math.max(maxSuffix[i+1], suffixSum);\n    }\n    \n    // Find best wrapping sum\n    for (let i = 0; i < n - 1; i++) {\n        const wrapSum = maxPrefix[i] + maxSuffix[i+1];\n        maxSum = Math.max(maxSum, wrapSum);\n    }\n    \n    return maxSum;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the case where all elements are negative (would incorrectly return totalSum - minSum = 0)",
+    "Forgetting to consider both wrapping and non-wrapping cases",
+    "In total - min approach, not checking if maxSum < 0 before returning",
+    "Confusing minimum subarray with minimum element",
+    "Not understanding that wrapping case = total - (middle minimum subarray)",
+    "In prefix/suffix approach, off-by-one errors when combining prefix[i] + suffix[i+1]",
+    "Trying to wrap entire array (minSum == totalSum case)"
+  ],
+  "hints": [
+    "Maximum circular subarray is either non-wrapping or wrapping around edges",
+    "Non-wrapping case: use standard Kadane's algorithm",
+    "Wrapping case: think about what remains when you remove minimum subarray from middle",
+    "Wrapping sum = totalSum - minimumSubarraySum",
+    "Edge case: if all elements negative, wrapping formula doesn't work (use maxSum)",
+    "Alternative: combine best prefix sum with best suffix sum"
+  ],
+  "followUp": [
+    "What if you can wrap around k times (k repetitions of array)?",
+    "How to return the actual subarray indices?",
+    "Can you solve with one deletion allowed in circular array?",
+    "What if array is not circular but you can choose start/end points?",
+    "How to find minimum circular subarray sum?",
+    "Can you extend to maximum product circular subarray?",
+    "What if some elements can be skipped (not deleted, just optional)?",
+    "How would you solve for 2D circular matrix?"
+  ],
+  "companies": [
+    "Facebook",
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Bloomberg",
+    "Apple",
+    "Adobe",
+    "Uber"
+  ],
+  "tags": [
+    "Array",
+    "Dynamic Programming",
+    "Kadane's Algorithm",
+    "Queue",
+    "Monotonic Queue"
+  ],
+  "relatedProblems": [
+    "Maximum Subarray",
+    "Maximum Subarray Sum with One Deletion",
+    "K Concatenation Maximum Sum",
+    "Minimum Subarray Sum",
+    "Maximum Absolute Sum of Any Subarray",
+    "Maximum Product Subarray",
+    "Continuous Subarray Sum"
+  ]
 }

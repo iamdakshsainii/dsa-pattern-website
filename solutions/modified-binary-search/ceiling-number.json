@@ -3,17 +3,181 @@
   "questionSlug": "ceiling-number",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/ceiling-in-a-sorted-array/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Ceiling of Target in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=uiz0IxPCUeU",
+        "channel": "Aditya Verma",
+        "duration": "12:15",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search - Floor and Ceiling",
+        "url": "https://www.youtube.com/watch?v=5cx0xerA8XY",
+        "channel": "take U forward",
+        "duration": "18:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Ceiling in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=5VaXx6fOcNw",
+        "channel": "TECH DOSE",
+        "duration": "14:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Ceiling in Sorted Array",
+        "url": "https://www.geeksforgeeks.org/ceiling-in-a-sorted-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Search Variations",
+        "url": "https://leetcode.com/discuss/study-guide/786126/python-powerful-ultimate-binary-search-template-solved-many-problems",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Floor and Ceiling Explained",
+        "url": "https://algo.monster/problems/binary_search_boundary",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find Smallest Letter Greater Than Target",
+        "url": "https://leetcode.com/problems/find-smallest-letter-greater-than-target/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search Insert Position",
+        "url": "https://leetcode.com/problems/search-insert-position/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "First Bad Version",
+        "url": "https://leetcode.com/problems/first-bad-version/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Right Interval",
+        "url": "https://leetcode.com/problems/find-right-interval/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Ceiling Number when finding smallest element >= target. Key indicators: sorted array, smallest greater/equal element, ceiling value, next element, binary search variation.",
+  "approaches": [
+    {
+      "name": "Modified Binary Search (Optimal)",
+      "order": 1,
+      "intuition": "Ceiling is smallest element >= target. Use binary search tracking smallest valid element found. When arr[mid] >= target, it's potential ceiling, search left for smaller. When arr[mid] < target, search right.",
+      "approach": "Binary search maintaining ceiling variable. Update ceiling when element >= target found. Move left to find smaller valid ceiling or right to find any valid ceiling.",
+      "steps": [
+        "Initialize left = 0, right = n-1, ceiling = -1",
+        "While left <= right:",
+        "  - Calculate mid = left + (right - left) / 2",
+        "  - If arr[mid] == target: return arr[mid] (exact match)",
+        "  - If arr[mid] > target:",
+        "    * Update ceiling = arr[mid] (potential answer)",
+        "    * Search left: right = mid - 1",
+        "  - Else arr[mid] < target:",
+        "    * Search right: left = mid + 1",
+        "Return ceiling (or -1 if not found)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search divides array in half each iteration. log n iterations.",
+        "spaceExplanation": "Only few variables used. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int ceilingNumber(vector<int>& arr, int target) {\n        int left = 0, right = arr.size() - 1;\n        int ceiling = -1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            // Exact match found\n            if (arr[mid] == target) {\n                return arr[mid];\n            }\n            \n            // Potential ceiling found\n            if (arr[mid] > target) {\n                ceiling = arr[mid];\n                right = mid - 1;  // Search for smaller ceiling\n            } else {\n                left = mid + 1;  // Need larger values\n            }\n        }\n        \n        return ceiling;\n    }\n};",
+        "java": "class Solution {\n    public int ceilingNumber(int[] arr, int target) {\n        int left = 0, right = arr.length - 1;\n        int ceiling = -1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            // Exact match found\n            if (arr[mid] == target) {\n                return arr[mid];\n            }\n            \n            // Potential ceiling found\n            if (arr[mid] > target) {\n                ceiling = arr[mid];\n                right = mid - 1;  // Search for smaller ceiling\n            } else {\n                left = mid + 1;  // Need larger values\n            }\n        }\n        \n        return ceiling;\n    }\n}",
+        "python": "class Solution:\n    def ceilingNumber(self, arr: List[int], target: int) -> int:\n        left, right = 0, len(arr) - 1\n        ceiling = -1\n        \n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            # Exact match found\n            if arr[mid] == target:\n                return arr[mid]\n            \n            # Potential ceiling found\n            if arr[mid] > target:\n                ceiling = arr[mid]\n                right = mid - 1  # Search for smaller ceiling\n            else:\n                left = mid + 1  # Need larger values\n        \n        return ceiling",
+        "javascript": "function ceilingNumber(arr, target) {\n    let left = 0, right = arr.length - 1;\n    let ceiling = -1;\n    \n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        // Exact match found\n        if (arr[mid] === target) {\n            return arr[mid];\n        }\n        \n        // Potential ceiling found\n        if (arr[mid] > target) {\n            ceiling = arr[mid];\n            right = mid - 1;  // Search for smaller ceiling\n        } else {\n            left = mid + 1;  // Need larger values\n        }\n    }\n    \n    return ceiling;\n}"
+      }
+    },
+    {
+      "name": "Linear Search (Brute Force)",
+      "order": 2,
+      "intuition": "Scan array from left to right. First element >= target is ceiling. Simple but inefficient, doesn't use sorted property.",
+      "approach": "Iterate through array. Return first element >= target. Return -1 if none found.",
+      "steps": [
+        "Iterate through array from index 0 to n-1",
+        "For each element arr[i]:",
+        "  - If arr[i] >= target: return arr[i]",
+        "If loop completes: return -1 (no ceiling found)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "May need to check all n elements in worst case. Linear time: O(n).",
+        "spaceExplanation": "Only few variables used. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int ceilingNumber(vector<int>& arr, int target) {\n        for (int i = 0; i < arr.size(); i++) {\n            if (arr[i] >= target) {\n                return arr[i];\n            }\n        }\n        return -1;  // No ceiling found\n    }\n};",
+        "java": "class Solution {\n    public int ceilingNumber(int[] arr, int target) {\n        for (int i = 0; i < arr.length; i++) {\n            if (arr[i] >= target) {\n                return arr[i];\n            }\n        }\n        return -1;  // No ceiling found\n    }\n}",
+        "python": "class Solution:\n    def ceilingNumber(self, arr: List[int], target: int) -> int:\n        for num in arr:\n            if num >= target:\n                return num\n        return -1  # No ceiling found",
+        "javascript": "function ceilingNumber(arr, target) {\n    for (let i = 0; i < arr.length; i++) {\n        if (arr[i] >= target) {\n            return arr[i];\n        }\n    }\n    return -1;  // No ceiling found\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Confusing ceiling (>=) with floor (<=)",
+    "Not handling case where no ceiling exists (all elements < target)",
+    "Using wrong comparison (> instead of >=)",
+    "Not updating ceiling when arr[mid] >= target",
+    "Returning index instead of value",
+    "Not handling empty array",
+    "Using left < right instead of left <= right",
+    "Forgetting exact match case (arr[mid] == target)"
+  ],
+  "hints": [
+    "Ceiling means smallest element >= target",
+    "Binary search can find it in O(log n)",
+    "Track potential ceiling as you search",
+    "When arr[mid] > target, search left for smaller",
+    "When arr[mid] < target, search right",
+    "Exact match (arr[mid] == target) is perfect ceiling",
+    "If no element >= target, return -1",
+    "Result could be first element or last element"
+  ],
+  "followUp": [
+    "What if array is rotated?",
+    "How to find floor (largest element <= target)?",
+    "What if duplicates exist?",
+    "Can you find ceiling in O(log log n)?",
+    "How to handle very large arrays (distributed)?",
+    "What if array is unsorted?",
+    "How to find both floor and ceiling efficiently?",
+    "What about floating point numbers?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Oracle",
+    "Adobe"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Sorted Array",
+    "Search Algorithm"
+  ],
+  "relatedProblems": [
+    "Find Smallest Letter Greater Than Target",
+    "Search Insert Position",
+    "First Bad Version",
+    "Find Right Interval",
+    "Next Letter",
+    "Minimum Difference Element",
+    "Number Range",
+    "Search in Rotated Sorted Array"
+  ]
 }

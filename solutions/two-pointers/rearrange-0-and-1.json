@@ -17,6 +17,13 @@
         "channel": "Pepcoding",
         "duration": "10:30",
         "language": "English"
+      },
+      {
+        "title": "Partition Array - Two Pointers Technique",
+        "url": "https://www.youtube.com/watch?v=UmWoBKPAPLg",
+        "channel": "Aditya Verma",
+        "duration": "12:15",
+        "language": "English"
       }
     ],
     "articles": [
@@ -24,23 +31,48 @@
         "title": "Segregate 0s and 1s in Array",
         "url": "https://www.geeksforgeeks.org/segregate-0s-and-1s-in-an-array-by-traversing-array-once/",
         "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Two Pointers Pattern Guide",
+        "url": "https://leetcode.com/discuss/study-guide/1688903/solved-all-two-pointers-problems-in-100-days",
+        "source": "LeetCode Discuss"
+      },
+      {
+        "title": "Partitioning Algorithms Explained",
+        "url": "https://www.educative.io/courses/grokking-coding-interview-patterns-java/partitioning",
+        "source": "Educative"
       }
     ],
     "practice": [
       {
-        "title": "Practice on GeeksforGeeks",
+        "title": "Segregate 0s and 1s",
         "url": "https://www.geeksforgeeks.org/problems/segregate-0s-and-1s5106/1",
         "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Sort Colors",
+        "url": "https://leetcode.com/problems/sort-colors/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Move Zeroes",
+        "url": "https://leetcode.com/problems/move-zeroes/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Partition Array",
+        "url": "https://leetcode.com/problems/partition-array/",
+        "platform": "LeetCode"
       }
     ],
     "discussions": []
   },
-  "patternTriggers": "Use Two Pointers when partitioning array into two sections based on a condition. Similar to Dutch National Flag but for two values.",
+  "patternTriggers": "Use Two Pointers when partitioning array into two sections based on a condition. Similar to Dutch National Flag but for two values. Keywords: 'segregate', 'partition', 'binary values', 'two categories'.",
   "approaches": [
     {
       "name": "Counting",
       "order": 1,
-      "intuition": "Count the number of 0s and 1s, then overwrite the array with all 0s first, followed by all 1s.",
+      "intuition": "Count the number of 0s and 1s, then overwrite the array with all 0s first, followed by all 1s. Simple but requires two passes.",
       "approach": "Make two passes: first to count, second to write back the values.",
       "steps": [
         "Count the number of 0s in the array",
@@ -51,8 +83,8 @@
       "complexity": {
         "time": "O(n)",
         "space": "O(1)",
-        "timeExplanation": "Two passes through the array",
-        "spaceExplanation": "Only counter variable used"
+        "timeExplanation": "Two passes through the array: O(n) + O(n) = O(2n) = O(n).",
+        "spaceExplanation": "Only counter variable used: O(1) constant space."
       },
       "code": {
         "cpp": "void segregate0and1(vector<int>& nums) {\n    int count0 = 0;\n    \n    // Count 0s\n    for (int num : nums) {\n        if (num == 0) count0++;\n    }\n    \n    // Fill array with 0s then 1s\n    for (int i = 0; i < nums.size(); i++) {\n        nums[i] = (i < count0) ? 0 : 1;\n    }\n}",
@@ -64,13 +96,13 @@
     {
       "name": "Two Pointers (Optimal)",
       "order": 2,
-      "intuition": "Use two pointers from both ends. Swap 1s from the left with 0s from the right to segregate them in one pass.",
+      "intuition": "Use two pointers from both ends. Swap 1s from the left with 0s from the right to segregate them in one pass. This is the optimal single-pass solution.",
       "approach": "Use left pointer to find 1s and right pointer to find 0s, then swap them.",
       "steps": [
         "Initialize left = 0, right = n - 1",
         "While left < right:",
-        "  If nums[left] is 0: increment left",
-        "  Else if nums[right] is 1: decrement right",
+        "  If nums[left] is 0: increment left (already in correct position)",
+        "  Else if nums[right] is 1: decrement right (already in correct position)",
         "  Else (nums[left] is 1 and nums[right] is 0):",
         "    Swap nums[left] and nums[right]",
         "    Increment left, decrement right"
@@ -78,8 +110,8 @@
       "complexity": {
         "time": "O(n)",
         "space": "O(1)",
-        "timeExplanation": "Single pass with two pointers",
-        "spaceExplanation": "Only two pointer variables"
+        "timeExplanation": "Single pass with two pointers meeting in the middle: O(n).",
+        "spaceExplanation": "Only two pointer variables: O(1) constant space."
       },
       "code": {
         "cpp": "void segregate0and1(vector<int>& nums) {\n    int left = 0, right = nums.size() - 1;\n    \n    while (left < right) {\n        // Move left pointer forward if it points to 0\n        if (nums[left] == 0) {\n            left++;\n        }\n        // Move right pointer backward if it points to 1\n        else if (nums[right] == 1) {\n            right--;\n        }\n        // Swap when left points to 1 and right points to 0\n        else {\n            swap(nums[left], nums[right]);\n            left++;\n            right--;\n        }\n    }\n}",
@@ -91,7 +123,7 @@
     {
       "name": "Partitioning (Alternative)",
       "order": 3,
-      "intuition": "Similar to partition in quicksort. Keep all 0s on the left side using a boundary pointer.",
+      "intuition": "Similar to partition in quicksort. Keep all 0s on the left side using a boundary pointer. Single pass solution like Two Pointers but different approach.",
       "approach": "Use a pointer to track the boundary between 0s and 1s.",
       "steps": [
         "Initialize boundary = 0 (next position for 0)",
@@ -104,8 +136,8 @@
       "complexity": {
         "time": "O(n)",
         "space": "O(1)",
-        "timeExplanation": "Single pass through the array",
-        "spaceExplanation": "Only boundary pointer used"
+        "timeExplanation": "Single pass through the array: O(n).",
+        "spaceExplanation": "Only boundary pointer used: O(1) constant space."
       },
       "code": {
         "cpp": "void segregate0and1(vector<int>& nums) {\n    int boundary = 0; // Next position for 0\n    \n    for (int i = 0; i < nums.size(); i++) {\n        if (nums[i] == 0) {\n            swap(nums[i], nums[boundary]);\n            boundary++;\n        }\n    }\n}",
@@ -120,36 +152,55 @@
     "Not handling the case when both pointers point to correct values",
     "Moving pointers at wrong times or not moving them after swap",
     "Trying to maintain relative order (problem usually doesn't require it)",
-    "Not considering edge cases like all 0s or all 1s"
+    "Not considering edge cases like all 0s or all 1s",
+    "Confusing this with Move Zeroes problem (different requirements)",
+    "Forgetting that only 0s and 1s exist (no other values)",
+    "Using extra space when O(1) space solution exists"
   ],
   "hints": [
     "You don't need to maintain the relative order of elements",
     "Think about partitioning the array into two sections",
     "All 0s should be on the left, all 1s on the right",
     "You can solve this in a single pass through the array",
-    "Similar to the partition step in quicksort"
+    "Similar to the partition step in quicksort",
+    "Two pointers from both ends is more efficient than single pointer",
+    "When left sees 1 and right sees 0, swap them",
+    "This is a simpler version of Dutch National Flag problem"
   ],
   "followUp": [
-    "What if you need to maintain the relative order of elements?",
+    "What if you need to maintain the relative order of elements (stable partition)?",
     "How would you extend this to segregate 0s, 1s, and 2s (Dutch National Flag)?",
     "Can you do this for a linked list instead of an array?",
-    "What if the array contains other values besides 0 and 1?"
+    "What if the array contains other values besides 0 and 1?",
+    "How would you segregate even and odd numbers?",
+    "What if you need to count the number of swaps made?",
+    "Can you solve this recursively?",
+    "How would you handle very large arrays that don't fit in memory?"
   ],
   "companies": [
     "Amazon",
     "Microsoft",
     "Adobe",
-    "Samsung"
+    "Samsung",
+    "Walmart",
+    "Goldman Sachs",
+    "Morgan Stanley",
+    "Qualcomm"
   ],
   "tags": [
     "Array",
     "Two Pointers",
-    "Sorting"
+    "Sorting",
+    "Partitioning"
   ],
   "relatedProblems": [
     "Sort Colors",
     "Move Zeroes",
     "Segregate Even and Odd Numbers",
-    "Partition Array"
+    "Partition Array",
+    "Partition List",
+    "Sort Array By Parity",
+    "Sort Array By Parity II",
+    "Squares of a Sorted Array"
   ]
 }

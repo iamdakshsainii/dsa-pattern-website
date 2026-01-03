@@ -3,17 +3,185 @@
   "questionSlug": "kth-largest-stream",
   "resources": {
     "leetcode": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Kth Largest Element in a Stream - Leetcode 703",
+        "url": "https://www.youtube.com/watch?v=hOjcdrqMoQ8",
+        "channel": "NeetCode",
+        "duration": "6:45",
+        "language": "English"
+      },
+      {
+        "title": "Kth Largest in Stream Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=EqzG_ghblT4",
+        "channel": "TECH DOSE",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Min Heap for Kth Largest",
+        "url": "https://www.youtube.com/watch?v=_AnJc2E7J9E",
+        "channel": "take U forward",
+        "duration": "13:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth Largest Element in a Stream Solution",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Kth Largest in Stream Using Heap",
+        "url": "https://www.geeksforgeeks.org/kth-largest-element-in-a-stream/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Stream Processing with Heaps",
+        "url": "https://algo.monster/problems/kth_largest_element_stream",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Kth Largest Element in an Array",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Median from Data Stream",
+        "url": "https://leetcode.com/problems/find-median-from-data-stream/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Sliding Window Maximum",
+        "url": "https://leetcode.com/problems/sliding-window-maximum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Top K Frequent Elements",
+        "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Min Heap for Kth Largest in Stream pattern when maintaining kth largest element as new elements arrive. Key indicators: streaming data, kth largest dynamically, min heap of size k, online algorithm.",
+  "approaches": [
+    {
+      "name": "Min Heap of Size K (Optimal)",
+      "order": 1,
+      "intuition": "Maintain min heap of size k containing k largest elements seen so far. Heap root is kth largest. When new element arrives: if larger than root, remove root and add new element. Root always represents kth largest.",
+      "approach": "Initialize min heap with first k elements (or fewer). For each new element: if heap size < k, add element. Else if element > heap root, remove root and add element. Return heap root (kth largest).",
+      "steps": [
+        "Constructor:",
+        " - Store k",
+        " - Create min heap",
+        " - For each element in initial array:",
+        "   - Call add(element)",
+        "add(val) method:",
+        " - If heap.size < k:",
+        "   - Add val to heap",
+        " - Else if val > heap.peek():",
+        "   - Remove heap root",
+        "   - Add val to heap",
+        " - Return heap.peek() (kth largest)"
+      ],
+      "complexity": {
+        "time": "O(log k) per add, O(n log k) constructor",
+        "space": "O(k)",
+        "timeExplanation": "Constructor: add n elements, each taking O(log k). Total: O(n log k). add(): one heap operation O(log k).",
+        "spaceExplanation": "Heap stores exactly k elements. O(k) space."
+      },
+      "code": {
+        "cpp": "class KthLargest {\nprivate:\n    int k;\n    priority_queue<int, vector<int>, greater<int>> minHeap;\n    \npublic:\n    KthLargest(int k, vector<int>& nums) {\n        this->k = k;\n        for (int num : nums) {\n            add(num);\n        }\n    }\n    \n    int add(int val) {\n        if (minHeap.size() < k) {\n            minHeap.push(val);\n        } else if (val > minHeap.top()) {\n            minHeap.pop();\n            minHeap.push(val);\n        }\n        return minHeap.top();\n    }\n};",
+        "java": "class KthLargest {\n    private int k;\n    private PriorityQueue<Integer> minHeap;\n    \n    public KthLargest(int k, int[] nums) {\n        this.k = k;\n        this.minHeap = new PriorityQueue<>();\n        \n        for (int num : nums) {\n            add(num);\n        }\n    }\n    \n    public int add(int val) {\n        if (minHeap.size() < k) {\n            minHeap.offer(val);\n        } else if (val > minHeap.peek()) {\n            minHeap.poll();\n            minHeap.offer(val);\n        }\n        return minHeap.peek();\n    }\n}",
+        "python": "import heapq\n\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.k = k\n        self.min_heap = []\n        \n        for num in nums:\n            self.add(num)\n    \n    def add(self, val: int) -> int:\n        if len(self.min_heap) < self.k:\n            heapq.heappush(self.min_heap, val)\n        elif val > self.min_heap[0]:\n            heapq.heapreplace(self.min_heap, val)\n        \n        return self.min_heap[0]",
+        "javascript": "class MinHeap {\n    constructor() {\n        this.heap = [];\n    }\n    \n    push(val) {\n        this.heap.push(val);\n        this.bubbleUp(this.heap.length - 1);\n    }\n    \n    pop() {\n        if (this.heap.length === 0) return null;\n        if (this.heap.length === 1) return this.heap.pop();\n        \n        const min = this.heap[0];\n        this.heap[0] = this.heap.pop();\n        this.bubbleDown(0);\n        return min;\n    }\n    \n    peek() {\n        return this.heap[0];\n    }\n    \n    size() {\n        return this.heap.length;\n    }\n    \n    bubbleUp(idx) {\n        while (idx > 0) {\n            const parent = Math.floor((idx - 1) / 2);\n            if (this.heap[parent] <= this.heap[idx]) break;\n            [this.heap[parent], this.heap[idx]] = [this.heap[idx], this.heap[parent]];\n            idx = parent;\n        }\n    }\n    \n    bubbleDown(idx) {\n        while (true) {\n            const left = 2 * idx + 1;\n            const right = 2 * idx + 2;\n            let smallest = idx;\n            \n            if (left < this.heap.length && this.heap[left] < this.heap[smallest]) {\n                smallest = left;\n            }\n            if (right < this.heap.length && this.heap[right] < this.heap[smallest]) {\n                smallest = right;\n            }\n            if (smallest === idx) break;\n            \n            [this.heap[idx], this.heap[smallest]] = [this.heap[smallest], this.heap[idx]];\n            idx = smallest;\n        }\n    }\n}\n\nclass KthLargest {\n    constructor(k, nums) {\n        this.k = k;\n        this.minHeap = new MinHeap();\n        \n        for (const num of nums) {\n            this.add(num);\n        }\n    }\n    \n    add(val) {\n        if (this.minHeap.size() < this.k) {\n            this.minHeap.push(val);\n        } else if (val > this.minHeap.peek()) {\n            this.minHeap.pop();\n            this.minHeap.push(val);\n        }\n        return this.minHeap.peek();\n    }\n}"
+      }
+    },
+    {
+      "name": "Sorted Array with Binary Search (Suboptimal)",
+      "order": 2,
+      "intuition": "Maintain sorted array of all elements. Use binary search to insert new element in correct position. Return element at position (length - k). This works but is less efficient than heap.",
+      "approach": "Keep sorted array. For each add, binary search for insertion position, insert element. Return arr[arr.length - k].",
+      "steps": [
+        "Constructor:",
+        " - Store k",
+        " - Create sorted array from nums",
+        "add(val) method:",
+        " - Binary search for insertion position",
+        " - Insert val at position",
+        " - Return arr[arr.length - k]"
+      ],
+      "complexity": {
+        "time": "O(n) per add due to insertion",
+        "space": "O(n)",
+        "timeExplanation": "Binary search: O(log n). Array insertion: O(n) to shift elements. Total per add: O(n). Constructor: O(n log n) for sorting.",
+        "spaceExplanation": "Store all n elements. O(n) space."
+      },
+      "code": {
+        "cpp": "class KthLargest {\nprivate:\n    int k;\n    vector<int> arr;\n    \npublic:\n    KthLargest(int k, vector<int>& nums) {\n        this->k = k;\n        arr = nums;\n        sort(arr.begin(), arr.end());\n    }\n    \n    int add(int val) {\n        auto pos = lower_bound(arr.begin(), arr.end(), val);\n        arr.insert(pos, val);\n        return arr[arr.size() - k];\n    }\n};",
+        "java": "class KthLargest {\n    private int k;\n    private List<Integer> arr;\n    \n    public KthLargest(int k, int[] nums) {\n        this.k = k;\n        this.arr = new ArrayList<>();\n        for (int num : nums) {\n            arr.add(num);\n        }\n        Collections.sort(arr);\n    }\n    \n    public int add(int val) {\n        int pos = Collections.binarySearch(arr, val);\n        if (pos < 0) pos = -(pos + 1);\n        arr.add(pos, val);\n        return arr.get(arr.size() - k);\n    }\n}",
+        "python": "from bisect import insort\n\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.k = k\n        self.arr = sorted(nums)\n    \n    def add(self, val: int) -> int:\n        insort(self.arr, val)\n        return self.arr[-self.k]",
+        "javascript": "class KthLargest {\n    constructor(k, nums) {\n        this.k = k;\n        this.arr = nums.sort((a, b) => a - b);\n    }\n    \n    add(val) {\n        // Binary search for insertion position\n        let left = 0, right = this.arr.length;\n        while (left < right) {\n            const mid = Math.floor((left + right) / 2);\n            if (this.arr[mid] < val) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        this.arr.splice(left, 0, val);\n        return this.arr[this.arr.length - this.k];\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using max heap instead of min heap",
+    "Not maintaining heap size exactly k",
+    "Comparing with wrong heap element (should compare with peek/root)",
+    "Returning wrong element (heap.top is kth largest, not largest)",
+    "Not handling case when heap size < k initially",
+    "Storing all elements instead of just k largest",
+    "Forgetting to remove root before adding larger element",
+    "Using sorted array (O(n) insert) instead of heap (O(log k))"
+  ],
+  "hints": [
+    "Min heap of size k keeps k largest elements",
+    "Heap root (minimum of k largest) is the kth largest overall",
+    "Only add to heap if element is larger than current kth largest",
+    "When heap full and new element is larger, remove root first",
+    "Heap size should be exactly k (or less if fewer elements seen)",
+    "Min heap for kth largest might seem counterintuitive but is correct",
+    "Don't store all elements - just maintain k largest"
+  ],
+  "followUp": [
+    "What if you need kth smallest instead of largest?",
+    "How to handle if k changes dynamically?",
+    "What if you need both kth largest and kth smallest?",
+    "How to extend to find kth largest in sliding window?",
+    "What if elements can be removed from stream?",
+    "How to handle very large k (close to stream size)?",
+    "What if you need top k elements, not just kth?",
+    "How to parallelize for multiple streams?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Uber"
+  ],
+  "tags": [
+    "Heap",
+    "Priority Queue",
+    "Design",
+    "Binary Search Tree",
+    "Data Stream"
+  ],
+  "relatedProblems": [
+    "Kth Largest Element in an Array",
+    "Find Median from Data Stream",
+    "Sliding Window Maximum",
+    "Top K Frequent Elements",
+    "Kth Smallest Element in a Sorted Matrix",
+    "Design a Stack With Increment Operation",
+    "Maximum Frequency Stack"
+  ]
 }

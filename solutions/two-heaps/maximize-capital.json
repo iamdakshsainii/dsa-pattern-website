@@ -3,17 +3,188 @@
   "questionSlug": "maximize-capital",
   "resources": {
     "leetcode": "https://leetcode.com/problems/ipo/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "IPO - LeetCode 502",
+        "url": "https://www.youtube.com/watch?v=1IUzNJ6TPEM",
+        "channel": "NeetCode",
+        "duration": "12:15",
+        "language": "English"
+      },
+      {
+        "title": "Maximize Capital Problem",
+        "url": "https://www.youtube.com/watch?v=BcInhJcy88w",
+        "channel": "TECH DOSE",
+        "duration": "14:50",
+        "language": "English"
+      },
+      {
+        "title": "IPO Problem Explained",
+        "url": "https://www.youtube.com/watch?v=8LusJS5-AGo",
+        "channel": "Pepcoding",
+        "duration": "16:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "IPO Problem",
+        "url": "https://leetcode.com/problems/ipo/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Maximize Capital Using Heaps",
+        "url": "https://www.geeksforgeeks.org/maximize-the-profit-by-investing-in-projects/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Greedy with Two Heaps Pattern",
+        "url": "https://algo.monster/problems/maximize_capital",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find Median from Data Stream",
+        "url": "https://leetcode.com/problems/find-median-from-data-stream/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Meeting Rooms II",
+        "url": "https://leetcode.com/problems/meeting-rooms-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Task Scheduler",
+        "url": "https://leetcode.com/problems/task-scheduler/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Performance of a Team",
+        "url": "https://leetcode.com/problems/maximum-performance-of-a-team/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Maximize Capital pattern when selecting k items with constraints to maximize value. Key indicators: can do k projects, each project has capital requirement and profit, want to maximize final capital, greedy selection with eligibility constraint.",
+  "approaches": [
+    {
+      "name": "Min Heap + Max Heap (Two Heaps)",
+      "order": 1,
+      "intuition": "Sort projects by capital requirement. Use min heap to track projects by capital requirement. Use max heap to track available (affordable) projects by profit. At each step, move all affordable projects to max heap, then pick most profitable one. Update capital and repeat k times.",
+      "approach": "Create project pairs (capital, profit). Sort by capital. Use min heap for all projects. For each of k iterations, pop all projects we can afford from min heap and push to max heap (by profit). Pick top from max heap (most profitable affordable project). Add its profit to capital.",
+      "steps": [
+        "Create projects array: [(capital[i], profit[i]) for all i]",
+        "Sort projects by capital requirement",
+        "Initialize minCapHeap with all projects (sorted by capital)",
+        "Initialize maxProfitHeap (empty, will store by profit)",
+        "For k iterations:",
+        "  - While minCapHeap not empty and top.capital <= currentCapital:",
+        "    - Pop project from minCapHeap",
+        "    - Push project.profit to maxProfitHeap",
+        "  - If maxProfitHeap is empty: break (no affordable projects)",
+        "  - Pop maxProfit from maxProfitHeap",
+        "  - currentCapital += maxProfit",
+        "Return currentCapital"
+      ],
+      "complexity": {
+        "time": "O(n log n + k log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting: O(n log n). k iterations, each moving projects between heaps: O(k log n). Total: O(n log n + k log n).",
+        "spaceExplanation": "Two heaps store n projects total. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMaximizedCapital(int k, int w, vector<int>& profits, vector<int>& capital) {\n        int n = profits.size();\n        \n        // Create projects: (capital, profit)\n        vector<pair<int, int>> projects;\n        for (int i = 0; i < n; i++) {\n            projects.push_back({capital[i], profits[i]});\n        }\n        \n        // Sort by capital requirement\n        sort(projects.begin(), projects.end());\n        \n        // Max heap for profits of affordable projects\n        priority_queue<int> maxProfitHeap;\n        \n        int currentCapital = w;\n        int projectIdx = 0;\n        \n        for (int i = 0; i < k; i++) {\n            // Add all affordable projects to max heap\n            while (projectIdx < n && projects[projectIdx].first <= currentCapital) {\n                maxProfitHeap.push(projects[projectIdx].second);\n                projectIdx++;\n            }\n            \n            // If no affordable projects, break\n            if (maxProfitHeap.empty()) break;\n            \n            // Pick most profitable project\n            currentCapital += maxProfitHeap.top();\n            maxProfitHeap.pop();\n        }\n        \n        return currentCapital;\n    }\n};",
+        "java": "class Solution {\n    public int findMaximizedCapital(int k, int w, int[] profits, int[] capital) {\n        int n = profits.length;\n        \n        // Create projects: [capital, profit]\n        int[][] projects = new int[n][2];\n        for (int i = 0; i < n; i++) {\n            projects[i] = new int[]{capital[i], profits[i]};\n        }\n        \n        // Sort by capital requirement\n        Arrays.sort(projects, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        // Max heap for profits\n        PriorityQueue<Integer> maxProfitHeap = new PriorityQueue<>(Collections.reverseOrder());\n        \n        int currentCapital = w;\n        int projectIdx = 0;\n        \n        for (int i = 0; i < k; i++) {\n            // Add all affordable projects to max heap\n            while (projectIdx < n && projects[projectIdx][0] <= currentCapital) {\n                maxProfitHeap.offer(projects[projectIdx][1]);\n                projectIdx++;\n            }\n            \n            // If no affordable projects, break\n            if (maxProfitHeap.isEmpty()) break;\n            \n            // Pick most profitable project\n            currentCapital += maxProfitHeap.poll();\n        }\n        \n        return currentCapital;\n    }\n}",
+        "python": "import heapq\n\nclass Solution:\n    def findMaximizedCapital(self, k, w, profits, capital):\n        # Create and sort projects by capital\n        projects = sorted(zip(capital, profits))\n        \n        # Max heap for profits (negate for max heap)\n        max_profit_heap = []\n        current_capital = w\n        project_idx = 0\n        n = len(projects)\n        \n        for _ in range(k):\n            # Add all affordable projects to max heap\n            while project_idx < n and projects[project_idx][0] <= current_capital:\n                heapq.heappush(max_profit_heap, -projects[project_idx][1])\n                project_idx += 1\n            \n            # If no affordable projects, break\n            if not max_profit_heap:\n                break\n            \n            # Pick most profitable project\n            current_capital += -heapq.heappop(max_profit_heap)\n        \n        return current_capital",
+        "javascript": "function findMaximizedCapital(k, w, profits, capital) {\n    const n = profits.length;\n    \n    // Create and sort projects by capital\n    const projects = [];\n    for (let i = 0; i < n; i++) {\n        projects.push([capital[i], profits[i]]);\n    }\n    projects.sort((a, b) => a[0] - b[0]);\n    \n    // Max heap for profits\n    const maxProfitHeap = new MaxHeap();\n    \n    let currentCapital = w;\n    let projectIdx = 0;\n    \n    for (let i = 0; i < k; i++) {\n        // Add all affordable projects to max heap\n        while (projectIdx < n && projects[projectIdx][0] <= currentCapital) {\n            maxProfitHeap.push(projects[projectIdx][1]);\n            projectIdx++;\n        }\n        \n        // If no affordable projects, break\n        if (maxProfitHeap.size() === 0) break;\n        \n        // Pick most profitable project\n        currentCapital += maxProfitHeap.pop();\n    }\n    \n    return currentCapital;\n}\n\nclass MaxHeap {\n    constructor() {\n        this.heap = [];\n    }\n    push(val) {\n        this.heap.push(val);\n        this.heap.sort((a, b) => b - a);\n    }\n    pop() {\n        return this.heap.shift();\n    }\n    size() {\n        return this.heap.length;\n    }\n}"
+      }
+    },
+    {
+      "name": "Greedy with Priority Queue",
+      "order": 2,
+      "intuition": "At each step, among all projects we can afford with current capital, always choose the one with maximum profit. This greedy choice maximizes our capital growth. Use priority queue to efficiently find maximum profit among eligible projects.",
+      "approach": "For each of k iterations, scan all projects to find affordable ones, select the one with maximum profit. This is less efficient but conceptually simpler than two heaps approach.",
+      "steps": [
+        "Initialize currentCapital = w",
+        "Create used array to track completed projects",
+        "For k iterations:",
+        "  - maxProfit = -1, selectedIdx = -1",
+        "  - For each project i:",
+        "    - If not used[i] and capital[i] <= currentCapital:",
+        "      - If profits[i] > maxProfit:",
+        "        - maxProfit = profits[i]",
+        "        - selectedIdx = i",
+        "  - If selectedIdx == -1: break (no affordable projects)",
+        "  - currentCapital += maxProfit",
+        "  - used[selectedIdx] = true",
+        "Return currentCapital"
+      ],
+      "complexity": {
+        "time": "O(k * n)",
+        "space": "O(n)",
+        "timeExplanation": "For each of k iterations, scan all n projects to find best: O(k * n).",
+        "spaceExplanation": "Used array stores n booleans. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMaximizedCapital(int k, int w, vector<int>& profits, vector<int>& capital) {\n        int n = profits.size();\n        vector<bool> used(n, false);\n        int currentCapital = w;\n        \n        for (int i = 0; i < k; i++) {\n            int maxProfit = -1;\n            int selectedIdx = -1;\n            \n            // Find best affordable project\n            for (int j = 0; j < n; j++) {\n                if (!used[j] && capital[j] <= currentCapital) {\n                    if (profits[j] > maxProfit) {\n                        maxProfit = profits[j];\n                        selectedIdx = j;\n                    }\n                }\n            }\n            \n            // If no affordable project found, break\n            if (selectedIdx == -1) break;\n            \n            // Complete selected project\n            currentCapital += maxProfit;\n            used[selectedIdx] = true;\n        }\n        \n        return currentCapital;\n    }\n};",
+        "java": "class Solution {\n    public int findMaximizedCapital(int k, int w, int[] profits, int[] capital) {\n        int n = profits.length;\n        boolean[] used = new boolean[n];\n        int currentCapital = w;\n        \n        for (int i = 0; i < k; i++) {\n            int maxProfit = -1;\n            int selectedIdx = -1;\n            \n            // Find best affordable project\n            for (int j = 0; j < n; j++) {\n                if (!used[j] && capital[j] <= currentCapital) {\n                    if (profits[j] > maxProfit) {\n                        maxProfit = profits[j];\n                        selectedIdx = j;\n                    }\n                }\n            }\n            \n            // If no affordable project found, break\n            if (selectedIdx == -1) break;\n            \n            // Complete selected project\n            currentCapital += maxProfit;\n            used[selectedIdx] = true;\n        }\n        \n        return currentCapital;\n    }\n}",
+        "python": "class Solution:\n    def findMaximizedCapital(self, k, w, profits, capital):\n        n = len(profits)\n        used = [False] * n\n        current_capital = w\n        \n        for _ in range(k):\n            max_profit = -1\n            selected_idx = -1\n            \n            # Find best affordable project\n            for j in range(n):\n                if not used[j] and capital[j] <= current_capital:\n                    if profits[j] > max_profit:\n                        max_profit = profits[j]\n                        selected_idx = j\n            \n            # If no affordable project found, break\n            if selected_idx == -1:\n                break\n            \n            # Complete selected project\n            current_capital += max_profit\n            used[selected_idx] = True\n        \n        return current_capital",
+        "javascript": "function findMaximizedCapital(k, w, profits, capital) {\n    const n = profits.length;\n    const used = new Array(n).fill(false);\n    let currentCapital = w;\n    \n    for (let i = 0; i < k; i++) {\n        let maxProfit = -1;\n        let selectedIdx = -1;\n        \n        // Find best affordable project\n        for (let j = 0; j < n; j++) {\n            if (!used[j] && capital[j] <= currentCapital) {\n                if (profits[j] > maxProfit) {\n                    maxProfit = profits[j];\n                    selectedIdx = j;\n                }\n            }\n        }\n        \n        // If no affordable project found, break\n        if (selectedIdx === -1) break;\n        \n        // Complete selected project\n        currentCapital += maxProfit;\n        used[selectedIdx] = true;\n    }\n    \n    return currentCapital;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting projects by capital requirement first",
+    "Trying to use single heap instead of two heaps",
+    "Not handling case when no projects are affordable",
+    "Forgetting to break early when no affordable projects remain",
+    "Not considering that we might complete fewer than k projects",
+    "Using min heap for profits instead of max heap",
+    "Not tracking which projects have been completed"
+  ],
+  "hints": [
+    "Greedy approach: always pick most profitable project we can afford",
+    "Sort projects by capital requirement for efficient access",
+    "Use max heap to quickly find most profitable among affordable projects",
+    "Move projects from 'all projects' to 'affordable projects' as capital grows",
+    "Two heaps: min heap by capital (all projects), max heap by profit (affordable)",
+    "May complete fewer than k projects if we run out of affordable options"
+  ],
+  "followUp": [
+    "What if each project can be done multiple times?",
+    "How to solve if projects have dependencies (must do A before B)?",
+    "What if we want to maximize capital after T time units with project durations?",
+    "How to handle if projects have risks (probability of success)?",
+    "What if we can do multiple projects simultaneously with multiple resources?",
+    "How to optimize if k is very large (k >> n)?",
+    "What if capital requirements and profits change over time?",
+    "Can you extend to minimize time to reach a target capital?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Bloomberg",
+    "Apple",
+    "Uber"
+  ],
+  "tags": [
+    "Heap",
+    "Greedy",
+    "Array",
+    "Sorting",
+    "Two Heaps"
+  ],
+  "relatedProblems": [
+    "Find Median from Data Stream",
+    "Maximum Performance of a Team",
+    "Maximum Profit in Job Scheduling",
+    "Task Scheduler",
+    "Meeting Rooms II",
+    "Kth Largest Element in a Stream",
+    "Top K Frequent Elements"
+  ]
 }

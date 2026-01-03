@@ -3,17 +3,188 @@
   "questionSlug": "minimum-depth-binary-tree",
   "resources": {
     "leetcode": "https://leetcode.com/problems/minimum-depth-of-binary-tree/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Minimum Depth of Binary Tree - BFS",
+        "url": "https://www.youtube.com/watch?v=Kkk1bdN69qI",
+        "channel": "NeetCode",
+        "duration": "7:45",
+        "language": "English"
+      },
+      {
+        "title": "Find Minimum Depth Using BFS",
+        "url": "https://www.youtube.com/watch?v=qF-jVB4YYvs",
+        "channel": "TECH DOSE",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Minimum Depth DFS vs BFS",
+        "url": "https://www.youtube.com/watch?v=QfJsau0ItOY",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Minimum Depth Solution",
+        "url": "https://leetcode.com/problems/minimum-depth-of-binary-tree/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find Minimum Depth Guide",
+        "url": "https://www.geeksforgeeks.org/find-minimum-depth-of-a-binary-tree/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Tree Depth Patterns",
+        "url": "https://algo.monster/problems/minimum_depth_binary_tree",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Depth of Binary Tree",
+        "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Balanced Binary Tree",
+        "url": "https://leetcode.com/problems/balanced-binary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Symmetric Tree",
+        "url": "https://leetcode.com/problems/symmetric-tree/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Minimum Depth when finding shortest path to leaf. Key indicators: minimum depth, shortest path to leaf, first leaf node, BFS early termination.",
+  "approaches": [
+    {
+      "name": "BFS with Early Termination (Optimal)",
+      "order": 1,
+      "intuition": "BFS processes nodes level by level. First leaf node encountered is at minimum depth. Can terminate early when first leaf found, making BFS more efficient than DFS for this problem.",
+      "approach": "Use queue for BFS, track depth. When first leaf node found (no children), return current depth.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize queue with root and depth = 1",
+        "While queue not empty:",
+        " - Get current level size",
+        " - For each node in current level:",
+        "   - Dequeue node",
+        "   - If node is leaf (no children), return current depth",
+        "   - Enqueue left child if exists",
+        "   - Enqueue right child if exists",
+        " - Increment depth",
+        "Return depth"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "In worst case (skewed tree), visit all n nodes. Best case (balanced), find leaf early at O(w) where w is width. Average: O(n).",
+        "spaceExplanation": "Queue stores at most w nodes (max width). In worst case (complete tree), w = n/2. Space: O(w) ≈ O(n/2)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minDepth(TreeNode* root) {\n        if (!root) return 0;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        int depth = 1;\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                // If leaf node found, return current depth\n                if (!node->left && !node->right) {\n                    return depth;\n                }\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n            \n            depth++;\n        }\n        \n        return depth;\n    }\n};",
+        "java": "class Solution {\n    public int minDepth(TreeNode root) {\n        if (root == null) return 0;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        int depth = 1;\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                \n                // If leaf node found, return current depth\n                if (node.left == null && node.right == null) {\n                    return depth;\n                }\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            \n            depth++;\n        }\n        \n        return depth;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def minDepth(self, root: Optional[TreeNode]) -> int:\n        if not root:\n            return 0\n        \n        queue = deque([root])\n        depth = 1\n        \n        while queue:\n            level_size = len(queue)\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                \n                # If leaf node found, return current depth\n                if not node.left and not node.right:\n                    return depth\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            depth += 1\n        \n        return depth",
+        "javascript": "function minDepth(root) {\n    if (!root) return 0;\n    \n    const queue = [root];\n    let depth = 1;\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            \n            // If leaf node found, return current depth\n            if (!node.left && !node.right) {\n                return depth;\n            }\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        depth++;\n    }\n    \n    return depth;\n}"
+      }
+    },
+    {
+      "name": "DFS Recursive (Alternative)",
+      "order": 2,
+      "intuition": "Recursively find minimum depth of left and right subtrees. Handle edge cases where node has only one child. Minimum depth is 1 + min of subtree depths.",
+      "approach": "Use recursion. If leaf, return 1. If only one child, return 1 + depth of that child. Otherwise, return 1 + min of both children's depths.",
+      "steps": [
+        "If node is null, return 0",
+        "If node is leaf (no children), return 1",
+        "If only left child exists:",
+        " - Return 1 + minDepth(left)",
+        "If only right child exists:",
+        " - Return 1 + minDepth(right)",
+        "Both children exist:",
+        " - Return 1 + min(minDepth(left), minDepth(right))"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit all n nodes in worst case. Each node processed once. Total: O(n).",
+        "spaceExplanation": "Recursion stack depth equals tree height h. Worst case (skewed): h = n. Best case (balanced): h = log n. Space: O(h)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minDepth(TreeNode* root) {\n        if (!root) return 0;\n        \n        // Leaf node\n        if (!root->left && !root->right) {\n            return 1;\n        }\n        \n        // Only left child\n        if (!root->right) {\n            return 1 + minDepth(root->left);\n        }\n        \n        // Only right child\n        if (!root->left) {\n            return 1 + minDepth(root->right);\n        }\n        \n        // Both children exist\n        return 1 + min(minDepth(root->left), minDepth(root->right));\n    }\n};",
+        "java": "class Solution {\n    public int minDepth(TreeNode root) {\n        if (root == null) return 0;\n        \n        // Leaf node\n        if (root.left == null && root.right == null) {\n            return 1;\n        }\n        \n        // Only left child\n        if (root.right == null) {\n            return 1 + minDepth(root.left);\n        }\n        \n        // Only right child\n        if (root.left == null) {\n            return 1 + minDepth(root.right);\n        }\n        \n        // Both children exist\n        return 1 + Math.min(minDepth(root.left), minDepth(root.right));\n    }\n}",
+        "python": "class Solution:\n    def minDepth(self, root: Optional[TreeNode]) -> int:\n        if not root:\n            return 0\n        \n        # Leaf node\n        if not root.left and not root.right:\n            return 1\n        \n        # Only left child\n        if not root.right:\n            return 1 + self.minDepth(root.left)\n        \n        # Only right child\n        if not root.left:\n            return 1 + self.minDepth(root.right)\n        \n        # Both children exist\n        return 1 + min(self.minDepth(root.left), self.minDepth(root.right))",
+        "javascript": "function minDepth(root) {\n    if (!root) return 0;\n    \n    // Leaf node\n    if (!root.left && !root.right) {\n        return 1;\n    }\n    \n    // Only left child\n    if (!root.right) {\n        return 1 + minDepth(root.left);\n    }\n    \n    // Only right child\n    if (!root.left) {\n        return 1 + minDepth(root.right);\n    }\n    \n    // Both children exist\n    return 1 + Math.min(minDepth(root.left), minDepth(root.right));\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling single-child case (taking min of 0 and subtree depth)",
+    "Confusing minimum depth with height",
+    "Not recognizing leaf node correctly",
+    "Using max instead of min",
+    "Not returning early in BFS when leaf found",
+    "Counting nodes instead of levels",
+    "Including root-to-internal-node paths",
+    "DFS without checking for single children"
+  ],
+  "hints": [
+    "Minimum depth is root to nearest leaf",
+    "BFS finds first leaf, which is nearest",
+    "Leaf node has both children null",
+    "Handle single-child nodes carefully in DFS",
+    "Can't take min(0, depth) for single child",
+    "BFS is more efficient with early termination",
+    "Depth starts at 1 for root",
+    "DFS must explore all paths in worst case"
+  ],
+  "followUp": [
+    "What if tree has millions of nodes but shallow depth?",
+    "How to find all leaves at minimum depth?",
+    "Can we solve without recursion or extra space?",
+    "What if we need second minimum depth?",
+    "How to handle n-ary tree?",
+    "What if nodes have weights affecting depth?",
+    "Can we optimize for extremely deep trees?",
+    "How to find path to nearest leaf?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "BFS",
+    "DFS",
+    "Depth First Search",
+    "Breadth First Search",
+    "Recursion"
+  ],
+  "relatedProblems": [
+    "Maximum Depth of Binary Tree",
+    "Binary Tree Level Order Traversal",
+    "Balanced Binary Tree",
+    "Path Sum",
+    "Binary Tree Paths",
+    "Lowest Common Ancestor",
+    "Diameter of Binary Tree",
+    "Sum Root to Leaf Numbers"
+  ]
 }

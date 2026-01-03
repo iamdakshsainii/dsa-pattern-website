@@ -3,17 +3,183 @@
   "questionSlug": "subarray-sum-equals-k",
   "resources": {
     "leetcode": "https://leetcode.com/problems/subarray-sum-equals-k/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Subarray Sum Equals K - Leetcode 560",
+        "url": "https://www.youtube.com/watch?v=fFVZt-6sgyo",
+        "channel": "NeetCode",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Subarray Sum Equals K Using HashMap",
+        "url": "https://www.youtube.com/watch?v=HbbYPQc-Oo4",
+        "channel": "TECH DOSE",
+        "duration": "16:45",
+        "language": "English"
+      },
+      {
+        "title": "Count Subarrays with Given Sum",
+        "url": "https://www.youtube.com/watch?v=xvNwoz-ufXA",
+        "channel": "take U forward",
+        "duration": "19:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Subarray Sum Equals K Solution",
+        "url": "https://leetcode.com/problems/subarray-sum-equals-k/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Count Subarrays with Given Sum",
+        "url": "https://www.geeksforgeeks.org/number-subarrays-sum-exactly-equal-k/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Prefix Sum HashMap Technique",
+        "url": "https://algo.monster/problems/subarray_sum_equals_k",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Continuous Subarray Sum",
+        "url": "https://leetcode.com/problems/continuous-subarray-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Path Sum III",
+        "url": "https://leetcode.com/problems/path-sum-iii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Pivot Index",
+        "url": "https://leetcode.com/problems/find-pivot-index/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Contiguous Array",
+        "url": "https://leetcode.com/problems/contiguous-array/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Subarray Sum Equals K pattern when counting subarrays with exact sum. Key indicators: count subarrays, sum equals target, prefix sum with hashmap, can have negative numbers.",
+  "approaches": [
+    {
+      "name": "HashMap with Prefix Sum (Optimal)",
+      "order": 1,
+      "intuition": "For subarray from i to j to have sum K, we need prefixSum[j] - prefixSum[i-1] = K, which means prefixSum[i-1] = prefixSum[j] - K. Use hashmap to track frequency of each prefix sum seen so far. At each position, check if (currentSum - K) exists in hashmap - that count represents number of valid subarrays ending at current position.",
+      "approach": "Maintain running prefix sum and hashmap storing frequency of each sum. At each position, check how many times (currentSum - K) appeared before. Add that count to result. Update hashmap with current sum.",
+      "steps": [
+        "Initialize hashmap with {0: 1} (empty subarray has sum 0)",
+        "Initialize currentSum = 0, count = 0",
+        "For each element in array:",
+        " - currentSum += element",
+        " - If (currentSum - K) exists in hashmap:",
+        "   - count += frequency of (currentSum - K)",
+        " - Update hashmap: increment frequency of currentSum",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array. HashMap operations are O(1). Total: O(n) time.",
+        "spaceExplanation": "HashMap stores at most n+1 unique prefix sums. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int subarraySum(vector<int>& nums, int k) {\n        unordered_map<int, int> prefixSumCount;\n        prefixSumCount[0] = 1; // Empty subarray\n        \n        int currentSum = 0;\n        int count = 0;\n        \n        for (int num : nums) {\n            currentSum += num;\n            \n            // Check if (currentSum - k) exists\n            if (prefixSumCount.find(currentSum - k) != prefixSumCount.end()) {\n                count += prefixSumCount[currentSum - k];\n            }\n            \n            // Update frequency of current sum\n            prefixSumCount[currentSum]++;\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int subarraySum(int[] nums, int k) {\n        Map<Integer, Integer> prefixSumCount = new HashMap<>();\n        prefixSumCount.put(0, 1); // Empty subarray\n        \n        int currentSum = 0;\n        int count = 0;\n        \n        for (int num : nums) {\n            currentSum += num;\n            \n            // Check if (currentSum - k) exists\n            count += prefixSumCount.getOrDefault(currentSum - k, 0);\n            \n            // Update frequency of current sum\n            prefixSumCount.put(currentSum, prefixSumCount.getOrDefault(currentSum, 0) + 1);\n        }\n        \n        return count;\n    }\n}",
+        "python": "class Solution:\n    def subarraySum(self, nums: List[int], k: int) -> int:\n        prefix_sum_count = {0: 1}  # Empty subarray\n        \n        current_sum = 0\n        count = 0\n        \n        for num in nums:\n            current_sum += num\n            \n            # Check if (current_sum - k) exists\n            if current_sum - k in prefix_sum_count:\n                count += prefix_sum_count[current_sum - k]\n            \n            # Update frequency of current sum\n            prefix_sum_count[current_sum] = prefix_sum_count.get(current_sum, 0) + 1\n        \n        return count",
+        "javascript": "function subarraySum(nums, k) {\n    const prefixSumCount = new Map();\n    prefixSumCount.set(0, 1); // Empty subarray\n    \n    let currentSum = 0;\n    let count = 0;\n    \n    for (const num of nums) {\n        currentSum += num;\n        \n        // Check if (currentSum - k) exists\n        if (prefixSumCount.has(currentSum - k)) {\n            count += prefixSumCount.get(currentSum - k);\n        }\n        \n        // Update frequency of current sum\n        prefixSumCount.set(currentSum, (prefixSumCount.get(currentSum) || 0) + 1);\n    }\n    \n    return count;\n}"
+      }
+    },
+    {
+      "name": "Brute Force (Check All Subarrays)",
+      "order": 2,
+      "intuition": "Generate all possible subarrays and check their sums. Count how many equal K. Simple but inefficient approach with nested loops.",
+      "approach": "Use two nested loops to check all subarrays. For each subarray, calculate sum. If sum equals K, increment count.",
+      "steps": [
+        "Initialize count = 0",
+        "For each starting index i from 0 to n-1:",
+        " - Initialize sum = 0",
+        " - For each ending index j from i to n-1:",
+        "   - sum += nums[j]",
+        "   - If sum == K:",
+        "     - count++",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops iterate through all subarrays. n² subarrays total. O(n²) time.",
+        "spaceExplanation": "Only constant extra space for variables. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int subarraySum(vector<int>& nums, int k) {\n        int count = 0;\n        int n = nums.size();\n        \n        for (int i = 0; i < n; i++) {\n            int sum = 0;\n            for (int j = i; j < n; j++) {\n                sum += nums[j];\n                if (sum == k) {\n                    count++;\n                }\n            }\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int subarraySum(int[] nums, int k) {\n        int count = 0;\n        int n = nums.length;\n        \n        for (int i = 0; i < n; i++) {\n            int sum = 0;\n            for (int j = i; j < n; j++) {\n                sum += nums[j];\n                if (sum == k) {\n                    count++;\n                }\n            }\n        }\n        \n        return count;\n    }\n}",
+        "python": "class Solution:\n    def subarraySum(self, nums: List[int], k: int) -> int:\n        count = 0\n        n = len(nums)\n        \n        for i in range(n):\n            total = 0\n            for j in range(i, n):\n                total += nums[j]\n                if total == k:\n                    count += 1\n        \n        return count",
+        "javascript": "function subarraySum(nums, k) {\n    let count = 0;\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        let sum = 0;\n        for (let j = i; j < n; j++) {\n            sum += nums[j];\n            if (sum === k) {\n                count++;\n            }\n        }\n    }\n    \n    return count;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not initializing hashmap with {0: 1} for subarrays starting at index 0",
+    "Checking and updating hashmap in wrong order (must check before update)",
+    "Using hashmap to store index instead of frequency count",
+    "Not handling negative numbers correctly (they're allowed)",
+    "Trying to use sliding window (doesn't work with negative numbers)",
+    "Forgetting that multiple subarrays can have same sum",
+    "Integer overflow with large sums (use long if needed)",
+    "Not understanding why we look for (currentSum - K) instead of K"
+  ],
+  "hints": [
+    "Use prefix sum: subarray(i,j) sum = prefixSum[j] - prefixSum[i-1]",
+    "If we want sum = K, then prefixSum[j] - prefixSum[i-1] = K",
+    "Rearrange: prefixSum[i-1] = prefixSum[j] - K",
+    "At each position j, look for how many times (currentSum - K) appeared",
+    "Store frequency, not just presence, since multiple subarrays can have same sum",
+    "Initialize with {0: 1} to handle subarrays starting from index 0",
+    "Update hashmap AFTER checking, not before"
+  ],
+  "followUp": [
+    "What if you need to return the actual subarrays, not just count?",
+    "How to find longest subarray with sum K?",
+    "What if you need count of subarrays with sum in range [L, R]?",
+    "How to handle if K changes dynamically (Q queries)?",
+    "What if all numbers are positive? (Can optimize with sliding window)",
+    "How to solve for 2D array (submatrix with sum K)?",
+    "What if array is a stream and you need online counting?",
+    "How to count subarrays with sum divisible by K?"
+  ],
+  "companies": [
+    "Facebook",
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "Adobe",
+    "Goldman Sachs"
+  ],
+  "tags": [
+    "Array",
+    "Hash Table",
+    "Prefix Sum"
+  ],
+  "relatedProblems": [
+    "Two Sum",
+    "Continuous Subarray Sum",
+    "Subarray Sums Divisible by K",
+    "Path Sum III",
+    "Find Pivot Index",
+    "Contiguous Array",
+    "Binary Subarrays With Sum",
+    "Count Number of Nice Subarrays",
+    "Maximum Size Subarray Sum Equals k"
+  ]
 }

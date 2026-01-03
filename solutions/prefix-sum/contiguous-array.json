@@ -3,17 +3,187 @@
   "questionSlug": "contiguous-array",
   "resources": {
     "leetcode": "https://leetcode.com/problems/contiguous-array/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Contiguous Array - Leetcode 525",
+        "url": "https://www.youtube.com/watch?v=agB1LyObUNE",
+        "channel": "NeetCode",
+        "duration": "10:45",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Length Binary Subarray Equal 0s and 1s",
+        "url": "https://www.youtube.com/watch?v=9ZyLjjk536U",
+        "channel": "TECH DOSE",
+        "duration": "15:30",
+        "language": "English"
+      },
+      {
+        "title": "Contiguous Array Using HashMap",
+        "url": "https://www.youtube.com/watch?v=u_AhGZBr7xg",
+        "channel": "take U forward",
+        "duration": "18:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Contiguous Array Solution",
+        "url": "https://leetcode.com/problems/contiguous-array/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Largest Subarray with Equal 0s and 1s",
+        "url": "https://www.geeksforgeeks.org/largest-subarray-with-equal-number-of-0s-and-1s/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Array Balance Using Prefix Sum",
+        "url": "https://algo.monster/problems/contiguous_array",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Subarray Sum Equals K",
+        "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Size Subarray Sum Equals k",
+        "url": "https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Continuous Subarray Sum",
+        "url": "https://leetcode.com/problems/continuous-subarray-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Replace the Substring for Balanced String",
+        "url": "https://leetcode.com/problems/replace-the-substring-for-balanced-string/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Contiguous Array pattern when finding longest subarray with equal count of two elements (like 0s and 1s). Key indicators: equal number of elements, longest/maximum length subarray, binary array, balanced subarray.",
+  "approaches": [
+    {
+      "name": "HashMap with Running Count (Optimal)",
+      "order": 1,
+      "intuition": "Transform problem: treat 0 as -1, then find longest subarray with sum 0. Use running count and hashmap to track first occurrence of each count. When same count appears again, subarray between has sum 0 (equal 0s and 1s). Track maximum length found.",
+      "approach": "Convert 0s to -1s conceptually. Use running count starting at 0. Store first occurrence of each count in hashmap. When count repeats, calculate subarray length. Track maximum length.",
+      "steps": [
+        "Initialize count = 0, maxLength = 0",
+        "Create hashmap to store {count: firstIndex}",
+        "Add {0: -1} to handle subarrays starting at index 0",
+        "For each index i from 0 to n-1:",
+        " - If nums[i] == 1: count++",
+        " - If nums[i] == 0: count--",
+        " - If count exists in hashmap:",
+        "   - length = i - hashmap[count]",
+        "   - maxLength = max(maxLength, length)",
+        " - Else:",
+        "   - Store count in hashmap: hashmap[count] = i",
+        "Return maxLength"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array of n elements. HashMap operations are O(1). Total: O(n).",
+        "spaceExplanation": "HashMap stores at most n+1 unique counts. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMaxLength(vector<int>& nums) {\n        unordered_map<int, int> countMap;\n        countMap[0] = -1; // Handle subarrays starting at index 0\n        \n        int count = 0;\n        int maxLength = 0;\n        \n        for (int i = 0; i < nums.size(); i++) {\n            // Treat 0 as -1, 1 as +1\n            count += (nums[i] == 1) ? 1 : -1;\n            \n            if (countMap.find(count) != countMap.end()) {\n                // Same count seen before, calculate length\n                maxLength = max(maxLength, i - countMap[count]);\n            } else {\n                // First time seeing this count\n                countMap[count] = i;\n            }\n        }\n        \n        return maxLength;\n    }\n};",
+        "java": "class Solution {\n    public int findMaxLength(int[] nums) {\n        Map<Integer, Integer> countMap = new HashMap<>();\n        countMap.put(0, -1); // Handle subarrays starting at index 0\n        \n        int count = 0;\n        int maxLength = 0;\n        \n        for (int i = 0; i < nums.length; i++) {\n            // Treat 0 as -1, 1 as +1\n            count += (nums[i] == 1) ? 1 : -1;\n            \n            if (countMap.containsKey(count)) {\n                // Same count seen before, calculate length\n                maxLength = Math.max(maxLength, i - countMap.get(count));\n            } else {\n                // First time seeing this count\n                countMap.put(count, i);\n            }\n        }\n        \n        return maxLength;\n    }\n}",
+        "python": "class Solution:\n    def findMaxLength(self, nums: List[int]) -> int:\n        count_map = {0: -1}  # Handle subarrays starting at index 0\n        \n        count = 0\n        max_length = 0\n        \n        for i, num in enumerate(nums):\n            # Treat 0 as -1, 1 as +1\n            count += 1 if num == 1 else -1\n            \n            if count in count_map:\n                # Same count seen before, calculate length\n                max_length = max(max_length, i - count_map[count])\n            else:\n                # First time seeing this count\n                count_map[count] = i\n        \n        return max_length",
+        "javascript": "function findMaxLength(nums) {\n    const countMap = new Map();\n    countMap.set(0, -1); // Handle subarrays starting at index 0\n    \n    let count = 0;\n    let maxLength = 0;\n    \n    for (let i = 0; i < nums.length; i++) {\n        // Treat 0 as -1, 1 as +1\n        count += (nums[i] === 1) ? 1 : -1;\n        \n        if (countMap.has(count)) {\n            // Same count seen before, calculate length\n            maxLength = Math.max(maxLength, i - countMap.get(count));\n        } else {\n            // First time seeing this count\n            countMap.set(count, i);\n        }\n    }\n    \n    return maxLength;\n}"
+      }
+    },
+    {
+      "name": "Brute Force (Check All Subarrays)",
+      "order": 2,
+      "intuition": "Check every possible subarray. For each subarray, count 0s and 1s. If counts are equal, update maximum length. Straightforward but inefficient approach.",
+      "approach": "Use two nested loops to generate all subarrays. For each subarray, count number of 0s and 1s. If equal, track maximum length found.",
+      "steps": [
+        "Initialize maxLength = 0",
+        "For each starting index i from 0 to n-1:",
+        " - Initialize zeros = 0, ones = 0",
+        " - For each ending index j from i to n-1:",
+        "   - If nums[j] == 0: zeros++",
+        "   - If nums[j] == 1: ones++",
+        "   - If zeros == ones:",
+        "     - maxLength = max(maxLength, j - i + 1)",
+        "Return maxLength"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops iterate through all subarrays. n² subarrays total. O(n²) time.",
+        "spaceExplanation": "Only constant extra space for counters. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMaxLength(vector<int>& nums) {\n        int maxLength = 0;\n        int n = nums.size();\n        \n        for (int i = 0; i < n; i++) {\n            int zeros = 0, ones = 0;\n            \n            for (int j = i; j < n; j++) {\n                if (nums[j] == 0) {\n                    zeros++;\n                } else {\n                    ones++;\n                }\n                \n                if (zeros == ones) {\n                    maxLength = max(maxLength, j - i + 1);\n                }\n            }\n        }\n        \n        return maxLength;\n    }\n};",
+        "java": "class Solution {\n    public int findMaxLength(int[] nums) {\n        int maxLength = 0;\n        int n = nums.length;\n        \n        for (int i = 0; i < n; i++) {\n            int zeros = 0, ones = 0;\n            \n            for (int j = i; j < n; j++) {\n                if (nums[j] == 0) {\n                    zeros++;\n                } else {\n                    ones++;\n                }\n                \n                if (zeros == ones) {\n                    maxLength = Math.max(maxLength, j - i + 1);\n                }\n            }\n        }\n        \n        return maxLength;\n    }\n}",
+        "python": "class Solution:\n    def findMaxLength(self, nums: List[int]) -> int:\n        max_length = 0\n        n = len(nums)\n        \n        for i in range(n):\n            zeros = 0\n            ones = 0\n            \n            for j in range(i, n):\n                if nums[j] == 0:\n                    zeros += 1\n                else:\n                    ones += 1\n                \n                if zeros == ones:\n                    max_length = max(max_length, j - i + 1)\n        \n        return max_length",
+        "javascript": "function findMaxLength(nums) {\n    let maxLength = 0;\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        let zeros = 0, ones = 0;\n        \n        for (let j = i; j < n; j++) {\n            if (nums[j] === 0) {\n                zeros++;\n            } else {\n                ones++;\n            }\n            \n            if (zeros === ones) {\n                maxLength = Math.max(maxLength, j - i + 1);\n            }\n        }\n    }\n    \n    return maxLength;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not initializing hashmap with {0: -1} to handle subarrays from start",
+    "Updating hashmap value when count repeats (should only store first occurrence)",
+    "Calculating length incorrectly (should be i - firstIndex, not i - firstIndex + 1)",
+    "Treating both 0 and 1 as +1 instead of 0 as -1 and 1 as +1",
+    "Not understanding why we convert to sum problem (0→-1, 1→+1)",
+    "Forgetting to track maximum length across all valid subarrays",
+    "Using wrong index in hashmap (should store index, not count)",
+    "Not handling empty array or single element array edge cases"
+  ],
+  "hints": [
+    "Transform problem: treat 0 as -1, then find subarray with sum 0",
+    "Use running count: +1 for each 1, -1 for each 0",
+    "When running count repeats, subarray between has equal 0s and 1s",
+    "Store first occurrence of each count in hashmap",
+    "Initialize hashmap with {0: -1} for subarrays starting at index 0",
+    "Only store first occurrence of count, don't update on repeats",
+    "Maximum length is found when same count appears again"
+  ],
+  "followUp": [
+    "What if array has more than 2 distinct elements?",
+    "How to find all subarrays with equal 0s and 1s?",
+    "What if you need shortest subarray instead of longest?",
+    "How to handle if array has negative numbers?",
+    "What if you need count of valid subarrays, not length?",
+    "How to solve for k equal groups instead of 2?",
+    "What if array is a stream and you need online algorithm?",
+    "How to handle very large arrays that don't fit in memory?"
+  ],
+  "companies": [
+    "Facebook",
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Hash Table",
+    "Prefix Sum",
+    "Binary Array"
+  ],
+  "relatedProblems": [
+    "Subarray Sum Equals K",
+    "Maximum Size Subarray Sum Equals k",
+    "Continuous Subarray Sum",
+    "Binary Subarrays With Sum",
+    "Count Number of Nice Subarrays",
+    "Replace the Substring for Balanced String",
+    "Longest Well-Performing Interval",
+    "Make Sum Divisible by P"
+  ]
 }

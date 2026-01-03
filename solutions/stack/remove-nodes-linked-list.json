@@ -3,17 +3,183 @@
   "questionSlug": "remove-nodes-linked-list",
   "resources": {
     "leetcode": "https://leetcode.com/problems/remove-nodes-from-linked-list/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Remove Nodes From Linked List - Stack",
+        "url": "https://www.youtube.com/watch?v=9kHyFJfLwRY",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Monotonic Stack for Linked List",
+        "url": "https://www.youtube.com/watch?v=7hFWIU8oS9k",
+        "channel": "take U forward",
+        "duration": "13:20",
+        "language": "English"
+      },
+      {
+        "title": "Remove Nodes Greater on Right",
+        "url": "https://www.youtube.com/watch?v=XNZvlQBDxqY",
+        "channel": "TECH DOSE",
+        "duration": "11:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Remove Nodes Solution",
+        "url": "https://leetcode.com/problems/remove-nodes-from-linked-list/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Delete Nodes With Greater Value",
+        "url": "https://www.geeksforgeeks.org/delete-nodes-which-have-a-greater-value-on-right-side/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Linked List Monotonic Pattern",
+        "url": "https://algo.monster/problems/remove_nodes_linked_list",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Reverse Linked List",
+        "url": "https://leetcode.com/problems/reverse-linked-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove Nth Node From End",
+        "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Delete Node in a Linked List",
+        "url": "https://leetcode.com/problems/delete-node-in-a-linked-list/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove Linked List Elements",
+        "url": "https://leetcode.com/problems/remove-linked-list-elements/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Remove Nodes pattern when eliminating nodes based on future values. Key indicators: remove nodes with greater on right, monotonic linked list, delete based on forward values, stack for linked list.",
+  "approaches": [
+    {
+      "name": "Reverse and Monotonic Stack (Optimal)",
+      "order": 1,
+      "intuition": "Reverse list to access future values easily. Use monotonic decreasing stack to keep only nodes where no greater value follows. Reverse again to restore order.",
+      "approach": "Reverse list, use stack to build monotonically decreasing sequence, reverse result.",
+      "steps": [
+        "Reverse the linked list",
+        "Create empty stack",
+        "Traverse reversed list:",
+        " - While stack not empty and current.val > stack.top().val:",
+        "   - Pop from stack (remove smaller)",
+        " - Push current node to stack",
+        "Build new list from stack (bottom to top)",
+        "Return new head"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Reverse list: O(n). Traverse with stack: O(n). Build result: O(n). Total: O(n).",
+        "spaceExplanation": "Stack stores at most n nodes. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* removeNodes(ListNode* head) {\n        // Reverse the list\n        head = reverseList(head);\n        \n        stack<ListNode*> st;\n        ListNode* curr = head;\n        \n        // Build monotonic decreasing stack\n        while (curr) {\n            while (!st.empty() && curr->val > st.top()->val) {\n                st.pop();\n            }\n            st.push(curr);\n            curr = curr->next;\n        }\n        \n        // Build result from stack\n        ListNode* result = nullptr;\n        while (!st.empty()) {\n            ListNode* node = st.top();\n            st.pop();\n            node->next = result;\n            result = node;\n        }\n        \n        return result;\n    }\n    \nprivate:\n    ListNode* reverseList(ListNode* head) {\n        ListNode* prev = nullptr;\n        ListNode* curr = head;\n        \n        while (curr) {\n            ListNode* next = curr->next;\n            curr->next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        return prev;\n    }\n};",
+        "java": "class Solution {\n    public ListNode removeNodes(ListNode head) {\n        // Reverse the list\n        head = reverseList(head);\n        \n        Stack<ListNode> stack = new Stack<>();\n        ListNode curr = head;\n        \n        // Build monotonic decreasing stack\n        while (curr != null) {\n            while (!stack.isEmpty() && curr.val > stack.peek().val) {\n                stack.pop();\n            }\n            stack.push(curr);\n            curr = curr.next;\n        }\n        \n        // Build result from stack\n        ListNode result = null;\n        while (!stack.isEmpty()) {\n            ListNode node = stack.pop();\n            node.next = result;\n            result = node;\n        }\n        \n        return result;\n    }\n    \n    private ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        ListNode curr = head;\n        \n        while (curr != null) {\n            ListNode next = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        return prev;\n    }\n}",
+        "python": "class Solution:\n    def removeNodes(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        # Reverse the list\n        head = self.reverseList(head)\n        \n        stack = []\n        curr = head\n        \n        # Build monotonic decreasing stack\n        while curr:\n            while stack and curr.val > stack[-1].val:\n                stack.pop()\n            stack.append(curr)\n            curr = curr.next\n        \n        # Build result from stack\n        result = None\n        while stack:\n            node = stack.pop()\n            node.next = result\n            result = node\n        \n        return result\n    \n    def reverseList(self, head):\n        prev = None\n        curr = head\n        \n        while curr:\n            next_node = curr.next\n            curr.next = prev\n            prev = curr\n            curr = next_node\n        \n        return prev",
+        "javascript": "function removeNodes(head) {\n    // Reverse the list\n    head = reverseList(head);\n    \n    const stack = [];\n    let curr = head;\n    \n    // Build monotonic decreasing stack\n    while (curr) {\n        while (stack.length > 0 && curr.val > stack[stack.length - 1].val) {\n            stack.pop();\n        }\n        stack.push(curr);\n        curr = curr.next;\n    }\n    \n    // Build result from stack\n    let result = null;\n    while (stack.length > 0) {\n        const node = stack.pop();\n        node.next = result;\n        result = node;\n    }\n    \n    return result;\n}\n\nfunction reverseList(head) {\n    let prev = null;\n    let curr = head;\n    \n    while (curr) {\n        const next = curr.next;\n        curr.next = prev;\n        prev = curr;\n        curr = next;\n    }\n    \n    return prev;\n}"
+      }
+    },
+    {
+      "name": "Recursion with Max Tracking (Alternative)",
+      "order": 2,
+      "intuition": "Use recursion to reach end of list first. Track maximum value seen so far from right. Keep node only if its value >= max from right.",
+      "approach": "Recursively process list from end. Track max value. Include node only if >= max.",
+      "steps": [
+        "Define recursive function(node, maxFromRight):",
+        " - If node is null, return null",
+        " - Recursively process next: nextNode = function(node.next, maxFromRight)",
+        " - Update maxFromRight = max(maxFromRight, node.val)",
+        " - If node.val >= maxFromRight:",
+        "   - node.next = nextNode",
+        "   - Return node",
+        " - Else: return nextNode",
+        "Call function(head, Integer.MIN_VALUE)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each node once. Each operation O(1). Total: O(n).",
+        "spaceExplanation": "Recursion stack depth n. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* removeNodes(ListNode* head) {\n        int maxVal = INT_MIN;\n        return removeNodesHelper(head, maxVal);\n    }\n    \nprivate:\n    ListNode* removeNodesHelper(ListNode* node, int& maxFromRight) {\n        if (!node) return nullptr;\n        \n        // Process rest of list first\n        ListNode* nextNode = removeNodesHelper(node->next, maxFromRight);\n        \n        // Update max seen from right\n        maxFromRight = max(maxFromRight, node->val);\n        \n        // Keep node if >= max from right\n        if (node->val >= maxFromRight) {\n            node->next = nextNode;\n            return node;\n        }\n        \n        return nextNode;\n    }\n};",
+        "java": "class Solution {\n    private int maxFromRight = Integer.MIN_VALUE;\n    \n    public ListNode removeNodes(ListNode head) {\n        if (head == null) return null;\n        \n        // Process rest of list first\n        ListNode nextNode = removeNodes(head.next);\n        \n        // Update max seen from right\n        maxFromRight = Math.max(maxFromRight, head.val);\n        \n        // Keep node if >= max from right\n        if (head.val >= maxFromRight) {\n            head.next = nextNode;\n            return head;\n        }\n        \n        return nextNode;\n    }\n}",
+        "python": "class Solution:\n    def removeNodes(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        def helper(node, max_from_right):\n            if not node:\n                return None, max_from_right\n            \n            # Process rest of list first\n            next_node, max_from_right = helper(node.next, max_from_right)\n            \n            # Update max seen from right\n            max_from_right = max(max_from_right, node.val)\n            \n            # Keep node if >= max from right\n            if node.val >= max_from_right:\n                node.next = next_node\n                return node, max_from_right\n            \n            return next_node, max_from_right\n        \n        result, _ = helper(head, float('-inf'))\n        return result",
+        "javascript": "function removeNodes(head) {\n    let maxFromRight = -Infinity;\n    \n    function helper(node) {\n        if (!node) return null;\n        \n        // Process rest of list first\n        const nextNode = helper(node.next);\n        \n        // Update max seen from right\n        maxFromRight = Math.max(maxFromRight, node.val);\n        \n        // Keep node if >= max from right\n        if (node.val >= maxFromRight) {\n            node.next = nextNode;\n            return node;\n        }\n        \n        return nextNode;\n    }\n    \n    return helper(head);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not reversing list first (can't access future values)",
+    "Forgetting to reverse result after processing",
+    "Not handling empty list edge case",
+    "Comparing with wrong values in stack",
+    "Not maintaining monotonic decreasing property",
+    "Memory leaks from removed nodes in some languages",
+    "In recursion: not updating max correctly",
+    "Building result in wrong order from stack"
+  ],
+  "hints": [
+    "Need to know future values - consider reversing",
+    "Monotonic decreasing stack keeps valid nodes",
+    "After processing, reverse again to restore order",
+    "Each node processed exactly once",
+    "Can also use recursion with max tracking",
+    "Keep node only if >= all values to its right",
+    "Stack approach more intuitive than recursion",
+    "Result maintains relative order of kept nodes"
+  ],
+  "followUp": [
+    "What if we remove nodes with smaller on right?",
+    "How to handle doubly linked list?",
+    "Can we do this in-place without extra space?",
+    "What if list is circular?",
+    "How to remove nodes based on left values instead?",
+    "What if we need to track which nodes were removed?",
+    "How to handle very long lists efficiently?",
+    "Can we use this for sorted list optimization?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Bloomberg"
+  ],
+  "tags": [
+    "Linked List",
+    "Stack",
+    "Monotonic Stack",
+    "Recursion",
+    "Reverse"
+  ],
+  "relatedProblems": [
+    "Reverse Linked List",
+    "Remove Nth Node From End",
+    "Delete Node in a Linked List",
+    "Remove Linked List Elements",
+    "Remove Duplicates from Sorted List",
+    "Next Greater Element II",
+    "Daily Temperatures",
+    "Monotonic Array"
+  ]
 }

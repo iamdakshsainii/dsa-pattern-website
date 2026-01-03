@@ -3,17 +3,187 @@
   "questionSlug": "tree-diameter",
   "resources": {
     "leetcode": "https://leetcode.com/problems/diameter-of-binary-tree/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Diameter of Binary Tree - Leetcode 543",
+        "url": "https://www.youtube.com/watch?v=bkxqA8Rfv04",
+        "channel": "NeetCode",
+        "duration": "7:30",
+        "language": "English"
+      },
+      {
+        "title": "Diameter of Binary Tree Explained",
+        "url": "https://www.youtube.com/watch?v=Rezetez59Nk",
+        "channel": "take U forward",
+        "duration": "15:45",
+        "language": "English"
+      },
+      {
+        "title": "Binary Tree Diameter Tutorial",
+        "url": "https://www.youtube.com/watch?v=ey7DYc9OAXc",
+        "channel": "TECH DOSE",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Diameter of Binary Tree",
+        "url": "https://leetcode.com/problems/diameter-of-binary-tree/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Diameter of Binary Tree Tutorial",
+        "url": "https://www.geeksforgeeks.org/diameter-of-a-binary-tree/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Understanding Tree Diameter",
+        "url": "https://algo.monster/problems/binary_tree_diameter",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Tree Maximum Path Sum",
+        "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Univalue Path",
+        "url": "https://leetcode.com/problems/longest-univalue-path/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Diameter of N-Ary Tree",
+        "url": "https://leetcode.com/problems/diameter-of-n-ary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Tree Diameter",
+        "url": "https://leetcode.com/problems/tree-diameter/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Tree Diameter pattern when finding longest path between any two nodes. Key indicators: diameter, longest path, distance between farthest nodes, path doesn't need to go through root.",
+  "approaches": [
+    {
+      "name": "DFS with Global Maximum (Optimal)",
+      "order": 1,
+      "intuition": "Diameter is longest path between any two nodes. Path through a node uses its left height + right height. At each node, calculate diameter passing through it (left height + right height). Update global maximum. Return height to parent (max(left, right) + 1).",
+      "approach": "Use post-order DFS to calculate height of each subtree. At each node, diameter through that node is leftHeight + rightHeight. Track global maximum diameter. Return height of current subtree to parent.",
+      "steps": [
+        "Initialize global variable diameter = 0",
+        "Define DFS function height(node):",
+        " - If node is null, return 0",
+        " - Recursively get leftHeight from left child",
+        " - Recursively get rightHeight from right child",
+        " - Calculate diameter through current node: leftHeight + rightHeight",
+        " - Update global diameter: diameter = max(diameter, leftHeight + rightHeight)",
+        " - Return height of current subtree: max(leftHeight, rightHeight) + 1",
+        "Call height(root)",
+        "Return diameter"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node exactly once in post-order traversal. n nodes total. O(n) time.",
+        "spaceExplanation": "Recursion call stack depth equals tree height h. O(h) space."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int diameter = 0;\n    \n    int height(TreeNode* node) {\n        if (node == nullptr) return 0;\n        \n        // Get heights of left and right subtrees\n        int leftHeight = height(node->left);\n        int rightHeight = height(node->right);\n        \n        // Update diameter: longest path through this node\n        diameter = max(diameter, leftHeight + rightHeight);\n        \n        // Return height of current subtree\n        return max(leftHeight, rightHeight) + 1;\n    }\n    \npublic:\n    int diameterOfBinaryTree(TreeNode* root) {\n        height(root);\n        return diameter;\n    }\n};",
+        "java": "class Solution {\n    private int diameter = 0;\n    \n    private int height(TreeNode node) {\n        if (node == null) return 0;\n        \n        // Get heights of left and right subtrees\n        int leftHeight = height(node.left);\n        int rightHeight = height(node.right);\n        \n        // Update diameter: longest path through this node\n        diameter = Math.max(diameter, leftHeight + rightHeight);\n        \n        // Return height of current subtree\n        return Math.max(leftHeight, rightHeight) + 1;\n    }\n    \n    public int diameterOfBinaryTree(TreeNode root) {\n        height(root);\n        return diameter;\n    }\n}",
+        "python": "class Solution:\n    def diameterOfBinaryTree(self, root: TreeNode) -> int:\n        diameter = 0\n        \n        def height(node):\n            nonlocal diameter\n            \n            if not node:\n                return 0\n            \n            # Get heights of left and right subtrees\n            left_height = height(node.left)\n            right_height = height(node.right)\n            \n            # Update diameter: longest path through this node\n            diameter = max(diameter, left_height + right_height)\n            \n            # Return height of current subtree\n            return max(left_height, right_height) + 1\n        \n        height(root)\n        return diameter",
+        "javascript": "function diameterOfBinaryTree(root) {\n    let diameter = 0;\n    \n    function height(node) {\n        if (node === null) return 0;\n        \n        // Get heights of left and right subtrees\n        const leftHeight = height(node.left);\n        const rightHeight = height(node.right);\n        \n        // Update diameter: longest path through this node\n        diameter = Math.max(diameter, leftHeight + rightHeight);\n        \n        // Return height of current subtree\n        return Math.max(leftHeight, rightHeight) + 1;\n    }\n    \n    height(root);\n    return diameter;\n}"
+      }
+    },
+    {
+      "name": "DFS with Return Tuple",
+      "order": 2,
+      "intuition": "Similar to first approach but return both diameter and height from each recursion. This makes the logic more explicit. At each node, calculate diameter through node and diameter in subtrees. Return max diameter found and current height.",
+      "approach": "Return tuple (diameter, height) from each node. Calculate diameter through current node as leftHeight + rightHeight. Compare with diameters from subtrees. Return max diameter and height of current subtree.",
+      "steps": [
+        "Define DFS function that returns (diameter, height):",
+        " - If node is null, return (0, 0)",
+        " - Recursively get (leftDiameter, leftHeight) from left child",
+        " - Recursively get (rightDiameter, rightHeight) from right child",
+        " - diameterThroughNode = leftHeight + rightHeight",
+        " - maxDiameter = max(leftDiameter, rightDiameter, diameterThroughNode)",
+        " - currentHeight = max(leftHeight, rightHeight) + 1",
+        " - Return (maxDiameter, currentHeight)",
+        "Call DFS and return diameter from result tuple"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once in post-order traversal. n nodes total. O(n) time.",
+        "spaceExplanation": "Recursion depth equals tree height h. O(h) space for call stack."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    pair<int, int> dfs(TreeNode* node) {\n        if (node == nullptr) {\n            return {0, 0}; // {diameter, height}\n        }\n        \n        auto [leftDiameter, leftHeight] = dfs(node->left);\n        auto [rightDiameter, rightHeight] = dfs(node->right);\n        \n        // Diameter through current node\n        int diameterThroughNode = leftHeight + rightHeight;\n        \n        // Max diameter in this subtree\n        int maxDiameter = max({leftDiameter, rightDiameter, diameterThroughNode});\n        \n        // Height of current subtree\n        int currentHeight = max(leftHeight, rightHeight) + 1;\n        \n        return {maxDiameter, currentHeight};\n    }\n    \npublic:\n    int diameterOfBinaryTree(TreeNode* root) {\n        return dfs(root).first;\n    }\n};",
+        "java": "class Solution {\n    private class Result {\n        int diameter;\n        int height;\n        Result(int d, int h) {\n            diameter = d;\n            height = h;\n        }\n    }\n    \n    private Result dfs(TreeNode node) {\n        if (node == null) {\n            return new Result(0, 0);\n        }\n        \n        Result left = dfs(node.left);\n        Result right = dfs(node.right);\n        \n        // Diameter through current node\n        int diameterThroughNode = left.height + right.height;\n        \n        // Max diameter in this subtree\n        int maxDiameter = Math.max(Math.max(left.diameter, right.diameter), diameterThroughNode);\n        \n        // Height of current subtree\n        int currentHeight = Math.max(left.height, right.height) + 1;\n        \n        return new Result(maxDiameter, currentHeight);\n    }\n    \n    public int diameterOfBinaryTree(TreeNode root) {\n        return dfs(root).diameter;\n    }\n}",
+        "python": "class Solution:\n    def diameterOfBinaryTree(self, root: TreeNode) -> int:\n        def dfs(node):\n            if not node:\n                return (0, 0)  # (diameter, height)\n            \n            left_diameter, left_height = dfs(node.left)\n            right_diameter, right_height = dfs(node.right)\n            \n            # Diameter through current node\n            diameter_through_node = left_height + right_height\n            \n            # Max diameter in this subtree\n            max_diameter = max(left_diameter, right_diameter, diameter_through_node)\n            \n            # Height of current subtree\n            current_height = max(left_height, right_height) + 1\n            \n            return (max_diameter, current_height)\n        \n        return dfs(root)[0]",
+        "javascript": "function diameterOfBinaryTree(root) {\n    function dfs(node) {\n        if (node === null) {\n            return [0, 0]; // [diameter, height]\n        }\n        \n        const [leftDiameter, leftHeight] = dfs(node.left);\n        const [rightDiameter, rightHeight] = dfs(node.right);\n        \n        // Diameter through current node\n        const diameterThroughNode = leftHeight + rightHeight;\n        \n        // Max diameter in this subtree\n        const maxDiameter = Math.max(leftDiameter, rightDiameter, diameterThroughNode);\n        \n        // Height of current subtree\n        const currentHeight = Math.max(leftHeight, rightHeight) + 1;\n        \n        return [maxDiameter, currentHeight];\n    }\n    \n    return dfs(root)[0];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Confusing diameter (number of edges) with height (also edges)",
+    "Returning diameter instead of height to parent node",
+    "Not considering that longest path may not go through root",
+    "Counting nodes instead of edges in the path",
+    "Forgetting to update global diameter at each node",
+    "Not using post-order traversal (process children first)",
+    "Calculating diameter but returning height incorrectly",
+    "Off-by-one errors when counting edges vs nodes"
+  ],
+  "hints": [
+    "Diameter is the number of edges in longest path (not nodes)",
+    "Longest path through a node = left height + right height",
+    "Use post-order DFS: process children before parent",
+    "Track global maximum diameter while calculating heights",
+    "Return height to parent, but update diameter at each node",
+    "Diameter doesn't necessarily pass through root",
+    "Height is max(leftHeight, rightHeight) + 1"
+  ],
+  "followUp": [
+    "What if you need to return the actual path (nodes) instead of length?",
+    "How to find diameter of N-ary tree?",
+    "What if edges have weights (not all 1)?",
+    "How to find all pairs of nodes with maximum distance?",
+    "What if tree is very large and doesn't fit in memory?",
+    "How to find diameter of a forest (multiple trees)?",
+    "What if you need the k longest paths instead of just one?",
+    "How to handle if tree has cycles (becomes a graph)?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Uber",
+    "Airbnb"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "Depth-First Search",
+    "Recursion",
+    "Tree Height"
+  ],
+  "relatedProblems": [
+    "Binary Tree Maximum Path Sum",
+    "Longest Univalue Path",
+    "Diameter of N-Ary Tree",
+    "Tree Diameter",
+    "Maximum Depth of Binary Tree",
+    "Balanced Binary Tree",
+    "Height of Binary Tree After Subtree Removal Queries",
+    "Count Nodes With Highest Score"
+  ]
 }

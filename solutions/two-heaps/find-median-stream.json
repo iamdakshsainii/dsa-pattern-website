@@ -3,17 +3,190 @@
   "questionSlug": "find-median-stream",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-median-from-data-stream/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Find Median from Data Stream - LeetCode 295",
+        "url": "https://www.youtube.com/watch?v=itmhHWaHupI",
+        "channel": "NeetCode",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Median in a Stream of Integers",
+        "url": "https://www.youtube.com/watch?v=1LkOrc-Le-Y",
+        "channel": "TECH DOSE",
+        "duration": "16:20",
+        "language": "English"
+      },
+      {
+        "title": "Find Median from Data Stream Explained",
+        "url": "https://www.youtube.com/watch?v=VmogG01IjYc",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Median from Data Stream",
+        "url": "https://leetcode.com/problems/find-median-from-data-stream/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Median in Stream of Integers",
+        "url": "https://www.geeksforgeeks.org/median-of-stream-of-integers-running-integers/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Two Heaps Pattern",
+        "url": "https://algo.monster/problems/two_heaps",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Sliding Window Median",
+        "url": "https://leetcode.com/problems/sliding-window-median/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "IPO (Maximize Capital)",
+        "url": "https://leetcode.com/problems/ipo/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Largest Element in a Stream",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find K Pairs with Smallest Sums",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Two Heaps pattern when finding median in a data stream or maintaining access to middle element(s). Key indicators: running median, stream of numbers, dynamic median calculation, maintain sorted order with insertions, need O(1) median access.",
+  "approaches": [
+    {
+      "name": "Two Heaps (Max Heap + Min Heap)",
+      "order": 1,
+      "intuition": "Maintain two heaps: max heap for smaller half, min heap for larger half. Max heap's top is largest of smaller numbers, min heap's top is smallest of larger numbers. Keep heaps balanced (size difference ≤ 1). Median is either top of larger heap, or average of both tops.",
+      "approach": "Use max heap for lower half and min heap for upper half. When adding number, add to appropriate heap and rebalance if needed. Median depends on heap sizes: if equal, average of tops; if unequal, top of larger heap.",
+      "steps": [
+        "Initialize maxHeap (for lower half) and minHeap (for upper half)",
+        "addNum(num):",
+        "  - If maxHeap empty or num <= maxHeap.top():",
+        "    - Add to maxHeap",
+        "  - Else:",
+        "    - Add to minHeap",
+        "  - Rebalance heaps:",
+        "    - If maxHeap.size() > minHeap.size() + 1:",
+        "      - Move maxHeap.top() to minHeap",
+        "    - If minHeap.size() > maxHeap.size():",
+        "      - Move minHeap.top() to maxHeap",
+        "findMedian():",
+        "  - If maxHeap.size() > minHeap.size():",
+        "    - Return maxHeap.top()",
+        "  - Else:",
+        "    - Return (maxHeap.top() + minHeap.top()) / 2.0"
+      ],
+      "complexity": {
+        "time": "O(log n) per add, O(1) per findMedian",
+        "space": "O(n)",
+        "timeExplanation": "Adding to heap: O(log n). Rebalancing (remove + insert): O(log n). Finding median: O(1).",
+        "spaceExplanation": "Both heaps together store n elements. O(n) space."
+      },
+      "code": {
+        "cpp": "class MedianFinder {\nprivate:\n    priority_queue<int> maxHeap; // lower half\n    priority_queue<int, vector<int>, greater<int>> minHeap; // upper half\n    \npublic:\n    MedianFinder() {}\n    \n    void addNum(int num) {\n        // Add to appropriate heap\n        if (maxHeap.empty() || num <= maxHeap.top()) {\n            maxHeap.push(num);\n        } else {\n            minHeap.push(num);\n        }\n        \n        // Rebalance heaps\n        // Max heap can have at most 1 more element than min heap\n        if (maxHeap.size() > minHeap.size() + 1) {\n            minHeap.push(maxHeap.top());\n            maxHeap.pop();\n        } else if (minHeap.size() > maxHeap.size()) {\n            maxHeap.push(minHeap.top());\n            minHeap.pop();\n        }\n    }\n    \n    double findMedian() {\n        if (maxHeap.size() > minHeap.size()) {\n            return maxHeap.top();\n        }\n        return (maxHeap.top() + minHeap.top()) / 2.0;\n    }\n};",
+        "java": "class MedianFinder {\n    private PriorityQueue<Integer> maxHeap; // lower half\n    private PriorityQueue<Integer> minHeap; // upper half\n    \n    public MedianFinder() {\n        maxHeap = new PriorityQueue<>(Collections.reverseOrder());\n        minHeap = new PriorityQueue<>();\n    }\n    \n    public void addNum(int num) {\n        // Add to appropriate heap\n        if (maxHeap.isEmpty() || num <= maxHeap.peek()) {\n            maxHeap.offer(num);\n        } else {\n            minHeap.offer(num);\n        }\n        \n        // Rebalance heaps\n        if (maxHeap.size() > minHeap.size() + 1) {\n            minHeap.offer(maxHeap.poll());\n        } else if (minHeap.size() > maxHeap.size()) {\n            maxHeap.offer(minHeap.poll());\n        }\n    }\n    \n    public double findMedian() {\n        if (maxHeap.size() > minHeap.size()) {\n            return maxHeap.peek();\n        }\n        return (maxHeap.peek() + minHeap.peek()) / 2.0;\n    }\n}",
+        "python": "import heapq\n\nclass MedianFinder:\n    def __init__(self):\n        self.max_heap = []  # lower half (negate for max heap)\n        self.min_heap = []  # upper half\n    \n    def addNum(self, num: int) -> None:\n        # Add to appropriate heap\n        if not self.max_heap or num <= -self.max_heap[0]:\n            heapq.heappush(self.max_heap, -num)\n        else:\n            heapq.heappush(self.min_heap, num)\n        \n        # Rebalance heaps\n        if len(self.max_heap) > len(self.min_heap) + 1:\n            heapq.heappush(self.min_heap, -heapq.heappop(self.max_heap))\n        elif len(self.min_heap) > len(self.max_heap):\n            heapq.heappush(self.max_heap, -heapq.heappop(self.min_heap))\n    \n    def findMedian(self) -> float:\n        if len(self.max_heap) > len(self.min_heap):\n            return -self.max_heap[0]\n        return (-self.max_heap[0] + self.min_heap[0]) / 2.0",
+        "javascript": "class MedianFinder {\n    constructor() {\n        this.maxHeap = new MaxHeap(); // lower half\n        this.minHeap = new MinHeap(); // upper half\n    }\n    \n    addNum(num) {\n        // Add to appropriate heap\n        if (this.maxHeap.size() === 0 || num <= this.maxHeap.peek()) {\n            this.maxHeap.push(num);\n        } else {\n            this.minHeap.push(num);\n        }\n        \n        // Rebalance heaps\n        if (this.maxHeap.size() > this.minHeap.size() + 1) {\n            this.minHeap.push(this.maxHeap.pop());\n        } else if (this.minHeap.size() > this.maxHeap.size()) {\n            this.maxHeap.push(this.minHeap.pop());\n        }\n    }\n    \n    findMedian() {\n        if (this.maxHeap.size() > this.minHeap.size()) {\n            return this.maxHeap.peek();\n        }\n        return (this.maxHeap.peek() + this.minHeap.peek()) / 2.0;\n    }\n}\n\n// Helper heap classes\nclass MaxHeap {\n    constructor() {\n        this.heap = [];\n    }\n    push(val) {\n        this.heap.push(val);\n        this.heap.sort((a, b) => b - a);\n    }\n    pop() {\n        return this.heap.shift();\n    }\n    peek() {\n        return this.heap[0];\n    }\n    size() {\n        return this.heap.length;\n    }\n}\n\nclass MinHeap {\n    constructor() {\n        this.heap = [];\n    }\n    push(val) {\n        this.heap.push(val);\n        this.heap.sort((a, b) => a - b);\n    }\n    pop() {\n        return this.heap.shift();\n    }\n    peek() {\n        return this.heap[0];\n    }\n    size() {\n        return this.heap.length;\n    }\n}"
+      }
+    },
+    {
+      "name": "Sorted Array with Binary Search",
+      "order": 2,
+      "intuition": "Maintain a sorted array of all numbers. When adding a number, use binary search to find insertion position and insert. Median is middle element(s) of sorted array. Simple but less efficient for large streams.",
+      "approach": "Keep all numbers in sorted order. For each insertion, binary search for position and insert. Median is at index n//2 for odd n, or average of indices n//2-1 and n//2 for even n.",
+      "steps": [
+        "Initialize empty sorted array: nums = []",
+        "addNum(num):",
+        "  - Use binary search to find insertion position",
+        "  - Insert num at that position to maintain sorted order",
+        "findMedian():",
+        "  - n = len(nums)",
+        "  - If n is odd:",
+        "    - Return nums[n // 2]",
+        "  - Else:",
+        "    - Return (nums[n // 2 - 1] + nums[n // 2]) / 2.0"
+      ],
+      "complexity": {
+        "time": "O(n) per add, O(1) per findMedian",
+        "space": "O(n)",
+        "timeExplanation": "Binary search: O(log n). Array insertion: O(n) due to shifting. Finding median: O(1).",
+        "spaceExplanation": "Array stores n elements. O(n) space."
+      },
+      "code": {
+        "cpp": "class MedianFinder {\nprivate:\n    vector<int> nums;\n    \npublic:\n    MedianFinder() {}\n    \n    void addNum(int num) {\n        // Binary search for insertion position\n        auto it = lower_bound(nums.begin(), nums.end(), num);\n        nums.insert(it, num);\n    }\n    \n    double findMedian() {\n        int n = nums.size();\n        if (n % 2 == 1) {\n            return nums[n / 2];\n        }\n        return (nums[n / 2 - 1] + nums[n / 2]) / 2.0;\n    }\n};",
+        "java": "class MedianFinder {\n    private List<Integer> nums;\n    \n    public MedianFinder() {\n        nums = new ArrayList<>();\n    }\n    \n    public void addNum(int num) {\n        // Binary search for insertion position\n        int pos = Collections.binarySearch(nums, num);\n        if (pos < 0) {\n            pos = -(pos + 1);\n        }\n        nums.add(pos, num);\n    }\n    \n    public double findMedian() {\n        int n = nums.size();\n        if (n % 2 == 1) {\n            return nums.get(n / 2);\n        }\n        return (nums.get(n / 2 - 1) + nums.get(n / 2)) / 2.0;\n    }\n}",
+        "python": "import bisect\n\nclass MedianFinder:\n    def __init__(self):\n        self.nums = []\n    \n    def addNum(self, num: int) -> None:\n        # Binary search and insert\n        bisect.insort(self.nums, num)\n    \n    def findMedian(self) -> float:\n        n = len(self.nums)\n        if n % 2 == 1:\n            return self.nums[n // 2]\n        return (self.nums[n // 2 - 1] + self.nums[n // 2]) / 2.0",
+        "javascript": "class MedianFinder {\n    constructor() {\n        this.nums = [];\n    }\n    \n    addNum(num) {\n        // Binary search for insertion position\n        let left = 0, right = this.nums.length;\n        while (left < right) {\n            const mid = Math.floor((left + right) / 2);\n            if (this.nums[mid] < num) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        this.nums.splice(left, 0, num);\n    }\n    \n    findMedian() {\n        const n = this.nums.length;\n        if (n % 2 === 1) {\n            return this.nums[Math.floor(n / 2)];\n        }\n        return (this.nums[n / 2 - 1] + this.nums[n / 2]) / 2.0;\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not maintaining heap balance properly (allowing size difference > 1)",
+    "Comparing with wrong heap's top when deciding which heap to add to",
+    "Forgetting to rebalance after insertion",
+    "Not handling the case when heaps have equal size vs different size",
+    "Using min heap for lower half instead of max heap",
+    "Integer overflow when calculating median average",
+    "Not initializing heaps correctly (wrong comparator for max heap)"
+  ],
+  "hints": [
+    "Two heaps approach: max heap for lower half, min heap for upper half",
+    "Max heap's top is the largest of smaller numbers (potential median)",
+    "Min heap's top is the smallest of larger numbers (potential median)",
+    "Keep heaps balanced: sizes differ by at most 1",
+    "If sizes equal, median is average of tops; if unequal, top of larger heap",
+    "In Python, negate values to simulate max heap with heapq"
+  ],
+  "followUp": [
+    "What if 99% of numbers are in range [0, 100]? How to optimize?",
+    "How to find median if all integers are in a known small range?",
+    "What if you need to support removal of numbers?",
+    "How to handle very large numbers that don't fit in memory?",
+    "Can you find the kth percentile instead of median?",
+    "What if numbers come in sorted batches?",
+    "How to find median in a sliding window over the stream?",
+    "What if the stream is distributed across multiple machines?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Heap",
+    "Design",
+    "Two Heaps",
+    "Data Stream",
+    "Sorting"
+  ],
+  "relatedProblems": [
+    "Sliding Window Median",
+    "Find K Pairs with Smallest Sums",
+    "Kth Largest Element in a Stream",
+    "IPO",
+    "Find K-th Smallest Pair Distance",
+    "Kth Smallest Element in a Sorted Matrix",
+    "The Skyline Problem"
+  ]
 }

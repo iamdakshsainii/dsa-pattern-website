@@ -3,17 +3,185 @@
   "questionSlug": "intervals-intersection",
   "resources": {
     "leetcode": "https://leetcode.com/problems/interval-list-intersections/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Interval List Intersections - LeetCode 986",
+        "url": "https://www.youtube.com/watch?v=Qh8ZjL1RpLI",
+        "channel": "NeetCode",
+        "duration": "8:50",
+        "language": "English"
+      },
+      {
+        "title": "Find Intersection of Two Interval Lists",
+        "url": "https://www.youtube.com/watch?v=14kklsXRUFs",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Interval Intersection Problem",
+        "url": "https://www.youtube.com/watch?v=EBNPu0GgM64",
+        "channel": "TECH DOSE",
+        "duration": "11:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Interval List Intersections",
+        "url": "https://leetcode.com/problems/interval-list-intersections/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find Intersection of Intervals",
+        "url": "https://www.geeksforgeeks.org/find-intersection-of-intervals-given-by-two-lists/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Two Pointer Interval Problems",
+        "url": "https://algo.monster/problems/interval_intersection",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Merge Intervals",
+        "url": "https://leetcode.com/problems/merge-intervals/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Insert Interval",
+        "url": "https://leetcode.com/problems/insert-interval/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Employee Free Time",
+        "url": "https://leetcode.com/problems/employee-free-time/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Meeting Rooms II",
+        "url": "https://leetcode.com/problems/meeting-rooms-ii/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Interval Intersection pattern when finding overlapping portions of two sorted interval lists. Key indicators: two sorted lists of intervals, find common parts, intersection of ranges, overlapping time slots between two schedules.",
+  "approaches": [
+    {
+      "name": "Two Pointers",
+      "order": 1,
+      "intuition": "Use two pointers, one for each sorted list. At each step, check if current intervals from both lists overlap. If they overlap, add their intersection to result. Move pointer of the interval that ends first, as it cannot intersect with future intervals from the other list.",
+      "approach": "Initialize pointers i and j for both lists. While both pointers are valid, check for intersection. Intersection exists if max(start1, start2) <= min(end1, end2). The intersection is [max(start1, start2), min(end1, end2)]. Move pointer of interval with smaller end.",
+      "steps": [
+        "Initialize i = 0, j = 0, result = []",
+        "While i < len(firstList) and j < len(secondList):",
+        "  - Get intervals: a = firstList[i], b = secondList[j]",
+        "  - Calculate intersection start: start = max(a[0], b[0])",
+        "  - Calculate intersection end: end = min(a[1], b[1])",
+        "  - If start <= end (valid intersection):",
+        "    - Add [start, end] to result",
+        "  - Move pointer of interval that ends first:",
+        "    - If a[1] < b[1]: i++",
+        "    - Else: j++",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1) or O(k)",
+        "timeExplanation": "Each pointer traverses its list once. m + n iterations total. O(m + n).",
+        "spaceExplanation": "Only pointers used. O(1) excluding output. Output can have up to O(m + n) intersections."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> intervalIntersection(vector<vector<int>>& firstList, \n                                              vector<vector<int>>& secondList) {\n        vector<vector<int>> result;\n        int i = 0, j = 0;\n        \n        while (i < firstList.size() && j < secondList.size()) {\n            // Get current intervals\n            auto a = firstList[i];\n            auto b = secondList[j];\n            \n            // Find intersection\n            int start = max(a[0], b[0]);\n            int end = min(a[1], b[1]);\n            \n            // If valid intersection, add to result\n            if (start <= end) {\n                result.push_back({start, end});\n            }\n            \n            // Move pointer of interval that ends first\n            if (a[1] < b[1]) {\n                i++;\n            } else {\n                j++;\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {\n        List<int[]> result = new ArrayList<>();\n        int i = 0, j = 0;\n        \n        while (i < firstList.length && j < secondList.length) {\n            // Get current intervals\n            int[] a = firstList[i];\n            int[] b = secondList[j];\n            \n            // Find intersection\n            int start = Math.max(a[0], b[0]);\n            int end = Math.min(a[1], b[1]);\n            \n            // If valid intersection, add to result\n            if (start <= end) {\n                result.add(new int[]{start, end});\n            }\n            \n            // Move pointer of interval that ends first\n            if (a[1] < b[1]) {\n                i++;\n            } else {\n                j++;\n            }\n        }\n        \n        return result.toArray(new int[result.size()][]);\n    }\n}",
+        "python": "def intervalIntersection(firstList, secondList):\n    result = []\n    i, j = 0, 0\n    \n    while i < len(firstList) and j < len(secondList):\n        # Get current intervals\n        a = firstList[i]\n        b = secondList[j]\n        \n        # Find intersection\n        start = max(a[0], b[0])\n        end = min(a[1], b[1])\n        \n        # If valid intersection, add to result\n        if start <= end:\n            result.append([start, end])\n        \n        # Move pointer of interval that ends first\n        if a[1] < b[1]:\n            i += 1\n        else:\n            j += 1\n    \n    return result",
+        "javascript": "function intervalIntersection(firstList, secondList) {\n    const result = [];\n    let i = 0, j = 0;\n    \n    while (i < firstList.length && j < secondList.length) {\n        // Get current intervals\n        const a = firstList[i];\n        const b = secondList[j];\n        \n        // Find intersection\n        const start = Math.max(a[0], b[0]);\n        const end = Math.min(a[1], b[1]);\n        \n        // If valid intersection, add to result\n        if (start <= end) {\n            result.push([start, end]);\n        }\n        \n        // Move pointer of interval that ends first\n        if (a[1] < b[1]) {\n            i++;\n        } else {\n            j++;\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Merge and Filter",
+      "order": 2,
+      "intuition": "Merge both lists into a single sorted list with markers indicating which list each interval belongs to. Then scan through merged list and whenever consecutive intervals are from different lists and overlap, add their intersection.",
+      "approach": "Combine both interval lists with tags (0 for first, 1 for second). Sort by start time. Iterate through merged list. When two consecutive intervals are from different lists and overlap, compute and add intersection.",
+      "steps": [
+        "Create merged list with tags:",
+        "  - merged = [(interval, 0) for interval in firstList]",
+        "  - merged += [(interval, 1) for interval in secondList]",
+        "Sort merged by start time",
+        "Initialize result = []",
+        "For i from 0 to len(merged)-2:",
+        "  - If merged[i] and merged[i+1] from different lists:",
+        "    - Check overlap: if merged[i][0][1] >= merged[i+1][0][0]:",
+        "      - start = max(merged[i][0][0], merged[i+1][0][0])",
+        "      - end = min(merged[i][0][1], merged[i+1][0][1])",
+        "      - Add [start, end] to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O((m + n) log(m + n))",
+        "space": "O(m + n)",
+        "timeExplanation": "Merging lists: O(m + n). Sorting: O((m + n) log(m + n)). Scan: O(m + n). Total dominated by sorting.",
+        "spaceExplanation": "Merged list stores m + n intervals. O(m + n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> intervalIntersection(vector<vector<int>>& firstList, \n                                              vector<vector<int>>& secondList) {\n        // Create merged list with tags\n        vector<pair<vector<int>, int>> merged;\n        for (auto& interval : firstList) {\n            merged.push_back({interval, 0});\n        }\n        for (auto& interval : secondList) {\n            merged.push_back({interval, 1});\n        }\n        \n        // Sort by start time\n        sort(merged.begin(), merged.end(), \n             [](const auto& a, const auto& b) {\n                 return a.first[0] < b.first[0];\n             });\n        \n        vector<vector<int>> result;\n        \n        // Find intersections\n        for (int i = 0; i < merged.size(); i++) {\n            for (int j = i + 1; j < merged.size(); j++) {\n                // Only check intervals from different lists\n                if (merged[i].second != merged[j].second) {\n                    auto& a = merged[i].first;\n                    auto& b = merged[j].first;\n                    \n                    // Check for overlap\n                    int start = max(a[0], b[0]);\n                    int end = min(a[1], b[1]);\n                    \n                    if (start <= end) {\n                        result.push_back({start, end});\n                    }\n                }\n                \n                // If current interval ends before next starts, break\n                if (merged[i].first[1] < merged[j].first[0]) {\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {\n        // Create merged list with tags\n        List<int[]> merged = new ArrayList<>();\n        for (int[] interval : firstList) {\n            merged.add(new int[]{interval[0], interval[1], 0});\n        }\n        for (int[] interval : secondList) {\n            merged.add(new int[]{interval[0], interval[1], 1});\n        }\n        \n        // Sort by start time\n        merged.sort((a, b) -> Integer.compare(a[0], b[0]));\n        \n        List<int[]> result = new ArrayList<>();\n        \n        // Find intersections using two pointers\n        for (int i = 0; i < merged.size(); i++) {\n            for (int j = i + 1; j < merged.size(); j++) {\n                // Only check intervals from different lists\n                if (merged.get(i)[2] != merged.get(j)[2]) {\n                    int[] a = merged.get(i);\n                    int[] b = merged.get(j);\n                    \n                    // Check for overlap\n                    int start = Math.max(a[0], b[0]);\n                    int end = Math.min(a[1], b[1]);\n                    \n                    if (start <= end) {\n                        result.add(new int[]{start, end});\n                    }\n                }\n                \n                // If current interval ends before next starts, break\n                if (merged.get(i)[1] < merged.get(j)[0]) {\n                    break;\n                }\n            }\n        }\n        \n        return result.toArray(new int[result.size()][]);\n    }\n}",
+        "python": "def intervalIntersection(firstList, secondList):\n    # Create merged list with tags\n    merged = [(interval, 0) for interval in firstList]\n    merged += [(interval, 1) for interval in secondList]\n    \n    # Sort by start time\n    merged.sort(key=lambda x: x[0][0])\n    \n    result = []\n    \n    # Find intersections\n    for i in range(len(merged)):\n        for j in range(i + 1, len(merged)):\n            # Only check intervals from different lists\n            if merged[i][1] != merged[j][1]:\n                a = merged[i][0]\n                b = merged[j][0]\n                \n                # Check for overlap\n                start = max(a[0], b[0])\n                end = min(a[1], b[1])\n                \n                if start <= end:\n                    result.append([start, end])\n            \n            # If current interval ends before next starts, break\n            if merged[i][0][1] < merged[j][0][0]:\n                break\n    \n    return result",
+        "javascript": "function intervalIntersection(firstList, secondList) {\n    // Create merged list with tags\n    const merged = [];\n    for (const interval of firstList) {\n        merged.push([interval, 0]);\n    }\n    for (const interval of secondList) {\n        merged.push([interval, 1]);\n    }\n    \n    // Sort by start time\n    merged.sort((a, b) => a[0][0] - b[0][0]);\n    \n    const result = [];\n    \n    // Find intersections\n    for (let i = 0; i < merged.length; i++) {\n        for (let j = i + 1; j < merged.length; j++) {\n            // Only check intervals from different lists\n            if (merged[i][1] !== merged[j][1]) {\n                const a = merged[i][0];\n                const b = merged[j][0];\n                \n                // Check for overlap\n                const start = Math.max(a[0], b[0]);\n                const end = Math.min(a[1], b[1]);\n                \n                if (start <= end) {\n                    result.push([start, end]);\n                }\n            }\n            \n            // If current interval ends before next starts, break\n            if (merged[i][0][1] < merged[j][0][0]) {\n                break;\n            }\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling empty input lists",
+    "Using wrong condition for checking overlap (start > end instead of start <= end)",
+    "Incrementing both pointers instead of just one",
+    "Not moving pointer of interval with smaller end",
+    "Forgetting that both lists are already sorted",
+    "Creating intersection with swapped start and end",
+    "Off-by-one errors in boundary conditions"
+  ],
+  "hints": [
+    "Both lists are already sorted - leverage this with two pointers",
+    "Intersection exists when max(start1, start2) <= min(end1, end2)",
+    "The intersection bounds are [max(start1, start2), min(end1, end2)]",
+    "Always move pointer of interval that ends first",
+    "No need to sort or merge - direct two-pointer scan works",
+    "Think about which interval can possibly intersect with future intervals"
+  ],
+  "followUp": [
+    "What if the lists were not sorted?",
+    "How to find intersections of three or more interval lists?",
+    "Can you find the union instead of intersection?",
+    "What if intervals can overlap within the same list?",
+    "How to find the symmetric difference (parts in either but not both)?",
+    "Can you solve this in parallel for very large lists?",
+    "What if intervals are given as a stream?",
+    "How to handle infinite intervals or open-ended ranges?"
+  ],
+  "companies": [
+    "Facebook",
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Bloomberg",
+    "Uber",
+    "Apple"
+  ],
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Intervals",
+    "Sorting"
+  ],
+  "relatedProblems": [
+    "Merge Intervals",
+    "Insert Interval",
+    "Employee Free Time",
+    "Meeting Rooms II",
+    "Range Module",
+    "Data Stream as Disjoint Intervals",
+    "Non-overlapping Intervals"
+  ]
 }

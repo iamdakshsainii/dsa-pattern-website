@@ -3,17 +3,184 @@
   "questionSlug": "level-order-successor",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/level-order-successor-of-a-node-in-binary-tree/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Level Order Successor in Binary Tree",
+        "url": "https://www.youtube.com/watch?v=287qpUT5v6U",
+        "channel": "TECH DOSE",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Next Node in Level Order",
+        "url": "https://www.youtube.com/watch?v=QfJsau0ItOY",
+        "channel": "take U forward",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "BFS Successor Pattern",
+        "url": "https://www.youtube.com/watch?v=kLbVRe7hN1c",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Level Order Successor Guide",
+        "url": "https://www.geeksforgeeks.org/level-order-successor-of-a-node-in-binary-tree/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Find Next Node in BFS",
+        "url": "https://www.educative.io/courses/grokking-the-coding-interview/7nPmMpwG9yO",
+        "source": "Educative"
+      },
+      {
+        "title": "BFS Traversal Patterns",
+        "url": "https://algo.monster/problems/level_order_successor",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Right Side View",
+        "url": "https://leetcode.com/problems/binary-tree-right-side-view/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Populating Next Right Pointers",
+        "url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Depth of Binary Tree",
+        "url": "https://leetcode.com/problems/minimum-depth-of-binary-tree/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Level Order Successor when finding next node in BFS traversal. Key indicators: find next node, successor in level order, node after given key, BFS next element.",
+  "approaches": [
+    {
+      "name": "BFS with Target Tracking (Optimal)",
+      "order": 1,
+      "intuition": "Use BFS to traverse tree level by level. When target node found, next node dequeued is the successor. BFS naturally gives order, so successor is simply next in queue.",
+      "approach": "Perform normal BFS. When dequeued node matches key, return next node in queue as successor.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize queue with root",
+        "While queue not empty:",
+        " - Dequeue current node",
+        " - If current node value equals key:",
+        "   - If queue not empty, return next node in queue",
+        "   - Otherwise, return null (no successor)",
+        " - Enqueue left child if exists",
+        " - Enqueue right child if exists",
+        "Return null if key not found"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "In worst case, visit all n nodes before finding key. Each node processed once. Total: O(n).",
+        "spaceExplanation": "Queue stores at most w nodes (max width). Space: O(w). Worst case w = n/2 for complete tree."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    TreeNode* levelOrderSuccessor(TreeNode* root, int key) {\n        if (!root) return nullptr;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        \n        while (!q.empty()) {\n            TreeNode* node = q.front();\n            q.pop();\n            \n            // If current node is the key, return next node\n            if (node->val == key) {\n                return q.empty() ? nullptr : q.front();\n            }\n            \n            if (node->left) q.push(node->left);\n            if (node->right) q.push(node->right);\n        }\n        \n        return nullptr; // Key not found\n    }\n};",
+        "java": "class Solution {\n    public TreeNode levelOrderSuccessor(TreeNode root, int key) {\n        if (root == null) return null;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        \n        while (!queue.isEmpty()) {\n            TreeNode node = queue.poll();\n            \n            // If current node is the key, return next node\n            if (node.val == key) {\n                return queue.isEmpty() ? null : queue.peek();\n            }\n            \n            if (node.left != null) queue.offer(node.left);\n            if (node.right != null) queue.offer(node.right);\n        }\n        \n        return null; // Key not found\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def levelOrderSuccessor(self, root: Optional[TreeNode], key: int) -> Optional[TreeNode]:\n        if not root:\n            return None\n        \n        queue = deque([root])\n        \n        while queue:\n            node = queue.popleft()\n            \n            # If current node is the key, return next node\n            if node.val == key:\n                return queue[0] if queue else None\n            \n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        \n        return None  # Key not found",
+        "javascript": "function levelOrderSuccessor(root, key) {\n    if (!root) return null;\n    \n    const queue = [root];\n    \n    while (queue.length > 0) {\n        const node = queue.shift();\n        \n        // If current node is the key, return next node\n        if (node.val === key) {\n            return queue.length > 0 ? queue[0] : null;\n        }\n        \n        if (node.left) queue.push(node.left);\n        if (node.right) queue.push(node.right);\n    }\n    \n    return null; // Key not found\n}"
+      }
+    },
+    {
+      "name": "BFS with Flag (Alternative)",
+      "order": 2,
+      "intuition": "Use flag to track when key is found. Process normally until key found, then set flag. Next node processed after flag is set is the successor.",
+      "approach": "Perform BFS with boolean flag. When key found, set flag. Next iteration returns current node as successor.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize queue with root and found = false",
+        "While queue not empty:",
+        " - Dequeue current node",
+        " - If found flag is true, return current node",
+        " - If current node value equals key, set found = true",
+        " - Enqueue left and right children",
+        "Return null if no successor found"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit nodes until successor found. Worst case: O(n). Best case: O(w) if key near root.",
+        "spaceExplanation": "Queue stores at most w nodes. Space: O(w)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    TreeNode* levelOrderSuccessor(TreeNode* root, int key) {\n        if (!root) return nullptr;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        bool found = false;\n        \n        while (!q.empty()) {\n            TreeNode* node = q.front();\n            q.pop();\n            \n            if (found) {\n                return node;\n            }\n            \n            if (node->val == key) {\n                found = true;\n            }\n            \n            if (node->left) q.push(node->left);\n            if (node->right) q.push(node->right);\n        }\n        \n        return nullptr;\n    }\n};",
+        "java": "class Solution {\n    public TreeNode levelOrderSuccessor(TreeNode root, int key) {\n        if (root == null) return null;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        boolean found = false;\n        \n        while (!queue.isEmpty()) {\n            TreeNode node = queue.poll();\n            \n            if (found) {\n                return node;\n            }\n            \n            if (node.val == key) {\n                found = true;\n            }\n            \n            if (node.left != null) queue.offer(node.left);\n            if (node.right != null) queue.offer(node.right);\n        }\n        \n        return null;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def levelOrderSuccessor(self, root: Optional[TreeNode], key: int) -> Optional[TreeNode]:\n        if not root:\n            return None\n        \n        queue = deque([root])\n        found = False\n        \n        while queue:\n            node = queue.popleft()\n            \n            if found:\n                return node\n            \n            if node.val == key:\n                found = True\n            \n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        \n        return None",
+        "javascript": "function levelOrderSuccessor(root, key) {\n    if (!root) return null;\n    \n    const queue = [root];\n    let found = false;\n    \n    while (queue.length > 0) {\n        const node = queue.shift();\n        \n        if (found) {\n            return node;\n        }\n        \n        if (node.val === key) {\n            found = true;\n        }\n        \n        if (node.left) queue.push(node.left);\n        if (node.right) queue.push(node.right);\n    }\n    \n    return null;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Checking queue front before enqueuing children",
+    "Not handling case when key is last node",
+    "Returning current node instead of next node",
+    "Forgetting to check if queue is empty before returning front",
+    "Using DFS instead of BFS",
+    "Not handling case when key doesn't exist",
+    "Returning sibling instead of level-order successor",
+    "Confusing successor with right child"
+  ],
+  "hints": [
+    "BFS processes nodes in level order naturally",
+    "Successor is simply next node in BFS traversal",
+    "Can check queue.front() right after finding key",
+    "Handle edge case: key is last node in tree",
+    "No need to track levels explicitly",
+    "Successor can be in same or next level",
+    "Queue peek/front gives next node without removing"
+  ],
+  "followUp": [
+    "How to find predecessor in level order?",
+    "What if we need kth successor?",
+    "How to find successor in inorder traversal?",
+    "Can we do this without extra space?",
+    "What if tree has duplicate values?",
+    "How to find all nodes at same level as key?",
+    "What if we need closest value successor?",
+    "How to handle very large trees efficiently?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "Bloomberg",
+    "Adobe"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "BFS",
+    "Queue",
+    "Level Order Traversal",
+    "Breadth First Search"
+  ],
+  "relatedProblems": [
+    "Binary Tree Level Order Traversal",
+    "Binary Tree Right Side View",
+    "Populating Next Right Pointers",
+    "Minimum Depth of Binary Tree",
+    "Inorder Successor in BST",
+    "Kth Smallest Element in BST",
+    "Find Bottom Left Tree Value",
+    "Complete Binary Tree Inserter"
+  ]
 }

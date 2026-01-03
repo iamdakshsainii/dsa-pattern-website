@@ -2,18 +2,181 @@
   "questionId": "694d4a3a98494915f3bc8eef",
   "questionSlug": "rotation-count",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+    "videos": [
+      {
+        "title": "Find Minimum in Rotated Sorted Array",
+        "url": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
+        "channel": "NeetCode",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Rotation Count Binary Search",
+        "url": "https://www.youtube.com/watch?v=4WmTRFZilj8",
+        "channel": "take U forward",
+        "duration": "17:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Pivot in Rotated Array",
+        "url": "https://www.youtube.com/watch?v=W9QJ8HaRvJQ",
+        "channel": "Aditya Verma",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Minimum in Rotated Sorted Array",
+        "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Count Rotations in Sorted Array",
+        "url": "https://www.geeksforgeeks.org/find-rotation-count-rotated-sorted-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Search in Rotated Array",
+        "url": "https://algo.monster/problems/binary_search_rotated",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find Minimum in Rotated Sorted Array",
+        "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Minimum in Rotated Sorted Array II",
+        "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search in Rotated Sorted Array",
+        "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Peak Element",
+        "url": "https://leetcode.com/problems/find-peak-element/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Rotation Count when finding pivot/minimum in rotated sorted array. Key indicators: rotated sorted array, count rotations, find pivot index, minimum element position, binary search on rotation.",
+  "approaches": [
+    {
+      "name": "Modified Binary Search (Optimal)",
+      "order": 1,
+      "intuition": "Rotation count equals index of minimum element. In rotated array, minimum is at pivot point where rotation occurred. Use binary search: compare mid with right. If arr[mid] > arr[right], minimum is in right half. Else minimum is in left half (including mid). Index of minimum = rotation count.",
+      "approach": "Binary search to find minimum element index. Compare arr[mid] with arr[right] to decide search direction. When found minimum, its index is the rotation count.",
+      "steps": [
+        "Initialize left = 0, right = n-1",
+        "While left < right:",
+        "  - mid = left + (right - left) / 2",
+        "  - If arr[mid] > arr[right]:",
+        "    * Minimum is in right half: left = mid + 1",
+        "  - Else:",
+        "    * Minimum is in left half or mid: right = mid",
+        "Return left (index of minimum = rotation count)",
+        "Special case: if arr[0] < arr[n-1], no rotation (return 0)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search divides space in half each iteration. log n iterations to find minimum.",
+        "spaceExplanation": "Only pointer variables. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findRotationCount(vector<int>& arr) {\n        int n = arr.size();\n        \n        // No rotation case\n        if (arr[0] < arr[n - 1]) {\n            return 0;\n        }\n        \n        int left = 0, right = n - 1;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] > arr[right]) {\n                // Minimum is in right half\n                left = mid + 1;\n            } else {\n                // Minimum is in left half or mid\n                right = mid;\n            }\n        }\n        \n        return left;  // Index of minimum = rotation count\n    }\n};",
+        "java": "class Solution {\n    public int findRotationCount(int[] arr) {\n        int n = arr.length;\n        \n        // No rotation case\n        if (arr[0] < arr[n - 1]) {\n            return 0;\n        }\n        \n        int left = 0, right = n - 1;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] > arr[right]) {\n                // Minimum is in right half\n                left = mid + 1;\n            } else {\n                // Minimum is in left half or mid\n                right = mid;\n            }\n        }\n        \n        return left;  // Index of minimum = rotation count\n    }\n}",
+        "python": "class Solution:\n    def findRotationCount(self, arr: List[int]) -> int:\n        n = len(arr)\n        \n        # No rotation case\n        if arr[0] < arr[-1]:\n            return 0\n        \n        left, right = 0, n - 1\n        \n        while left < right:\n            mid = left + (right - left) // 2\n            \n            if arr[mid] > arr[right]:\n                # Minimum is in right half\n                left = mid + 1\n            else:\n                # Minimum is in left half or mid\n                right = mid\n        \n        return left  # Index of minimum = rotation count",
+        "javascript": "function findRotationCount(arr) {\n    const n = arr.length;\n    \n    // No rotation case\n    if (arr[0] < arr[n - 1]) {\n        return 0;\n    }\n    \n    let left = 0, right = n - 1;\n    \n    while (left < right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (arr[mid] > arr[right]) {\n            // Minimum is in right half\n            left = mid + 1;\n        } else {\n            // Minimum is in left half or mid\n            right = mid;\n        }\n    }\n    \n    return left;  // Index of minimum = rotation count\n}"
+      }
+    },
+    {
+      "name": "Linear Search (Brute Force)",
+      "order": 2,
+      "intuition": "Scan array to find where order breaks (arr[i] > arr[i+1]). That index + 1 is rotation count. If no break, array not rotated. Simple but O(n).",
+      "approach": "Iterate checking adjacent elements. When current > next, next index is rotation count.",
+      "steps": [
+        "For i from 0 to n-2:",
+        "  - If arr[i] > arr[i+1]:",
+        "    * Return i + 1 (rotation count found)",
+        "Return 0 (no rotation)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "May check all n elements in worst case. Linear time: O(n).",
+        "spaceExplanation": "Only loop variable. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findRotationCount(vector<int>& arr) {\n        for (int i = 0; i < arr.size() - 1; i++) {\n            if (arr[i] > arr[i + 1]) {\n                return i + 1;\n            }\n        }\n        return 0;  // No rotation\n    }\n};",
+        "java": "class Solution {\n    public int findRotationCount(int[] arr) {\n        for (int i = 0; i < arr.length - 1; i++) {\n            if (arr[i] > arr[i + 1]) {\n                return i + 1;\n            }\n        }\n        return 0;  // No rotation\n    }\n}",
+        "python": "class Solution:\n    def findRotationCount(self, arr: List[int]) -> int:\n        for i in range(len(arr) - 1):\n            if arr[i] > arr[i + 1]:\n                return i + 1\n        return 0  # No rotation",
+        "javascript": "function findRotationCount(arr) {\n    for (let i = 0; i < arr.length - 1; i++) {\n        if (arr[i] > arr[i + 1]) {\n            return i + 1;\n        }\n    }\n    return 0;  // No rotation\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Comparing arr[mid] with arr[left] instead of arr[right]",
+    "Using left <= right instead of left < right",
+    "Setting right = mid - 1 instead of right = mid",
+    "Not handling no rotation case",
+    "Confusing rotation count with minimum value",
+    "Off-by-one error in result",
+    "Not considering single element array",
+    "Forgetting rotation count = index of minimum"
+  ],
+  "hints": [
+    "Rotation count equals index of minimum element",
+    "Compare arr[mid] with arr[right]",
+    "If arr[mid] > arr[right], min is in right half",
+    "If arr[mid] <= arr[right], min is in left or mid",
+    "Use left < right as loop condition",
+    "When left == right, found the minimum",
+    "No rotation: arr[0] < arr[n-1], return 0",
+    "Time complexity: O(log n)"
+  ],
+  "followUp": [
+    "What if array has duplicates?",
+    "How to find rotation count in O(1) space guaranteed?",
+    "What if multiple rotations possible?",
+    "Can you handle counter-clockwise rotation?",
+    "What about finding original array?",
+    "How to verify array is rotated sorted?",
+    "What if rotation point at boundaries?",
+    "Can you extend to 2D rotated matrix?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Oracle"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Rotated Array",
+    "Sorted Array"
+  ],
+  "relatedProblems": [
+    "Find Minimum in Rotated Sorted Array",
+    "Find Minimum in Rotated Sorted Array II",
+    "Search in Rotated Sorted Array",
+    "Search in Rotated Sorted Array II",
+    "Find Peak Element",
+    "Bitonic Array Maximum",
+    "Order Agnostic Binary Search",
+    "Search Bitonic Array"
+  ]
 }

@@ -3,17 +3,179 @@
   "questionSlug": "find-pivot-index",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-pivot-index/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Find Pivot Index - Leetcode 724",
+        "url": "https://www.youtube.com/watch?v=u89i60lYx8U",
+        "channel": "NeetCode",
+        "duration": "5:45",
+        "language": "English"
+      },
+      {
+        "title": "Find Pivot Index Explained",
+        "url": "https://www.youtube.com/watch?v=Yh-66wHsoMY",
+        "channel": "Nick White",
+        "duration": "8:30",
+        "language": "English"
+      },
+      {
+        "title": "Equilibrium Index Tutorial",
+        "url": "https://www.youtube.com/watch?v=kGd6fGl2fWo",
+        "channel": "TECH DOSE",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Pivot Index Solution",
+        "url": "https://leetcode.com/problems/find-pivot-index/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Equilibrium Index of Array",
+        "url": "https://www.geeksforgeeks.org/equilibrium-index-of-an-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Pivot Index Tutorial",
+        "url": "https://algo.monster/problems/find_pivot_index",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find the Middle Index in Array",
+        "url": "https://leetcode.com/problems/find-the-middle-index-in-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Subarray Sum Equals K",
+        "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Product of Array Except Self",
+        "url": "https://leetcode.com/problems/product-of-array-except-self/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Range Sum Query - Immutable",
+        "url": "https://leetcode.com/problems/range-sum-query-immutable/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Find Pivot Index pattern when finding index where left sum equals right sum. Key indicators: equilibrium point, balance point, left sum equals right sum, split array into equal sum parts.",
+  "approaches": [
+    {
+      "name": "Single Pass with Running Sum (Optimal)",
+      "order": 1,
+      "intuition": "Calculate total sum first. Then iterate through array maintaining left sum. At each index, right sum = total - left sum - current element. Check if left sum equals right sum. This avoids computing sums repeatedly.",
+      "approach": "Calculate total sum. Iterate with left sum starting at 0. At each index, check if leftSum == totalSum - leftSum - nums[i]. Update leftSum after check. Return first valid index or -1.",
+      "steps": [
+        "Calculate totalSum of entire array",
+        "Initialize leftSum = 0",
+        "For each index i from 0 to n-1:",
+        " - Calculate rightSum = totalSum - leftSum - nums[i]",
+        " - If leftSum == rightSum:",
+        "   - Return i (found pivot)",
+        " - Update leftSum: leftSum += nums[i]",
+        "If no pivot found, return -1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes: one to calculate total sum, one to find pivot. Each is O(n). Total: O(n).",
+        "spaceExplanation": "Only constant extra space for sum variables. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int pivotIndex(vector<int>& nums) {\n        int totalSum = 0;\n        for (int num : nums) {\n            totalSum += num;\n        }\n        \n        int leftSum = 0;\n        for (int i = 0; i < nums.size(); i++) {\n            int rightSum = totalSum - leftSum - nums[i];\n            \n            if (leftSum == rightSum) {\n                return i;\n            }\n            \n            leftSum += nums[i];\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int pivotIndex(int[] nums) {\n        int totalSum = 0;\n        for (int num : nums) {\n            totalSum += num;\n        }\n        \n        int leftSum = 0;\n        for (int i = 0; i < nums.length; i++) {\n            int rightSum = totalSum - leftSum - nums[i];\n            \n            if (leftSum == rightSum) {\n                return i;\n            }\n            \n            leftSum += nums[i];\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def pivotIndex(self, nums: List[int]) -> int:\n        total_sum = sum(nums)\n        \n        left_sum = 0\n        for i, num in enumerate(nums):\n            right_sum = total_sum - left_sum - num\n            \n            if left_sum == right_sum:\n                return i\n            \n            left_sum += num\n        \n        return -1",
+        "javascript": "function pivotIndex(nums) {\n    const totalSum = nums.reduce((sum, num) => sum + num, 0);\n    \n    let leftSum = 0;\n    for (let i = 0; i < nums.length; i++) {\n        const rightSum = totalSum - leftSum - nums[i];\n        \n        if (leftSum === rightSum) {\n            return i;\n        }\n        \n        leftSum += nums[i];\n    }\n    \n    return -1;\n}"
+      }
+    },
+    {
+      "name": "Prefix and Suffix Sum Arrays",
+      "order": 2,
+      "intuition": "Precompute prefix sum and suffix sum arrays. For each index, check if prefix[i-1] equals suffix[i+1]. This explicitly stores left and right sums but uses extra space.",
+      "approach": "Build prefix sum array from left. Build suffix sum array from right. For each index, compare prefix[i-1] with suffix[i+1]. Return first matching index.",
+      "steps": [
+        "Build prefix sum array: prefix[i] = sum of nums[0..i]",
+        "Build suffix sum array: suffix[i] = sum of nums[i..n-1]",
+        "For each index i from 0 to n-1:",
+        " - leftSum = (i > 0) ? prefix[i-1] : 0",
+        " - rightSum = (i < n-1) ? suffix[i+1] : 0",
+        " - If leftSum == rightSum:",
+        "   - Return i",
+        "Return -1 if no pivot found"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Build prefix sum O(n), suffix sum O(n), find pivot O(n). Total: O(n).",
+        "spaceExplanation": "Prefix and suffix arrays each take O(n) space. Total: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int pivotIndex(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> prefix(n), suffix(n);\n        \n        // Build prefix sum\n        prefix[0] = nums[0];\n        for (int i = 1; i < n; i++) {\n            prefix[i] = prefix[i - 1] + nums[i];\n        }\n        \n        // Build suffix sum\n        suffix[n - 1] = nums[n - 1];\n        for (int i = n - 2; i >= 0; i--) {\n            suffix[i] = suffix[i + 1] + nums[i];\n        }\n        \n        // Find pivot\n        for (int i = 0; i < n; i++) {\n            int leftSum = (i > 0) ? prefix[i - 1] : 0;\n            int rightSum = (i < n - 1) ? suffix[i + 1] : 0;\n            \n            if (leftSum == rightSum) {\n                return i;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int pivotIndex(int[] nums) {\n        int n = nums.length;\n        int[] prefix = new int[n];\n        int[] suffix = new int[n];\n        \n        // Build prefix sum\n        prefix[0] = nums[0];\n        for (int i = 1; i < n; i++) {\n            prefix[i] = prefix[i - 1] + nums[i];\n        }\n        \n        // Build suffix sum\n        suffix[n - 1] = nums[n - 1];\n        for (int i = n - 2; i >= 0; i--) {\n            suffix[i] = suffix[i + 1] + nums[i];\n        }\n        \n        // Find pivot\n        for (int i = 0; i < n; i++) {\n            int leftSum = (i > 0) ? prefix[i - 1] : 0;\n            int rightSum = (i < n - 1) ? suffix[i + 1] : 0;\n            \n            if (leftSum == rightSum) {\n                return i;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def pivotIndex(self, nums: List[int]) -> int:\n        n = len(nums)\n        \n        # Build prefix sum\n        prefix = [0] * n\n        prefix[0] = nums[0]\n        for i in range(1, n):\n            prefix[i] = prefix[i - 1] + nums[i]\n        \n        # Build suffix sum\n        suffix = [0] * n\n        suffix[n - 1] = nums[n - 1]\n        for i in range(n - 2, -1, -1):\n            suffix[i] = suffix[i + 1] + nums[i]\n        \n        # Find pivot\n        for i in range(n):\n            left_sum = prefix[i - 1] if i > 0 else 0\n            right_sum = suffix[i + 1] if i < n - 1 else 0\n            \n            if left_sum == right_sum:\n                return i\n        \n        return -1",
+        "javascript": "function pivotIndex(nums) {\n    const n = nums.length;\n    const prefix = new Array(n);\n    const suffix = new Array(n);\n    \n    // Build prefix sum\n    prefix[0] = nums[0];\n    for (let i = 1; i < n; i++) {\n        prefix[i] = prefix[i - 1] + nums[i];\n    }\n    \n    // Build suffix sum\n    suffix[n - 1] = nums[n - 1];\n    for (let i = n - 2; i >= 0; i--) {\n        suffix[i] = suffix[i + 1] + nums[i];\n    }\n    \n    // Find pivot\n    for (let i = 0; i < n; i++) {\n        const leftSum = (i > 0) ? prefix[i - 1] : 0;\n        const rightSum = (i < n - 1) ? suffix[i + 1] : 0;\n        \n        if (leftSum === rightSum) {\n            return i;\n        }\n    }\n    \n    return -1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Including current element in both left and right sums",
+    "Not handling edge cases (first or last element as pivot)",
+    "Updating leftSum before checking the condition",
+    "Integer overflow with large arrays (use long if needed)",
+    "Calculating rightSum incorrectly (should be total - left - current)",
+    "Not initializing leftSum to 0",
+    "Returning index instead of -1 when no pivot exists",
+    "Off-by-one errors in prefix/suffix array indexing"
+  ],
+  "hints": [
+    "Left sum at index i excludes nums[i]",
+    "Right sum = total sum - left sum - nums[i]",
+    "Update left sum AFTER checking the condition",
+    "Edge case: first element can be pivot if sum of rest is 0",
+    "Edge case: last element can be pivot if sum before it is 0",
+    "You only need one pass after calculating total sum",
+    "No need for prefix/suffix arrays, use running sum"
+  ],
+  "followUp": [
+    "What if there are multiple pivot indices? Return all of them.",
+    "How to find rightmost pivot instead of leftmost?",
+    "What if array can be modified? How to update pivot efficiently?",
+    "How to handle if array is a stream (online algorithm)?",
+    "What if you need pivot where left product equals right product?",
+    "How to solve for 2D array (find row or column pivot)?",
+    "What if negative numbers are not allowed?",
+    "How to find index where left sum = k * right sum?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "Apple",
+    "Adobe",
+    "Bloomberg"
+  ],
+  "tags": [
+    "Array",
+    "Prefix Sum"
+  ],
+  "relatedProblems": [
+    "Find the Middle Index in Array",
+    "Subarray Sum Equals K",
+    "Product of Array Except Self",
+    "Range Sum Query - Immutable",
+    "Subarray Sums Divisible by K",
+    "Continuous Subarray Sum",
+    "Maximum Subarray",
+    "Minimum Size Subarray Sum"
+  ]
 }

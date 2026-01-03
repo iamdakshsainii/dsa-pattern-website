@@ -2,18 +2,180 @@
   "questionId": "694d4a3a98494915f3bc8f01",
   "questionSlug": "sum-elements",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/sum-of-all-subset-xor-totals/",
+    "videos": [
+      {
+        "title": "Sum of Top K Elements Pattern",
+        "url": "https://www.youtube.com/watch?v=Tq9OBQmFmqY",
+        "channel": "NeetCode",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Heap Sum Problems Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=xzJ7RR_vJ-E",
+        "channel": "TECH DOSE",
+        "duration": "14:15",
+        "language": "English"
+      },
+      {
+        "title": "K Elements Sum Using Heap",
+        "url": "https://www.youtube.com/watch?v=c7tgNXOAPZ4",
+        "channel": "take U forward",
+        "duration": "17:40",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sum of K Elements Pattern",
+        "url": "https://leetcode.com/discuss/general-discussion/1127238/master-heap-by-solving-23-questions-in-4-patterns-category",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Finding Sum Using Heaps",
+        "url": "https://www.geeksforgeeks.org/sum-elements-k1th-k2th-smallest-elements/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Heap Sum Problems",
+        "url": "https://algo.monster/problems/top_k_elements",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Kth Largest Element in an Array",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Top K Frequent Elements",
+        "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimize Deviation in Array",
+        "url": "https://leetcode.com/problems/minimize-deviation-in-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find K Pairs with Smallest Sums",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Sum of K Elements pattern when computing sum of top/bottom k elements. Key indicators: sum of k largest/smallest, heap to track top k, maintain running sum, remove and add to heap.",
+  "approaches": [
+    {
+      "name": "Min Heap for K Largest (Optimal)",
+      "order": 1,
+      "intuition": "To find sum of k largest elements, maintain min heap of size k containing k largest elements seen so far. Sum all elements in heap at end. Heap maintains k largest efficiently by replacing minimum when better element found.",
+      "approach": "Build min heap of size k. For each element, if heap not full, add it. Otherwise, if element > heap root, remove root and add element. Finally, sum all elements in heap.",
+      "steps": [
+        "Create min heap",
+        "Initialize sum = 0",
+        "For each element in array:",
+        " - If heap.size < k:",
+        "   - Add element to heap",
+        " - Else if element > heap.peek():",
+        "   - Remove heap root",
+        "   - Add element to heap",
+        "Extract all elements from heap and sum them",
+        "Return sum"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Process n elements, each requiring O(log k) heap operation. Total: O(n log k). Extracting k elements: O(k log k). Total: O(n log k).",
+        "spaceExplanation": "Heap stores k elements. O(k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int sumOfKLargest(vector<int>& nums, int k) {\n        priority_queue<int, vector<int>, greater<int>> minHeap;\n        \n        for (int num : nums) {\n            minHeap.push(num);\n            if (minHeap.size() > k) {\n                minHeap.pop();\n            }\n        }\n        \n        int sum = 0;\n        while (!minHeap.empty()) {\n            sum += minHeap.top();\n            minHeap.pop();\n        }\n        \n        return sum;\n    }\n};",
+        "java": "class Solution {\n    public int sumOfKLargest(int[] nums, int k) {\n        PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n        \n        for (int num : nums) {\n            minHeap.offer(num);\n            if (minHeap.size() > k) {\n                minHeap.poll();\n            }\n        }\n        \n        int sum = 0;\n        while (!minHeap.isEmpty()) {\n            sum += minHeap.poll();\n        }\n        \n        return sum;\n    }\n}",
+        "python": "import heapq\n\nclass Solution:\n    def sumOfKLargest(self, nums: List[int], k: int) -> int:\n        min_heap = []\n        \n        for num in nums:\n            heapq.heappush(min_heap, num)\n            if len(min_heap) > k:\n                heapq.heappop(min_heap)\n        \n        return sum(min_heap)",
+        "javascript": "class MinHeap {\n    constructor() {\n        this.heap = [];\n    }\n    \n    push(val) {\n        this.heap.push(val);\n        this.bubbleUp(this.heap.length - 1);\n    }\n    \n    pop() {\n        if (this.heap.length === 0) return null;\n        if (this.heap.length === 1) return this.heap.pop();\n        \n        const min = this.heap[0];\n        this.heap[0] = this.heap.pop();\n        this.bubbleDown(0);\n        return min;\n    }\n    \n    size() {\n        return this.heap.length;\n    }\n    \n    bubbleUp(idx) {\n        while (idx > 0) {\n            const parent = Math.floor((idx - 1) / 2);\n            if (this.heap[parent] <= this.heap[idx]) break;\n            [this.heap[parent], this.heap[idx]] = [this.heap[idx], this.heap[parent]];\n            idx = parent;\n        }\n    }\n    \n    bubbleDown(idx) {\n        while (true) {\n            const left = 2 * idx + 1;\n            const right = 2 * idx + 2;\n            let smallest = idx;\n            \n            if (left < this.heap.length && this.heap[left] < this.heap[smallest]) {\n                smallest = left;\n            }\n            if (right < this.heap.length && this.heap[right] < this.heap[smallest]) {\n                smallest = right;\n            }\n            if (smallest === idx) break;\n            \n            [this.heap[idx], this.heap[smallest]] = [this.heap[smallest], this.heap[idx]];\n            idx = smallest;\n        }\n    }\n}\n\nfunction sumOfKLargest(nums, k) {\n    const minHeap = new MinHeap();\n    \n    for (const num of nums) {\n        minHeap.push(num);\n        if (minHeap.size() > k) {\n            minHeap.pop();\n        }\n    }\n    \n    let sum = 0;\n    while (minHeap.size() > 0) {\n        sum += minHeap.pop();\n    }\n    \n    return sum;\n}"
+      }
+    },
+    {
+      "name": "QuickSelect + Sum (Alternative)",
+      "order": 2,
+      "intuition": "Use QuickSelect to partition array so k largest elements are in right section. Then simply sum those k elements. No need for full sorting, just partition.",
+      "approach": "Use QuickSelect to find (n-k)th element (pivot between k largest and rest). Sum all elements after pivot position.",
+      "steps": [
+        "Use QuickSelect to partition array",
+        "Find position where k largest elements start",
+        "Sum elements from that position to end",
+        "Return sum"
+      ],
+      "complexity": {
+        "time": "O(n) average, O(n²) worst",
+        "space": "O(1)",
+        "timeExplanation": "QuickSelect average: O(n). Sum k elements: O(k). Total average: O(n). Worst case: O(n²).",
+        "spaceExplanation": "In-place partitioning. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int partition(vector<int>& nums, int left, int right) {\n        int pivot = nums[right];\n        int i = left;\n        \n        for (int j = left; j < right; j++) {\n            if (nums[j] >= pivot) {\n                swap(nums[i], nums[j]);\n                i++;\n            }\n        }\n        swap(nums[i], nums[right]);\n        return i;\n    }\n    \n    void quickSelect(vector<int>& nums, int left, int right, int k) {\n        if (left >= right) return;\n        \n        int pivotIndex = partition(nums, left, right);\n        \n        if (pivotIndex == k - 1) {\n            return;\n        } else if (pivotIndex > k - 1) {\n            quickSelect(nums, left, pivotIndex - 1, k);\n        } else {\n            quickSelect(nums, pivotIndex + 1, right, k);\n        }\n    }\n    \npublic:\n    int sumOfKLargest(vector<int>& nums, int k) {\n        quickSelect(nums, 0, nums.size() - 1, k);\n        \n        int sum = 0;\n        for (int i = 0; i < k; i++) {\n            sum += nums[i];\n        }\n        return sum;\n    }\n};",
+        "java": "class Solution {\n    private int partition(int[] nums, int left, int right) {\n        int pivot = nums[right];\n        int i = left;\n        \n        for (int j = left; j < right; j++) {\n            if (nums[j] >= pivot) {\n                int temp = nums[i];\n                nums[i] = nums[j];\n                nums[j] = temp;\n                i++;\n            }\n        }\n        int temp = nums[i];\n        nums[i] = nums[right];\n        nums[right] = temp;\n        return i;\n    }\n    \n    private void quickSelect(int[] nums, int left, int right, int k) {\n        if (left >= right) return;\n        \n        int pivotIndex = partition(nums, left, right);\n        \n        if (pivotIndex == k - 1) {\n            return;\n        } else if (pivotIndex > k - 1) {\n            quickSelect(nums, left, pivotIndex - 1, k);\n        } else {\n            quickSelect(nums, pivotIndex + 1, right, k);\n        }\n    }\n    \n    public int sumOfKLargest(int[] nums, int k) {\n        quickSelect(nums, 0, nums.length - 1, k);\n        \n        int sum = 0;\n        for (int i = 0; i < k; i++) {\n            sum += nums[i];\n        }\n        return sum;\n    }\n}",
+        "python": "class Solution:\n    def sumOfKLargest(self, nums: List[int], k: int) -> int:\n        def partition(left, right):\n            pivot = nums[right]\n            i = left\n            \n            for j in range(left, right):\n                if nums[j] >= pivot:\n                    nums[i], nums[j] = nums[j], nums[i]\n                    i += 1\n            \n            nums[i], nums[right] = nums[right], nums[i]\n            return i\n        \n        def quickselect(left, right, k):\n            if left >= right:\n                return\n            \n            pivot_index = partition(left, right)\n            \n            if pivot_index == k - 1:\n                return\n            elif pivot_index > k - 1:\n                quickselect(left, pivot_index - 1, k)\n            else:\n                quickselect(pivot_index + 1, right, k)\n        \n        quickselect(0, len(nums) - 1, k)\n        return sum(nums[:k])",
+        "javascript": "function sumOfKLargest(nums, k) {\n    function partition(left, right) {\n        const pivot = nums[right];\n        let i = left;\n        \n        for (let j = left; j < right; j++) {\n            if (nums[j] >= pivot) {\n                [nums[i], nums[j]] = [nums[j], nums[i]];\n                i++;\n            }\n        }\n        [nums[i], nums[right]] = [nums[right], nums[i]];\n        return i;\n    }\n    \n    function quickSelect(left, right, k) {\n        if (left >= right) return;\n        \n        const pivotIndex = partition(left, right);\n        \n        if (pivotIndex === k - 1) {\n            return;\n        } else if (pivotIndex > k - 1) {\n            quickSelect(left, pivotIndex - 1, k);\n        } else {\n            quickSelect(pivotIndex + 1, right, k);\n        }\n    }\n    \n    quickSelect(0, nums.length - 1, k);\n    \n    let sum = 0;\n    for (let i = 0; i < k; i++) {\n        sum += nums[i];\n    }\n    return sum;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using max heap instead of min heap for k largest",
+    "Not maintaining heap size at exactly k",
+    "Summing during heap building instead of at end",
+    "Wrong partition logic in QuickSelect",
+    "Forgetting to handle k > array length",
+    "Not extracting all elements from heap before returning",
+    "Using O(n log n) full sort when O(n log k) is sufficient",
+    "Off-by-one errors in QuickSelect index calculations"
+  ],
+  "hints": [
+    "Min heap of size k contains k largest elements",
+    "Sum elements after building complete heap, not during",
+    "QuickSelect gives O(n) average but modifies array",
+    "Heap approach doesn't modify original array",
+    "For k smallest, use max heap instead",
+    "Can optimize by maintaining running sum while building heap",
+    "Choose approach based on k: heap for small k, QuickSelect for large k"
+  ],
+  "followUp": [
+    "What if you need sum of k smallest instead?",
+    "How to find sum of elements between kth and mth largest?",
+    "What if array is too large to fit in memory?",
+    "How to handle if k changes frequently?",
+    "What if you need both sum and the k elements?",
+    "How to optimize if asked for multiple sums with different k?",
+    "What if elements are negative?",
+    "How to handle overflow for very large sums?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Heap",
+    "QuickSelect",
+    "Sorting",
+    "Math"
+  ],
+  "relatedProblems": [
+    "Kth Largest Element in an Array",
+    "Top K Frequent Elements",
+    "K Closest Points to Origin",
+    "Minimize Deviation in Array",
+    "Find K Pairs with Smallest Sums",
+    "Maximum Subsequence Score",
+    "Minimum Cost to Hire K Workers"
+  ]
 }

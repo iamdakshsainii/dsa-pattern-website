@@ -3,17 +3,187 @@
   "questionSlug": "minimum-meeting-rooms",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/problems/attend-all-meetings-ii/1",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Meeting Rooms II - LeetCode 253",
+        "url": "https://www.youtube.com/watch?v=FdzJmTCVyJU",
+        "channel": "NeetCode",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Minimum Meeting Rooms Required",
+        "url": "https://www.youtube.com/watch?v=4MEZeLJRhTQ",
+        "channel": "TECH DOSE",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Meeting Rooms II Explained",
+        "url": "https://www.youtube.com/watch?v=0LuJJj7o_h8",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:55",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Meeting Rooms II Problem",
+        "url": "https://www.geeksforgeeks.org/problems/attend-all-meetings-ii/1",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Minimum Platforms Problem",
+        "url": "https://www.geeksforgeeks.org/minimum-number-platforms-required-railwaybus-station/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Interval Scheduling Problems",
+        "url": "https://algo.monster/problems/meeting_rooms",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Meeting Rooms",
+        "url": "https://leetcode.com/problems/meeting-rooms/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "My Calendar I",
+        "url": "https://leetcode.com/problems/my-calendar-i/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Car Pooling",
+        "url": "https://leetcode.com/problems/car-pooling/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Corporate Flight Bookings",
+        "url": "https://leetcode.com/problems/corporate-flight-bookings/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Minimum Meeting Rooms pattern when finding the maximum number of overlapping intervals at any point. Key indicators: find peak overlap, minimum resources needed, maximum concurrent events, scheduling conflicts, platform allocation problem.",
+  "approaches": [
+    {
+      "name": "Min Heap (Priority Queue)",
+      "order": 1,
+      "intuition": "Sort meetings by start time. Use min heap to track end times of ongoing meetings. For each meeting, remove all finished meetings (end <= current start) from heap. Add current meeting's end time to heap. Heap size represents rooms needed at that time. Track maximum heap size.",
+      "approach": "Sort intervals by start time. Use min heap to store end times of active meetings. For each meeting, pop meetings that have ended. Push current meeting's end time. Maximum heap size is the answer.",
+      "steps": [
+        "Sort intervals by start time",
+        "Initialize min heap (priority queue) for end times",
+        "Initialize maxRooms = 0",
+        "For each interval:",
+        "  - While heap not empty and heap.top() <= interval.start:",
+        "    - Pop from heap (meeting ended)",
+        "  - Push interval.end to heap (new meeting starts)",
+        "  - maxRooms = max(maxRooms, heap.size())",
+        "Return maxRooms"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting: O(n log n). Each meeting added/removed from heap once: O(n log n). Total: O(n log n).",
+        "spaceExplanation": "Heap can store up to n meetings in worst case. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minMeetingRooms(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return 0;\n        \n        // Sort by start time\n        sort(intervals.begin(), intervals.end());\n        \n        // Min heap to store end times\n        priority_queue<int, vector<int>, greater<int>> minHeap;\n        \n        int maxRooms = 0;\n        \n        for (auto& interval : intervals) {\n            // Remove all meetings that have ended\n            while (!minHeap.empty() && minHeap.top() <= interval[0]) {\n                minHeap.pop();\n            }\n            \n            // Add current meeting's end time\n            minHeap.push(interval[1]);\n            \n            // Track maximum rooms needed\n            maxRooms = max(maxRooms, (int)minHeap.size());\n        }\n        \n        return maxRooms;\n    }\n};",
+        "java": "class Solution {\n    public int minMeetingRooms(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        \n        // Sort by start time\n        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        // Min heap to store end times\n        PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n        \n        int maxRooms = 0;\n        \n        for (int[] interval : intervals) {\n            // Remove all meetings that have ended\n            while (!minHeap.isEmpty() && minHeap.peek() <= interval[0]) {\n                minHeap.poll();\n            }\n            \n            // Add current meeting's end time\n            minHeap.offer(interval[1]);\n            \n            // Track maximum rooms needed\n            maxRooms = Math.max(maxRooms, minHeap.size());\n        }\n        \n        return maxRooms;\n    }\n}",
+        "python": "import heapq\n\ndef minMeetingRooms(intervals):\n    if not intervals:\n        return 0\n    \n    # Sort by start time\n    intervals.sort(key=lambda x: x[0])\n    \n    # Min heap to store end times\n    min_heap = []\n    max_rooms = 0\n    \n    for interval in intervals:\n        # Remove all meetings that have ended\n        while min_heap and min_heap[0] <= interval[0]:\n            heapq.heappop(min_heap)\n        \n        # Add current meeting's end time\n        heapq.heappush(min_heap, interval[1])\n        \n        # Track maximum rooms needed\n        max_rooms = max(max_rooms, len(min_heap))\n    \n    return max_rooms",
+        "javascript": "function minMeetingRooms(intervals) {\n    if (intervals.length === 0) return 0;\n    \n    // Sort by start time\n    intervals.sort((a, b) => a[0] - b[0]);\n    \n    // Min heap to store end times (using array as heap)\n    const minHeap = [];\n    let maxRooms = 0;\n    \n    for (const interval of intervals) {\n        // Remove all meetings that have ended\n        while (minHeap.length > 0 && minHeap[0] <= interval[0]) {\n            minHeap.shift();\n            // Re-heapify after removal\n            minHeap.sort((a, b) => a - b);\n        }\n        \n        // Add current meeting's end time\n        minHeap.push(interval[1]);\n        minHeap.sort((a, b) => a - b);\n        \n        // Track maximum rooms needed\n        maxRooms = Math.max(maxRooms, minHeap.length);\n    }\n    \n    return maxRooms;\n}"
+      }
+    },
+    {
+      "name": "Chronological Ordering (Two Pointers)",
+      "order": 2,
+      "intuition": "Create separate sorted arrays for start times and end times. Use two pointers to traverse both arrays. When start < end, a meeting starts (need new room). When end <= start, a meeting ends (free a room). Track the count of active meetings.",
+      "approach": "Extract and sort start times and end times separately. Use two pointers to scan chronologically. Increment rooms when meeting starts, decrement when meeting ends. Track maximum rooms needed.",
+      "steps": [
+        "Create starts[] = sorted start times",
+        "Create ends[] = sorted end times",
+        "Initialize i = 0, j = 0, rooms = 0, maxRooms = 0",
+        "While i < n:",
+        "  - If starts[i] < ends[j]:",
+        "    - rooms++ (new meeting starts)",
+        "    - i++",
+        "  - Else:",
+        "    - rooms-- (meeting ends)",
+        "    - j++",
+        "  - maxRooms = max(maxRooms, rooms)",
+        "Return maxRooms"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting start and end times: O(n log n) each. Two pointer scan: O(n). Total: O(n log n).",
+        "spaceExplanation": "Two arrays for starts and ends: O(n) each. Total: O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minMeetingRooms(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return 0;\n        \n        int n = intervals.size();\n        vector<int> starts, ends;\n        \n        // Extract start and end times\n        for (auto& interval : intervals) {\n            starts.push_back(interval[0]);\n            ends.push_back(interval[1]);\n        }\n        \n        // Sort both arrays\n        sort(starts.begin(), starts.end());\n        sort(ends.begin(), ends.end());\n        \n        int i = 0, j = 0;\n        int rooms = 0, maxRooms = 0;\n        \n        // Chronologically process events\n        while (i < n) {\n            if (starts[i] < ends[j]) {\n                // Meeting starts, need new room\n                rooms++;\n                i++;\n            } else {\n                // Meeting ends, free a room\n                rooms--;\n                j++;\n            }\n            maxRooms = max(maxRooms, rooms);\n        }\n        \n        return maxRooms;\n    }\n};",
+        "java": "class Solution {\n    public int minMeetingRooms(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        \n        int n = intervals.length;\n        int[] starts = new int[n];\n        int[] ends = new int[n];\n        \n        // Extract start and end times\n        for (int i = 0; i < n; i++) {\n            starts[i] = intervals[i][0];\n            ends[i] = intervals[i][1];\n        }\n        \n        // Sort both arrays\n        Arrays.sort(starts);\n        Arrays.sort(ends);\n        \n        int i = 0, j = 0;\n        int rooms = 0, maxRooms = 0;\n        \n        // Chronologically process events\n        while (i < n) {\n            if (starts[i] < ends[j]) {\n                // Meeting starts, need new room\n                rooms++;\n                i++;\n            } else {\n                // Meeting ends, free a room\n                rooms--;\n                j++;\n            }\n            maxRooms = Math.max(maxRooms, rooms);\n        }\n        \n        return maxRooms;\n    }\n}",
+        "python": "def minMeetingRooms(intervals):\n    if not intervals:\n        return 0\n    \n    n = len(intervals)\n    \n    # Extract start and end times\n    starts = sorted([interval[0] for interval in intervals])\n    ends = sorted([interval[1] for interval in intervals])\n    \n    i, j = 0, 0\n    rooms = 0\n    max_rooms = 0\n    \n    # Chronologically process events\n    while i < n:\n        if starts[i] < ends[j]:\n            # Meeting starts, need new room\n            rooms += 1\n            i += 1\n        else:\n            # Meeting ends, free a room\n            rooms -= 1\n            j += 1\n        max_rooms = max(max_rooms, rooms)\n    \n    return max_rooms",
+        "javascript": "function minMeetingRooms(intervals) {\n    if (intervals.length === 0) return 0;\n    \n    const n = intervals.length;\n    \n    // Extract start and end times\n    const starts = intervals.map(interval => interval[0]).sort((a, b) => a - b);\n    const ends = intervals.map(interval => interval[1]).sort((a, b) => a - b);\n    \n    let i = 0, j = 0;\n    let rooms = 0, maxRooms = 0;\n    \n    // Chronologically process events\n    while (i < n) {\n        if (starts[i] < ends[j]) {\n            // Meeting starts, need new room\n            rooms++;\n            i++;\n        } else {\n            // Meeting ends, free a room\n            rooms--;\n            j++;\n        }\n        maxRooms = Math.max(maxRooms, rooms);\n    }\n    \n    return maxRooms;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting intervals before processing",
+    "Using wrong comparison in heap removal (should be <= not <)",
+    "Not tracking maximum size, only final size",
+    "Confusing start and end times in two-pointer approach",
+    "Not handling empty input",
+    "Using max heap instead of min heap",
+    "Forgetting to remove ended meetings from heap"
+  ],
+  "hints": [
+    "Sort intervals by start time first",
+    "Use min heap to track when ongoing meetings end",
+    "Alternative: separate start and end times, sort both, use two pointers",
+    "The answer is the maximum number of overlapping meetings at any point",
+    "When a meeting ends, a room becomes available for reuse",
+    "Think of this as finding the peak number of concurrent meetings"
+  ],
+  "followUp": [
+    "What if meetings have priority and high-priority meetings get rooms first?",
+    "How to return the actual room assignments for each meeting?",
+    "What if some rooms are larger and can host multiple meetings?",
+    "How to handle recurring meetings (weekly, daily)?",
+    "Can you solve this in a streaming fashion as meetings arrive?",
+    "What if meetings can be rescheduled to minimize rooms?",
+    "How to find the time range with maximum room usage?",
+    "What if there are different types of rooms with different capacities?"
+  ],
+  "companies": [
+    "Facebook",
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Bloomberg",
+    "Uber",
+    "LinkedIn",
+    "Apple"
+  ],
+  "tags": [
+    "Array",
+    "Heap",
+    "Sorting",
+    "Greedy",
+    "Intervals",
+    "Two Pointers"
+  ],
+  "relatedProblems": [
+    "Meeting Rooms",
+    "Merge Intervals",
+    "My Calendar I",
+    "My Calendar II",
+    "My Calendar III",
+    "Car Pooling",
+    "Maximum CPU Load",
+    "Corporate Flight Bookings"
+  ]
 }

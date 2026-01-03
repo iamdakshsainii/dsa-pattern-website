@@ -2,18 +2,184 @@
   "questionId": "694d4a3a98494915f3bc8efb",
   "questionSlug": "connect-ropes",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/minimum-cost-to-connect-sticks/",
+    "videos": [
+      {
+        "title": "Minimum Cost to Connect Sticks",
+        "url": "https://www.youtube.com/watch?v=_k_c7UVDH1w",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Connect Ropes Min Heap Solution",
+        "url": "https://www.youtube.com/watch?v=HHIc5JZyenI",
+        "channel": "TECH DOSE",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Minimum Cost to Connect Ropes Complete Guide",
+        "url": "https://www.youtube.com/watch?v=_SiwrPXG9-g",
+        "channel": "take U forward",
+        "duration": "15:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Minimum Cost to Connect Sticks Solution",
+        "url": "https://leetcode.com/problems/minimum-cost-to-connect-sticks/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Connect Ropes with Minimum Cost",
+        "url": "https://www.geeksforgeeks.org/connect-n-ropes-minimum-cost/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Huffman Coding and Min Cost",
+        "url": "https://algo.monster/problems/minimum_cost_to_connect_sticks",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Last Stone Weight",
+        "url": "https://leetcode.com/problems/last-stone-weight/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Merge K Sorted Lists",
+        "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "K Closest Points to Origin",
+        "url": "https://leetcode.com/problems/k-closest-points-to-origin/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Largest Element in an Array",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Min Heap pattern when connecting ropes with minimum cost. Key indicators: minimize cost, combine smallest elements repeatedly, greedy approach, Huffman-like problem, need repeated minimum extraction.",
+  "approaches": [
+    {
+      "name": "Min Heap (Optimal)",
+      "order": 1,
+      "intuition": "Always connect two shortest ropes to minimize cost (greedy approach, similar to Huffman coding). Use min heap to efficiently get two smallest ropes. Cost of connecting two ropes equals their sum. Add result back to heap and repeat until one rope remains.",
+      "approach": "Insert all rope lengths into min heap. While heap has more than one element, extract two minimum elements, add their cost to total, push their sum back to heap. Final total is minimum cost.",
+      "steps": [
+        "Create min heap and add all rope lengths",
+        "Initialize totalCost = 0",
+        "While heap size > 1:",
+        " - Extract first minimum (rope1)",
+        " - Extract second minimum (rope2)",
+        " - cost = rope1 + rope2",
+        " - Add cost to totalCost",
+        " - Push cost back to heap",
+        "Return totalCost"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Building heap takes O(n). We perform n-1 operations (each removing 2, adding 1). Each heap operation is O(log n). Total: O(n log n).",
+        "spaceExplanation": "Min heap stores all n elements. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int connectSticks(vector<int>& sticks) {\n        priority_queue<int, vector<int>, greater<int>> minHeap(sticks.begin(), sticks.end());\n        int totalCost = 0;\n        \n        while (minHeap.size() > 1) {\n            int first = minHeap.top();\n            minHeap.pop();\n            int second = minHeap.top();\n            minHeap.pop();\n            \n            int cost = first + second;\n            totalCost += cost;\n            minHeap.push(cost);\n        }\n        \n        return totalCost;\n    }\n};",
+        "java": "class Solution {\n    public int connectSticks(int[] sticks) {\n        PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n        for (int stick : sticks) {\n            minHeap.offer(stick);\n        }\n        \n        int totalCost = 0;\n        while (minHeap.size() > 1) {\n            int first = minHeap.poll();\n            int second = minHeap.poll();\n            \n            int cost = first + second;\n            totalCost += cost;\n            minHeap.offer(cost);\n        }\n        \n        return totalCost;\n    }\n}",
+        "python": "import heapq\n\nclass Solution:\n    def connectSticks(self, sticks: List[int]) -> int:\n        heapq.heapify(sticks)\n        total_cost = 0\n        \n        while len(sticks) > 1:\n            first = heapq.heappop(sticks)\n            second = heapq.heappop(sticks)\n            \n            cost = first + second\n            total_cost += cost\n            heapq.heappush(sticks, cost)\n        \n        return total_cost",
+        "javascript": "class MinHeap {\n    constructor() {\n        this.heap = [];\n    }\n    \n    push(val) {\n        this.heap.push(val);\n        this.bubbleUp(this.heap.length - 1);\n    }\n    \n    pop() {\n        if (this.heap.length === 0) return null;\n        if (this.heap.length === 1) return this.heap.pop();\n        \n        const min = this.heap[0];\n        this.heap[0] = this.heap.pop();\n        this.bubbleDown(0);\n        return min;\n    }\n    \n    bubbleUp(idx) {\n        while (idx > 0) {\n            const parent = Math.floor((idx - 1) / 2);\n            if (this.heap[parent] <= this.heap[idx]) break;\n            [this.heap[parent], this.heap[idx]] = [this.heap[idx], this.heap[parent]];\n            idx = parent;\n        }\n    }\n    \n    bubbleDown(idx) {\n        while (true) {\n            const left = 2 * idx + 1;\n            const right = 2 * idx + 2;\n            let smallest = idx;\n            \n            if (left < this.heap.length && this.heap[left] < this.heap[smallest]) {\n                smallest = left;\n            }\n            if (right < this.heap.length && this.heap[right] < this.heap[smallest]) {\n                smallest = right;\n            }\n            if (smallest === idx) break;\n            \n            [this.heap[idx], this.heap[smallest]] = [this.heap[smallest], this.heap[idx]];\n            idx = smallest;\n        }\n    }\n    \n    size() {\n        return this.heap.length;\n    }\n}\n\nfunction connectSticks(sticks) {\n    const minHeap = new MinHeap();\n    for (const stick of sticks) {\n        minHeap.push(stick);\n    }\n    \n    let totalCost = 0;\n    while (minHeap.size() > 1) {\n        const first = minHeap.pop();\n        const second = minHeap.pop();\n        \n        const cost = first + second;\n        totalCost += cost;\n        minHeap.push(cost);\n    }\n    \n    return totalCost;\n}"
+      }
+    },
+    {
+      "name": "Sort and Combine (Suboptimal)",
+      "order": 2,
+      "intuition": "Sort array and always combine two smallest. After each combination, need to find where to insert result in sorted array. This is less efficient than heap but demonstrates the greedy logic.",
+      "approach": "Sort array. Repeatedly take two smallest, add cost, insert result back in sorted position. Continue until one element remains.",
+      "steps": [
+        "Sort sticks array",
+        "Initialize totalCost = 0",
+        "While sticks length > 1:",
+        " - Take first two elements (smallest)",
+        " - cost = sticks[0] + sticks[1]",
+        " - Add cost to totalCost",
+        " - Remove first two elements",
+        " - Insert cost in sorted position",
+        "Return totalCost"
+      ],
+      "complexity": {
+        "time": "O(n^2)",
+        "space": "O(1)",
+        "timeExplanation": "Initial sort is O(n log n). Then n-1 iterations, each requiring O(n) for insertion. Total: O(n^2).",
+        "spaceExplanation": "In-place operations. O(1) extra space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int connectSticks(vector<int>& sticks) {\n        sort(sticks.begin(), sticks.end());\n        int totalCost = 0;\n        \n        while (sticks.size() > 1) {\n            int first = sticks[0];\n            int second = sticks[1];\n            sticks.erase(sticks.begin(), sticks.begin() + 2);\n            \n            int cost = first + second;\n            totalCost += cost;\n            \n            // Insert cost in sorted position\n            auto pos = lower_bound(sticks.begin(), sticks.end(), cost);\n            sticks.insert(pos, cost);\n        }\n        \n        return totalCost;\n    }\n};",
+        "java": "class Solution {\n    public int connectSticks(int[] sticks) {\n        List<Integer> list = new ArrayList<>();\n        for (int stick : sticks) {\n            list.add(stick);\n        }\n        Collections.sort(list);\n        \n        int totalCost = 0;\n        while (list.size() > 1) {\n            int first = list.remove(0);\n            int second = list.remove(0);\n            \n            int cost = first + second;\n            totalCost += cost;\n            \n            // Insert in sorted position\n            int pos = Collections.binarySearch(list, cost);\n            if (pos < 0) pos = -(pos + 1);\n            list.add(pos, cost);\n        }\n        \n        return totalCost;\n    }\n}",
+        "python": "from bisect import insort\n\nclass Solution:\n    def connectSticks(self, sticks: List[int]) -> int:\n        sticks.sort()\n        total_cost = 0\n        \n        while len(sticks) > 1:\n            first = sticks.pop(0)\n            second = sticks.pop(0)\n            \n            cost = first + second\n            total_cost += cost\n            \n            # Insert in sorted position\n            insort(sticks, cost)\n        \n        return total_cost",
+        "javascript": "function connectSticks(sticks) {\n    sticks.sort((a, b) => a - b);\n    let totalCost = 0;\n    \n    while (sticks.length > 1) {\n        const first = sticks.shift();\n        const second = sticks.shift();\n        \n        const cost = first + second;\n        totalCost += cost;\n        \n        // Insert in sorted position\n        let pos = 0;\n        while (pos < sticks.length && sticks[pos] < cost) {\n            pos++;\n        }\n        sticks.splice(pos, 0, cost);\n    }\n    \n    return totalCost;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not using min heap (trying to sort repeatedly is O(n^2 log n))",
+    "Forgetting to add combined rope back to heap",
+    "Using max heap instead of min heap",
+    "Not handling edge case of single rope (cost = 0)",
+    "Calculating cost incorrectly (cost is sum of two ropes)",
+    "Removing both minimums before calculating cost",
+    "Not accumulating total cost properly",
+    "Using wrong data structure (array with repeated sorting)"
+  ],
+  "hints": [
+    "Always combine two shortest ropes (greedy approach)",
+    "Min heap gives O(log n) access to two smallest elements",
+    "Each combination creates new rope that goes back in pool",
+    "Similar to Huffman coding tree construction",
+    "Total operations = n-1 (combining n ropes into 1)",
+    "Cost of each combination = sum of two rope lengths",
+    "If only one rope, no connection needed (cost = 0)"
+  ],
+  "followUp": [
+    "What if you can connect k ropes at once instead of 2?",
+    "How to minimize maximum intermediate rope length?",
+    "What if connecting cost is not just sum (e.g., sum + penalty)?",
+    "How to solve if input is streamed (ropes arrive over time)?",
+    "What if you want to maximize cost instead of minimize?",
+    "How to track which ropes were connected together?",
+    "What if ropes have different connection costs?",
+    "How to parallelize this algorithm?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "Adobe"
+  ],
+  "tags": [
+    "Heap",
+    "Priority Queue",
+    "Greedy",
+    "Array"
+  ],
+  "relatedProblems": [
+    "Last Stone Weight",
+    "Merge K Sorted Lists",
+    "Huffman Coding",
+    "Minimum Cost Tree From Leaf Values",
+    "Kth Largest Element in an Array",
+    "Top K Frequent Elements",
+    "K Closest Points to Origin"
+  ]
 }

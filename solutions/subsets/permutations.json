@@ -2,18 +2,192 @@
   "questionId": "694d4a3a98494915f3bc8ee2",
   "questionSlug": "permutations",
   "resources": {
-    "leetcode": "https://www.educative.io/courses/grokking-the-coding-interview/B8R83jyN3KY",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/permutations/",
+    "videos": [
+      {
+        "title": "Permutations - Leetcode 46",
+        "url": "https://www.youtube.com/watch?v=s7AvT7cGdSo",
+        "channel": "NeetCode",
+        "duration": "11:45",
+        "language": "English"
+      },
+      {
+        "title": "All Permutations Using Backtracking",
+        "url": "https://www.youtube.com/watch?v=YK78FU5Ffjw",
+        "channel": "TECH DOSE",
+        "duration": "18:30",
+        "language": "English"
+      },
+      {
+        "title": "Permutations Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=f2ic2Rsc9pU",
+        "channel": "take U forward",
+        "duration": "22:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Permutations Solution",
+        "url": "https://leetcode.com/problems/permutations/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Generate All Permutations",
+        "url": "https://www.geeksforgeeks.org/write-a-c-program-to-print-all-permutations-of-a-given-string/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Backtracking for Permutations",
+        "url": "https://algo.monster/problems/permutations",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Permutations II",
+        "url": "https://leetcode.com/problems/permutations-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Next Permutation",
+        "url": "https://leetcode.com/problems/next-permutation/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Permutation Sequence",
+        "url": "https://leetcode.com/problems/permutation-sequence/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Combinations",
+        "url": "https://leetcode.com/problems/combinations/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Permutations pattern when generating all possible orderings/arrangements of elements. Key indicators: all permutations, all arrangements, order matters, backtracking with visited tracking, n! results.",
+  "approaches": [
+    {
+      "name": "Backtracking with Visited Set (Optimal)",
+      "order": 1,
+      "intuition": "Build permutations by choosing elements one at a time. Use visited set to track which elements are already used in current permutation. At each step, try adding each unused element, recurse, then backtrack. When permutation length equals n, add to result.",
+      "approach": "Use recursive backtracking. Maintain current permutation and visited set. Try each unvisited element, mark as visited, recurse, then unmark (backtrack). Base case: when current permutation has all n elements.",
+      "steps": [
+        "Initialize result list",
+        "Define backtrack function(current, visited):",
+        " - If current.length == n:",
+        "   - Add copy of current to result",
+        "   - Return",
+        " - For each element in nums:",
+        "   - If element not in visited:",
+        "     - Add element to current",
+        "     - Mark element as visited",
+        "     - Recursively call backtrack(current, visited)",
+        "     - Remove element from current (backtrack)",
+        "     - Unmark element from visited",
+        "Call backtrack([], {})",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n! * n)",
+        "space": "O(n)",
+        "timeExplanation": "Generate n! permutations. Creating each permutation takes O(n) time to copy. Total: O(n! * n).",
+        "spaceExplanation": "Recursion depth is n. Current permutation and visited set take O(n). Total: O(n) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    void backtrack(vector<vector<int>>& result, vector<int>& current, \n                   vector<int>& nums, unordered_set<int>& visited) {\n        if (current.size() == nums.size()) {\n            result.push_back(current);\n            return;\n        }\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (visited.find(i) == visited.end()) {\n                current.push_back(nums[i]);\n                visited.insert(i);\n                \n                backtrack(result, current, nums, visited);\n                \n                current.pop_back();\n                visited.erase(i);\n            }\n        }\n    }\n    \npublic:\n    vector<vector<int>> permute(vector<int>& nums) {\n        vector<vector<int>> result;\n        vector<int> current;\n        unordered_set<int> visited;\n        \n        backtrack(result, current, nums, visited);\n        return result;\n    }\n};",
+        "java": "class Solution {\n    private void backtrack(List<List<Integer>> result, List<Integer> current, \n                          int[] nums, Set<Integer> visited) {\n        if (current.size() == nums.length) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        for (int i = 0; i < nums.length; i++) {\n            if (!visited.contains(i)) {\n                current.add(nums[i]);\n                visited.add(i);\n                \n                backtrack(result, current, nums, visited);\n                \n                current.remove(current.size() - 1);\n                visited.remove(i);\n            }\n        }\n    }\n    \n    public List<List<Integer>> permute(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(result, new ArrayList<>(), nums, new HashSet<>());\n        return result;\n    }\n}",
+        "python": "class Solution:\n    def permute(self, nums: List[int]) -> List[List[int]]:\n        result = []\n        \n        def backtrack(current, visited):\n            if len(current) == len(nums):\n                result.append(current[:])\n                return\n            \n            for i in range(len(nums)):\n                if i not in visited:\n                    current.append(nums[i])\n                    visited.add(i)\n                    \n                    backtrack(current, visited)\n                    \n                    current.pop()\n                    visited.remove(i)\n        \n        backtrack([], set())\n        return result",
+        "javascript": "function permute(nums) {\n    const result = [];\n    \n    function backtrack(current, visited) {\n        if (current.length === nums.length) {\n            result.push([...current]);\n            return;\n        }\n        \n        for (let i = 0; i < nums.length; i++) {\n            if (!visited.has(i)) {\n                current.push(nums[i]);\n                visited.add(i);\n                \n                backtrack(current, visited);\n                \n                current.pop();\n                visited.delete(i);\n            }\n        }\n    }\n    \n    backtrack([], new Set());\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Swapping",
+      "order": 2,
+      "intuition": "Generate permutations by swapping elements. Fix first element, generate permutations of rest. Then swap first with each other element and repeat. This modifies array in-place and doesn't need visited set.",
+      "approach": "Use recursive backtracking with in-place swapping. For position i, try each element from i to end by swapping. Recurse on next position. Swap back after recursion (backtrack).",
+      "steps": [
+        "Initialize result list",
+        "Define backtrack function(nums, start):",
+        " - If start == nums.length:",
+        "   - Add copy of nums to result",
+        "   - Return",
+        " - For i from start to nums.length-1:",
+        "   - Swap nums[start] with nums[i]",
+        "   - Recursively call backtrack(nums, start+1)",
+        "   - Swap back nums[start] with nums[i] (backtrack)",
+        "Call backtrack(nums, 0)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n! * n)",
+        "space": "O(n)",
+        "timeExplanation": "Generate n! permutations. Each permutation copied in O(n). Total: O(n! * n).",
+        "spaceExplanation": "Recursion depth is n. No extra data structures needed. O(n) space excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    void backtrack(vector<vector<int>>& result, vector<int>& nums, int start) {\n        if (start == nums.size()) {\n            result.push_back(nums);\n            return;\n        }\n        \n        for (int i = start; i < nums.size(); i++) {\n            swap(nums[start], nums[i]);\n            backtrack(result, nums, start + 1);\n            swap(nums[start], nums[i]); // backtrack\n        }\n    }\n    \npublic:\n    vector<vector<int>> permute(vector<int>& nums) {\n        vector<vector<int>> result;\n        backtrack(result, nums, 0);\n        return result;\n    }\n};",
+        "java": "class Solution {\n    private void backtrack(List<List<Integer>> result, int[] nums, int start) {\n        if (start == nums.length) {\n            List<Integer> permutation = new ArrayList<>();\n            for (int num : nums) {\n                permutation.add(num);\n            }\n            result.add(permutation);\n            return;\n        }\n        \n        for (int i = start; i < nums.length; i++) {\n            swap(nums, start, i);\n            backtrack(result, nums, start + 1);\n            swap(nums, start, i); // backtrack\n        }\n    }\n    \n    private void swap(int[] nums, int i, int j) {\n        int temp = nums[i];\n        nums[i] = nums[j];\n        nums[j] = temp;\n    }\n    \n    public List<List<Integer>> permute(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(result, nums, 0);\n        return result;\n    }\n}",
+        "python": "class Solution:\n    def permute(self, nums: List[int]) -> List[List[int]]:\n        result = []\n        \n        def backtrack(start):\n            if start == len(nums):\n                result.append(nums[:])\n                return\n            \n            for i in range(start, len(nums)):\n                nums[start], nums[i] = nums[i], nums[start]\n                backtrack(start + 1)\n                nums[start], nums[i] = nums[i], nums[start]  # backtrack\n        \n        backtrack(0)\n        return result",
+        "javascript": "function permute(nums) {\n    const result = [];\n    \n    function backtrack(start) {\n        if (start === nums.length) {\n            result.push([...nums]);\n            return;\n        }\n        \n        for (let i = start; i < nums.length; i++) {\n            [nums[start], nums[i]] = [nums[i], nums[start]];\n            backtrack(start + 1);\n            [nums[start], nums[i]] = [nums[i], nums[start]]; // backtrack\n        }\n    }\n    \n    backtrack(0);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not copying the current permutation when adding to result (reference issue)",
+    "Forgetting to backtrack (remove element and unmark visited)",
+    "Not using indices for visited tracking (using values can fail with duplicates)",
+    "Modifying input array without restoring in swap approach",
+    "Not handling edge case of empty array",
+    "Creating new visited set in each recursion instead of modifying one",
+    "Confusing permutations with combinations (order matters in permutations)",
+    "Not understanding that we need exactly n! permutations"
+  ],
+  "hints": [
+    "Use backtracking to build permutations step by step",
+    "Track which elements are already used (visited set or swapping)",
+    "When permutation length equals n, add to result",
+    "Remember to backtrack: undo the choice before next iteration",
+    "Can use visited set OR in-place swapping, both work",
+    "Total number of permutations is n! (factorial)",
+    "Each element appears in each position exactly (n-1)! times"
+  ],
+  "followUp": [
+    "What if array has duplicate elements? (Permutations II)",
+    "How to find the kth permutation without generating all?",
+    "How to generate next lexicographical permutation?",
+    "What if you need to count permutations without generating?",
+    "How to handle if n is very large (> 10)?",
+    "What if you need permutations of specific length k < n?",
+    "How to generate permutations iteratively without recursion?",
+    "What if you need to find permutation that satisfies a condition?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Uber",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Array",
+    "Backtracking",
+    "Recursion"
+  ],
+  "relatedProblems": [
+    "Permutations II",
+    "Next Permutation",
+    "Permutation Sequence",
+    "Combinations",
+    "Letter Case Permutation",
+    "Subsets",
+    "Palindrome Permutation II",
+    "N-Queens"
+  ]
 }

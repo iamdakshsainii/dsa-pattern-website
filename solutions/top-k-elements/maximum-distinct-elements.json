@@ -2,18 +2,193 @@
   "questionId": "694d4a3a98494915f3bc8f00",
   "questionSlug": "maximum-distinct-elements",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/maximum-number-of-distinct-elements-after-operations/",
+    "videos": [
+      {
+        "title": "Maximum Distinct Elements Pattern",
+        "url": "https://www.youtube.com/watch?v=7p4yG8T4xt8",
+        "channel": "NeetCode",
+        "duration": "10:45",
+        "language": "English"
+      },
+      {
+        "title": "Heap for Maximum Distinct Elements",
+        "url": "https://www.youtube.com/watch?v=xzJ7RR_vJ-E",
+        "channel": "TECH DOSE",
+        "duration": "15:30",
+        "language": "English"
+      },
+      {
+        "title": "Greedy Distinct Elements Solution",
+        "url": "https://www.youtube.com/watch?v=c7tgNXOAPZ4",
+        "channel": "take U forward",
+        "duration": "18:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Distinct Elements Solution",
+        "url": "https://leetcode.com/problems/maximum-number-of-distinct-elements-after-operations/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find Maximum Distinct Elements",
+        "url": "https://www.geeksforgeeks.org/maximum-distinct-elements-removing-k-elements/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Heap Pattern for Distinct Count",
+        "url": "https://algo.monster/problems/maximum_distinct_elements",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Top K Frequent Elements",
+        "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove K Digits",
+        "url": "https://leetcode.com/problems/remove-k-digits/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find K Closest Elements",
+        "url": "https://leetcode.com/problems/find-k-closest-elements/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Erasure Value",
+        "url": "https://leetcode.com/problems/maximum-erasure-value/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Maximum Distinct Elements pattern when maximizing unique elements after operations. Key indicators: maximize distinct count, remove duplicates optimally, min heap by frequency, keep elements with frequency 1.",
+  "approaches": [
+    {
+      "name": "Frequency Count + Min Heap (Optimal)",
+      "order": 1,
+      "intuition": "To maximize distinct elements, keep elements with frequency 1 and remove duplicates from elements with higher frequency. Use min heap to prioritize removing elements with highest frequencies first. Each removal operation can eliminate one duplicate.",
+      "approach": "Count frequencies. Elements with frequency 1 already distinct. For duplicates, use min heap to track frequencies. Remove duplicates by reducing frequencies, prioritizing highest frequencies.",
+      "steps": [
+        "Count element frequencies using HashMap",
+        "Count distinct elements (frequency = 1)",
+        "Create min heap with (frequency, element) for freq > 1",
+        "Initialize removals = 0",
+        "While heap not empty and removals possible:",
+        " - Extract element with min frequency",
+        " - If frequency - 1 <= removals:",
+        "   - Remove all duplicates (make it distinct)",
+        "   - removals -= (frequency - 1)",
+        "   - distinct++",
+        " - Else:",
+        "   - Remove as many as possible",
+        "   - removals = 0",
+        "Return distinct count"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Count frequencies: O(n). Build heap of k unique elements: O(k). Process heap with O(log k) operations. Total: O(n log k).",
+        "spaceExplanation": "HashMap stores k unique elements. Heap stores elements with duplicates. Total: O(k)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxDistinctElements(vector<int>& nums, int k) {\n        unordered_map<int, int> freq;\n        for (int num : nums) {\n            freq[num]++;\n        }\n        \n        int distinct = 0;\n        priority_queue<int, vector<int>, greater<int>> minHeap; // min heap of frequencies\n        \n        for (auto& [num, count] : freq) {\n            if (count == 1) {\n                distinct++;\n            } else {\n                minHeap.push(count);\n            }\n        }\n        \n        int removals = k;\n        while (!minHeap.empty() && removals > 0) {\n            int frequency = minHeap.top();\n            minHeap.pop();\n            \n            int duplicates = frequency - 1;\n            if (duplicates <= removals) {\n                distinct++;\n                removals -= duplicates;\n            } else {\n                break;\n            }\n        }\n        \n        return distinct;\n    }\n};",
+        "java": "class Solution {\n    public int maxDistinctElements(int[] nums, int k) {\n        Map<Integer, Integer> freq = new HashMap<>();\n        for (int num : nums) {\n            freq.put(num, freq.getOrDefault(num, 0) + 1);\n        }\n        \n        int distinct = 0;\n        PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n        \n        for (int count : freq.values()) {\n            if (count == 1) {\n                distinct++;\n            } else {\n                minHeap.offer(count);\n            }\n        }\n        \n        int removals = k;\n        while (!minHeap.isEmpty() && removals > 0) {\n            int frequency = minHeap.poll();\n            int duplicates = frequency - 1;\n            \n            if (duplicates <= removals) {\n                distinct++;\n                removals -= duplicates;\n            } else {\n                break;\n            }\n        }\n        \n        return distinct;\n    }\n}",
+        "python": "from collections import Counter\nimport heapq\n\nclass Solution:\n    def maxDistinctElements(self, nums: List[int], k: int) -> int:\n        freq = Counter(nums)\n        \n        distinct = 0\n        min_heap = []\n        \n        for count in freq.values():\n            if count == 1:\n                distinct += 1\n            else:\n                heapq.heappush(min_heap, count)\n        \n        removals = k\n        while min_heap and removals > 0:\n            frequency = heapq.heappop(min_heap)\n            duplicates = frequency - 1\n            \n            if duplicates <= removals:\n                distinct += 1\n                removals -= duplicates\n            else:\n                break\n        \n        return distinct",
+        "javascript": "class MinHeap {\n    constructor() {\n        this.heap = [];\n    }\n    \n    push(val) {\n        this.heap.push(val);\n        this.bubbleUp(this.heap.length - 1);\n    }\n    \n    pop() {\n        if (this.heap.length === 0) return null;\n        if (this.heap.length === 1) return this.heap.pop();\n        \n        const min = this.heap[0];\n        this.heap[0] = this.heap.pop();\n        this.bubbleDown(0);\n        return min;\n    }\n    \n    isEmpty() {\n        return this.heap.length === 0;\n    }\n    \n    bubbleUp(idx) {\n        while (idx > 0) {\n            const parent = Math.floor((idx - 1) / 2);\n            if (this.heap[parent] <= this.heap[idx]) break;\n            [this.heap[parent], this.heap[idx]] = [this.heap[idx], this.heap[parent]];\n            idx = parent;\n        }\n    }\n    \n    bubbleDown(idx) {\n        while (true) {\n            const left = 2 * idx + 1;\n            const right = 2 * idx + 2;\n            let smallest = idx;\n            \n            if (left < this.heap.length && this.heap[left] < this.heap[smallest]) {\n                smallest = left;\n            }\n            if (right < this.heap.length && this.heap[right] < this.heap[smallest]) {\n                smallest = right;\n            }\n            if (smallest === idx) break;\n            \n            [this.heap[idx], this.heap[smallest]] = [this.heap[smallest], this.heap[idx]];\n            idx = smallest;\n        }\n    }\n}\n\nfunction maxDistinctElements(nums, k) {\n    const freq = new Map();\n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    let distinct = 0;\n    const minHeap = new MinHeap();\n    \n    for (const count of freq.values()) {\n        if (count === 1) {\n            distinct++;\n        } else {\n            minHeap.push(count);\n        }\n    }\n    \n    let removals = k;\n    while (!minHeap.isEmpty() && removals > 0) {\n        const frequency = minHeap.pop();\n        const duplicates = frequency - 1;\n        \n        if (duplicates <= removals) {\n            distinct++;\n            removals -= duplicates;\n        } else {\n            break;\n        }\n    }\n    \n    return distinct;\n}"
+      }
+    },
+    {
+      "name": "Greedy Sorting (Alternative)",
+      "order": 2,
+      "intuition": "Sort elements by frequency ascending. Greedily make low-frequency duplicates distinct first (costs fewer removals). Process elements until removals exhausted.",
+      "approach": "Count frequencies. Sort by frequency. Process elements with lowest frequency first, removing duplicates to make them distinct.",
+      "steps": [
+        "Count element frequencies",
+        "Count elements with frequency 1 (already distinct)",
+        "Create list of frequencies > 1",
+        "Sort frequencies in ascending order",
+        "For each frequency:",
+        " - Calculate duplicates = frequency - 1",
+        " - If duplicates <= remaining removals:",
+        "   - Remove all duplicates",
+        "   - Increment distinct count",
+        "   - Decrease removals",
+        " - Else: break",
+        "Return distinct count"
+      ],
+      "complexity": {
+        "time": "O(n + k log k)",
+        "space": "O(k)",
+        "timeExplanation": "Count frequencies: O(n). Sort k frequencies: O(k log k). Process: O(k). Total: O(n + k log k).",
+        "spaceExplanation": "Store frequencies for k elements. O(k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxDistinctElements(vector<int>& nums, int k) {\n        unordered_map<int, int> freq;\n        for (int num : nums) {\n            freq[num]++;\n        }\n        \n        int distinct = 0;\n        vector<int> frequencies;\n        \n        for (auto& [num, count] : freq) {\n            if (count == 1) {\n                distinct++;\n            } else {\n                frequencies.push_back(count);\n            }\n        }\n        \n        sort(frequencies.begin(), frequencies.end());\n        \n        int removals = k;\n        for (int frequency : frequencies) {\n            int duplicates = frequency - 1;\n            if (duplicates <= removals) {\n                distinct++;\n                removals -= duplicates;\n            } else {\n                break;\n            }\n        }\n        \n        return distinct;\n    }\n};",
+        "java": "class Solution {\n    public int maxDistinctElements(int[] nums, int k) {\n        Map<Integer, Integer> freq = new HashMap<>();\n        for (int num : nums) {\n            freq.put(num, freq.getOrDefault(num, 0) + 1);\n        }\n        \n        int distinct = 0;\n        List<Integer> frequencies = new ArrayList<>();\n        \n        for (int count : freq.values()) {\n            if (count == 1) {\n                distinct++;\n            } else {\n                frequencies.add(count);\n            }\n        }\n        \n        Collections.sort(frequencies);\n        \n        int removals = k;\n        for (int frequency : frequencies) {\n            int duplicates = frequency - 1;\n            if (duplicates <= removals) {\n                distinct++;\n                removals -= duplicates;\n            } else {\n                break;\n            }\n        }\n        \n        return distinct;\n    }\n}",
+        "python": "from collections import Counter\n\nclass Solution:\n    def maxDistinctElements(self, nums: List[int], k: int) -> int:\n        freq = Counter(nums)\n        \n        distinct = sum(1 for count in freq.values() if count == 1)\n        frequencies = sorted(count for count in freq.values() if count > 1)\n        \n        removals = k\n        for frequency in frequencies:\n            duplicates = frequency - 1\n            if duplicates <= removals:\n                distinct += 1\n                removals -= duplicates\n            else:\n                break\n        \n        return distinct",
+        "javascript": "function maxDistinctElements(nums, k) {\n    const freq = new Map();\n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    let distinct = 0;\n    const frequencies = [];\n    \n    for (const count of freq.values()) {\n        if (count === 1) {\n            distinct++;\n        } else {\n            frequencies.push(count);\n        }\n    }\n    \n    frequencies.sort((a, b) => a - b);\n    \n    let removals = k;\n    for (const frequency of frequencies) {\n        const duplicates = frequency - 1;\n        if (duplicates <= removals) {\n            distinct++;\n            removals -= duplicates;\n        } else {\n            break;\n        }\n    }\n    \n    return distinct;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not counting elements with frequency 1 separately",
+    "Using max heap instead of min heap",
+    "Not calculating duplicates correctly (should be frequency - 1)",
+    "Trying to remove elements instead of just duplicates",
+    "Not stopping when removals exhausted",
+    "Forgetting that we want to maximize distinct, not minimize",
+    "Not sorting frequencies in ascending order for greedy",
+    "Counting removed elements instead of remaining distinct"
+  ],
+  "hints": [
+    "Elements with frequency 1 are already distinct",
+    "Focus on removing duplicates from elements with frequency > 1",
+    "Greedy: remove duplicates from lowest frequency elements first",
+    "To make element distinct, need to remove (frequency - 1) occurrences",
+    "Min heap processes elements with lowest frequencies first",
+    "Stop when remaining removals < duplicates needed",
+    "Can use either heap or sorting for greedy approach"
+  ],
+  "followUp": [
+    "What if we want to maximize sum instead of count?",
+    "How to handle if different elements have different removal costs?",
+    "What if we want to find which elements to remove?",
+    "How to solve if k is very large (k > n)?",
+    "What if we can also add elements (not just remove)?",
+    "How to handle if elements have priorities?",
+    "What if we need minimum k to achieve target distinct count?",
+    "How to optimize for multiple queries with different k?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Hash Table",
+    "Heap",
+    "Greedy",
+    "Sorting",
+    "Counting"
+  ],
+  "relatedProblems": [
+    "Top K Frequent Elements",
+    "Remove K Digits",
+    "Find K Closest Elements",
+    "Maximum Erasure Value",
+    "Longest Substring Without Repeating Characters",
+    "Remove Duplicate Letters",
+    "Minimum Deletions to Make Array Beautiful"
+  ]
 }

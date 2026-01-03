@@ -2,18 +2,189 @@
   "questionId": "694d4a3a98494915f3bc8ef1",
   "questionSlug": "minimum-days-bouquets",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/",
+    "videos": [
+      {
+        "title": "Minimum Days to Make M Bouquets - Binary Search",
+        "url": "https://www.youtube.com/watch?v=TXAuxeYBTdg",
+        "channel": "NeetCode",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search on Answer Pattern",
+        "url": "https://www.youtube.com/watch?v=Z0R2u6gd3GU",
+        "channel": "take U forward",
+        "duration": "22:45",
+        "language": "English"
+      },
+      {
+        "title": "Bouquet Problem Binary Search Solution",
+        "url": "https://www.youtube.com/watch?v=qVBgmXYcD9E",
+        "channel": "TECH DOSE",
+        "duration": "18:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Minimum Days to Make M Bouquets",
+        "url": "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Binary Search on Answer",
+        "url": "https://www.geeksforgeeks.org/binary-search-on-answer/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Search Space Reduction Technique",
+        "url": "https://algo.monster/problems/binary_search_on_answer",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Koko Eating Bananas",
+        "url": "https://leetcode.com/problems/koko-eating-bananas/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Capacity To Ship Packages",
+        "url": "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Split Array Largest Sum",
+        "url": "https://leetcode.com/problems/split-array-largest-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Magnetic Force Between Two Balls",
+        "url": "https://leetcode.com/problems/magnetic-force-between-two-balls/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Minimum Days Bouquets when minimizing parameter with feasibility check. Key indicators: minimize days/time, check if possible, consecutive adjacent elements, binary search on answer, optimization problem.",
+  "approaches": [
+    {
+      "name": "Binary Search on Answer (Optimal)",
+      "order": 1,
+      "intuition": "Search space is days from min to max bloom day. Use binary search on this range. For each mid day, check if we can make m bouquets with k adjacent flowers that bloomed by day mid. If possible, try smaller days (search left). Else search right.",
+      "approach": "Binary search on day range [minDay, maxDay]. For each candidate day, simulate and count bouquets possible. If count >= m, search left for minimum. Else search right.",
+      "steps": [
+        "Find minDay = min(bloomDay), maxDay = max(bloomDay)",
+        "If m * k > n: return -1 (impossible)",
+        "Binary search on days [minDay, maxDay]:",
+        "  - While left <= right:",
+        "    * mid = left + (right - left) / 2",
+        "    * Count bouquets possible on day mid:",
+        "      - Iterate through bloomDay",
+        "      - Track consecutive bloomed flowers",
+        "      - When k consecutive found: increment bouquet count",
+        "    * If bouquets >= m:",
+        "      - Update result = mid",
+        "      - Search left: right = mid - 1",
+        "    * Else: left = mid + 1",
+        "Return result (or -1 if not found)"
+      ],
+      "complexity": {
+        "time": "O(n * log(max - min))",
+        "space": "O(1)",
+        "timeExplanation": "Binary search: log(maxDay - minDay) iterations. Each iteration checks n flowers: O(n). Total: O(n * log(max - min)).",
+        "spaceExplanation": "Only variables for pointers and counting. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minDays(vector<int>& bloomDay, int m, int k) {\n        int n = bloomDay.size();\n        \n        // Check if possible\n        if ((long long)m * k > n) return -1;\n        \n        int minDay = *min_element(bloomDay.begin(), bloomDay.end());\n        int maxDay = *max_element(bloomDay.begin(), bloomDay.end());\n        \n        int result = -1;\n        int left = minDay, right = maxDay;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (canMakeBouquets(bloomDay, m, k, mid)) {\n                result = mid;\n                right = mid - 1;  // Try smaller days\n            } else {\n                left = mid + 1;\n            }\n        }\n        \n        return result;\n    }\n    \nprivate:\n    bool canMakeBouquets(vector<int>& bloomDay, int m, int k, int day) {\n        int bouquets = 0;\n        int flowers = 0;\n        \n        for (int bloom : bloomDay) {\n            if (bloom <= day) {\n                flowers++;\n                if (flowers == k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0;  // Reset consecutive count\n            }\n        }\n        \n        return bouquets >= m;\n    }\n};",
+        "java": "class Solution {\n    public int minDays(int[] bloomDay, int m, int k) {\n        int n = bloomDay.length;\n        \n        // Check if possible\n        if ((long)m * k > n) return -1;\n        \n        int minDay = Integer.MAX_VALUE, maxDay = Integer.MIN_VALUE;\n        for (int day : bloomDay) {\n            minDay = Math.min(minDay, day);\n            maxDay = Math.max(maxDay, day);\n        }\n        \n        int result = -1;\n        int left = minDay, right = maxDay;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (canMakeBouquets(bloomDay, m, k, mid)) {\n                result = mid;\n                right = mid - 1;  // Try smaller days\n            } else {\n                left = mid + 1;\n            }\n        }\n        \n        return result;\n    }\n    \n    private boolean canMakeBouquets(int[] bloomDay, int m, int k, int day) {\n        int bouquets = 0;\n        int flowers = 0;\n        \n        for (int bloom : bloomDay) {\n            if (bloom <= day) {\n                flowers++;\n                if (flowers == k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0;  // Reset consecutive count\n            }\n        }\n        \n        return bouquets >= m;\n    }\n}",
+        "python": "class Solution:\n    def minDays(self, bloomDay: List[int], m: int, k: int) -> int:\n        n = len(bloomDay)\n        \n        # Check if possible\n        if m * k > n:\n            return -1\n        \n        min_day = min(bloomDay)\n        max_day = max(bloomDay)\n        \n        result = -1\n        left, right = min_day, max_day\n        \n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            if self.canMakeBouquets(bloomDay, m, k, mid):\n                result = mid\n                right = mid - 1  # Try smaller days\n            else:\n                left = mid + 1\n        \n        return result\n    \n    def canMakeBouquets(self, bloomDay: List[int], m: int, k: int, day: int) -> bool:\n        bouquets = 0\n        flowers = 0\n        \n        for bloom in bloomDay:\n            if bloom <= day:\n                flowers += 1\n                if flowers == k:\n                    bouquets += 1\n                    flowers = 0\n            else:\n                flowers = 0  # Reset consecutive count\n        \n        return bouquets >= m",
+        "javascript": "function minDays(bloomDay, m, k) {\n    const n = bloomDay.length;\n    \n    // Check if possible\n    if (m * k > n) return -1;\n    \n    const minDay = Math.min(...bloomDay);\n    const maxDay = Math.max(...bloomDay);\n    \n    let result = -1;\n    let left = minDay, right = maxDay;\n    \n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (canMakeBouquets(bloomDay, m, k, mid)) {\n            result = mid;\n            right = mid - 1;  // Try smaller days\n        } else {\n            left = mid + 1;\n        }\n    }\n    \n    return result;\n}\n\nfunction canMakeBouquets(bloomDay, m, k, day) {\n    let bouquets = 0;\n    let flowers = 0;\n    \n    for (const bloom of bloomDay) {\n        if (bloom <= day) {\n            flowers++;\n            if (flowers === k) {\n                bouquets++;\n                flowers = 0;\n            }\n        } else {\n            flowers = 0;  // Reset consecutive count\n        }\n    }\n    \n    return bouquets >= m;\n}"
+      }
+    },
+    {
+      "name": "Simulation with Sorting (Suboptimal)",
+      "order": 2,
+      "intuition": "Sort days and simulate day by day. Track which flowers bloomed and count bouquets. First day achieving m bouquets is answer. Requires extra space and modification of input.",
+      "approach": "Sort unique bloom days. For each day in sorted order, mark flowers as bloomed and count consecutive groups. Return first day with m bouquets.",
+      "steps": [
+        "Get sorted unique bloom days",
+        "Create bloomed array initialized to false",
+        "For each day in sorted order:",
+        "  - Mark all flowers with bloomDay <= day as bloomed",
+        "  - Count consecutive k-flower groups",
+        "  - If bouquets >= m: return day",
+        "Return -1 if never possible"
+      ],
+      "complexity": {
+        "time": "O(n * d)",
+        "space": "O(n + d)",
+        "timeExplanation": "d unique days, for each check n flowers. Sorting: O(d log d). Total: O(d log d + n * d).",
+        "spaceExplanation": "Bloomed array: O(n). Unique days set: O(d). Total: O(n + d)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minDays(vector<int>& bloomDay, int m, int k) {\n        int n = bloomDay.size();\n        if ((long long)m * k > n) return -1;\n        \n        set<int> uniqueDays(bloomDay.begin(), bloomDay.end());\n        vector<bool> bloomed(n, false);\n        \n        for (int day : uniqueDays) {\n            // Mark flowers that bloomed by this day\n            for (int i = 0; i < n; i++) {\n                if (bloomDay[i] <= day) {\n                    bloomed[i] = true;\n                }\n            }\n            \n            // Count bouquets\n            int bouquets = 0, flowers = 0;\n            for (bool b : bloomed) {\n                if (b) {\n                    flowers++;\n                    if (flowers == k) {\n                        bouquets++;\n                        flowers = 0;\n                    }\n                } else {\n                    flowers = 0;\n                }\n            }\n            \n            if (bouquets >= m) return day;\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int minDays(int[] bloomDay, int m, int k) {\n        int n = bloomDay.length;\n        if ((long)m * k > n) return -1;\n        \n        Set<Integer> uniqueDays = new TreeSet<>();\n        for (int day : bloomDay) uniqueDays.add(day);\n        \n        boolean[] bloomed = new boolean[n];\n        \n        for (int day : uniqueDays) {\n            // Mark flowers that bloomed by this day\n            for (int i = 0; i < n; i++) {\n                if (bloomDay[i] <= day) {\n                    bloomed[i] = true;\n                }\n            }\n            \n            // Count bouquets\n            int bouquets = 0, flowers = 0;\n            for (boolean b : bloomed) {\n                if (b) {\n                    flowers++;\n                    if (flowers == k) {\n                        bouquets++;\n                        flowers = 0;\n                    }\n                } else {\n                    flowers = 0;\n                }\n            }\n            \n            if (bouquets >= m) return day;\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def minDays(self, bloomDay: List[int], m: int, k: int) -> int:\n        n = len(bloomDay)\n        if m * k > n:\n            return -1\n        \n        unique_days = sorted(set(bloomDay))\n        bloomed = [False] * n\n        \n        for day in unique_days:\n            # Mark flowers that bloomed by this day\n            for i in range(n):\n                if bloomDay[i] <= day:\n                    bloomed[i] = True\n            \n            # Count bouquets\n            bouquets = flowers = 0\n            for b in bloomed:\n                if b:\n                    flowers += 1\n                    if flowers == k:\n                        bouquets += 1\n                        flowers = 0\n                else:\n                    flowers = 0\n            \n            if bouquets >= m:\n                return day\n        \n        return -1",
+        "javascript": "function minDays(bloomDay, m, k) {\n    const n = bloomDay.length;\n    if (m * k > n) return -1;\n    \n    const uniqueDays = [...new Set(bloomDay)].sort((a, b) => a - b);\n    const bloomed = new Array(n).fill(false);\n    \n    for (const day of uniqueDays) {\n        // Mark flowers that bloomed by this day\n        for (let i = 0; i < n; i++) {\n            if (bloomDay[i] <= day) {\n                bloomed[i] = true;\n            }\n        }\n        \n        // Count bouquets\n        let bouquets = 0, flowers = 0;\n        for (const b of bloomed) {\n            if (b) {\n                flowers++;\n                if (flowers === k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0;\n            }\n        }\n        \n        if (bouquets >= m) return day;\n    }\n    \n    return -1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if m * k > n (impossible case)",
+    "Forgetting consecutive flower requirement",
+    "Not resetting flower count when gap found",
+    "Using wrong search direction after finding feasible day",
+    "Integer overflow when checking m * k",
+    "Not handling edge case where k = 1",
+    "Incorrect binary search termination condition",
+    "Modifying original bloomDay array"
+  ],
+  "hints": [
+    "Binary search on the answer (day)",
+    "Search space is [minDay, maxDay]",
+    "Check function counts bouquets on given day",
+    "Need exactly k consecutive bloomed flowers per bouquet",
+    "Reset consecutive count when unbloomed flower found",
+    "If possible on day mid, try smaller days",
+    "Time complexity: O(n * log(maxDay - minDay))",
+    "Check m * k <= n before starting"
+  ],
+  "followUp": [
+    "What if flowers can be non-consecutive?",
+    "How to maximize bouquets instead of minimize days?",
+    "What if each flower type has different value?",
+    "Can you handle dynamic bloom days?",
+    "What about distributed/parallel processing?",
+    "How to optimize for very large arrays?",
+    "What if k varies per bouquet?",
+    "Can you find all possible days?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Bloomberg",
+    "Apple",
+    "Oracle",
+    "Adobe"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Binary Search on Answer",
+    "Greedy"
+  ],
+  "relatedProblems": [
+    "Koko Eating Bananas",
+    "Capacity To Ship Packages",
+    "Split Array Largest Sum",
+    "Magnetic Force Between Two Balls",
+    "Find Peak Element",
+    "Search in Rotated Sorted Array",
+    "Minimum Time to Complete Trips",
+    "Minimized Maximum of Products"
+  ]
 }

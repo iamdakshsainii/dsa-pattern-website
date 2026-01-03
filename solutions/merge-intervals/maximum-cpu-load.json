@@ -3,17 +3,189 @@
   "questionSlug": "maximum-cpu-load",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/maximum-cpu-load-from-the-given-list-of-jobs/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum CPU Load Problem",
+        "url": "https://www.youtube.com/watch?v=TC6snDuW8Rg",
+        "channel": "TECH DOSE",
+        "duration": "12:40",
+        "language": "English"
+      },
+      {
+        "title": "Find Maximum CPU Load",
+        "url": "https://www.youtube.com/watch?v=Z68aMq-pYRI",
+        "channel": "Pepcoding",
+        "duration": "15:20",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Load at Any Time",
+        "url": "https://www.youtube.com/watch?v=yPxKzpXvtxk",
+        "channel": "takeUforward",
+        "duration": "10:55",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum CPU Load Problem",
+        "url": "https://www.geeksforgeeks.org/maximum-cpu-load-from-the-given-list-of-jobs/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Find Maximum Load at Any Time",
+        "url": "https://www.geeksforgeeks.org/find-maximum-load-at-any-time/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Interval Scheduling with Weights",
+        "url": "https://algo.monster/problems/weighted_intervals",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Meeting Rooms II",
+        "url": "https://leetcode.com/problems/meeting-rooms-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Car Pooling",
+        "url": "https://leetcode.com/problems/car-pooling/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Corporate Flight Bookings",
+        "url": "https://leetcode.com/problems/corporate-flight-bookings/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "My Calendar III",
+        "url": "https://leetcode.com/problems/my-calendar-iii/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Maximum CPU Load pattern when finding the maximum sum of overlapping weighted intervals. Key indicators: jobs with CPU usage, weighted intervals, maximum load at any time, peak resource utilization, sum of concurrent tasks with costs.",
+  "approaches": [
+    {
+      "name": "Min Heap with Load Tracking",
+      "order": 1,
+      "intuition": "Similar to meeting rooms but track sum of loads instead of count. Sort jobs by start time. Use min heap to track end times and loads of active jobs. At each job, remove finished jobs and their loads. Add current job's load. Track maximum total load across all time points.",
+      "approach": "Sort jobs by start time. Use min heap storing (end_time, load) pairs. For each job, remove finished jobs and subtract their loads. Add current job and its load. Track maximum cumulative load.",
+      "steps": [
+        "Sort jobs by start time",
+        "Initialize min heap (stores [end_time, load] pairs)",
+        "Initialize currentLoad = 0, maxLoad = 0",
+        "For each job [start, end, load]:",
+        "  - While heap not empty and heap.top()[0] <= start:",
+        "    - Pop job from heap",
+        "    - currentLoad -= popped_job.load",
+        "  - Push [end, load] to heap",
+        "  - currentLoad += load",
+        "  - maxLoad = max(maxLoad, currentLoad)",
+        "Return maxLoad"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting: O(n log n). Each job added/removed from heap once: O(n log n). Total: O(n log n).",
+        "spaceExplanation": "Heap can store up to n jobs in worst case. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxCPULoad(vector<vector<int>>& jobs) {\n        if (jobs.empty()) return 0;\n        \n        // Sort by start time\n        sort(jobs.begin(), jobs.end());\n        \n        // Min heap: pair of (end_time, load)\n        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> minHeap;\n        \n        int currentLoad = 0;\n        int maxLoad = 0;\n        \n        for (auto& job : jobs) {\n            int start = job[0];\n            int end = job[1];\n            int load = job[2];\n            \n            // Remove all finished jobs and their loads\n            while (!minHeap.empty() && minHeap.top().first <= start) {\n                currentLoad -= minHeap.top().second;\n                minHeap.pop();\n            }\n            \n            // Add current job\n            minHeap.push({end, load});\n            currentLoad += load;\n            \n            // Track maximum load\n            maxLoad = max(maxLoad, currentLoad);\n        }\n        \n        return maxLoad;\n    }\n};",
+        "java": "class Solution {\n    public int maxCPULoad(int[][] jobs) {\n        if (jobs.length == 0) return 0;\n        \n        // Sort by start time\n        Arrays.sort(jobs, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        // Min heap: stores [end_time, load]\n        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));\n        \n        int currentLoad = 0;\n        int maxLoad = 0;\n        \n        for (int[] job : jobs) {\n            int start = job[0];\n            int end = job[1];\n            int load = job[2];\n            \n            // Remove all finished jobs and their loads\n            while (!minHeap.isEmpty() && minHeap.peek()[0] <= start) {\n                currentLoad -= minHeap.poll()[1];\n            }\n            \n            // Add current job\n            minHeap.offer(new int[]{end, load});\n            currentLoad += load;\n            \n            // Track maximum load\n            maxLoad = Math.max(maxLoad, currentLoad);\n        }\n        \n        return maxLoad;\n    }\n}",
+        "python": "import heapq\n\ndef maxCPULoad(jobs):\n    if not jobs:\n        return 0\n    \n    # Sort by start time\n    jobs.sort(key=lambda x: x[0])\n    \n    # Min heap: stores (end_time, load)\n    min_heap = []\n    current_load = 0\n    max_load = 0\n    \n    for job in jobs:\n        start, end, load = job\n        \n        # Remove all finished jobs and their loads\n        while min_heap and min_heap[0][0] <= start:\n            _, finished_load = heapq.heappop(min_heap)\n            current_load -= finished_load\n        \n        # Add current job\n        heapq.heappush(min_heap, (end, load))\n        current_load += load\n        \n        # Track maximum load\n        max_load = max(max_load, current_load)\n    \n    return max_load",
+        "javascript": "function maxCPULoad(jobs) {\n    if (jobs.length === 0) return 0;\n    \n    // Sort by start time\n    jobs.sort((a, b) => a[0] - b[0]);\n    \n    // Min heap: stores [end_time, load]\n    const minHeap = [];\n    let currentLoad = 0;\n    let maxLoad = 0;\n    \n    for (const job of jobs) {\n        const [start, end, load] = job;\n        \n        // Remove all finished jobs and their loads\n        while (minHeap.length > 0 && minHeap[0][0] <= start) {\n            currentLoad -= minHeap[0][1];\n            minHeap.shift();\n            minHeap.sort((a, b) => a[0] - b[0]);\n        }\n        \n        // Add current job\n        minHeap.push([end, load]);\n        minHeap.sort((a, b) => a[0] - b[0]);\n        currentLoad += load;\n        \n        // Track maximum load\n        maxLoad = Math.max(maxLoad, currentLoad);\n    }\n    \n    return maxLoad;\n}"
+      }
+    },
+    {
+      "name": "Event Sweep Line",
+      "order": 2,
+      "intuition": "Create events for job start (+load) and job end (-load). Sort all events chronologically. Sweep through events, updating current load. When multiple events at same time, process ends before starts. Track maximum load seen.",
+      "approach": "Create (time, type, load) events for each job. Sort events by time (ends before starts at same time). Sweep through events updating cumulative load. Track maximum.",
+      "steps": [
+        "Create events list:",
+        "  - For each job [start, end, load]:",
+        "    - Add (start, 'start', load)",
+        "    - Add (end, 'end', load)",
+        "Sort events by time (if tie, 'end' before 'start')",
+        "Initialize currentLoad = 0, maxLoad = 0",
+        "For each event:",
+        "  - If event.type == 'start':",
+        "    - currentLoad += event.load",
+        "  - Else:",
+        "    - currentLoad -= event.load",
+        "  - maxLoad = max(maxLoad, currentLoad)",
+        "Return maxLoad"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Creating events: O(n). Sorting 2n events: O(n log n). Processing: O(n). Total: O(n log n).",
+        "spaceExplanation": "Events list stores 2n events. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxCPULoad(vector<vector<int>>& jobs) {\n        if (jobs.empty()) return 0;\n        \n        // Create events: (time, type, load)\n        // type: 0 = end, 1 = start (ends processed before starts at same time)\n        vector<tuple<int, int, int>> events;\n        \n        for (auto& job : jobs) {\n            events.push_back({job[0], 1, job[2]}); // start event\n            events.push_back({job[1], 0, job[2]}); // end event\n        }\n        \n        // Sort events by time, then by type (ends before starts)\n        sort(events.begin(), events.end());\n        \n        int currentLoad = 0;\n        int maxLoad = 0;\n        \n        for (auto& [time, type, load] : events) {\n            if (type == 1) {\n                // Start event\n                currentLoad += load;\n            } else {\n                // End event\n                currentLoad -= load;\n            }\n            maxLoad = max(maxLoad, currentLoad);\n        }\n        \n        return maxLoad;\n    }\n};",
+        "java": "class Solution {\n    public int maxCPULoad(int[][] jobs) {\n        if (jobs.length == 0) return 0;\n        \n        // Create events: [time, type, load]\n        // type: 0 = end, 1 = start\n        List<int[]> events = new ArrayList<>();\n        \n        for (int[] job : jobs) {\n            events.add(new int[]{job[0], 1, job[2]}); // start event\n            events.add(new int[]{job[1], 0, job[2]}); // end event\n        }\n        \n        // Sort events by time, then by type (ends before starts)\n        events.sort((a, b) -> {\n            if (a[0] != b[0]) return Integer.compare(a[0], b[0]);\n            return Integer.compare(a[1], b[1]);\n        });\n        \n        int currentLoad = 0;\n        int maxLoad = 0;\n        \n        for (int[] event : events) {\n            if (event[1] == 1) {\n                // Start event\n                currentLoad += event[2];\n            } else {\n                // End event\n                currentLoad -= event[2];\n            }\n            maxLoad = Math.max(maxLoad, currentLoad);\n        }\n        \n        return maxLoad;\n    }\n}",
+        "python": "def maxCPULoad(jobs):\n    if not jobs:\n        return 0\n    \n    # Create events: (time, type, load)\n    # type: 0 = end, 1 = start (ends processed before starts at same time)\n    events = []\n    \n    for job in jobs:\n        start, end, load = job\n        events.append((start, 1, load))  # start event\n        events.append((end, 0, load))    # end event\n    \n    # Sort events by time, then by type\n    events.sort()\n    \n    current_load = 0\n    max_load = 0\n    \n    for time, event_type, load in events:\n        if event_type == 1:\n            # Start event\n            current_load += load\n        else:\n            # End event\n            current_load -= load\n        max_load = max(max_load, current_load)\n    \n    return max_load",
+        "javascript": "function maxCPULoad(jobs) {\n    if (jobs.length === 0) return 0;\n    \n    // Create events: [time, type, load]\n    // type: 0 = end, 1 = start\n    const events = [];\n    \n    for (const job of jobs) {\n        const [start, end, load] = job;\n        events.push([start, 1, load]); // start event\n        events.push([end, 0, load]);   // end event\n    }\n    \n    // Sort events by time, then by type (ends before starts)\n    events.sort((a, b) => {\n        if (a[0] !== b[0]) return a[0] - b[0];\n        return a[1] - b[1];\n    });\n    \n    let currentLoad = 0;\n    let maxLoad = 0;\n    \n    for (const [time, type, load] of events) {\n        if (type === 1) {\n            // Start event\n            currentLoad += load;\n        } else {\n            // End event\n            currentLoad -= load;\n        }\n        maxLoad = Math.max(maxLoad, currentLoad);\n    }\n    \n    return maxLoad;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting jobs by start time before processing",
+    "Forgetting to subtract load when job finishes",
+    "Not handling jobs that start exactly when another ends",
+    "Processing start events before end events at same time (should be opposite)",
+    "Using count instead of sum of loads",
+    "Not tracking maximum load, only final load",
+    "Confusing this with meeting rooms (counting vs summing)"
+  ],
+  "hints": [
+    "This is like Meeting Rooms II but sum loads instead of counting rooms",
+    "Sort jobs by start time first",
+    "Use min heap to track active jobs and their loads",
+    "Alternative: create start/end events and sweep through chronologically",
+    "At same time, process end events before start events",
+    "Track the cumulative load at each point, not just count of jobs"
+  ],
+  "followUp": [
+    "What if jobs have different priorities and you need maximum priority sum?",
+    "How to find the time interval with maximum load?",
+    "What if you can delay jobs to minimize peak load?",
+    "How to distribute jobs across multiple CPUs to minimize max load?",
+    "What if jobs can be preempted (paused and resumed)?",
+    "How to handle jobs with varying load over time (not constant)?",
+    "Can you find the minimum CPU capacity needed to handle all jobs?",
+    "What if jobs arrive in real-time and you need to make online decisions?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Bloomberg",
+    "Uber",
+    "Apple",
+    "Netflix"
+  ],
+  "tags": [
+    "Array",
+    "Heap",
+    "Sorting",
+    "Greedy",
+    "Intervals",
+    "Sweep Line"
+  ],
+  "relatedProblems": [
+    "Meeting Rooms II",
+    "Car Pooling",
+    "My Calendar III",
+    "Corporate Flight Bookings",
+    "Maximum Population Year",
+    "Number of Flowers in Full Bloom",
+    "Divide Intervals Into Minimum Number of Groups"
+  ]
 }

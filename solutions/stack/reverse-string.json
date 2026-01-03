@@ -2,18 +2,178 @@
   "questionId": "694d4a3a98494915f3bc8eb7",
   "questionSlug": "reverse-string",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/reverse-string/",
+    "videos": [
+      {
+        "title": "Reverse String - Two Pointers",
+        "url": "https://www.youtube.com/watch?v=_d0T_2Lk2qA",
+        "channel": "NeetCode",
+        "duration": "4:15",
+        "language": "English"
+      },
+      {
+        "title": "String Reversal Using Stack",
+        "url": "https://www.youtube.com/watch?v=P68JPXtFyYg",
+        "channel": "TECH DOSE",
+        "duration": "8:30",
+        "language": "English"
+      },
+      {
+        "title": "Multiple Ways to Reverse String",
+        "url": "https://www.youtube.com/watch?v=rWAJCfYYOvM",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Reverse String Solutions",
+        "url": "https://leetcode.com/problems/reverse-string/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "String Reversal Techniques",
+        "url": "https://www.geeksforgeeks.org/write-a-program-to-reverse-an-array-or-string/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Reverse String Patterns",
+        "url": "https://algo.monster/problems/reverse_string",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Reverse String II",
+        "url": "https://leetcode.com/problems/reverse-string-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Words in a String",
+        "url": "https://leetcode.com/problems/reverse-words-in-a-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Vowels of a String",
+        "url": "https://leetcode.com/problems/reverse-vowels-of-a-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Only Letters",
+        "url": "https://leetcode.com/problems/reverse-only-letters/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use String Reversal when reversing character sequences. Key indicators: reverse string, reverse array, swap characters, mirror sequence, LIFO order.",
+  "approaches": [
+    {
+      "name": "Two Pointers (Optimal)",
+      "order": 1,
+      "intuition": "Use two pointers from both ends, swap characters and move towards center. Most efficient for in-place reversal. No extra space needed beyond pointers.",
+      "approach": "Start pointers at beginning and end. Swap characters and move pointers inward until they meet.",
+      "steps": [
+        "Initialize left = 0, right = s.length - 1",
+        "While left < right:",
+        " - Swap s[left] and s[right]",
+        " - Increment left",
+        " - Decrement right",
+        "Return s"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Visit each character once for swapping. Total: O(n) where n is string length.",
+        "spaceExplanation": "Only use two pointer variables. No additional data structures. Space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void reverseString(vector<char>& s) {\n        int left = 0, right = s.size() - 1;\n        \n        while (left < right) {\n            swap(s[left], s[right]);\n            left++;\n            right--;\n        }\n    }\n};",
+        "java": "class Solution {\n    public void reverseString(char[] s) {\n        int left = 0, right = s.length - 1;\n        \n        while (left < right) {\n            char temp = s[left];\n            s[left] = s[right];\n            s[right] = temp;\n            left++;\n            right--;\n        }\n    }\n}",
+        "python": "class Solution:\n    def reverseString(self, s: List[str]) -> None:\n        left, right = 0, len(s) - 1\n        \n        while left < right:\n            s[left], s[right] = s[right], s[left]\n            left += 1\n            right -= 1",
+        "javascript": "function reverseString(s) {\n    let left = 0, right = s.length - 1;\n    \n    while (left < right) {\n        [s[left], s[right]] = [s[right], s[left]];\n        left++;\n        right--;\n    }\n}"
+      }
+    },
+    {
+      "name": "Stack (Alternative)",
+      "order": 2,
+      "intuition": "Use stack's LIFO property. Push all characters, then pop to get reversed order. Natural reversal using stack semantics.",
+      "approach": "Push all characters onto stack. Pop characters and place back into array/string.",
+      "steps": [
+        "Create empty stack",
+        "Push all characters from string onto stack",
+        "For i from 0 to n-1:",
+        " - s[i] = stack.pop()",
+        "Return s"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Push n characters: O(n). Pop n characters: O(n). Total: O(n).",
+        "spaceExplanation": "Stack stores all n characters. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void reverseString(vector<char>& s) {\n        stack<char> st;\n        \n        // Push all characters\n        for (char c : s) {\n            st.push(c);\n        }\n        \n        // Pop and assign back\n        for (int i = 0; i < s.size(); i++) {\n            s[i] = st.top();\n            st.pop();\n        }\n    }\n};",
+        "java": "class Solution {\n    public void reverseString(char[] s) {\n        Stack<Character> stack = new Stack<>();\n        \n        // Push all characters\n        for (char c : s) {\n            stack.push(c);\n        }\n        \n        // Pop and assign back\n        for (int i = 0; i < s.length; i++) {\n            s[i] = stack.pop();\n        }\n    }\n}",
+        "python": "class Solution:\n    def reverseString(self, s: List[str]) -> None:\n        stack = []\n        \n        # Push all characters\n        for char in s:\n            stack.append(char)\n        \n        # Pop and assign back\n        for i in range(len(s)):\n            s[i] = stack.pop()",
+        "javascript": "function reverseString(s) {\n    const stack = [];\n    \n    // Push all characters\n    for (const char of s) {\n        stack.push(char);\n    }\n    \n    // Pop and assign back\n    for (let i = 0; i < s.length; i++) {\n        s[i] = stack.pop();\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Creating new string instead of in-place reversal",
+    "Not handling empty or single character strings",
+    "Swapping characters that have already been swapped",
+    "Using substring operations repeatedly (O(n²))",
+    "Not moving both pointers after swap",
+    "Checking left <= right instead of left < right",
+    "Using recursion without tail call optimization (stack overflow)",
+    "Forgetting to handle Unicode characters properly"
+  ],
+  "hints": [
+    "Two pointers from ends is most efficient",
+    "Swap and move inward until pointers meet",
+    "Middle character doesn't need swapping",
+    "Stack naturally reverses with LIFO",
+    "Can also use recursion but watch stack space",
+    "Built-in reverse functions often use two pointers",
+    "In-place modification is possible",
+    "Each character swapped exactly once"
+  ],
+  "followUp": [
+    "How to reverse words in a sentence?",
+    "What if we reverse only vowels?",
+    "How to reverse in chunks of k?",
+    "Can we reverse without using extra space?",
+    "What if string is immutable?",
+    "How to reverse only letters, keeping others in place?",
+    "What about reversing Unicode grapheme clusters?",
+    "How to reverse a linked list (similar pattern)?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "Apple",
+    "Adobe"
+  ],
+  "tags": [
+    "String",
+    "Two Pointers",
+    "Stack",
+    "Array",
+    "Reversal"
+  ],
+  "relatedProblems": [
+    "Reverse String II",
+    "Reverse Words in a String",
+    "Reverse Words in a String III",
+    "Reverse Vowels of a String",
+    "Reverse Only Letters",
+    "Valid Palindrome",
+    "Reverse Linked List",
+    "Reverse Integer"
+  ]
 }

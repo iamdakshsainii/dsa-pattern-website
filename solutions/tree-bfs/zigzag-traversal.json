@@ -3,17 +3,194 @@
   "questionSlug": "zigzag-traversal",
   "resources": {
     "leetcode": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Zigzag Level Order Traversal Explained",
+        "url": "https://www.youtube.com/watch?v=3OXWEdlIGl4",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Binary Tree Zigzag BFS Pattern",
+        "url": "https://www.youtube.com/watch?v=NjdkNXAxE2w",
+        "channel": "take U forward",
+        "duration": "13:30",
+        "language": "English"
+      },
+      {
+        "title": "Zigzag Traversal Complete Guide",
+        "url": "https://www.youtube.com/watch?v=sjBUPHfp5jE",
+        "channel": "TECH DOSE",
+        "duration": "11:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Zigzag Level Order Solution",
+        "url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Zigzag Tree Traversal Guide",
+        "url": "https://www.geeksforgeeks.org/zigzag-tree-traversal/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Tree Zigzag Pattern",
+        "url": "https://algo.monster/problems/binary_tree_zigzag",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Level Order II",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Right Side View",
+        "url": "https://leetcode.com/problems/binary-tree-right-side-view/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "N-ary Tree Level Order",
+        "url": "https://leetcode.com/problems/n-ary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Zigzag Traversal when alternating left-to-right and right-to-left between levels. Key indicators: alternating direction, odd/even level handling, spiral traversal, snake pattern.",
+  "approaches": [
+    {
+      "name": "BFS with Level Direction Flag (Optimal)",
+      "order": 1,
+      "intuition": "Perform normal BFS but track direction for each level. Alternate between left-to-right and right-to-left. Use flag or level number to determine direction.",
+      "approach": "Use queue for BFS. Track if current level is left-to-right or right-to-left. Add nodes in order, then reverse level if needed.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result, queue with root, leftToRight = true",
+        "While queue not empty:",
+        " - Get current level size",
+        " - Create list for current level",
+        " - For each node in current level:",
+        "   - Dequeue node and add to level list",
+        "   - Enqueue left and right children",
+        " - If rightToLeft (not leftToRight), reverse current level",
+        " - Add current level to result",
+        " - Toggle direction flag",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node once: O(n). Reversing each level: O(w) per level × h levels = O(w×h) ≈ O(n). Total: O(n).",
+        "spaceExplanation": "Queue stores at most w nodes (max width). Result stores all nodes. Space: O(w + n) ≈ O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {\n        vector<vector<int>> result;\n        if (!root) return result;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        bool leftToRight = true;\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            vector<int> currentLevel;\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                currentLevel.push_back(node->val);\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n            \n            if (!leftToRight) {\n                reverse(currentLevel.begin(), currentLevel.end());\n            }\n            \n            result.push_back(currentLevel);\n            leftToRight = !leftToRight;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        if (root == null) return result;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        boolean leftToRight = true;\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            List<Integer> currentLevel = new ArrayList<>();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                currentLevel.add(node.val);\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            \n            if (!leftToRight) {\n                Collections.reverse(currentLevel);\n            }\n            \n            result.add(currentLevel);\n            leftToRight = !leftToRight;\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def zigzagLevelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:\n        if not root:\n            return []\n        \n        result = []\n        queue = deque([root])\n        left_to_right = True\n        \n        while queue:\n            level_size = len(queue)\n            current_level = []\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                current_level.append(node.val)\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            if not left_to_right:\n                current_level.reverse()\n            \n            result.append(current_level)\n            left_to_right = not left_to_right\n        \n        return result",
+        "javascript": "function zigzagLevelOrder(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root];\n    let leftToRight = true;\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        const currentLevel = [];\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            currentLevel.push(node.val);\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        if (!leftToRight) {\n            currentLevel.reverse();\n        }\n        \n        result.push(currentLevel);\n        leftToRight = !leftToRight;\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Deque with Bidirectional Insertion (Alternative)",
+      "order": 2,
+      "intuition": "Use deque to insert at both ends. For left-to-right, append normally. For right-to-left, prepend to build reversed order naturally.",
+      "approach": "Use queue for BFS. For each level, use deque and insert at appropriate end based on direction.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result, queue with root, leftToRight = true",
+        "While queue not empty:",
+        " - Get current level size",
+        " - Create deque for current level",
+        " - For each node in current level:",
+        "   - Dequeue node",
+        "   - If leftToRight: append to deque",
+        "   - Else: prepend to deque",
+        "   - Enqueue left and right children",
+        " - Convert deque to list and add to result",
+        " - Toggle direction flag",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node once. Deque operations are O(1). Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Queue stores at most w nodes. Deque stores current level. Space: O(w)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {\n        vector<vector<int>> result;\n        if (!root) return result;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        bool leftToRight = true;\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            deque<int> currentLevel;\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                if (leftToRight) {\n                    currentLevel.push_back(node->val);\n                } else {\n                    currentLevel.push_front(node->val);\n                }\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n            \n            result.push_back(vector<int>(currentLevel.begin(), currentLevel.end()));\n            leftToRight = !leftToRight;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        if (root == null) return result;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        boolean leftToRight = true;\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            LinkedList<Integer> currentLevel = new LinkedList<>();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                \n                if (leftToRight) {\n                    currentLevel.addLast(node.val);\n                } else {\n                    currentLevel.addFirst(node.val);\n                }\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            \n            result.add(currentLevel);\n            leftToRight = !leftToRight;\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def zigzagLevelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:\n        if not root:\n            return []\n        \n        result = []\n        queue = deque([root])\n        left_to_right = True\n        \n        while queue:\n            level_size = len(queue)\n            current_level = deque()\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                \n                if left_to_right:\n                    current_level.append(node.val)\n                else:\n                    current_level.appendleft(node.val)\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            result.append(list(current_level))\n            left_to_right = not left_to_right\n        \n        return result",
+        "javascript": "function zigzagLevelOrder(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root];\n    let leftToRight = true;\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        const currentLevel = [];\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            \n            if (leftToRight) {\n                currentLevel.push(node.val);\n            } else {\n                currentLevel.unshift(node.val);\n            }\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        result.push(currentLevel);\n        leftToRight = !leftToRight;\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to toggle direction flag after each level",
+    "Reversing result instead of individual levels",
+    "Not tracking which levels to reverse (odd vs even)",
+    "Using wrong initial direction (should start left-to-right)",
+    "Reversing queue instead of level output",
+    "Mixing up when to reverse (after vs during level processing)",
+    "Not handling single node case correctly",
+    "Using inefficient unshift repeatedly in JavaScript"
+  ],
+  "hints": [
+    "Alternate direction after each complete level",
+    "Can reverse after collecting or insert bidirectionally",
+    "Level 0 is left-to-right, level 1 is right-to-left",
+    "Direction flag toggles: true → false → true",
+    "Deque allows O(1) insertion at both ends",
+    "Root level is always left-to-right",
+    "Only reverse the values, not the tree structure"
+  ],
+  "followUp": [
+    "How to do spiral/snake traversal?",
+    "What if we print diagonal instead of zigzag?",
+    "How to handle n-ary tree zigzag?",
+    "Can we do this without reversing?",
+    "What if we want vertical zigzag?",
+    "How to find longest zigzag path in tree?",
+    "Can we do this with one queue only?",
+    "What if direction alternates every two levels?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "LinkedIn",
+    "Bloomberg",
+    "Adobe",
+    "Apple",
+    "Oracle"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "BFS",
+    "Queue",
+    "Deque",
+    "Level Order Traversal",
+    "Zigzag"
+  ],
+  "relatedProblems": [
+    "Binary Tree Level Order Traversal",
+    "Binary Tree Level Order Traversal II",
+    "Binary Tree Right Side View",
+    "N-ary Tree Level Order Traversal",
+    "Print Binary Tree",
+    "Populating Next Right Pointers",
+    "Vertical Order Traversal",
+    "Binary Tree Vertical Order Traversal"
+  ]
 }

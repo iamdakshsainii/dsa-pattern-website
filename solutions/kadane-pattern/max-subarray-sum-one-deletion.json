@@ -3,17 +3,186 @@
   "questionSlug": "max-subarray-sum-one-deletion",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-subarray-sum-with-one-deletion/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum Subarray Sum with One Deletion - Leetcode 1186",
+        "url": "https://www.youtube.com/watch?v=dZfcGr7OJl8",
+        "channel": "NeetCode",
+        "duration": "13:25",
+        "language": "English"
+      },
+      {
+        "title": "Max Subarray Sum After One Deletion",
+        "url": "https://www.youtube.com/watch?v=dxREBOWc0dE",
+        "channel": "TECH DOSE",
+        "duration": "17:40",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Sum with One Element Deletion",
+        "url": "https://www.youtube.com/watch?v=pHn_BCU4mrw",
+        "channel": "take U forward",
+        "duration": "15:10",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Subarray Sum with One Deletion",
+        "url": "https://leetcode.com/problems/maximum-subarray-sum-with-one-deletion/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Max Subarray with One Deletion Explained",
+        "url": "https://algo.monster/liteproblems/1186",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Maximum Sum Subarray with Deletion",
+        "url": "https://www.geeksforgeeks.org/maximum-sum-subarray-removing-one-element/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Subarray",
+        "url": "https://leetcode.com/problems/maximum-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "House Robber",
+        "url": "https://leetcode.com/problems/house-robber/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Delete and Earn",
+        "url": "https://leetcode.com/problems/delete-and-earn/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Sum Circular Subarray",
+        "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use State Machine DP when finding maximum subarray sum with optional deletion. Key indicators: contiguous subarray, maximum sum, can delete at most one element, track states (deleted or not deleted), need to decide skip vs include at each step.",
+  "approaches": [
+    {
+      "name": "Two State DP - No Deletion vs One Deletion",
+      "order": 1,
+      "intuition": "Track two states: (1) maxNoDelete[i] = max sum ending at i with no deletion, (2) maxOneDelete[i] = max sum ending at i with at most one deletion. For maxOneDelete, either delete current element (carry forward maxNoDelete from previous), or don't delete (add current to previous maxOneDelete).",
+      "approach": "Maintain two arrays/variables: maxNoDelete (standard Kadane's) and maxOneDelete (Kadane's but can skip one element). maxOneDelete can come from either deleting current or extending previous deletion state.",
+      "steps": [
+        "Initialize maxNoDelete = arr[0], maxOneDelete = 0 (can't delete if only one element initially)",
+        "Initialize result = arr[0]",
+        "For i from 1 to n-1:",
+        "  - newOneDelete = max(",
+        "      maxOneDelete + arr[i],  // don't delete current, extend previous",
+        "      maxNoDelete              // delete current, use previous no-delete sum",
+        "    )",
+        "  - newNoDelete = max(arr[i], maxNoDelete + arr[i])  // standard Kadane's",
+        "  - maxOneDelete = newOneDelete",
+        "  - maxNoDelete = newNoDelete",
+        "  - result = max(result, maxNoDelete, maxOneDelete)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array. O(n) time.",
+        "spaceExplanation": "Only constant variables. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maximumSum(vector<int>& arr) {\n        int n = arr.size();\n        int maxNoDelete = arr[0];\n        int maxOneDelete = 0;  // Initially can't have deleted anything\n        int result = arr[0];\n        \n        for (int i = 1; i < n; i++) {\n            // Option 1: Delete current element (use maxNoDelete from previous)\n            // Option 2: Don't delete current, extend maxOneDelete\n            int newOneDelete = max(maxOneDelete + arr[i], maxNoDelete);\n            \n            // Standard Kadane's for no deletion\n            int newNoDelete = max(arr[i], maxNoDelete + arr[i]);\n            \n            maxOneDelete = newOneDelete;\n            maxNoDelete = newNoDelete;\n            \n            result = max({result, maxNoDelete, maxOneDelete});\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int maximumSum(int[] arr) {\n        int n = arr.length;\n        int maxNoDelete = arr[0];\n        int maxOneDelete = 0;  // Initially can't have deleted anything\n        int result = arr[0];\n        \n        for (int i = 1; i < n; i++) {\n            // Option 1: Delete current element (use maxNoDelete from previous)\n            // Option 2: Don't delete current, extend maxOneDelete\n            int newOneDelete = Math.max(maxOneDelete + arr[i], maxNoDelete);\n            \n            // Standard Kadane's for no deletion\n            int newNoDelete = Math.max(arr[i], maxNoDelete + arr[i]);\n            \n            maxOneDelete = newOneDelete;\n            maxNoDelete = newNoDelete;\n            \n            result = Math.max(result, Math.max(maxNoDelete, maxOneDelete));\n        }\n        \n        return result;\n    }\n}",
+        "python": "def maximumSum(arr):\n    n = len(arr)\n    max_no_delete = arr[0]\n    max_one_delete = 0  # Initially can't have deleted anything\n    result = arr[0]\n    \n    for i in range(1, n):\n        # Option 1: Delete current element (use max_no_delete from previous)\n        # Option 2: Don't delete current, extend max_one_delete\n        new_one_delete = max(max_one_delete + arr[i], max_no_delete)\n        \n        # Standard Kadane's for no deletion\n        new_no_delete = max(arr[i], max_no_delete + arr[i])\n        \n        max_one_delete = new_one_delete\n        max_no_delete = new_no_delete\n        \n        result = max(result, max_no_delete, max_one_delete)\n    \n    return result",
+        "javascript": "function maximumSum(arr) {\n    const n = arr.length;\n    let maxNoDelete = arr[0];\n    let maxOneDelete = 0;  // Initially can't have deleted anything\n    let result = arr[0];\n    \n    for (let i = 1; i < n; i++) {\n        // Option 1: Delete current element (use maxNoDelete from previous)\n        // Option 2: Don't delete current, extend maxOneDelete\n        const newOneDelete = Math.max(maxOneDelete + arr[i], maxNoDelete);\n        \n        // Standard Kadane's for no deletion\n        const newNoDelete = Math.max(arr[i], maxNoDelete + arr[i]);\n        \n        maxOneDelete = newOneDelete;\n        maxNoDelete = newNoDelete;\n        \n        result = Math.max(result, maxNoDelete, maxOneDelete);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Forward and Backward Kadane's",
+      "order": 2,
+      "intuition": "For each position i, if we delete arr[i], the max sum is: maxSumLeft[i-1] + maxSumRight[i+1] (sum of best subarrays before and after deletion point). Precompute forward Kadane's (max sum ending at each index) and backward Kadane's (max sum starting at each index). Try deleting each element.",
+      "approach": "Compute forward[i] = max subarray sum ending at i using Kadane's. Compute backward[i] = max subarray sum starting at i using reverse Kadane's. For each i, consider deleting arr[i]: sum = forward[i-1] + backward[i+1]. Also consider not deleting (standard max subarray).",
+      "steps": [
+        "Compute forward[i] = max sum ending at i:",
+        "  - forward[0] = arr[0]",
+        "  - For i from 1 to n-1: forward[i] = max(arr[i], forward[i-1] + arr[i])",
+        "Compute backward[i] = max sum starting at i:",
+        "  - backward[n-1] = arr[n-1]",
+        "  - For i from n-2 to 0: backward[i] = max(arr[i], backward[i+1] + arr[i])",
+        "result = max(forward)  // case without deletion",
+        "For i from 1 to n-2:",
+        "  - deleteSum = forward[i-1] + backward[i+1]  // delete arr[i]",
+        "  - result = max(result, deleteSum)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Three passes: forward Kadane's O(n), backward Kadane's O(n), check deletions O(n). Total: O(n).",
+        "spaceExplanation": "Two arrays of size n. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maximumSum(vector<int>& arr) {\n        int n = arr.size();\n        vector<int> forward(n), backward(n);\n        \n        // Forward Kadane's: max sum ending at i\n        forward[0] = arr[0];\n        for (int i = 1; i < n; i++) {\n            forward[i] = max(arr[i], forward[i-1] + arr[i]);\n        }\n        \n        // Backward Kadane's: max sum starting at i\n        backward[n-1] = arr[n-1];\n        for (int i = n-2; i >= 0; i--) {\n            backward[i] = max(arr[i], backward[i+1] + arr[i]);\n        }\n        \n        // Max without deletion\n        int result = *max_element(forward.begin(), forward.end());\n        \n        // Try deleting each element (except first and last)\n        for (int i = 1; i < n - 1; i++) {\n            int deleteSum = forward[i-1] + backward[i+1];\n            result = max(result, deleteSum);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int maximumSum(int[] arr) {\n        int n = arr.length;\n        int[] forward = new int[n];\n        int[] backward = new int[n];\n        \n        // Forward Kadane's: max sum ending at i\n        forward[0] = arr[0];\n        for (int i = 1; i < n; i++) {\n            forward[i] = Math.max(arr[i], forward[i-1] + arr[i]);\n        }\n        \n        // Backward Kadane's: max sum starting at i\n        backward[n-1] = arr[n-1];\n        for (int i = n-2; i >= 0; i--) {\n            backward[i] = Math.max(arr[i], backward[i+1] + arr[i]);\n        }\n        \n        // Max without deletion\n        int result = Integer.MIN_VALUE;\n        for (int val : forward) {\n            result = Math.max(result, val);\n        }\n        \n        // Try deleting each element (except first and last)\n        for (int i = 1; i < n - 1; i++) {\n            int deleteSum = forward[i-1] + backward[i+1];\n            result = Math.max(result, deleteSum);\n        }\n        \n        return result;\n    }\n}",
+        "python": "def maximumSum(arr):\n    n = len(arr)\n    forward = [0] * n\n    backward = [0] * n\n    \n    # Forward Kadane's: max sum ending at i\n    forward[0] = arr[0]\n    for i in range(1, n):\n        forward[i] = max(arr[i], forward[i-1] + arr[i])\n    \n    # Backward Kadane's: max sum starting at i\n    backward[n-1] = arr[n-1]\n    for i in range(n-2, -1, -1):\n        backward[i] = max(arr[i], backward[i+1] + arr[i])\n    \n    # Max without deletion\n    result = max(forward)\n    \n    # Try deleting each element (except first and last)\n    for i in range(1, n - 1):\n        delete_sum = forward[i-1] + backward[i+1]\n        result = max(result, delete_sum)\n    \n    return result",
+        "javascript": "function maximumSum(arr) {\n    const n = arr.length;\n    const forward = new Array(n);\n    const backward = new Array(n);\n    \n    // Forward Kadane's: max sum ending at i\n    forward[0] = arr[0];\n    for (let i = 1; i < n; i++) {\n        forward[i] = Math.max(arr[i], forward[i-1] + arr[i]);\n    }\n    \n    // Backward Kadane's: max sum starting at i\n    backward[n-1] = arr[n-1];\n    for (let i = n-2; i >= 0; i--) {\n        backward[i] = Math.max(arr[i], backward[i+1] + arr[i]);\n    }\n    \n    // Max without deletion\n    let result = Math.max(...forward);\n    \n    // Try deleting each element (except first and last)\n    for (let i = 1; i < n - 1; i++) {\n        const deleteSum = forward[i-1] + backward[i+1];\n        result = Math.max(result, deleteSum);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the case where all elements are negative",
+    "Forgetting to consider the no-deletion case alongside deletion cases",
+    "In two-state DP, not updating both states before comparing",
+    "Not initializing maxOneDelete correctly (should be 0 or handled carefully)",
+    "In forward/backward approach, trying to delete first or last element incorrectly",
+    "Not understanding that maxOneDelete can extend previous deletion state",
+    "Confusing when to delete (delete current vs already deleted one)"
+  ],
+  "hints": [
+    "Track two states: max sum with no deletion and max sum with one deletion",
+    "For one deletion state, you can either delete current element or extend previous",
+    "When deleting current: use the no-deletion sum from previous position",
+    "Alternative: compute max subarray ending at each position and starting at each position",
+    "If you delete element i, join best ending at i-1 with best starting at i+1",
+    "Don't forget to compare with standard Kadane's (no deletion case)"
+  ],
+  "followUp": [
+    "What if you can delete up to k elements?",
+    "How to return which element(s) were deleted?",
+    "Can you solve if deletion has a cost?",
+    "What if you must delete exactly one element (not optional)?",
+    "How to extend to maximum product subarray with one deletion?",
+    "Can you handle circular array with one deletion?",
+    "What if different elements have different deletion costs?",
+    "How to find minimum subarray sum with one deletion?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Bloomberg",
+    "Adobe",
+    "Uber",
+    "Apple"
+  ],
+  "tags": [
+    "Array",
+    "Dynamic Programming",
+    "Kadane's Algorithm",
+    "State Machine DP"
+  ],
+  "relatedProblems": [
+    "Maximum Subarray",
+    "House Robber",
+    "Delete and Earn",
+    "Maximum Sum Circular Subarray",
+    "Best Time to Buy and Sell Stock with Cooldown",
+    "Longest Turbulent Subarray",
+    "Maximum Product Subarray"
+  ]
 }

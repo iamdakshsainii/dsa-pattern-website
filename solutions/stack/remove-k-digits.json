@@ -3,17 +3,186 @@
   "questionSlug": "remove-k-digits",
   "resources": {
     "leetcode": "https://leetcode.com/problems/remove-k-digits/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Remove K Digits - Monotonic Stack",
+        "url": "https://www.youtube.com/watch?v=cFabMOnJaq0",
+        "channel": "NeetCode",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Smallest Number After Removing K Digits",
+        "url": "https://www.youtube.com/watch?v=3QJzHqNAEXs",
+        "channel": "take U forward",
+        "duration": "16:45",
+        "language": "English"
+      },
+      {
+        "title": "Greedy Stack Solution",
+        "url": "https://www.youtube.com/watch?v=7hFWIU8oS9k",
+        "channel": "TECH DOSE",
+        "duration": "14:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Remove K Digits Solution",
+        "url": "https://leetcode.com/problems/remove-k-digits/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Smallest Number After K Removals",
+        "url": "https://www.geeksforgeeks.org/build-lowest-number-removing-n-digits-given-number/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Monotonic Stack for Minimization",
+        "url": "https://algo.monster/problems/remove_k_digits",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Create Maximum Number",
+        "url": "https://leetcode.com/problems/create-maximum-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove Adjacent Duplicates II",
+        "url": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Monotone Increasing Digits",
+        "url": "https://leetcode.com/problems/monotone-increasing-digits/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find the Most Competitive Subsequence",
+        "url": "https://leetcode.com/problems/find-the-most-competitive-subsequence/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Remove K Digits when minimizing number by removals. Key indicators: smallest number, remove k digits, monotonic stack, greedy digit removal, minimize value.",
+  "approaches": [
+    {
+      "name": "Monotonic Stack (Optimal)",
+      "order": 1,
+      "intuition": "Use monotonic increasing stack to build smallest number. Remove larger digits when smaller digit appears and removals remaining. Greedy: always remove larger digit from left to minimize result.",
+      "approach": "Build result with monotonic stack. Pop larger digits when smaller found. Handle remaining removals and leading zeros.",
+      "steps": [
+        "Create empty stack",
+        "For each digit in number:",
+        " - While stack not empty, stack.top() > current, and k > 0:",
+        "   - Pop from stack (remove larger digit)",
+        "   - Decrement k",
+        " - Push current digit to stack",
+        "Remove k more digits from end if k > 0",
+        "Remove leading zeros from result",
+        "Return result or '0' if empty"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each digit pushed and popped at most once. Removing leading zeros: O(n). Total: O(n).",
+        "spaceExplanation": "Stack stores at most n digits. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string removeKdigits(string num, int k) {\n        stack<char> st;\n        \n        for (char digit : num) {\n            // Remove larger digits while possible\n            while (!st.empty() && st.top() > digit && k > 0) {\n                st.pop();\n                k--;\n            }\n            st.push(digit);\n        }\n        \n        // Remove remaining k digits from end\n        while (k > 0 && !st.empty()) {\n            st.pop();\n            k--;\n        }\n        \n        // Build result from stack\n        string result = \"\";\n        while (!st.empty()) {\n            result = st.top() + result;\n            st.pop();\n        }\n        \n        // Remove leading zeros\n        int i = 0;\n        while (i < result.length() && result[i] == '0') {\n            i++;\n        }\n        result = result.substr(i);\n        \n        return result.empty() ? \"0\" : result;\n    }\n};",
+        "java": "class Solution {\n    public String removeKdigits(String num, int k) {\n        Stack<Character> stack = new Stack<>();\n        \n        for (char digit : num.toCharArray()) {\n            // Remove larger digits while possible\n            while (!stack.isEmpty() && stack.peek() > digit && k > 0) {\n                stack.pop();\n                k--;\n            }\n            stack.push(digit);\n        }\n        \n        // Remove remaining k digits from end\n        while (k > 0 && !stack.isEmpty()) {\n            stack.pop();\n            k--;\n        }\n        \n        // Build result from stack\n        StringBuilder result = new StringBuilder();\n        while (!stack.isEmpty()) {\n            result.insert(0, stack.pop());\n        }\n        \n        // Remove leading zeros\n        while (result.length() > 0 && result.charAt(0) == '0') {\n            result.deleteCharAt(0);\n        }\n        \n        return result.length() == 0 ? \"0\" : result.toString();\n    }\n}",
+        "python": "class Solution:\n    def removeKdigits(self, num: str, k: int) -> str:\n        stack = []\n        \n        for digit in num:\n            # Remove larger digits while possible\n            while stack and stack[-1] > digit and k > 0:\n                stack.pop()\n                k -= 1\n            stack.append(digit)\n        \n        # Remove remaining k digits from end\n        while k > 0 and stack:\n            stack.pop()\n            k -= 1\n        \n        # Build result and remove leading zeros\n        result = ''.join(stack).lstrip('0')\n        \n        return result if result else '0'",
+        "javascript": "function removeKdigits(num, k) {\n    const stack = [];\n    \n    for (const digit of num) {\n        // Remove larger digits while possible\n        while (stack.length > 0 && stack[stack.length - 1] > digit && k > 0) {\n            stack.pop();\n            k--;\n        }\n        stack.push(digit);\n    }\n    \n    // Remove remaining k digits from end\n    while (k > 0 && stack.length > 0) {\n        stack.pop();\n        k--;\n    }\n    \n    // Build result and remove leading zeros\n    let result = stack.join('').replace(/^0+/, '');\n    \n    return result || '0';\n}"
+      }
+    },
+    {
+      "name": "String Building (Alternative)",
+      "order": 2,
+      "intuition": "Build result string directly instead of using stack. Treat string as stack by checking last character. More space efficient in some languages.",
+      "approach": "Build result string. Remove last char when current smaller and removals left. Simulates stack with string.",
+      "steps": [
+        "Initialize empty result string",
+        "For each digit:",
+        " - While result not empty, last char > digit, k > 0:",
+        "   - Remove last character from result",
+        "   - Decrement k",
+        " - Append digit to result",
+        "Remove k more characters from end if needed",
+        "Remove leading zeros",
+        "Return result or '0' if empty"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each character processed once. String operations amortized O(1). Total: O(n).",
+        "spaceExplanation": "Result string stores up to n characters. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string removeKdigits(string num, int k) {\n        string result = \"\";\n        \n        for (char digit : num) {\n            // Remove larger digits\n            while (!result.empty() && result.back() > digit && k > 0) {\n                result.pop_back();\n                k--;\n            }\n            result.push_back(digit);\n        }\n        \n        // Remove remaining k digits\n        while (k > 0 && !result.empty()) {\n            result.pop_back();\n            k--;\n        }\n        \n        // Remove leading zeros\n        int i = 0;\n        while (i < result.length() && result[i] == '0') {\n            i++;\n        }\n        result = result.substr(i);\n        \n        return result.empty() ? \"0\" : result;\n    }\n};",
+        "java": "class Solution {\n    public String removeKdigits(String num, int k) {\n        StringBuilder result = new StringBuilder();\n        \n        for (char digit : num.toCharArray()) {\n            // Remove larger digits\n            while (result.length() > 0 && result.charAt(result.length() - 1) > digit && k > 0) {\n                result.deleteCharAt(result.length() - 1);\n                k--;\n            }\n            result.append(digit);\n        }\n        \n        // Remove remaining k digits\n        while (k > 0 && result.length() > 0) {\n            result.deleteCharAt(result.length() - 1);\n            k--;\n        }\n        \n        // Remove leading zeros\n        while (result.length() > 0 && result.charAt(0) == '0') {\n            result.deleteCharAt(0);\n        }\n        \n        return result.length() == 0 ? \"0\" : result.toString();\n    }\n}",
+        "python": "class Solution:\n    def removeKdigits(self, num: str, k: int) -> str:\n        result = []\n        \n        for digit in num:\n            # Remove larger digits\n            while result and result[-1] > digit and k > 0:\n                result.pop()\n                k -= 1\n            result.append(digit)\n        \n        # Remove remaining k digits\n        while k > 0 and result:\n            result.pop()\n            k -= 1\n        \n        # Remove leading zeros\n        return ''.join(result).lstrip('0') or '0'",
+        "javascript": "function removeKdigits(num, k) {\n    let result = '';\n    \n    for (const digit of num) {\n        // Remove larger digits\n        while (result.length > 0 && result[result.length - 1] > digit && k > 0) {\n            result = result.slice(0, -1);\n            k--;\n        }\n        result += digit;\n    }\n    \n    // Remove remaining k digits\n    while (k > 0 && result.length > 0) {\n        result = result.slice(0, -1);\n        k--;\n    }\n    \n    // Remove leading zeros\n    result = result.replace(/^0+/, '');\n    \n    return result || '0';\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not removing remaining k digits after first pass",
+    "Forgetting to handle leading zeros",
+    "Not returning '0' for empty result",
+    "Comparing characters as strings instead of values",
+    "Not checking k > 0 before popping",
+    "Removing from wrong end (should remove from left for minimum)",
+    "Not handling case where all digits are same",
+    "Forgetting monotonic increasing property"
+  ],
+  "hints": [
+    "Greedy: remove larger digits from left first",
+    "Monotonic increasing stack builds smallest number",
+    "Keep removing while current < top and removals left",
+    "May need to remove more from end if k still > 0",
+    "Leading zeros must be removed from final result",
+    "Empty result should return '0'",
+    "Each digit processed at most twice (push and pop)",
+    "Result has length n - k"
+  ],
+  "followUp": [
+    "What if we want maximum number instead?",
+    "How to handle very large numbers (beyond integer)?",
+    "Can we remove specific digits instead of k arbitrary?",
+    "What if we can swap digits instead of remove?",
+    "How to make number divisible by certain value?",
+    "What about removing to make palindrome?",
+    "Can we minimize with fewer removals?",
+    "How to handle negative numbers?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Bloomberg",
+    "Apple",
+    "Adobe",
+    "Snapchat"
+  ],
+  "tags": [
+    "Stack",
+    "String",
+    "Greedy",
+    "Monotonic Stack",
+    "Number"
+  ],
+  "relatedProblems": [
+    "Create Maximum Number",
+    "Monotone Increasing Digits",
+    "Find Most Competitive Subsequence",
+    "Remove Adjacent Duplicates II",
+    "Daily Temperatures",
+    "Next Greater Element II",
+    "Largest Rectangle in Histogram",
+    "Sum of Subarray Minimums"
+  ]
 }

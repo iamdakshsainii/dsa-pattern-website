@@ -3,17 +3,173 @@
   "questionSlug": "overlapping-intervals",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/check-if-any-two-intervals-overlap-among-a-given-set-of-intervals/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Check if Any Two Intervals Overlap",
+        "url": "https://www.youtube.com/watch?v=qkhUNzCGDik",
+        "channel": "TECH DOSE",
+        "duration": "10:20",
+        "language": "English"
+      },
+      {
+        "title": "Overlapping Intervals Problem",
+        "url": "https://www.youtube.com/watch?v=i0JMLmv4hbI",
+        "channel": "take U forward",
+        "duration": "12:45",
+        "language": "English"
+      },
+      {
+        "title": "Detect Overlapping Intervals",
+        "url": "https://www.youtube.com/watch?v=BTObFnHbD4Y",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Check if Any Two Intervals Overlap",
+        "url": "https://www.geeksforgeeks.org/check-if-any-two-intervals-overlap-among-a-given-set-of-intervals/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Overlapping Intervals Detection",
+        "url": "https://www.geeksforgeeks.org/find-if-an-interval-is-overlapped-by-any-other-interval/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Interval Overlap Problems",
+        "url": "https://algo.monster/problems/interval_overlap",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Merge Intervals",
+        "url": "https://leetcode.com/problems/merge-intervals/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Non-overlapping Intervals",
+        "url": "https://leetcode.com/problems/non-overlapping-intervals/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Meeting Rooms",
+        "url": "https://leetcode.com/problems/meeting-rooms/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Can Attend Meetings",
+        "url": "https://www.lintcode.com/problem/920/",
+        "platform": "LintCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Overlapping Intervals check when determining if any two intervals in a set overlap. Key indicators: detect conflict, check for overlap, validate non-overlapping schedule, can attend all meetings, interval collision detection.",
+  "approaches": [
+    {
+      "name": "Sort and Check Adjacent",
+      "order": 1,
+      "intuition": "If intervals are sorted by start time, overlapping intervals must be adjacent. After sorting, only need to check consecutive pairs. If any interval's end is greater than next interval's start, they overlap.",
+      "approach": "Sort intervals by start time. Iterate through sorted intervals checking each consecutive pair. If current interval's end is greater than next interval's start, overlap exists. Return false. If loop completes, no overlaps exist.",
+      "steps": [
+        "Sort intervals by start time: intervals.sort(key=lambda x: x[0])",
+        "For i from 0 to n-2:",
+        "  - If intervals[i][1] > intervals[i+1][0]:",
+        "    - Return true (overlap found)",
+        "Return false (no overlaps)"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1) or O(n)",
+        "timeExplanation": "Sorting takes O(n log n). Checking adjacent pairs takes O(n). Total: O(n log n).",
+        "spaceExplanation": "O(1) if sorting in-place. O(n) if creating new sorted array."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool hasOverlap(vector<vector<int>>& intervals) {\n        if (intervals.size() < 2) return false;\n        \n        // Sort by start time\n        sort(intervals.begin(), intervals.end());\n        \n        // Check adjacent intervals\n        for (int i = 0; i < intervals.size() - 1; i++) {\n            // If current interval's end > next interval's start, overlap exists\n            if (intervals[i][1] > intervals[i+1][0]) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean hasOverlap(int[][] intervals) {\n        if (intervals.length < 2) return false;\n        \n        // Sort by start time\n        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        // Check adjacent intervals\n        for (int i = 0; i < intervals.length - 1; i++) {\n            // If current interval's end > next interval's start, overlap exists\n            if (intervals[i][1] > intervals[i+1][0]) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "def hasOverlap(intervals):\n    if len(intervals) < 2:\n        return False\n    \n    # Sort by start time\n    intervals.sort(key=lambda x: x[0])\n    \n    # Check adjacent intervals\n    for i in range(len(intervals) - 1):\n        # If current interval's end > next interval's start, overlap exists\n        if intervals[i][1] > intervals[i+1][0]:\n            return True\n    \n    return False",
+        "javascript": "function hasOverlap(intervals) {\n    if (intervals.length < 2) return false;\n    \n    // Sort by start time\n    intervals.sort((a, b) => a[0] - b[0]);\n    \n    // Check adjacent intervals\n    for (let i = 0; i < intervals.length - 1; i++) {\n        // If current interval's end > next interval's start, overlap exists\n        if (intervals[i][1] > intervals[i+1][0]) {\n            return true;\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Brute Force - Check All Pairs",
+      "order": 2,
+      "intuition": "Check every possible pair of intervals to see if they overlap. Two intervals [a, b] and [c, d] overlap if max(a, c) < min(b, d). This ensures their intersection is non-empty.",
+      "approach": "Use nested loops to compare every pair of intervals. For each pair, check if they overlap using the condition: max(start1, start2) < min(end1, end2). Return true if any pair overlaps.",
+      "steps": [
+        "For i from 0 to n-2:",
+        "  - For j from i+1 to n-1:",
+        "    - a = intervals[i], b = intervals[j]",
+        "    - Check overlap: if max(a[0], b[0]) < min(a[1], b[1]):",
+        "      - Return true (overlap found)",
+        "Return false (no overlaps found)"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Need to check all pairs: n*(n-1)/2 comparisons. O(n²) time.",
+        "spaceExplanation": "Only constant extra space used. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool hasOverlap(vector<vector<int>>& intervals) {\n        int n = intervals.size();\n        if (n < 2) return false;\n        \n        // Check all pairs\n        for (int i = 0; i < n - 1; i++) {\n            for (int j = i + 1; j < n; j++) {\n                // Two intervals overlap if max(start1, start2) < min(end1, end2)\n                int start = max(intervals[i][0], intervals[j][0]);\n                int end = min(intervals[i][1], intervals[j][1]);\n                \n                if (start < end) {\n                    return true;\n                }\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean hasOverlap(int[][] intervals) {\n        int n = intervals.length;\n        if (n < 2) return false;\n        \n        // Check all pairs\n        for (int i = 0; i < n - 1; i++) {\n            for (int j = i + 1; j < n; j++) {\n                // Two intervals overlap if max(start1, start2) < min(end1, end2)\n                int start = Math.max(intervals[i][0], intervals[j][0]);\n                int end = Math.min(intervals[i][1], intervals[j][1]);\n                \n                if (start < end) {\n                    return true;\n                }\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "def hasOverlap(intervals):\n    n = len(intervals)\n    if n < 2:\n        return False\n    \n    # Check all pairs\n    for i in range(n - 1):\n        for j in range(i + 1, n):\n            # Two intervals overlap if max(start1, start2) < min(end1, end2)\n            start = max(intervals[i][0], intervals[j][0])\n            end = min(intervals[i][1], intervals[j][1])\n            \n            if start < end:\n                return True\n    \n    return False",
+        "javascript": "function hasOverlap(intervals) {\n    const n = intervals.length;\n    if (n < 2) return false;\n    \n    // Check all pairs\n    for (let i = 0; i < n - 1; i++) {\n        for (let j = i + 1; j < n; j++) {\n            // Two intervals overlap if max(start1, start2) < min(end1, end2)\n            const start = Math.max(intervals[i][0], intervals[j][0]);\n            const end = Math.min(intervals[i][1], intervals[j][1]);\n            \n            if (start < end) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using >= instead of > when checking overlap (touching intervals aren't overlapping)",
+    "Not sorting intervals before checking adjacency",
+    "Forgetting to handle empty or single-interval cases",
+    "Comparing wrong intervals after sorting",
+    "Using wrong overlap condition (should be start < end, not start <= end)",
+    "Not handling intervals where one is completely contained in another",
+    "Modifying input array unnecessarily"
+  ],
+  "hints": [
+    "After sorting by start time, overlapping intervals must be adjacent",
+    "Two intervals [a,b] and [c,d] overlap if max(a,c) < min(b,d)",
+    "Note: touching intervals [1,2] and [2,3] don't overlap (use < not <=)",
+    "Sorting first reduces the problem from O(n²) to O(n log n)",
+    "Only need to check consecutive pairs after sorting",
+    "Consider edge cases: empty array, single interval, all overlapping"
+  ],
+  "followUp": [
+    "How to return all pairs of overlapping intervals?",
+    "What if you need to find the maximum number of overlapping intervals at any point?",
+    "How to check overlap for circular intervals (like clock times)?",
+    "Can you solve this without sorting (using other data structures)?",
+    "What if intervals are given as a stream?",
+    "How to handle intervals in multiple dimensions (rectangles)?",
+    "Can you find the minimum number of intervals to remove to make all non-overlapping?",
+    "What if intervals have weights and you need to detect weighted overlaps?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Bloomberg",
+    "Uber",
+    "Apple"
+  ],
+  "tags": [
+    "Array",
+    "Sorting",
+    "Intervals",
+    "Greedy"
+  ],
+  "relatedProblems": [
+    "Meeting Rooms",
+    "Merge Intervals",
+    "Non-overlapping Intervals",
+    "Meeting Rooms II",
+    "Insert Interval",
+    "My Calendar I",
+    "Interval List Intersections"
+  ]
 }

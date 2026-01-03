@@ -17,6 +17,13 @@
         "channel": "takeUforward",
         "duration": "10:25",
         "language": "English"
+      },
+      {
+        "title": "Remove Duplicates In-Place | Two Pointers",
+        "url": "https://www.youtube.com/watch?v=wT7gcXLFr5M",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:42",
+        "language": "English"
       }
     ],
     "articles": [
@@ -24,24 +31,49 @@
         "title": "Remove Duplicates from Sorted Array Solution",
         "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/solution/",
         "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Two Pointers Technique - Complete Guide",
+        "url": "https://leetcode.com/discuss/study-guide/1688903/solved-all-two-pointers-problems-in-100-days",
+        "source": "LeetCode Discuss"
+      },
+      {
+        "title": "In-Place Array Modification Patterns",
+        "url": "https://www.geeksforgeeks.org/remove-duplicates-sorted-array/",
+        "source": "GeeksforGeeks"
       }
     ],
     "practice": [
       {
-        "title": "Practice on GeeksforGeeks",
-        "url": "https://www.geeksforgeeks.org/remove-duplicates-sorted-array/",
-        "platform": "GeeksforGeeks"
+        "title": "Remove Duplicates from Sorted Array II",
+        "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove Element",
+        "url": "https://leetcode.com/problems/remove-element/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Move Zeroes",
+        "url": "https://leetcode.com/problems/move-zeroes/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove Duplicates from Sorted List",
+        "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-list/",
+        "platform": "LeetCode"
       }
     ],
     "discussions": []
   },
-  "patternTriggers": "Use Two Pointers when you need to modify an array in-place, especially when dealing with sorted arrays and removing/replacing elements.",
+  "patternTriggers": "Use Two Pointers when you need to modify an array in-place, especially when dealing with sorted arrays and removing/replacing elements. Keywords: 'remove duplicates', 'in-place', 'sorted array', 'modify array'.",
   "approaches": [
     {
       "name": "Brute Force - Extra Space",
       "order": 1,
-      "intuition": "Use extra space to store unique elements, then copy them back to the original array.",
-      "approach": "Create a new array or set to store unique elements, then overwrite the original array.",
+      "intuition": "Use extra space to store unique elements, then copy them back to the original array. Simple but not optimal for space.",
+      "approach": "Create a new array or list to store unique elements, then overwrite the original array.",
       "steps": [
         "Create a temporary array or list",
         "Iterate through the original array",
@@ -52,8 +84,8 @@
       "complexity": {
         "time": "O(n)",
         "space": "O(n)",
-        "timeExplanation": "Single pass through the array",
-        "spaceExplanation": "Extra array to store unique elements"
+        "timeExplanation": "Single pass through the array: O(n).",
+        "spaceExplanation": "Extra array to store unique elements: O(n) in worst case."
       },
       "code": {
         "cpp": "int removeDuplicates(vector<int>& nums) {\n    if (nums.empty()) return 0;\n    \n    vector<int> unique;\n    unique.push_back(nums[0]);\n    \n    for (int i = 1; i < nums.size(); i++) {\n        if (nums[i] != nums[i - 1]) {\n            unique.push_back(nums[i]);\n        }\n    }\n    \n    for (int i = 0; i < unique.size(); i++) {\n        nums[i] = unique[i];\n    }\n    \n    return unique.size();\n}",
@@ -65,7 +97,7 @@
     {
       "name": "Two Pointers (Optimal)",
       "order": 2,
-      "intuition": "Use one pointer to track the position of unique elements and another to scan through the array.",
+      "intuition": "Use one pointer to track the position of unique elements and another to scan through the array. This is the optimal O(1) space solution.",
       "approach": "Keep a slow pointer for the position of unique elements and a fast pointer to scan through the array.",
       "steps": [
         "Handle edge case: if array is empty, return 0",
@@ -81,8 +113,8 @@
       "complexity": {
         "time": "O(n)",
         "space": "O(1)",
-        "timeExplanation": "Single pass through the array",
-        "spaceExplanation": "Only two pointer variables used, in-place modification"
+        "timeExplanation": "Single pass through the array: O(n).",
+        "spaceExplanation": "Only two pointer variables used, in-place modification: O(1)."
       },
       "code": {
         "cpp": "int removeDuplicates(vector<int>& nums) {\n    if (nums.empty()) return 0;\n    \n    int insertPos = 1; // Position to insert next unique element\n    \n    for (int i = 1; i < nums.size(); i++) {\n        // If current element is different from previous\n        if (nums[i] != nums[i - 1]) {\n            nums[insertPos] = nums[i];\n            insertPos++;\n        }\n    }\n    \n    return insertPos;\n}",
@@ -94,7 +126,7 @@
     {
       "name": "Two Pointers - Alternative",
       "order": 3,
-      "intuition": "Compare current element with the last unique element placed, rather than with previous element.",
+      "intuition": "Compare current element with the last unique element placed, rather than with previous element. Same efficiency but different comparison logic.",
       "approach": "Use one pointer to track unique elements and compare with it directly.",
       "steps": [
         "Handle edge case: if array is empty, return 0",
@@ -108,8 +140,8 @@
       "complexity": {
         "time": "O(n)",
         "space": "O(1)",
-        "timeExplanation": "Single pass through the array",
-        "spaceExplanation": "Only one pointer variable used"
+        "timeExplanation": "Single pass through the array: O(n).",
+        "spaceExplanation": "Only one pointer variable used: O(1)."
       },
       "code": {
         "cpp": "int removeDuplicates(vector<int>& nums) {\n    if (nums.empty()) return 0;\n    \n    int uniqueIndex = 0;\n    \n    for (int i = 1; i < nums.size(); i++) {\n        if (nums[i] != nums[uniqueIndex]) {\n            uniqueIndex++;\n            nums[uniqueIndex] = nums[i];\n        }\n    }\n    \n    return uniqueIndex + 1;\n}",
@@ -124,19 +156,30 @@
     "Not handling empty array edge case",
     "Trying to remove elements instead of overwriting them in-place",
     "Comparing with wrong element (should compare with previous or last unique)",
-    "Modifying the array length instead of just overwriting values"
+    "Modifying the array length instead of just overwriting values",
+    "Starting loop from index 0 instead of 1",
+    "Using <= instead of < in loop condition",
+    "Confusing insertPos with the actual count (off-by-one error)"
   ],
   "hints": [
     "The array is already sorted, so duplicates will be adjacent",
     "You don't need to actually remove elements, just overwrite them",
     "Keep track of where to place the next unique element",
-    "The first element is always unique"
+    "The first element is always unique",
+    "Think about maintaining a 'clean' section at the start of the array",
+    "Each unique element should appear exactly once in the result",
+    "The relative order of elements must be preserved",
+    "Elements beyond the returned length don't matter"
   ],
   "followUp": [
     "What if the array is not sorted?",
     "How would you allow at most 2 duplicates of each element?",
     "Can you do this for a linked list?",
-    "What if you need to preserve the original order but remove all duplicates entirely?"
+    "What if you need to preserve the original order but remove all duplicates entirely?",
+    "How would you handle this if the array contains objects instead of primitives?",
+    "Can you solve this recursively?",
+    "What if you need to count how many duplicates were removed?",
+    "How would you optimize for arrays with very few duplicates?"
   ],
   "companies": [
     "Facebook",
@@ -144,15 +187,24 @@
     "Amazon",
     "Google",
     "Apple",
-    "Bloomberg"
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn",
+    "Uber",
+    "Oracle"
   ],
   "tags": [
     "Array",
-    "Two Pointers"
+    "Two Pointers",
+    "In-Place"
   ],
   "relatedProblems": [
     "Remove Duplicates from Sorted Array II",
     "Remove Element",
-    "Remove Duplicates from Sorted List"
+    "Remove Duplicates from Sorted List",
+    "Move Zeroes",
+    "Remove Duplicates from Unsorted Array",
+    "Partition Array",
+    "Find the Duplicate Number"
   ]
 }

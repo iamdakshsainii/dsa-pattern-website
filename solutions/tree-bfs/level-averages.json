@@ -3,17 +3,189 @@
   "questionSlug": "level-averages",
   "resources": {
     "leetcode": "https://leetcode.com/problems/average-of-levels-in-binary-tree/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Average of Levels in Binary Tree",
+        "url": "https://www.youtube.com/watch?v=rXKMU4l3kko",
+        "channel": "NeetCode",
+        "duration": "6:30",
+        "language": "English"
+      },
+      {
+        "title": "Level Order Average BFS Solution",
+        "url": "https://www.youtube.com/watch?v=7hFWIU8oS9k",
+        "channel": "TECH DOSE",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Binary Tree Level Averages",
+        "url": "https://www.youtube.com/watch?v=XNZvlQBDxqY",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Average of Levels Solution",
+        "url": "https://leetcode.com/problems/average-of-levels-in-binary-tree/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Level Order Statistics Guide",
+        "url": "https://www.geeksforgeeks.org/averages-levels-binary-tree/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "BFS Level Computation Pattern",
+        "url": "https://algo.monster/problems/average_of_levels",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Level Sum",
+        "url": "https://leetcode.com/problems/maximum-level-sum-of-a-binary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Deepest Leaves Sum",
+        "url": "https://leetcode.com/problems/deepest-leaves-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Width of Binary Tree",
+        "url": "https://leetcode.com/problems/maximum-width-of-binary-tree/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Level Averages when computing statistics per level. Key indicators: level-wise computation, average per level, aggregate per depth, BFS with arithmetic.",
+  "approaches": [
+    {
+      "name": "BFS with Level Sum (Optimal)",
+      "order": 1,
+      "intuition": "Process tree level by level using BFS. For each level, sum all node values and divide by level size to get average. Store average for each level.",
+      "approach": "Use queue for BFS. For each level, accumulate sum of all nodes and count. Calculate average as sum/count.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result list and queue with root",
+        "While queue not empty:",
+        " - Get current level size",
+        " - Initialize sum = 0",
+        " - For each node in current level:",
+        "   - Dequeue node",
+        "   - Add node value to sum",
+        "   - Enqueue left and right children",
+        " - Calculate average = sum / levelSize",
+        " - Add average to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node exactly once. Each node processed in O(1) time. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Queue stores at most w nodes (max width). In worst case (complete tree), w = n/2. Space: O(w) ≈ O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<double> averageOfLevels(TreeNode* root) {\n        vector<double> result;\n        if (!root) return result;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            double sum = 0;\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                sum += node->val;\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n            \n            result.push_back(sum / levelSize);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Double> averageOfLevels(TreeNode root) {\n        List<Double> result = new ArrayList<>();\n        if (root == null) return result;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            double sum = 0;\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                sum += node.val;\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            \n            result.add(sum / levelSize);\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def averageOfLevels(self, root: Optional[TreeNode]) -> List[float]:\n        if not root:\n            return []\n        \n        result = []\n        queue = deque([root])\n        \n        while queue:\n            level_size = len(queue)\n            level_sum = 0\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                level_sum += node.val\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            result.append(level_sum / level_size)\n        \n        return result",
+        "javascript": "function averageOfLevels(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root];\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        let sum = 0;\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            sum += node.val;\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        result.push(sum / levelSize);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "DFS with Level Tracking (Alternative)",
+      "order": 2,
+      "intuition": "Use DFS to traverse tree with level parameter. Track sum and count for each level separately. After traversal, compute averages for each level.",
+      "approach": "Recursively traverse tree tracking level. Store sum and count for each level in maps. Calculate averages after DFS completes.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize levelSum map and levelCount map",
+        "Define DFS helper(node, level):",
+        " - If node is null, return",
+        " - Add node value to levelSum[level]",
+        " - Increment levelCount[level]",
+        " - Recursively call for left and right children with level+1",
+        "Call DFS helper with root and level 0",
+        "For each level, compute average = levelSum / levelCount",
+        "Return list of averages"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once in DFS: O(n). Computing averages: O(h) where h is height. Total: O(n).",
+        "spaceExplanation": "Recursion stack depth equals height h. Maps store h levels. Space: O(h). Worst case h = n, best case h = log n."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<double> averageOfLevels(TreeNode* root) {\n        unordered_map<int, long long> levelSum;\n        unordered_map<int, int> levelCount;\n        int maxLevel = 0;\n        \n        dfs(root, 0, levelSum, levelCount, maxLevel);\n        \n        vector<double> result;\n        for (int i = 0; i <= maxLevel; i++) {\n            result.push_back((double)levelSum[i] / levelCount[i]);\n        }\n        \n        return result;\n    }\n    \nprivate:\n    void dfs(TreeNode* node, int level, unordered_map<int, long long>& levelSum,\n             unordered_map<int, int>& levelCount, int& maxLevel) {\n        if (!node) return;\n        \n        levelSum[level] += node->val;\n        levelCount[level]++;\n        maxLevel = max(maxLevel, level);\n        \n        dfs(node->left, level + 1, levelSum, levelCount, maxLevel);\n        dfs(node->right, level + 1, levelSum, levelCount, maxLevel);\n    }\n};",
+        "java": "class Solution {\n    private Map<Integer, Long> levelSum = new HashMap<>();\n    private Map<Integer, Integer> levelCount = new HashMap<>();\n    private int maxLevel = 0;\n    \n    public List<Double> averageOfLevels(TreeNode root) {\n        dfs(root, 0);\n        \n        List<Double> result = new ArrayList<>();\n        for (int i = 0; i <= maxLevel; i++) {\n            result.add((double)levelSum.get(i) / levelCount.get(i));\n        }\n        \n        return result;\n    }\n    \n    private void dfs(TreeNode node, int level) {\n        if (node == null) return;\n        \n        levelSum.put(level, levelSum.getOrDefault(level, 0L) + node.val);\n        levelCount.put(level, levelCount.getOrDefault(level, 0) + 1);\n        maxLevel = Math.max(maxLevel, level);\n        \n        dfs(node.left, level + 1);\n        dfs(node.right, level + 1);\n    }\n}",
+        "python": "class Solution:\n    def averageOfLevels(self, root: Optional[TreeNode]) -> List[float]:\n        level_sum = {}\n        level_count = {}\n        \n        def dfs(node, level):\n            if not node:\n                return\n            \n            level_sum[level] = level_sum.get(level, 0) + node.val\n            level_count[level] = level_count.get(level, 0) + 1\n            \n            dfs(node.left, level + 1)\n            dfs(node.right, level + 1)\n        \n        dfs(root, 0)\n        \n        result = []\n        for level in sorted(level_sum.keys()):\n            result.append(level_sum[level] / level_count[level])\n        \n        return result",
+        "javascript": "function averageOfLevels(root) {\n    const levelSum = new Map();\n    const levelCount = new Map();\n    \n    function dfs(node, level) {\n        if (!node) return;\n        \n        levelSum.set(level, (levelSum.get(level) || 0) + node.val);\n        levelCount.set(level, (levelCount.get(level) || 0) + 1);\n        \n        dfs(node.left, level + 1);\n        dfs(node.right, level + 1);\n    }\n    \n    dfs(root, 0);\n    \n    const result = [];\n    const maxLevel = Math.max(...levelSum.keys());\n    \n    for (let i = 0; i <= maxLevel; i++) {\n        result.push(levelSum.get(i) / levelCount.get(i));\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Integer division instead of float division",
+    "Not using double/long for sum (integer overflow)",
+    "Computing average during traversal instead of after",
+    "Forgetting to track level size before processing",
+    "Using int for sum when values can be large",
+    "Not handling empty tree edge case",
+    "Dividing by wrong count (total nodes vs level nodes)",
+    "Accumulating sum incorrectly in DFS approach"
+  ],
+  "hints": [
+    "Use double or float to avoid integer division",
+    "Sum can overflow - use long or double for accumulation",
+    "BFS naturally groups nodes by level",
+    "Average = sum of level / number of nodes in level",
+    "Can also use DFS with level tracking",
+    "Track level size before dequeuing nodes",
+    "Each level produces exactly one average"
+  ],
+  "followUp": [
+    "How to find level with maximum average?",
+    "What if we need median instead of average?",
+    "How to find level with maximum sum?",
+    "Can we find k levels with highest averages?",
+    "What if tree is very wide (millions of nodes per level)?",
+    "How to handle integer overflow in sum?",
+    "Can we compute running average?",
+    "How to find level with most similar values?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Bloomberg",
+    "Adobe",
+    "Apple"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "BFS",
+    "Queue",
+    "Level Order Traversal",
+    "Math",
+    "Average"
+  ],
+  "relatedProblems": [
+    "Binary Tree Level Order Traversal",
+    "Maximum Level Sum of Binary Tree",
+    "Deepest Leaves Sum",
+    "Binary Tree Zigzag Level Order",
+    "Maximum Width of Binary Tree",
+    "Minimum Depth of Binary Tree",
+    "Maximum Depth of Binary Tree",
+    "Count Complete Tree Nodes"
+  ]
 }

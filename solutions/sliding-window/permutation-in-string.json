@@ -3,17 +3,188 @@
   "questionSlug": "permutation-in-string",
   "resources": {
     "leetcode": "https://leetcode.com/problems/permutation-in-string/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Permutation in String - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=UbyhOgBN834",
+        "channel": "NeetCode",
+        "duration": "11:20",
+        "language": "English"
+      },
+      {
+        "title": "Fixed Window Frequency Matching",
+        "url": "https://www.youtube.com/watch?v=G5tbP11wLyE",
+        "channel": "take U forward",
+        "duration": "17:45",
+        "language": "English"
+      },
+      {
+        "title": "Anagram in String Pattern",
+        "url": "https://www.youtube.com/watch?v=fYgU6Bi2fRg",
+        "channel": "Aditya Verma",
+        "duration": "20:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Permutation in String",
+        "url": "https://leetcode.com/problems/permutation-in-string/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find Anagram in String",
+        "url": "https://www.geeksforgeeks.org/anagram-substring-search-search-permutations/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Fixed Window Pattern Matching",
+        "url": "https://algo.monster/problems/permutation_string",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find All Anagrams in a String",
+        "url": "https://leetcode.com/problems/find-all-anagrams-in-a-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Window Substring",
+        "url": "https://leetcode.com/problems/minimum-window-substring/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Valid Anagram",
+        "url": "https://leetcode.com/problems/valid-anagram/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Group Anagrams",
+        "url": "https://leetcode.com/problems/group-anagrams/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Permutation in String when: check if permutation exists as substring, fixed window size, character frequency matching, anagram detection. Keywords: 'permutation', 'anagram', 'substring', 'any arrangement'.",
+  "approaches": [
+    {
+      "name": "Sliding Window with Frequency Comparison (Optimal)",
+      "order": 1,
+      "intuition": "Permutation means same characters with same frequencies. Use fixed window of size len(s1). Compare character frequencies of window with s1. Slide window one character at a time, updating frequencies. If frequencies match, found permutation. O(n) time.",
+      "approach": "Fixed window sliding. Build frequency map for s1. Slide window of same size through s2. Compare frequencies at each position.",
+      "steps": [
+        "If len(s1) > len(s2), return false",
+        "Build frequency map for s1",
+        "Build frequency map for first window in s2",
+        "If maps equal, return true",
+        "For i from len(s1) to len(s2)-1:",
+        "  - Add s2[i] to window (increment frequency)",
+        "  - Remove s2[i - len(s1)] from window (decrement frequency)",
+        "  - If frequency becomes 0, remove from map",
+        "  - If maps equal, return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Build s1 map: O(len(s1)). Slide through s2: O(len(s2)). Comparing maps: O(26) = O(1). Total: O(n).",
+        "spaceExplanation": "Two frequency maps with at most 26 lowercase letters: O(26 + 26) = O(1) constant space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool checkInclusion(string s1, string s2) {\n        if (s1.length() > s2.length()) return false;\n        \n        unordered_map<char, int> s1Count, windowCount;\n        \n        // Build frequency maps\n        for (char c : s1) s1Count[c]++;\n        \n        // First window\n        for (int i = 0; i < s1.length(); i++) {\n            windowCount[s2[i]]++;\n        }\n        \n        if (s1Count == windowCount) return true;\n        \n        // Slide the window\n        for (int i = s1.length(); i < s2.length(); i++) {\n            // Add new character\n            windowCount[s2[i]]++;\n            \n            // Remove old character\n            windowCount[s2[i - s1.length()]]--;\n            if (windowCount[s2[i - s1.length()]] == 0) {\n                windowCount.erase(s2[i - s1.length()]);\n            }\n            \n            if (s1Count == windowCount) return true;\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean checkInclusion(String s1, String s2) {\n        if (s1.length() > s2.length()) return false;\n        \n        Map<Character, Integer> s1Count = new HashMap<>();\n        Map<Character, Integer> windowCount = new HashMap<>();\n        \n        // Build frequency maps\n        for (char c : s1.toCharArray()) {\n            s1Count.put(c, s1Count.getOrDefault(c, 0) + 1);\n        }\n        \n        // First window\n        for (int i = 0; i < s1.length(); i++) {\n            char c = s2.charAt(i);\n            windowCount.put(c, windowCount.getOrDefault(c, 0) + 1);\n        }\n        \n        if (s1Count.equals(windowCount)) return true;\n        \n        // Slide the window\n        for (int i = s1.length(); i < s2.length(); i++) {\n            // Add new character\n            char newChar = s2.charAt(i);\n            windowCount.put(newChar, windowCount.getOrDefault(newChar, 0) + 1);\n            \n            // Remove old character\n            char oldChar = s2.charAt(i - s1.length());\n            windowCount.put(oldChar, windowCount.get(oldChar) - 1);\n            if (windowCount.get(oldChar) == 0) {\n                windowCount.remove(oldChar);\n            }\n            \n            if (s1Count.equals(windowCount)) return true;\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def checkInclusion(self, s1: str, s2: str) -> bool:\n        if len(s1) > len(s2):\n            return False\n        \n        s1_count = Counter(s1)\n        window_count = Counter(s2[:len(s1)])\n        \n        if s1_count == window_count:\n            return True\n        \n        # Slide the window\n        for i in range(len(s1), len(s2)):\n            # Add new character\n            window_count[s2[i]] += 1\n            \n            # Remove old character\n            window_count[s2[i - len(s1)]] -= 1\n            if window_count[s2[i - len(s1)]] == 0:\n                del window_count[s2[i - len(s1)]]\n            \n            if s1_count == window_count:\n                return True\n        \n        return False",
+        "javascript": "function checkInclusion(s1, s2) {\n    if (s1.length > s2.length) return false;\n    \n    const s1Count = new Map();\n    const windowCount = new Map();\n    \n    // Build frequency maps\n    for (const c of s1) {\n        s1Count.set(c, (s1Count.get(c) || 0) + 1);\n    }\n    \n    // First window\n    for (let i = 0; i < s1.length; i++) {\n        const c = s2[i];\n        windowCount.set(c, (windowCount.get(c) || 0) + 1);\n    }\n    \n    if (mapsEqual(s1Count, windowCount)) return true;\n    \n    // Slide the window\n    for (let i = s1.length; i < s2.length; i++) {\n        // Add new character\n        const newChar = s2[i];\n        windowCount.set(newChar, (windowCount.get(newChar) || 0) + 1);\n        \n        // Remove old character\n        const oldChar = s2[i - s1.length];\n        windowCount.set(oldChar, windowCount.get(oldChar) - 1);\n        if (windowCount.get(oldChar) === 0) {\n            windowCount.delete(oldChar);\n        }\n        \n        if (mapsEqual(s1Count, windowCount)) return true;\n    }\n    \n    return false;\n}\n\nfunction mapsEqual(map1, map2) {\n    if (map1.size !== map2.size) return false;\n    for (const [key, val] of map1) {\n        if (map2.get(key) !== val) return false;\n    }\n    return true;\n}"
+      }
+    },
+    {
+      "name": "Array Frequency Optimization",
+      "order": 2,
+      "intuition": "Since only lowercase letters, use array of size 26 instead of HashMap. Faster in practice. Track number of matching character frequencies instead of comparing entire arrays each time. O(n) time with better constants.",
+      "approach": "Use two arrays of size 26. Track matches count. Update matches as window slides. Return true when matches == 26.",
+      "steps": [
+        "If len(s1) > len(s2), return false",
+        "Create s1Freq[26] and windowFreq[26]",
+        "Build frequencies for s1 and first window",
+        "Count initial matches (frequencies that are equal)",
+        "For i from len(s1) to len(s2)-1:",
+        "  - Add new character, update matches if needed",
+        "  - Remove old character, update matches if needed",
+        "  - If matches == 26, return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Build frequencies: O(len(s1)). Slide window: O(len(s2)). Constant time per iteration: O(n).",
+        "spaceExplanation": "Two arrays of fixed size 26: O(26 + 26) = O(1) constant space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool checkInclusion(string s1, string s2) {\n        if (s1.length() > s2.length()) return false;\n        \n        vector<int> s1Freq(26, 0), windowFreq(26, 0);\n        \n        // Build initial frequencies\n        for (int i = 0; i < s1.length(); i++) {\n            s1Freq[s1[i] - 'a']++;\n            windowFreq[s2[i] - 'a']++;\n        }\n        \n        // Count initial matches\n        int matches = 0;\n        for (int i = 0; i < 26; i++) {\n            if (s1Freq[i] == windowFreq[i]) matches++;\n        }\n        \n        if (matches == 26) return true;\n        \n        // Slide the window\n        for (int i = s1.length(); i < s2.length(); i++) {\n            int newIdx = s2[i] - 'a';\n            int oldIdx = s2[i - s1.length()] - 'a';\n            \n            // Add new character\n            if (windowFreq[newIdx] == s1Freq[newIdx]) matches--;\n            windowFreq[newIdx]++;\n            if (windowFreq[newIdx] == s1Freq[newIdx]) matches++;\n            \n            // Remove old character\n            if (windowFreq[oldIdx] == s1Freq[oldIdx]) matches--;\n            windowFreq[oldIdx]--;\n            if (windowFreq[oldIdx] == s1Freq[oldIdx]) matches++;\n            \n            if (matches == 26) return true;\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean checkInclusion(String s1, String s2) {\n        if (s1.length() > s2.length()) return false;\n        \n        int[] s1Freq = new int[26];\n        int[] windowFreq = new int[26];\n        \n        // Build initial frequencies\n        for (int i = 0; i < s1.length(); i++) {\n            s1Freq[s1.charAt(i) - 'a']++;\n            windowFreq[s2.charAt(i) - 'a']++;\n        }\n        \n        // Count initial matches\n        int matches = 0;\n        for (int i = 0; i < 26; i++) {\n            if (s1Freq[i] == windowFreq[i]) matches++;\n        }\n        \n        if (matches == 26) return true;\n        \n        // Slide the window\n        for (int i = s1.length(); i < s2.length(); i++) {\n            int newIdx = s2.charAt(i) - 'a';\n            int oldIdx = s2.charAt(i - s1.length()) - 'a';\n            \n            // Add new character\n            if (windowFreq[newIdx] == s1Freq[newIdx]) matches--;\n            windowFreq[newIdx]++;\n            if (windowFreq[newIdx] == s1Freq[newIdx]) matches++;\n            \n            // Remove old character\n            if (windowFreq[oldIdx] == s1Freq[oldIdx]) matches--;\n            windowFreq[oldIdx]--;\n            if (windowFreq[oldIdx] == s1Freq[oldIdx]) matches++;\n            \n            if (matches == 26) return true;\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def checkInclusion(self, s1: str, s2: str) -> bool:\n        if len(s1) > len(s2):\n            return False\n        \n        s1_freq = [0] * 26\n        window_freq = [0] * 26\n        \n        # Build initial frequencies\n        for i in range(len(s1)):\n            s1_freq[ord(s1[i]) - ord('a')] += 1\n            window_freq[ord(s2[i]) - ord('a')] += 1\n        \n        # Count initial matches\n        matches = sum(1 for i in range(26) if s1_freq[i] == window_freq[i])\n        \n        if matches == 26:\n            return True\n        \n        # Slide the window\n        for i in range(len(s1), len(s2)):\n            new_idx = ord(s2[i]) - ord('a')\n            old_idx = ord(s2[i - len(s1)]) - ord('a')\n            \n            # Add new character\n            if window_freq[new_idx] == s1_freq[new_idx]:\n                matches -= 1\n            window_freq[new_idx] += 1\n            if window_freq[new_idx] == s1_freq[new_idx]:\n                matches += 1\n            \n            # Remove old character\n            if window_freq[old_idx] == s1_freq[old_idx]:\n                matches -= 1\n            window_freq[old_idx] -= 1\n            if window_freq[old_idx] == s1_freq[old_idx]:\n                matches += 1\n            \n            if matches == 26:\n                return True\n        \n        return False",
+        "javascript": "function checkInclusion(s1, s2) {\n    if (s1.length > s2.length) return false;\n    \n    const s1Freq = new Array(26).fill(0);\n    const windowFreq = new Array(26).fill(0);\n    \n    // Build initial frequencies\n    for (let i = 0; i < s1.length; i++) {\n        s1Freq[s1.charCodeAt(i) - 97]++;\n        windowFreq[s2.charCodeAt(i) - 97]++;\n    }\n    \n    // Count initial matches\n    let matches = 0;\n    for (let i = 0; i < 26; i++) {\n        if (s1Freq[i] === windowFreq[i]) matches++;\n    }\n    \n    if (matches === 26) return true;\n    \n    // Slide the window\n    for (let i = s1.length; i < s2.length; i++) {\n        const newIdx = s2.charCodeAt(i) - 97;\n        const oldIdx = s2.charCodeAt(i - s1.length) - 97;\n        \n        // Add new character\n        if (windowFreq[newIdx] === s1Freq[newIdx]) matches--;\n        windowFreq[newIdx]++;\n        if (windowFreq[newIdx] === s1Freq[newIdx]) matches++;\n        \n        // Remove old character\n        if (windowFreq[oldIdx] === s1Freq[oldIdx]) matches--;\n        windowFreq[oldIdx]--;\n        if (windowFreq[oldIdx] === s1Freq[oldIdx]) matches++;\n        \n        if (matches === 26) return true;\n    }\n    \n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not removing old character when sliding window",
+    "Comparing maps on every iteration (inefficient)",
+    "Not handling s1 longer than s2 edge case",
+    "Forgetting to delete entry when frequency becomes 0",
+    "Wrong window size (not using len(s1))",
+    "Not building initial window before sliding",
+    "Incrementing matches incorrectly in array approach",
+    "Using wrong character indexing ('a' vs 97)"
+  ],
+  "hints": [
+    "Permutation = same character frequencies",
+    "Fixed window size of len(s1)",
+    "Slide window one character at a time",
+    "Optimize: use array instead of map for lowercase only",
+    "Track matches count instead of comparing entire maps",
+    "Remove character from map when frequency is 0",
+    "Time complexity: O(len(s2)) with O(1) per iteration",
+    "Space: O(1) for lowercase letters only"
+  ],
+  "followUp": [
+    "What if you need to find all permutation positions?",
+    "Can you handle uppercase letters too?",
+    "What about case-insensitive matching?",
+    "How to extend to find k permutations?",
+    "What if characters have weights?",
+    "Can you optimize for very long s1?",
+    "What about finding longest permutation substring?",
+    "How to handle Unicode characters?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Uber",
+    "Oracle"
+  ],
+  "tags": [
+    "Sliding Window",
+    "HashMap",
+    "String",
+    "Fixed Window",
+    "Frequency Matching"
+  ],
+  "relatedProblems": [
+    "Find All Anagrams in a String",
+    "Minimum Window Substring",
+    "Valid Anagram",
+    "Group Anagrams",
+    "Longest Repeating Character Replacement",
+    "Substring with Concatenation of All Words",
+    "Find K-Length Substrings With No Repeated Characters",
+    "Maximum Number of Occurrences of a Substring"
+  ]
 }

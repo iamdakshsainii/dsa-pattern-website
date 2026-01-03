@@ -3,17 +3,192 @@
   "questionSlug": "unique-generalized-abbreviations",
   "resources": {
     "leetcode": "https://leetcode.com/problems/generalized-abbreviation/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Generalized Abbreviation - Leetcode 320",
+        "url": "https://www.youtube.com/watch?v=7p4yG8T4xt8",
+        "channel": "NeetCode",
+        "duration": "11:45",
+        "language": "English"
+      },
+      {
+        "title": "Generate All Abbreviations Backtracking",
+        "url": "https://www.youtube.com/watch?v=qVdGFj5EhVE",
+        "channel": "TECH DOSE",
+        "duration": "16:30",
+        "language": "English"
+      },
+      {
+        "title": "Generalized Abbreviation Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=8rP8JKZdnw0",
+        "channel": "take U forward",
+        "duration": "19:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Generalized Abbreviation Solution",
+        "url": "https://leetcode.com/problems/generalized-abbreviation/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Generate All Abbreviations of a String",
+        "url": "https://www.geeksforgeeks.org/generate-all-possible-abbreviations-of-string/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Backtracking for Abbreviations",
+        "url": "https://algo.monster/problems/generalized_abbreviation",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Subsets",
+        "url": "https://leetcode.com/problems/subsets/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Letter Combinations of Phone Number",
+        "url": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Permutations",
+        "url": "https://leetcode.com/problems/permutations/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Valid Word Abbreviation",
+        "url": "https://leetcode.com/problems/valid-word-abbreviation/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Generalized Abbreviation pattern when generating all ways to abbreviate a word. Key indicators: abbreviate with numbers, keep/abbreviate each character, backtracking with two choices per character, 2^n abbreviations.",
+  "approaches": [
+    {
+      "name": "Backtracking with Keep/Abbreviate Choices (Optimal)",
+      "order": 1,
+      "intuition": "For each character, we have 2 choices: keep it as-is or abbreviate it (and following consecutive chars). Use backtracking to explore both paths. Track count of consecutive abbreviated characters and add to result when reaching end.",
+      "approach": "Recursive backtracking. At each index, try two options: (1) keep character and recurse, (2) abbreviate from current position with different lengths. When abbreviated count > 0, add number to string before next character.",
+      "steps": [
+        "Initialize result list",
+        "Define backtrack function(index, current, count):",
+        " - If index == word.length:",
+        "   - If count > 0: add count to current",
+        "   - Add current to result",
+        "   - Return",
+        " - Option 1: Abbreviate current character",
+        "   - Recursively call backtrack(index+1, current, count+1)",
+        " - Option 2: Keep current character",
+        "   - If count > 0: append count to current",
+        "   - Append word[index] to current",
+        "   - Recursively call backtrack(index+1, current, 0)",
+        "Call backtrack(0, '', 0)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(2^n * n)",
+        "space": "O(n)",
+        "timeExplanation": "Generate 2^n abbreviations (each character keep or abbreviate). Each abbreviation takes O(n) to build. Total: O(2^n * n).",
+        "spaceExplanation": "Recursion depth is n. Current string is O(n). Total: O(n) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    void backtrack(string& word, int index, string current, int count, vector<string>& result) {\n        if (index == word.length()) {\n            if (count > 0) {\n                current += to_string(count);\n            }\n            result.push_back(current);\n            return;\n        }\n        \n        // Option 1: Abbreviate current character\n        backtrack(word, index + 1, current, count + 1, result);\n        \n        // Option 2: Keep current character\n        string newCurrent = current;\n        if (count > 0) {\n            newCurrent += to_string(count);\n        }\n        newCurrent += word[index];\n        backtrack(word, index + 1, newCurrent, 0, result);\n    }\n    \npublic:\n    vector<string> generateAbbreviations(string word) {\n        vector<string> result;\n        backtrack(word, 0, \"\", 0, result);\n        return result;\n    }\n};",
+        "java": "class Solution {\n    private void backtrack(String word, int index, StringBuilder current, int count, List<String> result) {\n        if (index == word.length()) {\n            if (count > 0) {\n                current.append(count);\n            }\n            result.add(current.toString());\n            return;\n        }\n        \n        int len = current.length();\n        \n        // Option 1: Abbreviate current character\n        backtrack(word, index + 1, current, count + 1, result);\n        \n        // Option 2: Keep current character\n        if (count > 0) {\n            current.append(count);\n        }\n        current.append(word.charAt(index));\n        backtrack(word, index + 1, current, 0, result);\n        current.setLength(len); // backtrack\n    }\n    \n    public List<String> generateAbbreviations(String word) {\n        List<String> result = new ArrayList<>();\n        backtrack(word, 0, new StringBuilder(), 0, result);\n        return result;\n    }\n}",
+        "python": "class Solution:\n    def generateAbbreviations(self, word: str) -> List[str]:\n        result = []\n        \n        def backtrack(index, current, count):\n            if index == len(word):\n                if count > 0:\n                    current += str(count)\n                result.append(current)\n                return\n            \n            # Option 1: Abbreviate current character\n            backtrack(index + 1, current, count + 1)\n            \n            # Option 2: Keep current character\n            new_current = current\n            if count > 0:\n                new_current += str(count)\n            new_current += word[index]\n            backtrack(index + 1, new_current, 0)\n        \n        backtrack(0, '', 0)\n        return result",
+        "javascript": "function generateAbbreviations(word) {\n    const result = [];\n    \n    function backtrack(index, current, count) {\n        if (index === word.length) {\n            if (count > 0) {\n                current += count;\n            }\n            result.push(current);\n            return;\n        }\n        \n        // Option 1: Abbreviate current character\n        backtrack(index + 1, current, count + 1);\n        \n        // Option 2: Keep current character\n        let newCurrent = current;\n        if (count > 0) {\n            newCurrent += count;\n        }\n        newCurrent += word[index];\n        backtrack(index + 1, newCurrent, 0);\n    }\n    \n    backtrack(0, '', 0);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Bit Manipulation (Alternative)",
+      "order": 2,
+      "intuition": "Each abbreviation represents a binary pattern: 0 = keep character, 1 = abbreviate. Generate all 2^n binary patterns. For each pattern, build corresponding abbreviation by grouping consecutive 1s into numbers.",
+      "approach": "Iterate through all numbers from 0 to 2^n - 1. Each number's binary representation determines which characters to keep (0) or abbreviate (1). Build abbreviation by counting consecutive 1s.",
+      "steps": [
+        "Initialize result list",
+        "For mask from 0 to 2^n - 1:",
+        " - Initialize abbreviation string",
+        " - Initialize count = 0",
+        " - For i from 0 to n-1:",
+        "   - If bit i is set in mask:",
+        "     - count++",
+        "   - Else:",
+        "     - If count > 0: append count to abbreviation",
+        "     - Append word[i] to abbreviation",
+        "     - count = 0",
+        " - If count > 0: append count",
+        " - Add abbreviation to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(2^n * n)",
+        "space": "O(1)",
+        "timeExplanation": "Generate 2^n patterns. For each, process n bits to build abbreviation. Total: O(2^n * n).",
+        "spaceExplanation": "Only variables for current pattern. O(1) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> generateAbbreviations(string word) {\n        int n = word.length();\n        vector<string> result;\n        \n        for (int mask = 0; mask < (1 << n); mask++) {\n            string abbr;\n            int count = 0;\n            \n            for (int i = 0; i < n; i++) {\n                if (mask & (1 << i)) {\n                    count++;\n                } else {\n                    if (count > 0) {\n                        abbr += to_string(count);\n                        count = 0;\n                    }\n                    abbr += word[i];\n                }\n            }\n            \n            if (count > 0) {\n                abbr += to_string(count);\n            }\n            result.push_back(abbr);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<String> generateAbbreviations(String word) {\n        int n = word.length();\n        List<String> result = new ArrayList<>();\n        \n        for (int mask = 0; mask < (1 << n); mask++) {\n            StringBuilder abbr = new StringBuilder();\n            int count = 0;\n            \n            for (int i = 0; i < n; i++) {\n                if ((mask & (1 << i)) != 0) {\n                    count++;\n                } else {\n                    if (count > 0) {\n                        abbr.append(count);\n                        count = 0;\n                    }\n                    abbr.append(word.charAt(i));\n                }\n            }\n            \n            if (count > 0) {\n                abbr.append(count);\n            }\n            result.add(abbr.toString());\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def generateAbbreviations(self, word: str) -> List[str]:\n        n = len(word)\n        result = []\n        \n        for mask in range(1 << n):\n            abbr = []\n            count = 0\n            \n            for i in range(n):\n                if mask & (1 << i):\n                    count += 1\n                else:\n                    if count > 0:\n                        abbr.append(str(count))\n                        count = 0\n                    abbr.append(word[i])\n            \n            if count > 0:\n                abbr.append(str(count))\n            \n            result.append(''.join(abbr))\n        \n        return result",
+        "javascript": "function generateAbbreviations(word) {\n    const n = word.length;\n    const result = [];\n    \n    for (let mask = 0; mask < (1 << n); mask++) {\n        let abbr = '';\n        let count = 0;\n        \n        for (let i = 0; i < n; i++) {\n            if (mask & (1 << i)) {\n                count++;\n            } else {\n                if (count > 0) {\n                    abbr += count;\n                    count = 0;\n                }\n                abbr += word[i];\n            }\n        }\n        \n        if (count > 0) {\n            abbr += count;\n        }\n        result.push(abbr);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to add count when reaching end of word",
+    "Not resetting count to 0 after keeping a character",
+    "Adding 0 to abbreviation instead of skipping it",
+    "Not handling consecutive abbreviated characters correctly",
+    "Generating duplicate abbreviations",
+    "Forgetting that two numbers can't be adjacent (must have letter between)",
+    "Not understanding that each abbreviation must be unique",
+    "Mixing up the binary representation in bit manipulation approach"
+  ],
+  "hints": [
+    "For each character, decide: keep it or abbreviate it",
+    "Track count of consecutive abbreviated characters",
+    "When keeping a character, first add count if > 0, then add character",
+    "At end, don't forget to add final count if > 0",
+    "Total abbreviations = 2^n (binary choices for each character)",
+    "Numbers in abbreviation represent consecutive abbreviated characters",
+    "Can't have two numbers adjacent - must have at least one letter between"
+  ],
+  "followUp": [
+    "How to check if one abbreviation matches another word?",
+    "What if you need only abbreviations of specific length?",
+    "How to find shortest unique abbreviation?",
+    "What if you need to generate abbreviations in lexicographic order?",
+    "How to count abbreviations without generating them?",
+    "What if you need abbreviations with minimum number of characters?",
+    "How to validate if a given abbreviation is valid?",
+    "What if word can have numbers (how to distinguish from abbreviation)?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Snapchat",
+    "Uber",
+    "LinkedIn"
+  ],
+  "tags": [
+    "String",
+    "Backtracking",
+    "Bit Manipulation",
+    "Recursion"
+  ],
+  "relatedProblems": [
+    "Subsets",
+    "Permutations",
+    "Letter Combinations of a Phone Number",
+    "Valid Word Abbreviation",
+    "Minimum Unique Word Abbreviation",
+    "Word Abbreviation",
+    "Abbreviating the Product of a Range"
+  ]
 }

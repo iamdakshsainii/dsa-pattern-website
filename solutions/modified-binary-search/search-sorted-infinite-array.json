@@ -3,17 +3,190 @@
   "questionSlug": "search-sorted-infinite-array",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/find-position-element-sorted-array-infinite-numbers/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Search in Infinite Sorted Array",
+        "url": "https://www.youtube.com/watch?v=FzvK5uuaki8",
+        "channel": "Aditya Verma",
+        "duration": "13:25",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search on Infinite Array",
+        "url": "https://www.youtube.com/watch?v=W9QJ8HaRvJQ",
+        "channel": "TECH DOSE",
+        "duration": "16:40",
+        "language": "English"
+      },
+      {
+        "title": "Finding Bounds in Infinite Array",
+        "url": "https://www.youtube.com/watch?v=x1bXZdJ6kHM",
+        "channel": "Back To Back SWE",
+        "duration": "12:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Position in Infinite Sorted Array",
+        "url": "https://www.geeksforgeeks.org/find-position-element-sorted-array-infinite-numbers/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Search Infinite Array",
+        "url": "https://algo.monster/problems/binary_search_boundary",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Exponential Search Technique",
+        "url": "https://www.educative.io/answers/what-is-exponential-search",
+        "source": "Educative"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Search",
+        "url": "https://leetcode.com/problems/binary-search/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search Insert Position",
+        "url": "https://leetcode.com/problems/search-insert-position/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "First Bad Version",
+        "url": "https://leetcode.com/problems/first-bad-version/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Smallest Letter Greater Than Target",
+        "url": "https://leetcode.com/problems/find-smallest-letter-greater-than-target/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Search Sorted Infinite Array when searching without knowing array size. Key indicators: infinite/unknown size array, sorted array, find target, cannot access length, exponential search, doubling window.",
+  "approaches": [
+    {
+      "name": "Exponential Search + Binary Search (Optimal)",
+      "order": 1,
+      "intuition": "Can't binary search without knowing size. First find bounds where target might exist by exponentially increasing window (1, 2, 4, 8...). Once found upper bound (arr[high] >= target), do binary search in [low, high]. Exponential growth finds bounds in O(log pos) where pos is target position.",
+      "approach": "Start with low=0, high=1. Double high until arr[high] >= target or out of bounds. Then binary search in [low, high]. Total complexity O(log pos).",
+      "steps": [
+        "Initialize low = 0, high = 1",
+        "Find bounds using exponential search:",
+        "  - While arr[high] < target:",
+        "    * low = high",
+        "    * high = high * 2",
+        "    * If arr[high] out of bounds: break",
+        "Now target is in range [low, high]",
+        "Apply binary search on [low, high]:",
+        "  - While low <= high:",
+        "    * mid = low + (high - low) / 2",
+        "    * If arr[mid] == target: return mid",
+        "    * If arr[mid] < target: low = mid + 1",
+        "    * Else: high = mid - 1",
+        "Return -1 if not found"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Exponential search: O(log pos) to find bounds. Binary search: O(log(high-low)). Total: O(log n) where n is position.",
+        "spaceExplanation": "Only variables for pointers. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int search(vector<int>& arr, int target) {\n        // Find bounds\n        int low = 0, high = 1;\n        \n        // Exponential search to find range\n        while (high < arr.size() && arr[high] < target) {\n            low = high;\n            high = high * 2;\n        }\n        \n        // Ensure high is within bounds\n        high = min(high, (int)arr.size() - 1);\n        \n        // Binary search in [low, high]\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] == target) {\n                return mid;\n            } else if (arr[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int search(int[] arr, int target) {\n        // Find bounds\n        int low = 0, high = 1;\n        \n        // Exponential search to find range\n        while (high < arr.length && arr[high] < target) {\n            low = high;\n            high = high * 2;\n        }\n        \n        // Ensure high is within bounds\n        high = Math.min(high, arr.length - 1);\n        \n        // Binary search in [low, high]\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] == target) {\n                return mid;\n            } else if (arr[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def search(self, arr: List[int], target: int) -> int:\n        # Find bounds\n        low, high = 0, 1\n        \n        # Exponential search to find range\n        while high < len(arr) and arr[high] < target:\n            low = high\n            high = high * 2\n        \n        # Ensure high is within bounds\n        high = min(high, len(arr) - 1)\n        \n        # Binary search in [low, high]\n        while low <= high:\n            mid = low + (high - low) // 2\n            \n            if arr[mid] == target:\n                return mid\n            elif arr[mid] < target:\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        return -1",
+        "javascript": "function search(arr, target) {\n    // Find bounds\n    let low = 0, high = 1;\n    \n    // Exponential search to find range\n    while (high < arr.length && arr[high] < target) {\n        low = high;\n        high = high * 2;\n    }\n    \n    // Ensure high is within bounds\n    high = Math.min(high, arr.length - 1);\n    \n    // Binary search in [low, high]\n    while (low <= high) {\n        const mid = low + Math.floor((high - low) / 2);\n        \n        if (arr[mid] === target) {\n            return mid;\n        } else if (arr[mid] < target) {\n            low = mid + 1;\n        } else {\n            high = mid - 1;\n        }\n    }\n    \n    return -1;\n}"
+      }
+    },
+    {
+      "name": "Fixed Window Search (Suboptimal)",
+      "order": 2,
+      "intuition": "Use fixed window size (e.g., 1000) and search window by window. Simple but less efficient, especially if target is far from start. May need many window checks.",
+      "approach": "Check windows of fixed size sequentially. When target might be in window, do binary search. Simpler but potentially slower.",
+      "steps": [
+        "Set window size (e.g., windowSize = 1000)",
+        "Initialize start = 0",
+        "While true:",
+        "  - end = start + windowSize - 1",
+        "  - If arr[end] >= target OR out of bounds:",
+        "    * Binary search in [start, end]",
+        "    * Return if found",
+        "  - start = end + 1",
+        "Return -1"
+      ],
+      "complexity": {
+        "time": "O(n/w + log w)",
+        "space": "O(1)",
+        "timeExplanation": "Check n/w windows where w is window size. Binary search per window: O(log w). Total: O(n/w + log w).",
+        "spaceExplanation": "Only variables for window tracking. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int search(vector<int>& arr, int target) {\n        int windowSize = 1000;\n        int start = 0;\n        \n        while (start < arr.size()) {\n            int end = min(start + windowSize - 1, (int)arr.size() - 1);\n            \n            // Check if target might be in this window\n            if (arr[end] >= target || end == arr.size() - 1) {\n                // Binary search in this window\n                int result = binarySearch(arr, start, end, target);\n                if (result != -1) return result;\n            }\n            \n            start = end + 1;\n        }\n        \n        return -1;\n    }\n    \nprivate:\n    int binarySearch(vector<int>& arr, int left, int right, int target) {\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] == target) return mid;\n            else if (arr[mid] < target) left = mid + 1;\n            else right = mid - 1;\n        }\n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int search(int[] arr, int target) {\n        int windowSize = 1000;\n        int start = 0;\n        \n        while (start < arr.length) {\n            int end = Math.min(start + windowSize - 1, arr.length - 1);\n            \n            // Check if target might be in this window\n            if (arr[end] >= target || end == arr.length - 1) {\n                // Binary search in this window\n                int result = binarySearch(arr, start, end, target);\n                if (result != -1) return result;\n            }\n            \n            start = end + 1;\n        }\n        \n        return -1;\n    }\n    \n    private int binarySearch(int[] arr, int left, int right, int target) {\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] == target) return mid;\n            else if (arr[mid] < target) left = mid + 1;\n            else right = mid - 1;\n        }\n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def search(self, arr: List[int], target: int) -> int:\n        window_size = 1000\n        start = 0\n        \n        while start < len(arr):\n            end = min(start + window_size - 1, len(arr) - 1)\n            \n            # Check if target might be in this window\n            if arr[end] >= target or end == len(arr) - 1:\n                # Binary search in this window\n                result = self.binarySearch(arr, start, end, target)\n                if result != -1:\n                    return result\n            \n            start = end + 1\n        \n        return -1\n    \n    def binarySearch(self, arr: List[int], left: int, right: int, target: int) -> int:\n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            if arr[mid] == target:\n                return mid\n            elif arr[mid] < target:\n                left = mid + 1\n            else:\n                right = mid - 1\n        \n        return -1",
+        "javascript": "function search(arr, target) {\n    const windowSize = 1000;\n    let start = 0;\n    \n    while (start < arr.length) {\n        const end = Math.min(start + windowSize - 1, arr.length - 1);\n        \n        // Check if target might be in this window\n        if (arr[end] >= target || end === arr.length - 1) {\n            // Binary search in this window\n            const result = binarySearch(arr, start, end, target);\n            if (result !== -1) return result;\n        }\n        \n        start = end + 1;\n    }\n    \n    return -1;\n}\n\nfunction binarySearch(arr, left, right, target) {\n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (arr[mid] === target) return mid;\n        else if (arr[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return -1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Trying to find array length first (defeats purpose)",
+    "Not handling out of bounds access",
+    "Using linear search (O(n) instead of O(log n))",
+    "Not doubling window size (using linear growth)",
+    "Integer overflow when doubling high",
+    "Not checking bounds before accessing array",
+    "Forgetting to update low when doubling high",
+    "Starting high from 0 instead of 1"
+  ],
+  "hints": [
+    "Can't use array length - treat as infinite",
+    "Use exponential search to find bounds",
+    "Double high: 1, 2, 4, 8, 16... until arr[high] >= target",
+    "Then binary search in found range",
+    "Exponential search is O(log pos)",
+    "Total complexity: O(log n)",
+    "Also called unbounded binary search",
+    "Key insight: doubling finds position quickly"
+  ],
+  "followUp": [
+    "What if array is not sorted?",
+    "How to handle duplicates?",
+    "What if array is descending?",
+    "Can you find k-th element?",
+    "What about negative numbers?",
+    "How to handle very sparse arrays?",
+    "What if out-of-bounds throws exception?",
+    "Can you extend to 2D infinite matrix?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Oracle",
+    "Adobe"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Exponential Search",
+    "Infinite Array"
+  ],
+  "relatedProblems": [
+    "Binary Search",
+    "Search Insert Position",
+    "First Bad Version",
+    "Find Smallest Letter Greater Than Target",
+    "Ceiling Number",
+    "Order Agnostic Binary Search",
+    "Search in Rotated Sorted Array",
+    "Find Peak Element"
+  ]
 }

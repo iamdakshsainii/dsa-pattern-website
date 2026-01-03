@@ -3,17 +3,185 @@
   "questionSlug": "smallest-subarray-given-sum",
   "resources": {
     "leetcode": "https://leetcode.com/problems/minimum-size-subarray-sum/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Minimum Size Subarray Sum - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=aYqYMIqZx5s",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Variable Size Sliding Window Pattern",
+        "url": "https://www.youtube.com/watch?v=9kdHxplyl5I",
+        "channel": "Aditya Verma",
+        "duration": "17:30",
+        "language": "English"
+      },
+      {
+        "title": "Smallest Subarray with Given Sum",
+        "url": "https://www.youtube.com/watch?v=jFZmBQ569So",
+        "channel": "take U forward",
+        "duration": "14:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Minimum Size Subarray Sum",
+        "url": "https://leetcode.com/problems/minimum-size-subarray-sum/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Variable Size Sliding Window",
+        "url": "https://www.geeksforgeeks.org/smallest-subarray-with-sum-greater-than-a-given-value/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Two Pointer Approach",
+        "url": "https://algo.monster/problems/two_pointers",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Size Subarray Sum Equals k",
+        "url": "https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Subarray Product Less Than K",
+        "url": "https://leetcode.com/problems/subarray-product-less-than-k/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Average Subarray II",
+        "url": "https://leetcode.com/problems/maximum-average-subarray-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Fruit Into Baskets",
+        "url": "https://leetcode.com/problems/fruit-into-baskets/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Smallest Subarray Given Sum when: variable window size, find minimum length, sum >= target, positive numbers, shrinking window condition. Keywords: 'minimum length', 'sum at least', 'smallest subarray'.",
+  "approaches": [
+    {
+      "name": "Sliding Window (Optimal)",
+      "order": 1,
+      "intuition": "Use variable size window with two pointers. Expand right to increase sum. When sum >= target, shrink from left to find minimum length. Keep track of minimum length found. O(n) time as each element visited at most twice.",
+      "approach": "Two pointers: left and right. Expand right to add elements. When sum >= target, update minLength and shrink from left. Continue until right reaches end.",
+      "steps": [
+        "Initialize left = 0, windowSum = 0, minLength = INT_MAX",
+        "For right from 0 to n-1:",
+        "  - Add arr[right] to windowSum",
+        "  - While windowSum >= target:",
+        "    - Update minLength = min(minLength, right - left + 1)",
+        "    - Subtract arr[left] from windowSum",
+        "    - Increment left",
+        "Return minLength == INT_MAX ? 0 : minLength"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element added once (right pointer) and removed once (left pointer). Total 2n operations: O(n).",
+        "spaceExplanation": "Only storing pointers and sum variables. Constant space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minSubArrayLen(int target, vector<int>& nums) {\n        int n = nums.size();\n        int left = 0;\n        int windowSum = 0;\n        int minLength = INT_MAX;\n        \n        for (int right = 0; right < n; right++) {\n            windowSum += nums[right];\n            \n            while (windowSum >= target) {\n                minLength = min(minLength, right - left + 1);\n                windowSum -= nums[left];\n                left++;\n            }\n        }\n        \n        return minLength == INT_MAX ? 0 : minLength;\n    }\n};",
+        "java": "class Solution {\n    public int minSubArrayLen(int target, int[] nums) {\n        int n = nums.length;\n        int left = 0;\n        int windowSum = 0;\n        int minLength = Integer.MAX_VALUE;\n        \n        for (int right = 0; right < n; right++) {\n            windowSum += nums[right];\n            \n            while (windowSum >= target) {\n                minLength = Math.min(minLength, right - left + 1);\n                windowSum -= nums[left];\n                left++;\n            }\n        }\n        \n        return minLength == Integer.MAX_VALUE ? 0 : minLength;\n    }\n}",
+        "python": "class Solution:\n    def minSubArrayLen(self, target: int, nums: List[int]) -> int:\n        n = len(nums)\n        left = 0\n        window_sum = 0\n        min_length = float('inf')\n        \n        for right in range(n):\n            window_sum += nums[right]\n            \n            while window_sum >= target:\n                min_length = min(min_length, right - left + 1)\n                window_sum -= nums[left]\n                left += 1\n        \n        return 0 if min_length == float('inf') else min_length",
+        "javascript": "function minSubArrayLen(target, nums) {\n    const n = nums.length;\n    let left = 0;\n    let windowSum = 0;\n    let minLength = Infinity;\n    \n    for (let right = 0; right < n; right++) {\n        windowSum += nums[right];\n        \n        while (windowSum >= target) {\n            minLength = Math.min(minLength, right - left + 1);\n            windowSum -= nums[left];\n            left++;\n        }\n    }\n    \n    return minLength === Infinity ? 0 : minLength;\n}"
+      }
+    },
+    {
+      "name": "Brute Force",
+      "order": 2,
+      "intuition": "Check all possible subarrays. For each starting position, expand until sum >= target. Track minimum length. Inefficient O(n²) approach but straightforward.",
+      "approach": "Nested loops: outer loop for start position, inner loop to expand and calculate sum. Update minimum when condition met.",
+      "steps": [
+        "Initialize minLength = INT_MAX",
+        "For i from 0 to n-1:",
+        "  - Initialize currentSum = 0",
+        "  - For j from i to n-1:",
+        "    - Add nums[j] to currentSum",
+        "    - If currentSum >= target:",
+        "      - Update minLength = min(minLength, j - i + 1)",
+        "      - Break inner loop",
+        "Return minLength == INT_MAX ? 0 : minLength"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops: outer n iterations, inner up to n iterations. Worst case O(n²).",
+        "spaceExplanation": "Only storing variables. Constant space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minSubArrayLen(int target, vector<int>& nums) {\n        int n = nums.size();\n        int minLength = INT_MAX;\n        \n        for (int i = 0; i < n; i++) {\n            int currentSum = 0;\n            for (int j = i; j < n; j++) {\n                currentSum += nums[j];\n                if (currentSum >= target) {\n                    minLength = min(minLength, j - i + 1);\n                    break;\n                }\n            }\n        }\n        \n        return minLength == INT_MAX ? 0 : minLength;\n    }\n};",
+        "java": "class Solution {\n    public int minSubArrayLen(int target, int[] nums) {\n        int n = nums.length;\n        int minLength = Integer.MAX_VALUE;\n        \n        for (int i = 0; i < n; i++) {\n            int currentSum = 0;\n            for (int j = i; j < n; j++) {\n                currentSum += nums[j];\n                if (currentSum >= target) {\n                    minLength = Math.min(minLength, j - i + 1);\n                    break;\n                }\n            }\n        }\n        \n        return minLength == Integer.MAX_VALUE ? 0 : minLength;\n    }\n}",
+        "python": "class Solution:\n    def minSubArrayLen(self, target: int, nums: List[int]) -> int:\n        n = len(nums)\n        min_length = float('inf')\n        \n        for i in range(n):\n            current_sum = 0\n            for j in range(i, n):\n                current_sum += nums[j]\n                if current_sum >= target:\n                    min_length = min(min_length, j - i + 1)\n                    break\n        \n        return 0 if min_length == float('inf') else min_length",
+        "javascript": "function minSubArrayLen(target, nums) {\n    const n = nums.length;\n    let minLength = Infinity;\n    \n    for (let i = 0; i < n; i++) {\n        let currentSum = 0;\n        for (let j = i; j < n; j++) {\n            currentSum += nums[j];\n            if (currentSum >= target) {\n                minLength = Math.min(minLength, j - i + 1);\n                break;\n            }\n        }\n    }\n    \n    return minLength === Infinity ? 0 : minLength;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using left <= right instead of left < n in while condition",
+    "Not returning 0 when no valid subarray found",
+    "Forgetting to subtract nums[left] before incrementing left",
+    "Integer overflow with large sums",
+    "Not handling empty array edge case",
+    "Using >= in while instead of checking sum >= target",
+    "Updating minLength outside the while loop",
+    "Wrong window length calculation: using right - left instead of right - left + 1"
+  ],
+  "hints": [
+    "Variable window size requires two pointers approach",
+    "Expand window to increase sum, shrink to minimize length",
+    "Each element visited at most twice: O(n) time",
+    "While loop shrinks window when condition met",
+    "Track minimum length as you go",
+    "Return 0 if no valid subarray exists",
+    "Works only with positive numbers (sum always increasing)",
+    "Similar pattern to longest substring problems"
+  ],
+  "followUp": [
+    "What if array contains negative numbers?",
+    "Can you find all subarrays with sum >= target?",
+    "What if you need exactly sum = target?",
+    "How to handle maximum length instead of minimum?",
+    "What about 2D array version?",
+    "Can you optimize space for prefix sum approach?",
+    "What if target is very large?",
+    "How to handle circular array?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Oracle"
+  ],
+  "tags": [
+    "Sliding Window",
+    "Two Pointers",
+    "Array",
+    "Variable Window",
+    "Subarray"
+  ],
+  "relatedProblems": [
+    "Maximum Size Subarray Sum Equals K",
+    "Subarray Product Less Than K",
+    "Longest Substring Without Repeating Characters",
+    "Fruit Into Baskets",
+    "Max Consecutive Ones III",
+    "Minimum Window Substring",
+    "Longest Repeating Character Replacement",
+    "Subarrays with K Different Integers"
+  ]
 }

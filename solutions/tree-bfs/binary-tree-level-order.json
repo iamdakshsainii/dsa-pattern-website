@@ -3,17 +3,190 @@
   "questionSlug": "binary-tree-level-order",
   "resources": {
     "leetcode": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Binary Tree Level Order Traversal - BFS",
+        "url": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Level Order Traversal Using Queue",
+        "url": "https://www.youtube.com/watch?v=VM63zGJ6kVk",
+        "channel": "take U forward",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "BFS Tree Traversal Complete Guide",
+        "url": "https://www.youtube.com/watch?v=86g8jAQug04",
+        "channel": "Abdul Bari",
+        "duration": "15:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Level Order Traversal Solution",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "BFS Tree Traversal Guide",
+        "url": "https://www.geeksforgeeks.org/level-order-tree-traversal/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Tree BFS Pattern",
+        "url": "https://algo.monster/problems/binary_tree_level_order_traversal",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Tree Zigzag Level Order",
+        "url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Level Order Traversal II",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Average of Levels",
+        "url": "https://leetcode.com/problems/average-of-levels-in-binary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "N-ary Tree Level Order",
+        "url": "https://leetcode.com/problems/n-ary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Level Order Traversal when processing nodes level by level. Key indicators: level-by-level processing, BFS traversal, queue-based traversal, grouping nodes by depth.",
+  "approaches": [
+    {
+      "name": "BFS with Queue (Optimal)",
+      "order": 1,
+      "intuition": "Process tree level by level using queue. For each level, process all nodes at current depth before moving to next level. Track level size to group nodes by level.",
+      "approach": "Use queue for BFS. Process nodes level by level by tracking size of each level. Add children to queue for next level.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result list and queue with root",
+        "While queue not empty:",
+        " - Get current level size",
+        " - Create list for current level",
+        " - For each node in current level:",
+        "   - Dequeue node",
+        "   - Add value to current level list",
+        "   - Enqueue left child if exists",
+        "   - Enqueue right child if exists",
+        " - Add current level to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node exactly once. Each node processed in O(1) time. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Queue stores at most w nodes where w is maximum width of tree. In worst case (complete tree), w = n/2. Space: O(w) ≈ O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> levelOrder(TreeNode* root) {\n        vector<vector<int>> result;\n        if (!root) return result;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            vector<int> currentLevel;\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                currentLevel.push_back(node->val);\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n            \n            result.push_back(currentLevel);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        if (root == null) return result;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            List<Integer> currentLevel = new ArrayList<>();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                currentLevel.add(node.val);\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            \n            result.add(currentLevel);\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:\n        if not root:\n            return []\n        \n        result = []\n        queue = deque([root])\n        \n        while queue:\n            level_size = len(queue)\n            current_level = []\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                current_level.append(node.val)\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            result.append(current_level)\n        \n        return result",
+        "javascript": "function levelOrder(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root];\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        const currentLevel = [];\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            currentLevel.push(node.val);\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        result.push(currentLevel);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "DFS with Level Tracking (Alternative)",
+      "order": 2,
+      "intuition": "Use DFS recursion with level parameter. Add nodes to corresponding level in result array. Each recursive call tracks current depth.",
+      "approach": "Recursively traverse tree, passing current level. Initialize level array if needed. Add current node to its level.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result list",
+        "Define DFS helper(node, level):",
+        " - If node is null, return",
+        " - If level >= result size, add new level list",
+        " - Add node value to result[level]",
+        " - Recursively call for left child with level+1",
+        " - Recursively call for right child with level+1",
+        "Call DFS helper with root and level 0",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once. Each node processed in O(1) time. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Recursion stack depth equals tree height h. In worst case (skewed tree), h = n. Best case (balanced), h = log n. Space: O(h)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> levelOrder(TreeNode* root) {\n        vector<vector<int>> result;\n        dfs(root, 0, result);\n        return result;\n    }\n    \nprivate:\n    void dfs(TreeNode* node, int level, vector<vector<int>>& result) {\n        if (!node) return;\n        \n        if (level >= result.size()) {\n            result.push_back(vector<int>());\n        }\n        \n        result[level].push_back(node->val);\n        \n        dfs(node->left, level + 1, result);\n        dfs(node->right, level + 1, result);\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        dfs(root, 0, result);\n        return result;\n    }\n    \n    private void dfs(TreeNode node, int level, List<List<Integer>> result) {\n        if (node == null) return;\n        \n        if (level >= result.size()) {\n            result.add(new ArrayList<>());\n        }\n        \n        result.get(level).add(node.val);\n        \n        dfs(node.left, level + 1, result);\n        dfs(node.right, level + 1, result);\n    }\n}",
+        "python": "class Solution:\n    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:\n        result = []\n        \n        def dfs(node, level):\n            if not node:\n                return\n            \n            if level >= len(result):\n                result.append([])\n            \n            result[level].append(node.val)\n            \n            dfs(node.left, level + 1)\n            dfs(node.right, level + 1)\n        \n        dfs(root, 0)\n        return result",
+        "javascript": "function levelOrder(root) {\n    const result = [];\n    \n    function dfs(node, level) {\n        if (!node) return;\n        \n        if (level >= result.length) {\n            result.push([]);\n        }\n        \n        result[level].push(node.val);\n        \n        dfs(node.left, level + 1);\n        dfs(node.right, level + 1);\n    }\n    \n    dfs(root, 0);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not tracking level size before processing nodes",
+    "Processing children before finishing current level",
+    "Forgetting to check for null children before enqueuing",
+    "Using DFS without level tracking",
+    "Not initializing level arrays in DFS approach",
+    "Mixing up left and right child order",
+    "Not handling empty tree edge case",
+    "Using array shift() in JavaScript (O(n) operation)"
+  ],
+  "hints": [
+    "Queue naturally processes nodes level by level",
+    "Track size of current level before processing",
+    "Each level's size tells how many nodes to process",
+    "Children are automatically queued for next level",
+    "DFS can also work with level parameter",
+    "Result structure is list of lists, one per level",
+    "BFS typically more intuitive for level order"
+  ],
+  "followUp": [
+    "How to do zigzag level order traversal?",
+    "What if we need to print right to left?",
+    "How to find level with maximum sum?",
+    "Can we do this without extra space (except output)?",
+    "How to do reverse level order (bottom to top)?",
+    "What if tree has parent pointers?",
+    "How to find nodes at specific level k?",
+    "How to connect nodes at same level?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "BFS",
+    "Queue",
+    "Level Order Traversal",
+    "Breadth First Search"
+  ],
+  "relatedProblems": [
+    "Binary Tree Zigzag Level Order Traversal",
+    "Binary Tree Level Order Traversal II",
+    "Average of Levels in Binary Tree",
+    "Binary Tree Right Side View",
+    "Populating Next Right Pointers",
+    "N-ary Tree Level Order Traversal",
+    "Minimum Depth of Binary Tree",
+    "Maximum Depth of Binary Tree"
+  ]
 }

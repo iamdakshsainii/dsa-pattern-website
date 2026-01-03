@@ -2,18 +2,183 @@
   "questionId": "694d4a3a98494915f3bc8eed",
   "questionSlug": "search-bitonic-array",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/find-in-mountain-array/",
+    "videos": [
+      {
+        "title": "Find in Mountain Array - Binary Search",
+        "url": "https://www.youtube.com/watch?v=W9QJ8HaRvJQ",
+        "channel": "Aditya Verma",
+        "duration": "16:30",
+        "language": "English"
+      },
+      {
+        "title": "Search in Bitonic Array",
+        "url": "https://www.youtube.com/watch?v=OINnBJTRrMU",
+        "channel": "take U forward",
+        "duration": "20:45",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search in Mountain Array",
+        "url": "https://www.youtube.com/watch?v=nz1BSwf-YH0",
+        "channel": "TECH DOSE",
+        "duration": "14:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find in Mountain Array",
+        "url": "https://leetcode.com/problems/find-in-mountain-array/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Search in Bitonic Array",
+        "url": "https://www.geeksforgeeks.org/find-element-bitonic-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Search Variations",
+        "url": "https://algo.monster/problems/binary_search_boundary",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find in Mountain Array",
+        "url": "https://leetcode.com/problems/find-in-mountain-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Peak Index in Mountain Array",
+        "url": "https://leetcode.com/problems/peak-index-in-a-mountain-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Peak Element",
+        "url": "https://leetcode.com/problems/find-peak-element/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search in Rotated Sorted Array",
+        "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Search Bitonic Array when searching in mountain/bitonic array. Key indicators: array increases then decreases, find target in bitonic array, mountain array search, split search ascending and descending parts.",
+  "approaches": [
+    {
+      "name": "Three Binary Searches (Optimal)",
+      "order": 1,
+      "intuition": "Bitonic array has two sorted parts: ascending (left of peak) and descending (right of peak). Strategy: 1) Find peak using binary search, 2) Binary search target in ascending part [0, peak], 3) If not found, binary search in descending part [peak+1, n-1]. Three O(log n) searches total O(log n).",
+      "approach": "First find peak index. Then search left side (ascending) using standard binary search. If not found, search right side (descending) using modified binary search.",
+      "steps": [
+        "Find peak index using binary search:",
+        "  - While left < right:",
+        "    * mid = left + (right - left) / 2",
+        "    * If arr[mid] < arr[mid+1]: left = mid + 1",
+        "    * Else: right = mid",
+        "Search in ascending part [0, peak]:",
+        "  - Standard binary search",
+        "  - If found: return index",
+        "Search in descending part [peak+1, n-1]:",
+        "  - Modified binary search (reverse comparison)",
+        "  - If found: return index",
+        "Return -1 if not found"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Find peak: O(log n). Search left: O(log n). Search right: O(log n). Total: O(log n).",
+        "spaceExplanation": "Only pointer variables. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int search(vector<int>& arr, int target) {\n        int peak = findPeak(arr);\n        \n        // Search in ascending part\n        int index = binarySearch(arr, target, 0, peak, true);\n        if (index != -1) return index;\n        \n        // Search in descending part\n        return binarySearch(arr, target, peak + 1, arr.size() - 1, false);\n    }\n    \nprivate:\n    int findPeak(vector<int>& arr) {\n        int left = 0, right = arr.size() - 1;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] < arr[mid + 1]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        return left;\n    }\n    \n    int binarySearch(vector<int>& arr, int target, int left, int right, bool ascending) {\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] == target) {\n                return mid;\n            }\n            \n            if (ascending) {\n                if (arr[mid] < target) left = mid + 1;\n                else right = mid - 1;\n            } else {\n                if (arr[mid] > target) left = mid + 1;\n                else right = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int search(int[] arr, int target) {\n        int peak = findPeak(arr);\n        \n        // Search in ascending part\n        int index = binarySearch(arr, target, 0, peak, true);\n        if (index != -1) return index;\n        \n        // Search in descending part\n        return binarySearch(arr, target, peak + 1, arr.length - 1, false);\n    }\n    \n    private int findPeak(int[] arr) {\n        int left = 0, right = arr.length - 1;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] < arr[mid + 1]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        return left;\n    }\n    \n    private int binarySearch(int[] arr, int target, int left, int right, boolean ascending) {\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] == target) {\n                return mid;\n            }\n            \n            if (ascending) {\n                if (arr[mid] < target) left = mid + 1;\n                else right = mid - 1;\n            } else {\n                if (arr[mid] > target) left = mid + 1;\n                else right = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def search(self, arr: List[int], target: int) -> int:\n        peak = self.findPeak(arr)\n        \n        # Search in ascending part\n        index = self.binarySearch(arr, target, 0, peak, True)\n        if index != -1:\n            return index\n        \n        # Search in descending part\n        return self.binarySearch(arr, target, peak + 1, len(arr) - 1, False)\n    \n    def findPeak(self, arr: List[int]) -> int:\n        left, right = 0, len(arr) - 1\n        \n        while left < right:\n            mid = left + (right - left) // 2\n            \n            if arr[mid] < arr[mid + 1]:\n                left = mid + 1\n            else:\n                right = mid\n        \n        return left\n    \n    def binarySearch(self, arr: List[int], target: int, left: int, right: int, ascending: bool) -> int:\n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            if arr[mid] == target:\n                return mid\n            \n            if ascending:\n                if arr[mid] < target:\n                    left = mid + 1\n                else:\n                    right = mid - 1\n            else:\n                if arr[mid] > target:\n                    left = mid + 1\n                else:\n                    right = mid - 1\n        \n        return -1",
+        "javascript": "function search(arr, target) {\n    const peak = findPeak(arr);\n    \n    // Search in ascending part\n    let index = binarySearch(arr, target, 0, peak, true);\n    if (index !== -1) return index;\n    \n    // Search in descending part\n    return binarySearch(arr, target, peak + 1, arr.length - 1, false);\n}\n\nfunction findPeak(arr) {\n    let left = 0, right = arr.length - 1;\n    \n    while (left < right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (arr[mid] < arr[mid + 1]) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    \n    return left;\n}\n\nfunction binarySearch(arr, target, left, right, ascending) {\n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (arr[mid] === target) {\n            return mid;\n        }\n        \n        if (ascending) {\n            if (arr[mid] < target) left = mid + 1;\n            else right = mid - 1;\n        } else {\n            if (arr[mid] > target) left = mid + 1;\n            else right = mid - 1;\n        }\n    }\n    \n    return -1;\n}"
+      }
+    },
+    {
+      "name": "Linear Search (Brute Force)",
+      "order": 2,
+      "intuition": "Scan entire array linearly looking for target. Simple but doesn't use bitonic property. O(n) time.",
+      "approach": "Iterate through array checking each element. Return index when target found.",
+      "steps": [
+        "For i from 0 to n-1:",
+        "  - If arr[i] == target: return i",
+        "Return -1 if not found"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Check all n elements in worst case. Linear time: O(n).",
+        "spaceExplanation": "Only loop variable. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int search(vector<int>& arr, int target) {\n        for (int i = 0; i < arr.size(); i++) {\n            if (arr[i] == target) {\n                return i;\n            }\n        }\n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int search(int[] arr, int target) {\n        for (int i = 0; i < arr.length; i++) {\n            if (arr[i] == target) {\n                return i;\n            }\n        }\n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def search(self, arr: List[int], target: int) -> int:\n        for i in range(len(arr)):\n            if arr[i] == target:\n                return i\n        return -1",
+        "javascript": "function search(arr, target) {\n    for (let i = 0; i < arr.length; i++) {\n        if (arr[i] === target) {\n            return i;\n        }\n    }\n    return -1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not finding peak first before searching",
+    "Using wrong comparison for descending part",
+    "Searching entire array instead of split search",
+    "Not handling case where target equals peak",
+    "Wrong binary search boundaries",
+    "Forgetting to check both halves",
+    "Using ascending search for descending part",
+    "Not returning early when found in first half"
+  ],
+  "hints": [
+    "First find the peak index",
+    "Left of peak is sorted ascending",
+    "Right of peak is sorted descending",
+    "Do separate binary searches on each part",
+    "For descending part, reverse comparison logic",
+    "Total time: O(log n) + O(log n) + O(log n) = O(log n)",
+    "Return as soon as target found in first half",
+    "Peak element itself could be the target"
+  ],
+  "followUp": [
+    "What if multiple peaks exist?",
+    "How to find all occurrences of target?",
+    "What if array has duplicates?",
+    "Can you optimize to two binary searches?",
+    "What if peak is not guaranteed?",
+    "How to handle very large arrays?",
+    "What about finding range of target?",
+    "Can you extend to 2D bitonic arrays?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Apple",
+    "LinkedIn",
+    "Bloomberg",
+    "Oracle"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Bitonic Array",
+    "Mountain Array"
+  ],
+  "relatedProblems": [
+    "Find in Mountain Array",
+    "Peak Index in Mountain Array",
+    "Find Peak Element",
+    "Search in Rotated Sorted Array",
+    "Bitonic Array Maximum",
+    "Valid Mountain Array",
+    "Longest Mountain in Array",
+    "Order Agnostic Binary Search"
+  ]
 }

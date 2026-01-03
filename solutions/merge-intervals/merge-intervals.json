@@ -3,17 +3,179 @@
   "questionSlug": "merge-intervals",
   "resources": {
     "leetcode": "https://leetcode.com/problems/merge-intervals/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Merge Intervals - LeetCode 56",
+        "url": "https://www.youtube.com/watch?v=44H3cEC2fFM",
+        "channel": "NeetCode",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Merge Overlapping Intervals",
+        "url": "https://www.youtube.com/watch?v=2JzRBPFYbKE",
+        "channel": "take U forward",
+        "duration": "14:20",
+        "language": "English"
+      },
+      {
+        "title": "Merge Intervals Explained",
+        "url": "https://www.youtube.com/watch?v=qKczfGUrFY4",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:35",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Merge Intervals - LeetCode Solution",
+        "url": "https://leetcode.com/problems/merge-intervals/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Merge Overlapping Intervals",
+        "url": "https://www.geeksforgeeks.org/merging-intervals/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Interval Problems Pattern",
+        "url": "https://algo.monster/problems/interval_merge",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Insert Interval",
+        "url": "https://leetcode.com/problems/insert-interval/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Interval List Intersections",
+        "url": "https://leetcode.com/problems/interval-list-intersections/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Non-overlapping Intervals",
+        "url": "https://leetcode.com/problems/non-overlapping-intervals/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Meeting Rooms II",
+        "url": "https://leetcode.com/problems/meeting-rooms-ii/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Merge Intervals pattern when dealing with overlapping intervals that need to be combined. Key indicators: merge overlapping ranges, consolidate intervals, combine time slots, intervals with start and end times, need to check for overlaps.",
+  "approaches": [
+    {
+      "name": "Sort and Merge",
+      "order": 1,
+      "intuition": "Sort intervals by start time. Then iterate through sorted intervals, comparing each with the last merged interval. If current interval overlaps with last merged interval (current start <= last end), merge them by extending the end. Otherwise, add current interval as new merged interval.",
+      "approach": "Sort intervals by start time. Initialize result with first interval. For each subsequent interval, check if it overlaps with last interval in result. If overlaps, merge by updating end to maximum of both ends. If doesn't overlap, add to result.",
+      "steps": [
+        "Sort intervals by start time: intervals.sort(key=lambda x: x[0])",
+        "Initialize merged list with first interval: merged = [intervals[0]]",
+        "For each interval from index 1 to n-1:",
+        "  - Get last merged interval: last = merged[-1]",
+        "  - If current.start <= last.end (overlaps):",
+        "    - Merge: last.end = max(last.end, current.end)",
+        "  - Else (no overlap):",
+        "    - Add current interval to merged",
+        "Return merged list"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting takes O(n log n). Merging takes O(n). Total: O(n log n).",
+        "spaceExplanation": "Result list stores up to n intervals in worst case. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return {};\n        \n        // Sort by start time\n        sort(intervals.begin(), intervals.end());\n        \n        vector<vector<int>> merged;\n        merged.push_back(intervals[0]);\n        \n        for (int i = 1; i < intervals.size(); i++) {\n            // If current interval overlaps with last merged interval\n            if (intervals[i][0] <= merged.back()[1]) {\n                // Merge by extending the end\n                merged.back()[1] = max(merged.back()[1], intervals[i][1]);\n            } else {\n                // No overlap, add as new interval\n                merged.push_back(intervals[i]);\n            }\n        }\n        \n        return merged;\n    }\n};",
+        "java": "class Solution {\n    public int[][] merge(int[][] intervals) {\n        if (intervals.length == 0) return new int[0][];\n        \n        // Sort by start time\n        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        List<int[]> merged = new ArrayList<>();\n        merged.add(intervals[0]);\n        \n        for (int i = 1; i < intervals.length; i++) {\n            int[] current = intervals[i];\n            int[] last = merged.get(merged.size() - 1);\n            \n            // If current interval overlaps with last merged interval\n            if (current[0] <= last[1]) {\n                // Merge by extending the end\n                last[1] = Math.max(last[1], current[1]);\n            } else {\n                // No overlap, add as new interval\n                merged.add(current);\n            }\n        }\n        \n        return merged.toArray(new int[merged.size()][]);\n    }\n}",
+        "python": "def merge(intervals):\n    if not intervals:\n        return []\n    \n    # Sort by start time\n    intervals.sort(key=lambda x: x[0])\n    \n    merged = [intervals[0]]\n    \n    for i in range(1, len(intervals)):\n        current = intervals[i]\n        last = merged[-1]\n        \n        # If current interval overlaps with last merged interval\n        if current[0] <= last[1]:\n            # Merge by extending the end\n            last[1] = max(last[1], current[1])\n        else:\n            # No overlap, add as new interval\n            merged.append(current)\n    \n    return merged",
+        "javascript": "function merge(intervals) {\n    if (intervals.length === 0) return [];\n    \n    // Sort by start time\n    intervals.sort((a, b) => a[0] - b[0]);\n    \n    const merged = [intervals[0]];\n    \n    for (let i = 1; i < intervals.length; i++) {\n        const current = intervals[i];\n        const last = merged[merged.length - 1];\n        \n        // If current interval overlaps with last merged interval\n        if (current[0] <= last[1]) {\n            // Merge by extending the end\n            last[1] = Math.max(last[1], current[1]);\n        } else {\n            // No overlap, add as new interval\n            merged.push(current);\n        }\n    }\n    \n    return merged;\n}"
+      }
+    },
+    {
+      "name": "Connected Components (Graph Approach)",
+      "order": 2,
+      "intuition": "Treat each interval as a node. Two intervals that overlap are connected by an edge. The problem becomes finding connected components in a graph. Each connected component can be merged into a single interval by taking minimum start and maximum end.",
+      "approach": "Build a graph where nodes are intervals and edges connect overlapping intervals. Use DFS/BFS to find connected components. For each component, merge all intervals by taking min start and max end.",
+      "steps": [
+        "Build adjacency list: for each pair of intervals, if they overlap, add edge",
+        "Initialize visited array",
+        "For each unvisited interval:",
+        "  - Perform DFS/BFS to find all connected intervals (component)",
+        "  - Track min start and max end in component",
+        "  - Add merged interval [minStart, maxEnd] to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n²)",
+        "timeExplanation": "Building graph: O(n²) to check all pairs. DFS/BFS: O(n + edges). Total: O(n²).",
+        "spaceExplanation": "Graph adjacency list can have O(n²) edges in worst case. O(n²) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool overlap(vector<int>& a, vector<int>& b) {\n        return a[0] <= b[1] && b[0] <= a[1];\n    }\n    \n    void dfs(int node, vector<vector<int>>& graph, vector<bool>& visited,\n             vector<vector<int>>& intervals, int& minStart, int& maxEnd) {\n        visited[node] = true;\n        minStart = min(minStart, intervals[node][0]);\n        maxEnd = max(maxEnd, intervals[node][1]);\n        \n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(neighbor, graph, visited, intervals, minStart, maxEnd);\n            }\n        }\n    }\n    \n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n        int n = intervals.size();\n        if (n == 0) return {};\n        \n        // Build graph\n        vector<vector<int>> graph(n);\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (overlap(intervals[i], intervals[j])) {\n                    graph[i].push_back(j);\n                    graph[j].push_back(i);\n                }\n            }\n        }\n        \n        // Find connected components\n        vector<bool> visited(n, false);\n        vector<vector<int>> merged;\n        \n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                int minStart = intervals[i][0];\n                int maxEnd = intervals[i][1];\n                dfs(i, graph, visited, intervals, minStart, maxEnd);\n                merged.push_back({minStart, maxEnd});\n            }\n        }\n        \n        return merged;\n    }\n};",
+        "java": "class Solution {\n    private boolean overlap(int[] a, int[] b) {\n        return a[0] <= b[1] && b[0] <= a[1];\n    }\n    \n    private void dfs(int node, List<List<Integer>> graph, boolean[] visited,\n                     int[][] intervals, int[] bounds) {\n        visited[node] = true;\n        bounds[0] = Math.min(bounds[0], intervals[node][0]);\n        bounds[1] = Math.max(bounds[1], intervals[node][1]);\n        \n        for (int neighbor : graph.get(node)) {\n            if (!visited[neighbor]) {\n                dfs(neighbor, graph, visited, intervals, bounds);\n            }\n        }\n    }\n    \n    public int[][] merge(int[][] intervals) {\n        int n = intervals.length;\n        if (n == 0) return new int[0][];\n        \n        // Build graph\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            graph.add(new ArrayList<>());\n        }\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (overlap(intervals[i], intervals[j])) {\n                    graph.get(i).add(j);\n                    graph.get(j).add(i);\n                }\n            }\n        }\n        \n        // Find connected components\n        boolean[] visited = new boolean[n];\n        List<int[]> merged = new ArrayList<>();\n        \n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                int[] bounds = {intervals[i][0], intervals[i][1]};\n                dfs(i, graph, visited, intervals, bounds);\n                merged.add(bounds);\n            }\n        }\n        \n        return merged.toArray(new int[merged.size()][]);\n    }\n}",
+        "python": "def merge(intervals):\n    if not intervals:\n        return []\n    \n    n = len(intervals)\n    \n    # Helper function to check overlap\n    def overlap(a, b):\n        return a[0] <= b[1] and b[0] <= a[1]\n    \n    # Build graph\n    graph = [[] for _ in range(n)]\n    for i in range(n):\n        for j in range(i + 1, n):\n            if overlap(intervals[i], intervals[j]):\n                graph[i].append(j)\n                graph[j].append(i)\n    \n    # DFS to find connected components\n    visited = [False] * n\n    merged = []\n    \n    def dfs(node, bounds):\n        visited[node] = True\n        bounds[0] = min(bounds[0], intervals[node][0])\n        bounds[1] = max(bounds[1], intervals[node][1])\n        \n        for neighbor in graph[node]:\n            if not visited[neighbor]:\n                dfs(neighbor, bounds)\n    \n    for i in range(n):\n        if not visited[i]:\n            bounds = [intervals[i][0], intervals[i][1]]\n            dfs(i, bounds)\n            merged.append(bounds)\n    \n    return merged",
+        "javascript": "function merge(intervals) {\n    if (intervals.length === 0) return [];\n    \n    const n = intervals.length;\n    \n    // Helper function to check overlap\n    const overlap = (a, b) => a[0] <= b[1] && b[0] <= a[1];\n    \n    // Build graph\n    const graph = Array.from({ length: n }, () => []);\n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            if (overlap(intervals[i], intervals[j])) {\n                graph[i].push(j);\n                graph[j].push(i);\n            }\n        }\n    }\n    \n    // DFS to find connected components\n    const visited = new Array(n).fill(false);\n    const merged = [];\n    \n    const dfs = (node, bounds) => {\n        visited[node] = true;\n        bounds[0] = Math.min(bounds[0], intervals[node][0]);\n        bounds[1] = Math.max(bounds[1], intervals[node][1]);\n        \n        for (const neighbor of graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(neighbor, bounds);\n            }\n        }\n    };\n    \n    for (let i = 0; i < n; i++) {\n        if (!visited[i]) {\n            const bounds = [intervals[i][0], intervals[i][1]];\n            dfs(i, bounds);\n            merged.push(bounds);\n        }\n    }\n    \n    return merged;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to sort intervals before merging",
+    "Not handling empty input array",
+    "Checking overlap incorrectly (using < instead of <=)",
+    "Not updating end to max of both intervals when merging",
+    "Modifying the original intervals array",
+    "Comparing wrong indices after sorting",
+    "Not considering intervals that are completely contained within another"
+  ],
+  "hints": [
+    "Sort intervals by start time first - this makes merging linear",
+    "Two intervals [a,b] and [c,d] overlap if a <= d and c <= b",
+    "When merging, the new end should be max(end1, end2)",
+    "Keep track of the last merged interval for comparison",
+    "If current interval doesn't overlap with last merged, start a new merged interval",
+    "Consider edge cases: empty array, single interval, all overlapping intervals"
+  ],
+  "followUp": [
+    "How to insert a new interval into already merged intervals?",
+    "What if intervals are given as stream, not all at once?",
+    "How to find the maximum number of overlapping intervals?",
+    "Can you merge intervals without sorting (using other data structures)?",
+    "How to merge intervals in multiple dimensions (rectangles)?",
+    "What if you need to remove overlapping parts instead of merging?",
+    "How to find gaps between merged intervals?",
+    "Can you do this in-place without extra space for result?"
+  ],
+  "companies": [
+    "Facebook",
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Bloomberg",
+    "LinkedIn",
+    "Uber",
+    "Apple"
+  ],
+  "tags": [
+    "Array",
+    "Sorting",
+    "Intervals",
+    "Greedy"
+  ],
+  "relatedProblems": [
+    "Insert Interval",
+    "Meeting Rooms",
+    "Meeting Rooms II",
+    "Interval List Intersections",
+    "Non-overlapping Intervals",
+    "Employee Free Time",
+    "Data Stream as Disjoint Intervals"
+  ]
 }

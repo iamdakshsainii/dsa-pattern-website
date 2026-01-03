@@ -3,17 +3,191 @@
   "questionSlug": "insert-interval",
   "resources": {
     "leetcode": "https://leetcode.com/problems/insert-interval/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Insert Interval - LeetCode 57",
+        "url": "https://www.youtube.com/watch?v=A8NUOmlwOlM",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Insert Interval Explained",
+        "url": "https://www.youtube.com/watch?v=NWM_4fr_mpk",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:40",
+        "language": "English"
+      },
+      {
+        "title": "Insert New Interval in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=xxRE-46OfVw",
+        "channel": "Pepcoding",
+        "duration": "12:25",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Insert Interval - LeetCode Solution",
+        "url": "https://leetcode.com/problems/insert-interval/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Insert Interval Problem",
+        "url": "https://www.geeksforgeeks.org/insert-in-sorted-and-non-overlapping-interval-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Interval Insertion Pattern",
+        "url": "https://algo.monster/problems/interval_insert",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Merge Intervals",
+        "url": "https://leetcode.com/problems/merge-intervals/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Interval List Intersections",
+        "url": "https://leetcode.com/problems/interval-list-intersections/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Non-overlapping Intervals",
+        "url": "https://leetcode.com/problems/non-overlapping-intervals/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Data Stream as Disjoint Intervals",
+        "url": "https://leetcode.com/problems/data-stream-as-disjoint-intervals/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Insert Interval pattern when inserting a new interval into a sorted list of non-overlapping intervals. Key indicators: sorted intervals, insert and merge, maintain non-overlapping property, single insertion operation.",
+  "approaches": [
+    {
+      "name": "Three-Part Linear Scan",
+      "order": 1,
+      "intuition": "Since intervals are already sorted and non-overlapping, we can process them in three parts: (1) all intervals before the new interval (no overlap), (2) merge all overlapping intervals with new interval, (3) add all intervals after the new interval. This avoids sorting and works in single pass.",
+      "approach": "Iterate through intervals once. Add all intervals that end before new interval starts. Then merge all intervals that overlap with new interval by tracking min start and max end. Finally add all remaining intervals that start after new interval ends.",
+      "steps": [
+        "Initialize result list and index i = 0",
+        "Part 1: Add all intervals that end before newInterval starts",
+        "  - While i < n and intervals[i][1] < newInterval[0]:",
+        "    - Add intervals[i] to result",
+        "    - i++",
+        "Part 2: Merge all overlapping intervals with newInterval",
+        "  - While i < n and intervals[i][0] <= newInterval[1]:",
+        "    - newInterval[0] = min(newInterval[0], intervals[i][0])",
+        "    - newInterval[1] = max(newInterval[1], intervals[i][1])",
+        "    - i++",
+        "  - Add merged newInterval to result",
+        "Part 3: Add all remaining intervals",
+        "  - While i < n:",
+        "    - Add intervals[i] to result",
+        "    - i++",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through all n intervals. Each interval processed once. O(n).",
+        "spaceExplanation": "Result list can contain up to n+1 intervals. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {\n        vector<vector<int>> result;\n        int i = 0;\n        int n = intervals.size();\n        \n        // Part 1: Add all intervals before newInterval (no overlap)\n        while (i < n && intervals[i][1] < newInterval[0]) {\n            result.push_back(intervals[i]);\n            i++;\n        }\n        \n        // Part 2: Merge all overlapping intervals with newInterval\n        while (i < n && intervals[i][0] <= newInterval[1]) {\n            newInterval[0] = min(newInterval[0], intervals[i][0]);\n            newInterval[1] = max(newInterval[1], intervals[i][1]);\n            i++;\n        }\n        result.push_back(newInterval);\n        \n        // Part 3: Add all remaining intervals after newInterval\n        while (i < n) {\n            result.push_back(intervals[i]);\n            i++;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[][] insert(int[][] intervals, int[] newInterval) {\n        List<int[]> result = new ArrayList<>();\n        int i = 0;\n        int n = intervals.length;\n        \n        // Part 1: Add all intervals before newInterval (no overlap)\n        while (i < n && intervals[i][1] < newInterval[0]) {\n            result.add(intervals[i]);\n            i++;\n        }\n        \n        // Part 2: Merge all overlapping intervals with newInterval\n        while (i < n && intervals[i][0] <= newInterval[1]) {\n            newInterval[0] = Math.min(newInterval[0], intervals[i][0]);\n            newInterval[1] = Math.max(newInterval[1], intervals[i][1]);\n            i++;\n        }\n        result.add(newInterval);\n        \n        // Part 3: Add all remaining intervals after newInterval\n        while (i < n) {\n            result.add(intervals[i]);\n            i++;\n        }\n        \n        return result.toArray(new int[result.size()][]);\n    }\n}",
+        "python": "def insert(intervals, newInterval):\n    result = []\n    i = 0\n    n = len(intervals)\n    \n    # Part 1: Add all intervals before newInterval (no overlap)\n    while i < n and intervals[i][1] < newInterval[0]:\n        result.append(intervals[i])\n        i += 1\n    \n    # Part 2: Merge all overlapping intervals with newInterval\n    while i < n and intervals[i][0] <= newInterval[1]:\n        newInterval[0] = min(newInterval[0], intervals[i][0])\n        newInterval[1] = max(newInterval[1], intervals[i][1])\n        i += 1\n    result.append(newInterval)\n    \n    # Part 3: Add all remaining intervals after newInterval\n    while i < n:\n        result.append(intervals[i])\n        i += 1\n    \n    return result",
+        "javascript": "function insert(intervals, newInterval) {\n    const result = [];\n    let i = 0;\n    const n = intervals.length;\n    \n    // Part 1: Add all intervals before newInterval (no overlap)\n    while (i < n && intervals[i][1] < newInterval[0]) {\n        result.push(intervals[i]);\n        i++;\n    }\n    \n    // Part 2: Merge all overlapping intervals with newInterval\n    while (i < n && intervals[i][0] <= newInterval[1]) {\n        newInterval[0] = Math.min(newInterval[0], intervals[i][0]);\n        newInterval[1] = Math.max(newInterval[1], intervals[i][1]);\n        i++;\n    }\n    result.push(newInterval);\n    \n    // Part 3: Add all remaining intervals after newInterval\n    while (i < n) {\n        result.push(intervals[i]);\n        i++;\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Binary Search + Merge",
+      "order": 2,
+      "intuition": "Use binary search to find the insertion position for newInterval, then merge overlapping intervals. Binary search finds the first interval that could potentially overlap with newInterval. Then perform linear merge from that position.",
+      "approach": "Use binary search to find the index where newInterval should be inserted. From that position, scan left and right to find all overlapping intervals. Merge them all together and reconstruct the result array.",
+      "steps": [
+        "Binary search to find insertion index:",
+        "  - Find leftmost position where intervals[i][0] >= newInterval[0]",
+        "Find merge range:",
+        "  - Scan left from insertion point to find first overlapping interval",
+        "  - Scan right to find last overlapping interval",
+        "Merge all intervals in the overlap range:",
+        "  - newStart = min of all starts in range",
+        "  - newEnd = max of all ends in range",
+        "Build result:",
+        "  - Add intervals before merge range",
+        "  - Add merged interval",
+        "  - Add intervals after merge range"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Binary search: O(log n), but merging and building result: O(n). Total: O(n).",
+        "spaceExplanation": "Result array stores up to n+1 intervals. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {\n        if (intervals.empty()) return {newInterval};\n        \n        int n = intervals.size();\n        \n        // Find first interval that could overlap\n        int left = 0, right = n;\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (intervals[mid][0] < newInterval[0]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        // Find merge boundaries\n        int mergeStart = left;\n        int mergeEnd = left;\n        \n        // Expand left to find first overlapping interval\n        while (mergeStart > 0 && intervals[mergeStart - 1][1] >= newInterval[0]) {\n            mergeStart--;\n        }\n        \n        // Expand right to find last overlapping interval\n        while (mergeEnd < n && intervals[mergeEnd][0] <= newInterval[1]) {\n            mergeEnd++;\n        }\n        \n        // Calculate merged interval\n        int start = newInterval[0];\n        int end = newInterval[1];\n        \n        for (int i = mergeStart; i < mergeEnd; i++) {\n            start = min(start, intervals[i][0]);\n            end = max(end, intervals[i][1]);\n        }\n        \n        // Build result\n        vector<vector<int>> result;\n        for (int i = 0; i < mergeStart; i++) {\n            result.push_back(intervals[i]);\n        }\n        result.push_back({start, end});\n        for (int i = mergeEnd; i < n; i++) {\n            result.push_back(intervals[i]);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[][] insert(int[][] intervals, int[] newInterval) {\n        if (intervals.length == 0) return new int[][]{{newInterval[0], newInterval[1]}};\n        \n        int n = intervals.length;\n        \n        // Find first interval that could overlap\n        int left = 0, right = n;\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (intervals[mid][0] < newInterval[0]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        // Find merge boundaries\n        int mergeStart = left;\n        int mergeEnd = left;\n        \n        // Expand left to find first overlapping interval\n        while (mergeStart > 0 && intervals[mergeStart - 1][1] >= newInterval[0]) {\n            mergeStart--;\n        }\n        \n        // Expand right to find last overlapping interval\n        while (mergeEnd < n && intervals[mergeEnd][0] <= newInterval[1]) {\n            mergeEnd++;\n        }\n        \n        // Calculate merged interval\n        int start = newInterval[0];\n        int end = newInterval[1];\n        \n        for (int i = mergeStart; i < mergeEnd; i++) {\n            start = Math.min(start, intervals[i][0]);\n            end = Math.max(end, intervals[i][1]);\n        }\n        \n        // Build result\n        List<int[]> result = new ArrayList<>();\n        for (int i = 0; i < mergeStart; i++) {\n            result.add(intervals[i]);\n        }\n        result.add(new int[]{start, end});\n        for (int i = mergeEnd; i < n; i++) {\n            result.add(intervals[i]);\n        }\n        \n        return result.toArray(new int[result.size()][]);\n    }\n}",
+        "python": "def insert(intervals, newInterval):\n    if not intervals:\n        return [newInterval]\n    \n    n = len(intervals)\n    \n    # Find first interval that could overlap using binary search\n    left, right = 0, n\n    while left < right:\n        mid = left + (right - left) // 2\n        if intervals[mid][0] < newInterval[0]:\n            left = mid + 1\n        else:\n            right = mid\n    \n    # Find merge boundaries\n    merge_start = left\n    merge_end = left\n    \n    # Expand left to find first overlapping interval\n    while merge_start > 0 and intervals[merge_start - 1][1] >= newInterval[0]:\n        merge_start -= 1\n    \n    # Expand right to find last overlapping interval\n    while merge_end < n and intervals[merge_end][0] <= newInterval[1]:\n        merge_end += 1\n    \n    # Calculate merged interval\n    start = newInterval[0]\n    end = newInterval[1]\n    \n    for i in range(merge_start, merge_end):\n        start = min(start, intervals[i][0])\n        end = max(end, intervals[i][1])\n    \n    # Build result\n    result = []\n    result.extend(intervals[:merge_start])\n    result.append([start, end])\n    result.extend(intervals[merge_end:])\n    \n    return result",
+        "javascript": "function insert(intervals, newInterval) {\n    if (intervals.length === 0) return [newInterval];\n    \n    const n = intervals.length;\n    \n    // Find first interval that could overlap using binary search\n    let left = 0, right = n;\n    while (left < right) {\n        const mid = Math.floor(left + (right - left) / 2);\n        if (intervals[mid][0] < newInterval[0]) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    \n    // Find merge boundaries\n    let mergeStart = left;\n    let mergeEnd = left;\n    \n    // Expand left to find first overlapping interval\n    while (mergeStart > 0 && intervals[mergeStart - 1][1] >= newInterval[0]) {\n        mergeStart--;\n    }\n    \n    // Expand right to find last overlapping interval\n    while (mergeEnd < n && intervals[mergeEnd][0] <= newInterval[1]) {\n        mergeEnd++;\n    }\n    \n    // Calculate merged interval\n    let start = newInterval[0];\n    let end = newInterval[1];\n    \n    for (let i = mergeStart; i < mergeEnd; i++) {\n        start = Math.min(start, intervals[i][0]);\n        end = Math.max(end, intervals[i][1]);\n    }\n    \n    // Build result\n    const result = [];\n    for (let i = 0; i < mergeStart; i++) {\n        result.push(intervals[i]);\n    }\n    result.push([start, end]);\n    for (let i = mergeEnd; i < n; i++) {\n        result.push(intervals[i]);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling empty intervals array",
+    "Forgetting to update both start and end when merging",
+    "Using wrong comparison operators for overlap detection",
+    "Not considering newInterval could be completely contained in existing interval",
+    "Not considering newInterval could contain multiple existing intervals",
+    "Modifying the newInterval array directly causing issues",
+    "Off-by-one errors in loop boundaries"
+  ],
+  "hints": [
+    "Intervals are already sorted - no need to sort again",
+    "Process in three parts: before, merge, after",
+    "Two intervals overlap if start1 <= end2 AND start2 <= end1",
+    "When merging, take min of starts and max of ends",
+    "Single pass solution is possible - no need for binary search",
+    "Think about edge cases: newInterval before all, after all, or overlapping many"
+  ],
+  "followUp": [
+    "What if intervals were not sorted? How would you modify the approach?",
+    "How to insert multiple intervals efficiently?",
+    "Can you do this in-place if allowed to modify the input?",
+    "What if you need to track the number of merged intervals?",
+    "How would you handle inserting into a circular interval list?",
+    "Can you extend this to 2D intervals (rectangles)?",
+    "What if intervals can be infinite (use null for infinity)?",
+    "How to maintain this as a data structure with multiple insertions?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "LinkedIn",
+    "Apple",
+    "Bloomberg",
+    "Uber"
+  ],
+  "tags": [
+    "Array",
+    "Intervals",
+    "Sorting",
+    "Greedy"
+  ],
+  "relatedProblems": [
+    "Merge Intervals",
+    "Meeting Rooms II",
+    "Interval List Intersections",
+    "Non-overlapping Intervals",
+    "Data Stream as Disjoint Intervals",
+    "Employee Free Time",
+    "Range Module"
+  ]
 }

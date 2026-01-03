@@ -2,18 +2,185 @@
   "questionId": "694d4a3a98494915f3bc8eb6",
   "questionSlug": "balanced-parentheses",
   "resources": {
-    "leetcode": "https://leetcode.com/problems/valid-parentheses/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/valid-parentheses/",
+    "videos": [
+      {
+        "title": "Valid Parentheses - Stack Solution",
+        "url": "https://www.youtube.com/watch?v=WTzjTskDFMg",
+        "channel": "NeetCode",
+        "duration": "6:45",
+        "language": "English"
+      },
+      {
+        "title": "Balanced Parentheses Using Stack",
+        "url": "https://www.youtube.com/watch?v=CCyPhOS69w8",
+        "channel": "take U forward",
+        "duration": "11:20",
+        "language": "English"
+      },
+      {
+        "title": "Valid Parentheses Complete Guide",
+        "url": "https://www.youtube.com/watch?v=B7KHqXQGCTc",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Valid Parentheses Solution",
+        "url": "https://leetcode.com/problems/valid-parentheses/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Check Balanced Parentheses Guide",
+        "url": "https://www.geeksforgeeks.org/check-for-balanced-parentheses-in-an-expression/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Stack Pattern for Parentheses",
+        "url": "https://algo.monster/problems/valid_parentheses",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Generate Parentheses",
+        "url": "https://leetcode.com/problems/generate-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Valid Parentheses",
+        "url": "https://leetcode.com/problems/longest-valid-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove Invalid Parentheses",
+        "url": "https://leetcode.com/problems/remove-invalid-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Add to Make Valid",
+        "url": "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Balanced Parentheses pattern when validating bracket sequences. Key indicators: matching brackets, valid parentheses, balanced delimiters, nested brackets, pairs validation.",
+  "approaches": [
+    {
+      "name": "Stack with Matching (Optimal)",
+      "order": 1,
+      "intuition": "Use stack to track opening brackets. When closing bracket found, check if it matches top of stack. If all brackets match properly, string is valid. Stack naturally handles nesting.",
+      "approach": "Push opening brackets onto stack. For closing brackets, check if stack top matches. Valid if stack empty at end.",
+      "steps": [
+        "Create empty stack",
+        "Create map of closing to opening brackets",
+        "For each character in string:",
+        " - If opening bracket (, [, {: push to stack",
+        " - If closing bracket ), ], }:",
+        "   - If stack empty, return false (no match)",
+        "   - Pop from stack",
+        "   - If popped bracket doesn't match, return false",
+        "After processing all characters:",
+        " - Return true if stack empty, false otherwise"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Process each character once. Each push/pop is O(1). Total: O(n) where n is string length.",
+        "spaceExplanation": "Stack stores at most n/2 opening brackets in worst case (all opening). Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isValid(string s) {\n        stack<char> st;\n        unordered_map<char, char> pairs = {\n            {')', '('},\n            {']', '['},\n            {'}', '{'}\n        };\n        \n        for (char c : s) {\n            // If opening bracket\n            if (c == '(' || c == '[' || c == '{') {\n                st.push(c);\n            }\n            // If closing bracket\n            else {\n                if (st.empty() || st.top() != pairs[c]) {\n                    return false;\n                }\n                st.pop();\n            }\n        }\n        \n        return st.empty();\n    }\n};",
+        "java": "class Solution {\n    public boolean isValid(String s) {\n        Stack<Character> stack = new Stack<>();\n        Map<Character, Character> pairs = new HashMap<>();\n        pairs.put(')', '(');\n        pairs.put(']', '[');\n        pairs.put('}', '{');\n        \n        for (char c : s.toCharArray()) {\n            // If opening bracket\n            if (c == '(' || c == '[' || c == '{') {\n                stack.push(c);\n            }\n            // If closing bracket\n            else {\n                if (stack.isEmpty() || stack.pop() != pairs.get(c)) {\n                    return false;\n                }\n            }\n        }\n        \n        return stack.isEmpty();\n    }\n}",
+        "python": "class Solution:\n    def isValid(self, s: str) -> bool:\n        stack = []\n        pairs = {\n            ')': '(',\n            ']': '[',\n            '}': '{'\n        }\n        \n        for char in s:\n            # If opening bracket\n            if char in '([{':\n                stack.append(char)\n            # If closing bracket\n            else:\n                if not stack or stack.pop() != pairs[char]:\n                    return False\n        \n        return len(stack) == 0",
+        "javascript": "function isValid(s) {\n    const stack = [];\n    const pairs = {\n        ')': '(',\n        ']': '[',\n        '}': '{'\n    };\n    \n    for (const char of s) {\n        // If opening bracket\n        if (char === '(' || char === '[' || char === '{') {\n            stack.push(char);\n        }\n        // If closing bracket\n        else {\n            if (stack.length === 0 || stack.pop() !== pairs[char]) {\n                return false;\n            }\n        }\n    }\n    \n    return stack.length === 0;\n}"
+      }
+    },
+    {
+      "name": "Counter Method (Alternative for Simple Cases)",
+      "order": 2,
+      "intuition": "For single type of bracket, can use counter. Increment for opening, decrement for closing. Valid if counter never negative and ends at zero. Works only for single bracket type.",
+      "approach": "Use counter to track balance. Counter negative means closing without matching opening.",
+      "steps": [
+        "Initialize counter = 0",
+        "For each character:",
+        " - If opening bracket: counter++",
+        " - If closing bracket: counter--",
+        " - If counter < 0: return false (more closing than opening)",
+        "Return true if counter == 0"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through string. Each operation O(1). Total: O(n).",
+        "spaceExplanation": "Only counter variable needed. Space: O(1)."
+      },
+      "code": {
+        "cpp": "// Note: This only works for single bracket type like \"()(())\"\nclass Solution {\npublic:\n    bool isValidSingleType(string s) {\n        int counter = 0;\n        \n        for (char c : s) {\n            if (c == '(') {\n                counter++;\n            } else if (c == ')') {\n                counter--;\n                if (counter < 0) return false;\n            }\n        }\n        \n        return counter == 0;\n    }\n};",
+        "java": "// Note: This only works for single bracket type\nclass Solution {\n    public boolean isValidSingleType(String s) {\n        int counter = 0;\n        \n        for (char c : s.toCharArray()) {\n            if (c == '(') {\n                counter++;\n            } else if (c == ')') {\n                counter--;\n                if (counter < 0) return false;\n            }\n        }\n        \n        return counter == 0;\n    }\n}",
+        "python": "# Note: This only works for single bracket type\nclass Solution:\n    def isValidSingleType(self, s: str) -> bool:\n        counter = 0\n        \n        for char in s:\n            if char == '(':\n                counter += 1\n            elif char == ')':\n                counter -= 1\n                if counter < 0:\n                    return False\n        \n        return counter == 0",
+        "javascript": "// Note: This only works for single bracket type\nfunction isValidSingleType(s) {\n    let counter = 0;\n    \n    for (const char of s) {\n        if (char === '(') {\n            counter++;\n        } else if (char === ')') {\n            counter--;\n            if (counter < 0) return false;\n        }\n    }\n    \n    return counter === 0;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if stack is empty before popping",
+    "Forgetting to check if stack is empty at the end",
+    "Only counting brackets without checking matching types",
+    "Not handling multiple bracket types correctly",
+    "Popping before checking if top matches",
+    "Using wrong data structure (queue instead of stack)",
+    "Not handling empty string edge case",
+    "Comparing with wrong bracket type in map"
+  ],
+  "hints": [
+    "Stack is perfect for matching pairs",
+    "Opening brackets push, closing brackets pop",
+    "Check if stack top matches before popping",
+    "Empty stack at end means all matched",
+    "Stack empty during closing means invalid",
+    "Map closing brackets to their opening counterparts",
+    "Process left to right, one character at a time",
+    "Counter method only works for single bracket type"
+  ],
+  "followUp": [
+    "How to generate all valid parentheses of length n?",
+    "What if brackets can be removed to make valid?",
+    "How to find longest valid parentheses substring?",
+    "Can we handle wildcards (* can be any bracket)?",
+    "What if we need minimum additions to make valid?",
+    "How to handle escaped brackets?",
+    "Can we validate without using stack (O(1) space)?",
+    "What if brackets have different weights/priorities?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Google",
+    "Bloomberg",
+    "Apple",
+    "Adobe",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Stack",
+    "String",
+    "Parentheses",
+    "Matching",
+    "Validation"
+  ],
+  "relatedProblems": [
+    "Generate Parentheses",
+    "Longest Valid Parentheses",
+    "Remove Invalid Parentheses",
+    "Minimum Add to Make Valid",
+    "Minimum Remove to Make Valid",
+    "Check If Word Is Valid After Substitutions",
+    "Score of Parentheses",
+    "Valid Parenthesis String"
+  ]
 }

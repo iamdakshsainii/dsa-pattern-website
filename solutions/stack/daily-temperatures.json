@@ -3,17 +3,185 @@
   "questionSlug": "daily-temperatures",
   "resources": {
     "leetcode": "https://leetcode.com/problems/daily-temperatures/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Daily Temperatures - Monotonic Stack",
+        "url": "https://www.youtube.com/watch?v=cTBiBSnjO3c",
+        "channel": "NeetCode",
+        "duration": "7:15",
+        "language": "English"
+      },
+      {
+        "title": "Stack Solution for Daily Temperatures",
+        "url": "https://www.youtube.com/watch?v=hqK33NaP1WA",
+        "channel": "take U forward",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Days Until Warmer Temperature",
+        "url": "https://www.youtube.com/watch?v=WGm4Kj3lhRI",
+        "channel": "TECH DOSE",
+        "duration": "10:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Daily Temperatures Solution",
+        "url": "https://leetcode.com/problems/daily-temperatures/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Next Warmer Day Pattern",
+        "url": "https://www.geeksforgeeks.org/next-warmer-temperature/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Monotonic Stack Applications",
+        "url": "https://algo.monster/problems/daily_temperatures",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Next Greater Element II",
+        "url": "https://leetcode.com/problems/next-greater-element-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Online Stock Span",
+        "url": "https://leetcode.com/problems/online-stock-span/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Sum of Subarray Minimums",
+        "url": "https://leetcode.com/problems/sum-of-subarray-minimums/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "132 Pattern",
+        "url": "https://leetcode.com/problems/132-pattern/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Daily Temperatures when finding days until condition met. Key indicators: days until warmer, wait time to greater value, monotonic stack, next greater distance.",
+  "approaches": [
+    {
+      "name": "Monotonic Stack with Indices (Optimal)",
+      "order": 1,
+      "intuition": "Use monotonic decreasing stack storing indices. When warmer day found, pop colder days and calculate distance. Stack maintains days waiting for warmer temperature in decreasing temperature order.",
+      "approach": "Maintain stack of indices with decreasing temperatures. When current temp higher, pop and record days waited.",
+      "steps": [
+        "Initialize result array with 0 (default no warmer day)",
+        "Create empty stack for indices",
+        "For i from 0 to n-1:",
+        " - While stack not empty and temperatures[i] > temperatures[stack.top()]:",
+        "   - Pop previous day index",
+        "   - result[previous] = i - previous (days waited)",
+        " - Push current index i to stack",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each index pushed and popped at most once. Single pass through array. Total: O(n).",
+        "spaceExplanation": "Stack stores at most n indices in worst case (decreasing temps). Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> dailyTemperatures(vector<int>& temperatures) {\n        int n = temperatures.size();\n        vector<int> result(n, 0);\n        stack<int> st; // stores indices\n        \n        for (int i = 0; i < n; i++) {\n            // Pop colder days and record wait time\n            while (!st.empty() && temperatures[i] > temperatures[st.top()]) {\n                int prevDay = st.top();\n                st.pop();\n                result[prevDay] = i - prevDay;\n            }\n            \n            st.push(i);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int n = temperatures.length;\n        int[] result = new int[n];\n        Stack<Integer> stack = new Stack<>(); // stores indices\n        \n        for (int i = 0; i < n; i++) {\n            // Pop colder days and record wait time\n            while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {\n                int prevDay = stack.pop();\n                result[prevDay] = i - prevDay;\n            }\n            \n            stack.push(i);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        n = len(temperatures)\n        result = [0] * n\n        stack = []  # stores indices\n        \n        for i in range(n):\n            # Pop colder days and record wait time\n            while stack and temperatures[i] > temperatures[stack[-1]]:\n                prev_day = stack.pop()\n                result[prev_day] = i - prev_day\n            \n            stack.append(i)\n        \n        return result",
+        "javascript": "function dailyTemperatures(temperatures) {\n    const n = temperatures.length;\n    const result = new Array(n).fill(0);\n    const stack = []; // stores indices\n    \n    for (let i = 0; i < n; i++) {\n        // Pop colder days and record wait time\n        while (stack.length > 0 && temperatures[i] > temperatures[stack[stack.length - 1]]) {\n            const prevDay = stack.pop();\n            result[prevDay] = i - prevDay;\n        }\n        \n        stack.push(i);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backward Iteration (Alternative)",
+      "order": 2,
+      "intuition": "Iterate backwards, tracking next warmer index for each temperature. Use already computed results to skip ahead efficiently. Can optimize by jumping to next warmer day.",
+      "approach": "Start from end. For each day, look forward using already computed results to find next warmer day.",
+      "steps": [
+        "Initialize result array with 0",
+        "For i from n-2 down to 0:",
+        " - Set j = i + 1",
+        " - While j < n and temperatures[j] <= temperatures[i]:",
+        "   - If result[j] == 0: break (no warmer ahead)",
+        "   - j = j + result[j] (jump to next warmer)",
+        " - If j < n and temperatures[j] > temperatures[i]:",
+        "   - result[i] = j - i",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each position visited limited times due to jumping. Amortized O(n) across all positions.",
+        "spaceExplanation": "Only result array (output) and few variables. Space: O(1) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> dailyTemperatures(vector<int>& temperatures) {\n        int n = temperatures.size();\n        vector<int> result(n, 0);\n        \n        for (int i = n - 2; i >= 0; i--) {\n            int j = i + 1;\n            \n            // Find next warmer day\n            while (j < n && temperatures[j] <= temperatures[i]) {\n                if (result[j] == 0) {\n                    j = n; // No warmer day ahead\n                    break;\n                }\n                j = j + result[j]; // Jump to next warmer\n            }\n            \n            if (j < n) {\n                result[i] = j - i;\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int n = temperatures.length;\n        int[] result = new int[n];\n        \n        for (int i = n - 2; i >= 0; i--) {\n            int j = i + 1;\n            \n            // Find next warmer day\n            while (j < n && temperatures[j] <= temperatures[i]) {\n                if (result[j] == 0) {\n                    j = n; // No warmer day ahead\n                    break;\n                }\n                j = j + result[j]; // Jump to next warmer\n            }\n            \n            if (j < n) {\n                result[i] = j - i;\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        n = len(temperatures)\n        result = [0] * n\n        \n        for i in range(n - 2, -1, -1):\n            j = i + 1\n            \n            # Find next warmer day\n            while j < n and temperatures[j] <= temperatures[i]:\n                if result[j] == 0:\n                    j = n  # No warmer day ahead\n                    break\n                j = j + result[j]  # Jump to next warmer\n            \n            if j < n:\n                result[i] = j - i\n        \n        return result",
+        "javascript": "function dailyTemperatures(temperatures) {\n    const n = temperatures.length;\n    const result = new Array(n).fill(0);\n    \n    for (let i = n - 2; i >= 0; i--) {\n        let j = i + 1;\n        \n        // Find next warmer day\n        while (j < n && temperatures[j] <= temperatures[i]) {\n            if (result[j] === 0) {\n                j = n; // No warmer day ahead\n                break;\n            }\n            j = j + result[j]; // Jump to next warmer\n        }\n        \n        if (j < n) {\n            result[i] = j - i;\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Storing temperatures instead of indices in stack",
+    "Not calculating difference correctly (should be i - prevIndex)",
+    "Forgetting to initialize result with 0",
+    "Not checking stack empty before accessing top",
+    "Using wrong comparison (>= instead of >)",
+    "Not pushing current index after popping",
+    "In backward approach: not handling no warmer case",
+    "Comparing indices instead of temperatures"
+  ],
+  "hints": [
+    "Stack stores indices of days waiting for warmer",
+    "Result is distance (days), not temperature",
+    "Monotonic decreasing stack (by temperature)",
+    "When warmer found, pop all colder days",
+    "Default answer is 0 (no warmer day found)",
+    "Each index pushed and popped exactly once",
+    "Can also solve backwards using already computed results",
+    "Backward approach can jump using result values"
+  ],
+  "followUp": [
+    "What if we need days until colder temperature?",
+    "How to find k-th next warmer day?",
+    "What if temperatures can be equal?",
+    "How to handle streaming temperature data?",
+    "Can we find previous warmer day?",
+    "What if we need sum of all waiting days?",
+    "How to handle very large temperature ranges?",
+    "What about finding warmest day in next k days?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Bloomberg",
+    "Apple",
+    "Adobe",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Stack",
+    "Array",
+    "Monotonic Stack",
+    "Next Greater",
+    "Distance"
+  ],
+  "relatedProblems": [
+    "Next Greater Element I",
+    "Next Greater Element II",
+    "Online Stock Span",
+    "Sum of Subarray Minimums",
+    "132 Pattern",
+    "Largest Rectangle in Histogram",
+    "Trapping Rain Water",
+    "Car Fleet"
+  ]
 }

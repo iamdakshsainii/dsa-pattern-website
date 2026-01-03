@@ -3,17 +3,183 @@
   "questionSlug": "sliding-window-median",
   "resources": {
     "leetcode": "https://leetcode.com/problems/sliding-window-median/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Sliding Window Median - LeetCode 480",
+        "url": "https://www.youtube.com/watch?v=3xFvF0vLRtw",
+        "channel": "NeetCode",
+        "duration": "17:25",
+        "language": "English"
+      },
+      {
+        "title": "Sliding Window Median Using Two Heaps",
+        "url": "https://www.youtube.com/watch?v=fLXVOzP_cME",
+        "channel": "TECH DOSE",
+        "duration": "19:40",
+        "language": "English"
+      },
+      {
+        "title": "Median in Sliding Window",
+        "url": "https://www.youtube.com/watch?v=dshgdlGNVE8",
+        "channel": "Pepcoding",
+        "duration": "15:55",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sliding Window Median",
+        "url": "https://leetcode.com/problems/sliding-window-median/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Median in Sliding Window",
+        "url": "https://www.geeksforgeeks.org/sliding-window-median/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Two Heaps with Lazy Deletion",
+        "url": "https://algo.monster/problems/sliding_window_median",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find Median from Data Stream",
+        "url": "https://leetcode.com/problems/find-median-from-data-stream/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Sliding Window Maximum",
+        "url": "https://leetcode.com/problems/sliding-window-maximum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Moving Average from Data Stream",
+        "url": "https://leetcode.com/problems/moving-average-from-data-stream/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Largest Element in a Stream",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Sliding Window Median pattern when finding median in each window of fixed size sliding through array. Key indicators: sliding window, median in each window, fixed window size, stream processing with removal.",
+  "approaches": [
+    {
+      "name": "Two Heaps with Lazy Deletion",
+      "order": 1,
+      "intuition": "Use two heaps like regular median finding, but also track elements to remove with a hash map. When an element leaves window, mark it for lazy deletion. Actually remove elements from heap tops when they're marked for deletion. Calculate median from valid (non-deleted) heap tops.",
+      "approach": "Maintain max heap for lower half and min heap for upper half. Use hash map to track counts of elements to remove. When element leaves window, increment its count in map. Before accessing heap top, remove all marked elements from top. Rebalance heaps considering only valid elements.",
+      "steps": [
+        "Initialize maxHeap, minHeap, and toRemove map",
+        "For each position i from 0 to n-k:",
+        "  - Add nums[i+k-1] to appropriate heap",
+        "  - If i > 0, mark nums[i-1] for removal in toRemove",
+        "  - Clean heap tops (remove marked elements)",
+        "  - Rebalance heaps",
+        "  - Calculate and store median",
+        "Clean heap tops:",
+        "  - While maxHeap.top() is in toRemove:",
+        "    - Remove from maxHeap and decrement toRemove count",
+        "  - Same for minHeap",
+        "Return result array"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "For n-k+1 windows, each add/remove is O(log k). Lazy deletion amortizes to O(log k). Total: O(n log k).",
+        "spaceExplanation": "Heaps store at most k elements. HashMap stores O(k) entries. Total: O(k)."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    multiset<int> small, large; // small acts as max heap, large as min heap\n    unordered_map<int, int> toRemove;\n    \n    void clean(multiset<int>& heap) {\n        while (!heap.empty() && toRemove[*heap.rbegin()] > 0) {\n            toRemove[*heap.rbegin()]--;\n            heap.erase(heap.find(*heap.rbegin()));\n        }\n    }\n    \n    void rebalance() {\n        if (small.size() > large.size() + 1) {\n            large.insert(*small.rbegin());\n            small.erase(small.find(*small.rbegin()));\n        } else if (large.size() > small.size()) {\n            small.insert(*large.begin());\n            large.erase(large.begin());\n        }\n    }\n    \n    double getMedian(int k) {\n        if (k % 2 == 1) {\n            return *small.rbegin();\n        }\n        return ((double)*small.rbegin() + *large.begin()) / 2.0;\n    }\n    \npublic:\n    vector<double> medianSlidingWindow(vector<int>& nums, int k) {\n        vector<double> result;\n        \n        // Initialize first window\n        for (int i = 0; i < k; i++) {\n            small.insert(nums[i]);\n        }\n        for (int i = 0; i < k / 2; i++) {\n            large.insert(*small.rbegin());\n            small.erase(small.find(*small.rbegin()));\n        }\n        result.push_back(getMedian(k));\n        \n        // Process remaining windows\n        for (int i = k; i < nums.size(); i++) {\n            int out = nums[i - k];\n            int in = nums[i];\n            \n            // Mark outgoing element for removal\n            toRemove[out]++;\n            \n            // Add incoming element\n            if (!small.empty() && in <= *small.rbegin()) {\n                small.insert(in);\n            } else {\n                large.insert(in);\n            }\n            \n            // Clean tops\n            if (!small.empty()) {\n                auto it = small.rbegin();\n                while (it != small.rend() && toRemove[*it] > 0) {\n                    toRemove[*it]--;\n                    small.erase(small.find(*it));\n                    it = small.rbegin();\n                }\n            }\n            if (!large.empty()) {\n                auto it = large.begin();\n                while (it != large.end() && toRemove[*it] > 0) {\n                    toRemove[*it]--;\n                    large.erase(it);\n                    it = large.begin();\n                }\n            }\n            \n            // Rebalance\n            rebalance();\n            \n            result.push_back(getMedian(k));\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    private TreeMap<Integer, Integer> small = new TreeMap<>();\n    private TreeMap<Integer, Integer> large = new TreeMap<>();\n    private Map<Integer, Integer> toRemove = new HashMap<>();\n    private int smallSize = 0, largeSize = 0;\n    \n    private void add(TreeMap<Integer, Integer> map, int num, int[] size) {\n        map.put(num, map.getOrDefault(num, 0) + 1);\n        size[0]++;\n    }\n    \n    private void remove(TreeMap<Integer, Integer> map, int num, int[] size) {\n        map.put(num, map.get(num) - 1);\n        if (map.get(num) == 0) map.remove(num);\n        size[0]--;\n    }\n    \n    private void clean() {\n        while (!small.isEmpty() && toRemove.getOrDefault(small.lastKey(), 0) > 0) {\n            int num = small.lastKey();\n            toRemove.put(num, toRemove.get(num) - 1);\n            remove(small, num, new int[]{smallSize});\n            smallSize--;\n        }\n        while (!large.isEmpty() && toRemove.getOrDefault(large.firstKey(), 0) > 0) {\n            int num = large.firstKey();\n            toRemove.put(num, toRemove.get(num) - 1);\n            remove(large, num, new int[]{largeSize});\n            largeSize--;\n        }\n    }\n    \n    private void rebalance() {\n        if (smallSize > largeSize + 1) {\n            int num = small.lastKey();\n            remove(small, num, new int[]{smallSize});\n            smallSize--;\n            add(large, num, new int[]{largeSize});\n            largeSize++;\n        } else if (largeSize > smallSize) {\n            int num = large.firstKey();\n            remove(large, num, new int[]{largeSize});\n            largeSize--;\n            add(small, num, new int[]{smallSize});\n            smallSize++;\n        }\n    }\n    \n    public double[] medianSlidingWindow(int[] nums, int k) {\n        double[] result = new double[nums.length - k + 1];\n        \n        for (int i = 0; i < nums.length; i++) {\n            if (i >= k) {\n                toRemove.put(nums[i - k], toRemove.getOrDefault(nums[i - k], 0) + 1);\n            }\n            \n            if (small.isEmpty() || nums[i] <= small.lastKey()) {\n                add(small, nums[i], new int[]{smallSize});\n                smallSize++;\n            } else {\n                add(large, nums[i], new int[]{largeSize});\n                largeSize++;\n            }\n            \n            clean();\n            rebalance();\n            \n            if (i >= k - 1) {\n                if (k % 2 == 1) {\n                    result[i - k + 1] = small.lastKey();\n                } else {\n                    result[i - k + 1] = ((double)small.lastKey() + large.firstKey()) / 2.0;\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import defaultdict\nimport heapq\n\nclass Solution:\n    def medianSlidingWindow(self, nums, k):\n        result = []\n        max_heap = []  # lower half (negated)\n        min_heap = []  # upper half\n        to_remove = defaultdict(int)\n        \n        def clean(heap):\n            while heap and to_remove[abs(heap[0])] > 0:\n                to_remove[abs(heap[0])] -= 1\n                heapq.heappop(heap)\n        \n        def rebalance():\n            clean(max_heap)\n            clean(min_heap)\n            \n            if len(max_heap) > len(min_heap) + 1:\n                heapq.heappush(min_heap, -heapq.heappop(max_heap))\n            elif len(min_heap) > len(max_heap):\n                heapq.heappush(max_heap, -heapq.heappop(min_heap))\n        \n        def get_median():\n            if k % 2 == 1:\n                return -max_heap[0]\n            return (-max_heap[0] + min_heap[0]) / 2.0\n        \n        for i in range(len(nums)):\n            # Mark outgoing element\n            if i >= k:\n                to_remove[nums[i - k]] += 1\n            \n            # Add incoming element\n            if not max_heap or nums[i] <= -max_heap[0]:\n                heapq.heappush(max_heap, -nums[i])\n            else:\n                heapq.heappush(min_heap, nums[i])\n            \n            # Clean and rebalance\n            rebalance()\n            \n            # Calculate median for current window\n            if i >= k - 1:\n                result.append(get_median())\n        \n        return result",
+        "javascript": "function medianSlidingWindow(nums, k) {\n    const result = [];\n    const maxHeap = new MaxHeap();\n    const minHeap = new MinHeap();\n    const toRemove = new Map();\n    \n    function clean(heap) {\n        while (heap.size() > 0 && (toRemove.get(heap.peek()) || 0) > 0) {\n            const num = heap.pop();\n            toRemove.set(num, toRemove.get(num) - 1);\n        }\n    }\n    \n    function rebalance() {\n        clean(maxHeap);\n        clean(minHeap);\n        \n        if (maxHeap.size() > minHeap.size() + 1) {\n            minHeap.push(maxHeap.pop());\n        } else if (minHeap.size() > maxHeap.size()) {\n            maxHeap.push(minHeap.pop());\n        }\n    }\n    \n    function getMedian() {\n        if (k % 2 === 1) {\n            return maxHeap.peek();\n        }\n        return (maxHeap.peek() + minHeap.peek()) / 2.0;\n    }\n    \n    for (let i = 0; i < nums.length; i++) {\n        // Mark outgoing element\n        if (i >= k) {\n            toRemove.set(nums[i - k], (toRemove.get(nums[i - k]) || 0) + 1);\n        }\n        \n        // Add incoming element\n        if (maxHeap.size() === 0 || nums[i] <= maxHeap.peek()) {\n            maxHeap.push(nums[i]);\n        } else {\n            minHeap.push(nums[i]);\n        }\n        \n        // Clean and rebalance\n        rebalance();\n        \n        // Calculate median\n        if (i >= k - 1) {\n            result.push(getMedian());\n        }\n    }\n    \n    return result;\n}\n\n// Heap implementations (simplified)\nclass MaxHeap {\n    constructor() { this.heap = []; }\n    push(val) { this.heap.push(val); this.heap.sort((a,b) => b-a); }\n    pop() { return this.heap.shift(); }\n    peek() { return this.heap[0]; }\n    size() { return this.heap.length; }\n}\n\nclass MinHeap {\n    constructor() { this.heap = []; }\n    push(val) { this.heap.push(val); this.heap.sort((a,b) => a-b); }\n    pop() { return this.heap.shift(); }\n    peek() { return this.heap[0]; }\n    size() { return this.heap.length; }\n}"
+      }
+    },
+    {
+      "name": "Sorted Multiset with Two Iterators",
+      "order": 2,
+      "intuition": "Maintain all k elements in a sorted multiset. Use two iterators to mark the median position(s). When sliding window, remove outgoing element and add incoming element while updating iterators to maintain median position.",
+      "approach": "Use multiset (or TreeMap with counts) to keep window elements sorted. Track iterator(s) pointing to median element(s). When element leaves, remove it and adjust iterators. When element enters, insert it and adjust iterators.",
+      "steps": [
+        "Initialize multiset with first k elements",
+        "Set iterator(s) to median position(s)",
+        "For each window starting at position i:",
+        "  - Calculate median from iterator(s)",
+        "  - Remove nums[i] from multiset",
+        "  - Adjust iterator(s) if nums[i] affects median position",
+        "  - Add nums[i+k] to multiset",
+        "  - Adjust iterator(s) if nums[i+k] affects median position",
+        "Return result array"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "For n-k+1 windows, each insert/delete in multiset is O(log k). Total: O(n log k).",
+        "spaceExplanation": "Multiset stores k elements. O(k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<double> medianSlidingWindow(vector<int>& nums, int k) {\n        multiset<int> window(nums.begin(), nums.begin() + k);\n        auto mid = next(window.begin(), k / 2);\n        vector<double> result;\n        \n        for (int i = k; ; i++) {\n            // Calculate median\n            double median = (k % 2 == 1) ? *mid : ((double)*mid + *prev(mid)) / 2.0;\n            result.push_back(median);\n            \n            if (i == nums.size()) break;\n            \n            // Remove outgoing element\n            window.insert(nums[i]);\n            if (nums[i] < *mid) mid--;\n            \n            // Add incoming element\n            if (nums[i - k] <= *mid) mid++;\n            window.erase(window.lower_bound(nums[i - k]));\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public double[] medianSlidingWindow(int[] nums, int k) {\n        double[] result = new double[nums.length - k + 1];\n        TreeMap<Integer, Integer> window = new TreeMap<>();\n        \n        // Add first k elements\n        for (int i = 0; i < k; i++) {\n            window.put(nums[i], window.getOrDefault(nums[i], 0) + 1);\n        }\n        \n        for (int i = 0; i <= nums.length - k; i++) {\n            result[i] = getMedian(window, k);\n            \n            if (i < nums.length - k) {\n                // Remove outgoing\n                int out = nums[i];\n                window.put(out, window.get(out) - 1);\n                if (window.get(out) == 0) window.remove(out);\n                \n                // Add incoming\n                int in = nums[i + k];\n                window.put(in, window.getOrDefault(in, 0) + 1);\n            }\n        }\n        \n        return result;\n    }\n    \n    private double getMedian(TreeMap<Integer, Integer> map, int k) {\n        int count = 0;\n        Integer first = null, second = null;\n        \n        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {\n            int num = entry.getKey();\n            int freq = entry.getValue();\n            \n            if (count < k / 2) {\n                count += freq;\n                if (count >= k / 2) first = num;\n            }\n            if (count < (k + 1) / 2) {\n                if (count + freq >= (k + 1) / 2) second = num;\n                count += freq;\n                if (count >= (k + 1) / 2) break;\n            }\n        }\n        \n        if (k % 2 == 1) return second;\n        return ((double)first + second) / 2.0;\n    }\n}",
+        "python": "from sortedcontainers import SortedList\n\nclass Solution:\n    def medianSlidingWindow(self, nums, k):\n        window = SortedList(nums[:k])\n        result = []\n        \n        for i in range(len(nums) - k + 1):\n            # Calculate median\n            if k % 2 == 1:\n                result.append(window[k // 2])\n            else:\n                result.append((window[k // 2 - 1] + window[k // 2]) / 2.0)\n            \n            if i < len(nums) - k:\n                # Remove outgoing and add incoming\n                window.remove(nums[i])\n                window.add(nums[i + k])\n        \n        return result",
+        "javascript": "function medianSlidingWindow(nums, k) {\n    const result = [];\n    const window = [];\n    \n    // Initialize first window\n    for (let i = 0; i < k; i++) {\n        window.push(nums[i]);\n    }\n    window.sort((a, b) => a - b);\n    \n    for (let i = 0; i <= nums.length - k; i++) {\n        // Calculate median\n        if (k % 2 === 1) {\n            result.push(window[Math.floor(k / 2)]);\n        } else {\n            result.push((window[k / 2 - 1] + window[k / 2]) / 2.0);\n        }\n        \n        if (i < nums.length - k) {\n            // Remove outgoing element\n            const outIdx = window.indexOf(nums[i]);\n            window.splice(outIdx, 1);\n            \n            // Add incoming element (binary search insert)\n            let left = 0, right = window.length;\n            while (left < right) {\n                const mid = Math.floor((left + right) / 2);\n                if (window[mid] < nums[i + k]) {\n                    left = mid + 1;\n                } else {\n                    right = mid;\n                }\n            }\n            window.splice(left, 0, nums[i + k]);\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling lazy deletion correctly in two heaps approach",
+    "Forgetting to clean heap tops before calculating median",
+    "Not rebalancing heaps after adding/removing elements",
+    "Integer overflow when calculating median of large numbers",
+    "Not handling k=1 case properly",
+    "Incorrectly updating heap sizes with lazy deletion",
+    "Not considering elements at heap tops might be marked for deletion"
+  ],
+  "hints": [
+    "Extend median from data stream with element removal",
+    "Use lazy deletion: mark elements for removal but don't remove immediately",
+    "Clean heap tops before accessing them or rebalancing",
+    "HashMap tracks count of elements to be removed",
+    "Alternative: use multiset/TreeMap with two iterators for median",
+    "Window size k is constant - helps with complexity analysis"
+  ],
+  "followUp": [
+    "What if k changes dynamically?",
+    "How to optimize for very large k (k close to n)?",
+    "Can you support queries for median in arbitrary ranges?",
+    "What if you need mode instead of median in sliding window?",
+    "How to handle if nums contains duplicates inefficiently?",
+    "Can you extend to find kth percentile in sliding window?",
+    "What if window size varies for each query?",
+    "How to handle this in a distributed system?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Uber"
+  ],
+  "tags": [
+    "Heap",
+    "Sliding Window",
+    "Two Heaps",
+    "Array",
+    "Hash Table"
+  ],
+  "relatedProblems": [
+    "Find Median from Data Stream",
+    "Sliding Window Maximum",
+    "Moving Average from Data Stream",
+    "Continuous Subarrays",
+    "Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit",
+    "Kth Largest Element in a Stream"
+  ]
 }

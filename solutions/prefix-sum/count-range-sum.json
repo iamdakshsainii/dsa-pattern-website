@@ -3,17 +3,187 @@
   "questionSlug": "count-range-sum",
   "resources": {
     "leetcode": "https://leetcode.com/problems/count-of-range-sum/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Count of Range Sum - Leetcode 327",
+        "url": "https://www.youtube.com/watch?v=0CkUsJKgeXA",
+        "channel": "HuaHua",
+        "duration": "21:45",
+        "language": "English"
+      },
+      {
+        "title": "Count Range Sum Using Merge Sort",
+        "url": "https://www.youtube.com/watch?v=yZJbRsHWDuA",
+        "channel": "TECH DOSE",
+        "duration": "25:30",
+        "language": "English"
+      },
+      {
+        "title": "Range Sum Count Explained",
+        "url": "https://www.youtube.com/watch?v=9KUf0wSjhKc",
+        "channel": "Algorithms Made Easy",
+        "duration": "18:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Count of Range Sum Solutions",
+        "url": "https://leetcode.com/problems/count-of-range-sum/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Count Range Sum Tutorial",
+        "url": "https://www.geeksforgeeks.org/count-of-subarrays-with-sum-in-given-range/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Merge Sort Approach for Range Sum",
+        "url": "https://algo.monster/problems/count_range_sum",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Count of Smaller Numbers After Self",
+        "url": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Reverse Pairs",
+        "url": "https://leetcode.com/problems/reverse-pairs/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Subarray Sum Equals K",
+        "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Continuous Subarray Sum",
+        "url": "https://leetcode.com/problems/continuous-subarray-sum/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Count Range Sum pattern when counting subarrays with sum in range [lower, upper]. Key indicators: count subarrays, sum in range, prefix sum array, range constraints on sum.",
+  "approaches": [
+    {
+      "name": "Merge Sort with Prefix Sum (Optimal)",
+      "order": 1,
+      "intuition": "Compute prefix sums. For each pair (i,j) where i<j, subarray sum is prefixSum[j]-prefixSum[i]. Need to count pairs where lower ≤ prefixSum[j]-prefixSum[i] ≤ upper. Use modified merge sort to count valid pairs efficiently while sorting prefix sums.",
+      "approach": "Build prefix sum array. Use divide-and-conquer merge sort. During merge, count pairs from left and right halves where prefix sum difference is in [lower, upper]. Use two pointers to efficiently count valid pairs.",
+      "steps": [
+        "Build prefix sum array (size n+1, prefixSum[0]=0)",
+        "Define mergeSort function:",
+        " - Base case: if start >= end, return 0",
+        " - mid = (start + end) / 2",
+        " - count = mergeSort(start, mid) + mergeSort(mid+1, end)",
+        " - Count cross pairs: for each i in [start, mid]:",
+        "   - Find range [left, right) in [mid+1, end+1] where",
+        "   - lower ≤ prefixSum[j] - prefixSum[i] ≤ upper",
+        "   - count += (right - left)",
+        " - Merge sorted halves",
+        " - Return count",
+        "Return mergeSort(0, n)"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Merge sort divides array log n times. At each level, merge takes O(n). Total: O(n log n).",
+        "spaceExplanation": "Prefix sum array and merge temporary array need O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int mergeSort(vector<long long>& prefixSum, int start, int end, int lower, int upper) {\n        if (start >= end) return 0;\n        \n        int mid = start + (end - start) / 2;\n        int count = mergeSort(prefixSum, start, mid, lower, upper) + \n                    mergeSort(prefixSum, mid + 1, end, lower, upper);\n        \n        // Count cross pairs\n        int left = mid + 1, right = mid + 1;\n        for (int i = start; i <= mid; i++) {\n            // Find range where lower <= prefixSum[j] - prefixSum[i] <= upper\n            while (left <= end && prefixSum[left] - prefixSum[i] < lower) left++;\n            while (right <= end && prefixSum[right] - prefixSum[i] <= upper) right++;\n            count += right - left;\n        }\n        \n        // Merge sorted halves\n        inplace_merge(prefixSum.begin() + start, prefixSum.begin() + mid + 1, \n                      prefixSum.begin() + end + 1);\n        \n        return count;\n    }\n    \npublic:\n    int countRangeSum(vector<int>& nums, int lower, int upper) {\n        int n = nums.size();\n        vector<long long> prefixSum(n + 1, 0);\n        \n        for (int i = 0; i < n; i++) {\n            prefixSum[i + 1] = prefixSum[i] + nums[i];\n        }\n        \n        return mergeSort(prefixSum, 0, n, lower, upper);\n    }\n};",
+        "java": "class Solution {\n    private int mergeSort(long[] prefixSum, int start, int end, int lower, int upper) {\n        if (start >= end) return 0;\n        \n        int mid = start + (end - start) / 2;\n        int count = mergeSort(prefixSum, start, mid, lower, upper) + \n                    mergeSort(prefixSum, mid + 1, end, lower, upper);\n        \n        // Count cross pairs\n        int left = mid + 1, right = mid + 1;\n        for (int i = start; i <= mid; i++) {\n            while (left <= end && prefixSum[left] - prefixSum[i] < lower) left++;\n            while (right <= end && prefixSum[right] - prefixSum[i] <= upper) right++;\n            count += right - left;\n        }\n        \n        // Merge sorted halves\n        long[] merged = new long[end - start + 1];\n        int i = start, j = mid + 1, k = 0;\n        while (i <= mid && j <= end) {\n            merged[k++] = prefixSum[i] <= prefixSum[j] ? prefixSum[i++] : prefixSum[j++];\n        }\n        while (i <= mid) merged[k++] = prefixSum[i++];\n        while (j <= end) merged[k++] = prefixSum[j++];\n        System.arraycopy(merged, 0, prefixSum, start, merged.length);\n        \n        return count;\n    }\n    \n    public int countRangeSum(int[] nums, int lower, int upper) {\n        int n = nums.length;\n        long[] prefixSum = new long[n + 1];\n        \n        for (int i = 0; i < n; i++) {\n            prefixSum[i + 1] = prefixSum[i] + nums[i];\n        }\n        \n        return mergeSort(prefixSum, 0, n, lower, upper);\n    }\n}",
+        "python": "class Solution:\n    def countRangeSum(self, nums: List[int], lower: int, upper: int) -> int:\n        def mergeSort(prefix_sum, start, end):\n            if start >= end:\n                return 0\n            \n            mid = (start + end) // 2\n            count = mergeSort(prefix_sum, start, mid) + mergeSort(prefix_sum, mid + 1, end)\n            \n            # Count cross pairs\n            left = right = mid + 1\n            for i in range(start, mid + 1):\n                while left <= end and prefix_sum[left] - prefix_sum[i] < lower:\n                    left += 1\n                while right <= end and prefix_sum[right] - prefix_sum[i] <= upper:\n                    right += 1\n                count += right - left\n            \n            # Merge sorted halves\n            prefix_sum[start:end + 1] = sorted(prefix_sum[start:end + 1])\n            \n            return count\n        \n        n = len(nums)\n        prefix_sum = [0] * (n + 1)\n        for i in range(n):\n            prefix_sum[i + 1] = prefix_sum[i] + nums[i]\n        \n        return mergeSort(prefix_sum, 0, n)",
+        "javascript": "function countRangeSum(nums, lower, upper) {\n    function mergeSort(prefixSum, start, end) {\n        if (start >= end) return 0;\n        \n        const mid = Math.floor((start + end) / 2);\n        let count = mergeSort(prefixSum, start, mid) + mergeSort(prefixSum, mid + 1, end);\n        \n        // Count cross pairs\n        let left = mid + 1, right = mid + 1;\n        for (let i = start; i <= mid; i++) {\n            while (left <= end && prefixSum[left] - prefixSum[i] < lower) left++;\n            while (right <= end && prefixSum[right] - prefixSum[i] <= upper) right++;\n            count += right - left;\n        }\n        \n        // Merge sorted halves\n        const merged = [];\n        let i = start, j = mid + 1;\n        while (i <= mid && j <= end) {\n            merged.push(prefixSum[i] <= prefixSum[j] ? prefixSum[i++] : prefixSum[j++]);\n        }\n        while (i <= mid) merged.push(prefixSum[i++]);\n        while (j <= end) merged.push(prefixSum[j++]);\n        \n        for (let k = 0; k < merged.length; k++) {\n            prefixSum[start + k] = merged[k];\n        }\n        \n        return count;\n    }\n    \n    const n = nums.length;\n    const prefixSum = new Array(n + 1).fill(0);\n    \n    for (let i = 0; i < n; i++) {\n        prefixSum[i + 1] = prefixSum[i] + nums[i];\n    }\n    \n    return mergeSort(prefixSum, 0, n);\n}"
+      }
+    },
+    {
+      "name": "Brute Force (Check All Subarrays)",
+      "order": 2,
+      "intuition": "Check every possible subarray. Calculate sum for each subarray. Count how many have sum in range [lower, upper]. Straightforward but inefficient.",
+      "approach": "Use nested loops to generate all subarrays. For each subarray, calculate sum and check if in range. Count valid subarrays.",
+      "steps": [
+        "Initialize count = 0",
+        "For each starting index i from 0 to n-1:",
+        " - Initialize sum = 0",
+        " - For each ending index j from i to n-1:",
+        "   - sum += nums[j]",
+        "   - If lower <= sum <= upper:",
+        "     - count++",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops check all n² subarrays. O(n²) time complexity.",
+        "spaceExplanation": "Only constant extra space for counters. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countRangeSum(vector<int>& nums, int lower, int upper) {\n        int count = 0;\n        int n = nums.size();\n        \n        for (int i = 0; i < n; i++) {\n            long long sum = 0;\n            for (int j = i; j < n; j++) {\n                sum += nums[j];\n                if (sum >= lower && sum <= upper) {\n                    count++;\n                }\n            }\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int countRangeSum(int[] nums, int lower, int upper) {\n        int count = 0;\n        int n = nums.length;\n        \n        for (int i = 0; i < n; i++) {\n            long sum = 0;\n            for (int j = i; j < n; j++) {\n                sum += nums[j];\n                if (sum >= lower && sum <= upper) {\n                    count++;\n                }\n            }\n        }\n        \n        return count;\n    }\n}",
+        "python": "class Solution:\n    def countRangeSum(self, nums: List[int], lower: int, upper: int) -> int:\n        count = 0\n        n = len(nums)\n        \n        for i in range(n):\n            total = 0\n            for j in range(i, n):\n                total += nums[j]\n                if lower <= total <= upper:\n                    count += 1\n        \n        return count",
+        "javascript": "function countRangeSum(nums, lower, upper) {\n    let count = 0;\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        let sum = 0;\n        for (let j = i; j < n; j++) {\n            sum += nums[j];\n            if (sum >= lower && sum <= upper) {\n                count++;\n            }\n        }\n    }\n    \n    return count;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Integer overflow with large sums (use long/long long)",
+    "Incorrect merge sort implementation (not merging properly)",
+    "Off-by-one errors in two pointer range finding",
+    "Not using <= for upper bound comparison",
+    "Forgetting to initialize prefix sum with 0 at index 0",
+    "Incorrect counting logic in merge step",
+    "Not handling negative numbers correctly in prefix sum",
+    "Confusing inclusive vs exclusive range bounds"
+  ],
+  "hints": [
+    "Use prefix sum: subarray(i,j) sum = prefixSum[j] - prefixSum[i-1]",
+    "Problem becomes: count pairs where lower ≤ prefixSum[j] - prefixSum[i] ≤ upper",
+    "Merge sort can count inversions and similar pair conditions efficiently",
+    "During merge, use two pointers to find range of valid j values for each i",
+    "Keep prefix sums sorted to enable binary search-like counting",
+    "Handle integer overflow by using long/long long data types",
+    "Initialize prefix sum array with size n+1, starting with 0"
+  ],
+  "followUp": [
+    "What if you need to find the actual subarrays, not just count?",
+    "How to handle if lower and upper can be updated dynamically (Q queries)?",
+    "What if array is a stream and you need online counting?",
+    "How to solve for multiple ranges efficiently?",
+    "What if you need to count subarrays with product in range?",
+    "How to handle very large arrays that don't fit in memory?",
+    "What if array elements can be floating point numbers?",
+    "How to optimize for the case where lower = upper (exact sum)?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Prefix Sum",
+    "Divide and Conquer",
+    "Merge Sort",
+    "Binary Indexed Tree",
+    "Segment Tree"
+  ],
+  "relatedProblems": [
+    "Count of Smaller Numbers After Self",
+    "Reverse Pairs",
+    "Subarray Sum Equals K",
+    "Continuous Subarray Sum",
+    "Subarray Sums Divisible by K",
+    "Maximum Size Subarray Sum Equals k",
+    "Number of Subarrays with Bounded Maximum",
+    "Count Good Triplets in an Array"
+  ]
 }

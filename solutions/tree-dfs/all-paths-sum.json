@@ -3,17 +3,187 @@
   "questionSlug": "all-paths-sum",
   "resources": {
     "leetcode": "https://leetcode.com/problems/path-sum-iii/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Path Sum III - LeetCode 437",
+        "url": "https://www.youtube.com/watch?v=uZzvivFkgtM",
+        "channel": "NeetCode",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Path Sum III Using Prefix Sum",
+        "url": "https://www.youtube.com/watch?v=xTcXtFvUY8Q",
+        "channel": "TECH DOSE",
+        "duration": "17:45",
+        "language": "English"
+      },
+      {
+        "title": "Count Paths with Target Sum",
+        "url": "https://www.youtube.com/watch?v=xKrAQc5a1Cs",
+        "channel": "take U forward",
+        "duration": "16:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Path Sum III",
+        "url": "https://leetcode.com/problems/path-sum-iii/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Count Paths with Given Sum",
+        "url": "https://www.geeksforgeeks.org/count-paths-with-given-sum-in-a-binary-tree/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Prefix Sum in Trees",
+        "url": "https://algo.monster/problems/path_sum_prefix",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Path Sum",
+        "url": "https://leetcode.com/problems/path-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Path Sum II",
+        "url": "https://leetcode.com/problems/path-sum-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Maximum Path Sum",
+        "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Subarray Sum Equals K",
+        "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use All Paths Sum pattern when counting paths with target sum where paths can start/end at any node (not just root-to-leaf). Key indicators: any path in tree, count paths, path sum equals target, downward paths only, not restricted to root or leaf.",
+  "approaches": [
+    {
+      "name": "Prefix Sum with HashMap (Optimal)",
+      "order": 1,
+      "intuition": "Similar to subarray sum equals K. Track prefix sums from root to current node in hashmap. At each node, if (currentSum - targetSum) exists in hashmap, those are valid paths ending at current node. Use DFS with hashmap tracking prefix sum frequencies. Backtrack by removing current sum when returning from recursion.",
+      "approach": "Use DFS with hashmap storing prefix sum frequencies. At each node, check if (currentSum - targetSum) exists. This count represents paths ending at current node with target sum. Add current sum to hashmap, recurse to children, then remove (backtrack).",
+      "steps": [
+        "Initialize hashmap with {0: 1} (empty path)",
+        "Define DFS function with (node, currentSum, prefixSumMap):",
+        "  - If node is null, return 0",
+        "  - currentSum += node.val",
+        "  - Count paths ending here: count = prefixSumMap.get(currentSum - targetSum, 0)",
+        "  - Add currentSum to prefixSumMap",
+        "  - Recursively count in left and right subtrees",
+        "  - Backtrack: remove currentSum from prefixSumMap",
+        "  - Return total count",
+        "Call DFS(root, 0, {0: 1})"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once in DFS. n nodes total. O(n) time.",
+        "spaceExplanation": "HashMap stores at most h entries (tree height). Recursion depth h. Total: O(h) space."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int count = 0;\n    int targetSum;\n    \n    void dfs(TreeNode* node, long long currentSum, unordered_map<long long, int>& prefixSum) {\n        if (node == nullptr) return;\n        \n        currentSum += node->val;\n        \n        // Count paths ending at current node\n        count += prefixSum[currentSum - targetSum];\n        \n        // Add current sum to map\n        prefixSum[currentSum]++;\n        \n        // Recurse to children\n        dfs(node->left, currentSum, prefixSum);\n        dfs(node->right, currentSum, prefixSum);\n        \n        // Backtrack: remove current sum\n        prefixSum[currentSum]--;\n    }\n    \npublic:\n    int pathSum(TreeNode* root, int targetSum) {\n        this->targetSum = targetSum;\n        unordered_map<long long, int> prefixSum;\n        prefixSum[0] = 1; // Empty path\n        \n        dfs(root, 0, prefixSum);\n        return count;\n    }\n};",
+        "java": "class Solution {\n    private int count = 0;\n    private int targetSum;\n    \n    private void dfs(TreeNode node, long currentSum, Map<Long, Integer> prefixSum) {\n        if (node == null) return;\n        \n        currentSum += node.val;\n        \n        // Count paths ending at current node\n        count += prefixSum.getOrDefault(currentSum - targetSum, 0);\n        \n        // Add current sum to map\n        prefixSum.put(currentSum, prefixSum.getOrDefault(currentSum, 0) + 1);\n        \n        // Recurse to children\n        dfs(node.left, currentSum, prefixSum);\n        dfs(node.right, currentSum, prefixSum);\n        \n        // Backtrack: remove current sum\n        prefixSum.put(currentSum, prefixSum.get(currentSum) - 1);\n    }\n    \n    public int pathSum(TreeNode root, int targetSum) {\n        this.targetSum = targetSum;\n        Map<Long, Integer> prefixSum = new HashMap<>();\n        prefixSum.put(0L, 1); // Empty path\n        \n        dfs(root, 0L, prefixSum);\n        return count;\n    }\n}",
+        "python": "class Solution:\n    def pathSum(self, root: TreeNode, targetSum: int) -> int:\n        def dfs(node, current_sum, prefix_sum):\n            if not node:\n                return 0\n            \n            current_sum += node.val\n            \n            # Count paths ending at current node\n            count = prefix_sum.get(current_sum - targetSum, 0)\n            \n            # Add current sum to map\n            prefix_sum[current_sum] = prefix_sum.get(current_sum, 0) + 1\n            \n            # Recurse to children\n            count += dfs(node.left, current_sum, prefix_sum)\n            count += dfs(node.right, current_sum, prefix_sum)\n            \n            # Backtrack: remove current sum\n            prefix_sum[current_sum] -= 1\n            \n            return count\n        \n        prefix_sum = {0: 1}  # Empty path\n        return dfs(root, 0, prefix_sum)",
+        "javascript": "function pathSum(root, targetSum) {\n    function dfs(node, currentSum, prefixSum) {\n        if (node === null) return 0;\n        \n        currentSum += node.val;\n        \n        // Count paths ending at current node\n        let count = prefixSum.get(currentSum - targetSum) || 0;\n        \n        // Add current sum to map\n        prefixSum.set(currentSum, (prefixSum.get(currentSum) || 0) + 1);\n        \n        // Recurse to children\n        count += dfs(node.left, currentSum, prefixSum);\n        count += dfs(node.right, currentSum, prefixSum);\n        \n        // Backtrack: remove current sum\n        prefixSum.set(currentSum, prefixSum.get(currentSum) - 1);\n        \n        return count;\n    }\n    \n    const prefixSum = new Map();\n    prefixSum.set(0, 1); // Empty path\n    \n    return dfs(root, 0, prefixSum);\n}"
+      }
+    },
+    {
+      "name": "DFS from Every Node (Brute Force)",
+      "order": 2,
+      "intuition": "For each node in tree, start a path from that node and count all valid paths going downward. This requires two functions: one to traverse all nodes, another to count paths starting from a specific node. Less efficient but easier to understand.",
+      "approach": "Main function traverses all nodes. For each node, call helper function to count paths starting from that node. Helper function does DFS downward, tracking current sum and counting when sum equals target.",
+      "steps": [
+        "Main function pathSum(root, targetSum):",
+        "  - If root is null, return 0",
+        "  - Count paths starting from root",
+        "  - Add paths from left subtree: pathSum(root.left, targetSum)",
+        "  - Add paths from right subtree: pathSum(root.right, targetSum)",
+        "Helper function pathsFromNode(node, remainingSum):",
+        "  - If node is null, return 0",
+        "  - count = 1 if node.val == remainingSum, else 0",
+        "  - remainingSum -= node.val",
+        "  - count += pathsFromNode(left, remainingSum)",
+        "  - count += pathsFromNode(right, remainingSum)",
+        "  - Return count"
+      ],
+      "complexity": {
+        "time": "O(n²) worst case, O(n log n) balanced",
+        "space": "O(h)",
+        "timeExplanation": "For each of n nodes, explore paths downward (up to h nodes). Worst case (skewed): O(n²). Balanced: O(n log n).",
+        "spaceExplanation": "Recursion depth is tree height h. O(h) space."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int pathsFromNode(TreeNode* node, long long remainingSum) {\n        if (node == nullptr) return 0;\n        \n        int count = (node->val == remainingSum) ? 1 : 0;\n        remainingSum -= node->val;\n        \n        count += pathsFromNode(node->left, remainingSum);\n        count += pathsFromNode(node->right, remainingSum);\n        \n        return count;\n    }\n    \npublic:\n    int pathSum(TreeNode* root, int targetSum) {\n        if (root == nullptr) return 0;\n        \n        // Paths starting from current root\n        int count = pathsFromNode(root, targetSum);\n        \n        // Paths in left and right subtrees\n        count += pathSum(root->left, targetSum);\n        count += pathSum(root->right, targetSum);\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    private int pathsFromNode(TreeNode node, long remainingSum) {\n        if (node == null) return 0;\n        \n        int count = (node.val == remainingSum) ? 1 : 0;\n        remainingSum -= node.val;\n        \n        count += pathsFromNode(node.left, remainingSum);\n        count += pathsFromNode(node.right, remainingSum);\n        \n        return count;\n    }\n    \n    public int pathSum(TreeNode root, int targetSum) {\n        if (root == null) return 0;\n        \n        // Paths starting from current root\n        int count = pathsFromNode(root, targetSum);\n        \n        // Paths in left and right subtrees\n        count += pathSum(root.left, targetSum);\n        count += pathSum(root.right, targetSum);\n        \n        return count;\n    }\n}",
+        "python": "class Solution:\n    def pathSum(self, root: TreeNode, targetSum: int) -> int:\n        def paths_from_node(node, remaining_sum):\n            if not node:\n                return 0\n            \n            count = 1 if node.val == remaining_sum else 0\n            remaining_sum -= node.val\n            \n            count += paths_from_node(node.left, remaining_sum)\n            count += paths_from_node(node.right, remaining_sum)\n            \n            return count\n        \n        if not root:\n            return 0\n        \n        # Paths starting from current root\n        count = paths_from_node(root, targetSum)\n        \n        # Paths in left and right subtrees\n        count += self.pathSum(root.left, targetSum)\n        count += self.pathSum(root.right, targetSum)\n        \n        return count",
+        "javascript": "function pathSum(root, targetSum) {\n    function pathsFromNode(node, remainingSum) {\n        if (node === null) return 0;\n        \n        let count = (node.val === remainingSum) ? 1 : 0;\n        remainingSum -= node.val;\n        \n        count += pathsFromNode(node.left, remainingSum);\n        count += pathsFromNode(node.right, remainingSum);\n        \n        return count;\n    }\n    \n    if (root === null) return 0;\n    \n    // Paths starting from current root\n    let count = pathsFromNode(root, targetSum);\n    \n    // Paths in left and right subtrees\n    count += pathSum(root.left, targetSum);\n    count += pathSum(root.right, targetSum);\n    \n    return count;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling integer overflow (use long for sums)",
+    "Forgetting to backtrack when using prefix sum approach",
+    "Not initializing prefix sum map with {0: 1}",
+    "Counting paths that go upward (should only go downward)",
+    "Not handling negative numbers in tree correctly",
+    "Modifying global state without proper backtracking",
+    "Using wrong data type for sum (int overflow with large values)"
+  ],
+  "hints": [
+    "Paths can start and end at any node, but must go downward",
+    "Use prefix sum technique similar to 'Subarray Sum Equals K'",
+    "At each node, look for (currentSum - targetSum) in prefix map",
+    "Remember to backtrack after exploring each subtree",
+    "Initialize prefix sum map with {0: 1} for paths starting at root",
+    "Use long/long long for sums to avoid integer overflow"
+  ],
+  "followUp": [
+    "What if paths can go in any direction (up and down)?",
+    "How to return all actual paths instead of just counting?",
+    "What if you need the longest path with target sum?",
+    "How to handle if tree has cycles (convert to graph)?",
+    "Can you solve with O(1) space (no hashmap)?",
+    "What if you need to find paths with sum in a range [L, R]?",
+    "How to handle very large trees that don't fit in memory?",
+    "What if node values can be floating point numbers?"
+  ],
+  "companies": [
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Bloomberg",
+    "Apple",
+    "Adobe"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "Depth-First Search",
+    "Hash Table",
+    "Prefix Sum",
+    "Backtracking"
+  ],
+  "relatedProblems": [
+    "Path Sum",
+    "Path Sum II",
+    "Binary Tree Maximum Path Sum",
+    "Subarray Sum Equals K",
+    "Longest Univalue Path",
+    "Count Univalue Subtrees",
+    "Sum Root to Leaf Numbers",
+    "Diameter of Binary Tree"
+  ]
 }

@@ -2,18 +2,186 @@
   "questionId": "694d4a3a98494915f3bc8eff",
   "questionSlug": "k-closest-numbers",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/find-k-closest-elements/",
+    "videos": [
+      {
+        "title": "Find K Closest Elements - Leetcode 658",
+        "url": "https://www.youtube.com/watch?v=o-YDQzHoaKM",
+        "channel": "NeetCode",
+        "duration": "12:20",
+        "language": "English"
+      },
+      {
+        "title": "K Closest Elements Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=J8yLD-x7fBI",
+        "channel": "TECH DOSE",
+        "duration": "16:45",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search for K Closest Elements",
+        "url": "https://www.youtube.com/watch?v=1RzqKay6vA8",
+        "channel": "take U forward",
+        "duration": "18:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find K Closest Elements Solution",
+        "url": "https://leetcode.com/problems/find-k-closest-elements/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "K Closest Elements to Target",
+        "url": "https://www.geeksforgeeks.org/find-k-closest-elements-given-value/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "K Closest Numbers Pattern",
+        "url": "https://algo.monster/problems/k_closest_elements",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "K Closest Points to Origin",
+        "url": "https://leetcode.com/problems/k-closest-points-to-origin/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Top K Frequent Elements",
+        "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Largest Element in an Array",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search Insert Position",
+        "url": "https://leetcode.com/problems/search-insert-position/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use K Closest Numbers pattern when finding k elements nearest to target. Key indicators: k closest/nearest elements, sorted array, distance from target, binary search + two pointers, sliding window on sorted array.",
+  "approaches": [
+    {
+      "name": "Binary Search + Two Pointers (Optimal)",
+      "order": 1,
+      "intuition": "Array is sorted, use binary search to find closest position to target. Then use two pointers expanding left and right, selecting closer element each time until we have k elements. This ensures we get k closest in sorted order.",
+      "approach": "Binary search to find insertion point or closest element. Use two pointers (left, right) around this position. Compare distances and move pointer toward closer element. Repeat k times.",
+      "steps": [
+        "Use binary search to find position closest to x",
+        "Initialize left = position - 1, right = position",
+        "Initialize result list",
+        "While result.size < k:",
+        " - If left < 0: add arr[right], right++",
+        " - Else if right >= n: add arr[left], left--",
+        " - Else compare |arr[left] - x| vs |arr[right] - x|:",
+        "   - If left is closer or equal: add arr[left], left--",
+        "   - Else: add arr[right], right++",
+        "Return result (may need to reverse or sort)"
+      ],
+      "complexity": {
+        "time": "O(log n + k)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search: O(log n). Two pointers expand k times: O(k). Total: O(log n + k).",
+        "spaceExplanation": "Only pointers used. O(1) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findClosestElements(vector<int>& arr, int k, int x) {\n        int left = 0, right = arr.size() - 1;\n        \n        // Binary search for closest position\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (arr[mid] < x) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        // Two pointers to find k closest\n        left = left - 1;\n        right = left + 1;\n        \n        while (k > 0) {\n            if (left < 0) {\n                right++;\n            } else if (right >= arr.size()) {\n                left--;\n            } else if (x - arr[left] <= arr[right] - x) {\n                left--;\n            } else {\n                right++;\n            }\n            k--;\n        }\n        \n        return vector<int>(arr.begin() + left + 1, arr.begin() + right);\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findClosestElements(int[] arr, int k, int x) {\n        int left = 0, right = arr.length - 1;\n        \n        // Binary search for closest position\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (arr[mid] < x) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        // Two pointers to find k closest\n        left = left - 1;\n        right = left + 1;\n        \n        while (k > 0) {\n            if (left < 0) {\n                right++;\n            } else if (right >= arr.length) {\n                left--;\n            } else if (x - arr[left] <= arr[right] - x) {\n                left--;\n            } else {\n                right++;\n            }\n            k--;\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        for (int i = left + 1; i < right; i++) {\n            result.add(arr[i]);\n        }\n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findClosestElements(self, arr: List[int], k: int, x: int) -> List[int]:\n        left, right = 0, len(arr) - 1\n        \n        # Binary search for closest position\n        while left < right:\n            mid = (left + right) // 2\n            if arr[mid] < x:\n                left = mid + 1\n            else:\n                right = mid\n        \n        # Two pointers to find k closest\n        left -= 1\n        right = left + 1\n        \n        while k > 0:\n            if left < 0:\n                right += 1\n            elif right >= len(arr):\n                left -= 1\n            elif x - arr[left] <= arr[right] - x:\n                left -= 1\n            else:\n                right += 1\n            k -= 1\n        \n        return arr[left + 1:right]",
+        "javascript": "function findClosestElements(arr, k, x) {\n    let left = 0, right = arr.length - 1;\n    \n    // Binary search for closest position\n    while (left < right) {\n        const mid = Math.floor((left + right) / 2);\n        if (arr[mid] < x) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    \n    // Two pointers to find k closest\n    left = left - 1;\n    right = left + 1;\n    \n    while (k > 0) {\n        if (left < 0) {\n            right++;\n        } else if (right >= arr.length) {\n            left--;\n        } else if (x - arr[left] <= arr[right] - x) {\n            left--;\n        } else {\n            right++;\n        }\n        k--;\n    }\n    \n    return arr.slice(left + 1, right);\n}"
+      }
+    },
+    {
+      "name": "Binary Search for Window (Optimal Alternative)",
+      "order": 2,
+      "intuition": "Since result must be contiguous k elements in sorted array, binary search for best starting position of k-length window. Compare distances of window boundaries to decide which window is better.",
+      "approach": "Binary search on starting positions (0 to n-k). For each position, compare if window starting at mid is better than window starting at mid+1 by checking boundary distances.",
+      "steps": [
+        "Initialize left = 0, right = arr.length - k",
+        "While left < right:",
+        " - mid = (left + right) / 2",
+        " - Compare x - arr[mid] vs arr[mid+k] - x",
+        " - If arr[mid] further than arr[mid+k]:",
+        "   - left = mid + 1 (window should move right)",
+        " - Else:",
+        "   - right = mid (current or left window better)",
+        "Return arr[left : left+k]"
+      ],
+      "complexity": {
+        "time": "O(log(n-k) + k)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search on n-k positions: O(log(n-k)). Extract k elements: O(k). Total: O(log(n-k) + k).",
+        "spaceExplanation": "Only pointers used. O(1) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findClosestElements(vector<int>& arr, int k, int x) {\n        int left = 0, right = arr.size() - k;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            \n            // Compare distances of window boundaries\n            if (x - arr[mid] > arr[mid + k] - x) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        return vector<int>(arr.begin() + left, arr.begin() + left + k);\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findClosestElements(int[] arr, int k, int x) {\n        int left = 0, right = arr.length - k;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            \n            // Compare distances of window boundaries\n            if (x - arr[mid] > arr[mid + k] - x) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        for (int i = left; i < left + k; i++) {\n            result.add(arr[i]);\n        }\n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findClosestElements(self, arr: List[int], k: int, x: int) -> List[int]:\n        left, right = 0, len(arr) - k\n        \n        while left < right:\n            mid = (left + right) // 2\n            \n            # Compare distances of window boundaries\n            if x - arr[mid] > arr[mid + k] - x:\n                left = mid + 1\n            else:\n                right = mid\n        \n        return arr[left:left + k]",
+        "javascript": "function findClosestElements(arr, k, x) {\n    let left = 0, right = arr.length - k;\n    \n    while (left < right) {\n        const mid = Math.floor((left + right) / 2);\n        \n        // Compare distances of window boundaries\n        if (x - arr[mid] > arr[mid + k] - x) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    \n    return arr.slice(left, left + k);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling equal distances correctly (prefer smaller value)",
+    "Forgetting that result must be in sorted order",
+    "Using max heap of size k (works but not optimal for sorted array)",
+    "Not using binary search (linear search is O(n) instead of O(log n))",
+    "Comparing absolute distances incorrectly",
+    "Not handling edge cases (k = n, x outside array range)",
+    "Returning unsorted result",
+    "Off-by-one errors in window boundaries"
+  ],
+  "hints": [
+    "Array is sorted - use binary search to find starting point",
+    "Result must be contiguous subarray of length k",
+    "Can binary search for best window starting position",
+    "When distances equal, prefer smaller value (left element)",
+    "Two pointers can expand around closest position",
+    "Window boundaries comparison: x - arr[left] vs arr[right] - x",
+    "Result is already sorted - just extract subarray"
+  ],
+  "followUp": [
+    "What if array is not sorted?",
+    "How to handle duplicate elements?",
+    "What if you need k closest but not necessarily contiguous?",
+    "How to solve if array is very large (distributed)?",
+    "What if x is not in the array?",
+    "How to handle multiple target values efficiently?",
+    "What if you need to find k closest repeatedly (preprocessing)?",
+    "How to solve in streaming scenario (elements arrive over time)?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "LinkedIn",
+    "Bloomberg",
+    "Uber"
+  ],
+  "tags": [
+    "Array",
+    "Binary Search",
+    "Two Pointers",
+    "Sliding Window",
+    "Sorting"
+  ],
+  "relatedProblems": [
+    "K Closest Points to Origin",
+    "Top K Frequent Elements",
+    "Kth Largest Element in an Array",
+    "Search Insert Position",
+    "Find First and Last Position of Element",
+    "Closest Binary Search Tree Value",
+    "Two Sum II"
+  ]
 }

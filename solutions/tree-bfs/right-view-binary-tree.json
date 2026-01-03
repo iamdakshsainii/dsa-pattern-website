@@ -3,17 +3,190 @@
   "questionSlug": "right-view-binary-tree",
   "resources": {
     "leetcode": "https://leetcode.com/problems/binary-tree-right-side-view/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Binary Tree Right Side View - BFS & DFS",
+        "url": "https://www.youtube.com/watch?v=d7n5Pzg1xTM",
+        "channel": "NeetCode",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "Right View of Binary Tree Complete Guide",
+        "url": "https://www.youtube.com/watch?v=s1d8UGDCCN8",
+        "channel": "take U forward",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Find Right Side View Using Level Order",
+        "url": "https://www.youtube.com/watch?v=KV4mRzTjlAk",
+        "channel": "TECH DOSE",
+        "duration": "11:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Right Side View Solution",
+        "url": "https://leetcode.com/problems/binary-tree-right-side-view/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Right View Guide",
+        "url": "https://www.geeksforgeeks.org/print-right-view-binary-tree-2/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Tree View Patterns",
+        "url": "https://algo.monster/problems/binary_tree_right_side_view",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Populating Next Right Pointers",
+        "url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Boundary of Binary Tree",
+        "url": "https://leetcode.com/problems/boundary-of-binary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Vertical Order Traversal",
+        "url": "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Right Side View when finding rightmost visible nodes. Key indicators: right side view, visible from right, rightmost node per level, boundary nodes from right.",
+  "approaches": [
+    {
+      "name": "BFS with Rightmost Tracking (Optimal)",
+      "order": 1,
+      "intuition": "Process tree level by level using BFS. For each level, rightmost node is the last one processed in that level. Collect last node of each level.",
+      "approach": "Use queue for BFS. For each level, process all nodes. Add last node of each level to result.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result list and queue with root",
+        "While queue not empty:",
+        " - Get current level size",
+        " - For each node in current level:",
+        "   - Dequeue node",
+        "   - If last node in level (i == levelSize - 1):",
+        "     - Add node value to result",
+        "   - Enqueue left and right children",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node exactly once. Each node processed in O(1) time. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Queue stores at most w nodes (max width). In worst case (complete tree), w = n/2. Space: O(w)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> rightSideView(TreeNode* root) {\n        vector<int> result;\n        if (!root) return result;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                // If last node in level, add to result\n                if (i == levelSize - 1) {\n                    result.push_back(node->val);\n                }\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> rightSideView(TreeNode root) {\n        List<Integer> result = new ArrayList<>();\n        if (root == null) return result;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                \n                // If last node in level, add to result\n                if (i == levelSize - 1) {\n                    result.add(node.val);\n                }\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:\n        if not root:\n            return []\n        \n        result = []\n        queue = deque([root])\n        \n        while queue:\n            level_size = len(queue)\n            \n            for i in range(level_size):\n                node = queue.popleft()\n                \n                # If last node in level, add to result\n                if i == level_size - 1:\n                    result.append(node.val)\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n        return result",
+        "javascript": "function rightSideView(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root];\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            \n            // If last node in level, add to result\n            if (i === levelSize - 1) {\n                result.push(node.val);\n            }\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "DFS with Level Tracking (Alternative)",
+      "order": 2,
+      "intuition": "Use DFS traversing right subtree before left. For each level, first node visited at that depth is rightmost visible. Track max level reached to know when to add node.",
+      "approach": "DFS with level parameter. Visit right child first. If current level greater than max level seen, add current node to result.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result list",
+        "Define DFS helper(node, level):",
+        " - If node is null, return",
+        " - If level == result size:",
+        "   - Add node value to result",
+        " - Recursively call for right child with level+1",
+        " - Recursively call for left child with level+1",
+        "Call DFS helper with root and level 0",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node exactly once. Each node processed in O(1) time. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Recursion stack depth equals tree height h. Worst case (skewed): h = n. Best case (balanced): h = log n. Space: O(h)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> rightSideView(TreeNode* root) {\n        vector<int> result;\n        dfs(root, 0, result);\n        return result;\n    }\n    \nprivate:\n    void dfs(TreeNode* node, int level, vector<int>& result) {\n        if (!node) return;\n        \n        // First time visiting this level\n        if (level == result.size()) {\n            result.push_back(node->val);\n        }\n        \n        // Visit right first to get rightmost node\n        dfs(node->right, level + 1, result);\n        dfs(node->left, level + 1, result);\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> rightSideView(TreeNode root) {\n        List<Integer> result = new ArrayList<>();\n        dfs(root, 0, result);\n        return result;\n    }\n    \n    private void dfs(TreeNode node, int level, List<Integer> result) {\n        if (node == null) return;\n        \n        // First time visiting this level\n        if (level == result.size()) {\n            result.add(node.val);\n        }\n        \n        // Visit right first to get rightmost node\n        dfs(node.right, level + 1, result);\n        dfs(node.left, level + 1, result);\n    }\n}",
+        "python": "class Solution:\n    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:\n        result = []\n        \n        def dfs(node, level):\n            if not node:\n                return\n            \n            # First time visiting this level\n            if level == len(result):\n                result.append(node.val)\n            \n            # Visit right first to get rightmost node\n            dfs(node.right, level + 1)\n            dfs(node.left, level + 1)\n        \n        dfs(root, 0)\n        return result",
+        "javascript": "function rightSideView(root) {\n    const result = [];\n    \n    function dfs(node, level) {\n        if (!node) return;\n        \n        // First time visiting this level\n        if (level === result.length) {\n            result.push(node.val);\n        }\n        \n        // Visit right first to get rightmost node\n        dfs(node.right, level + 1);\n        dfs(node.left, level + 1);\n    }\n    \n    dfs(root, 0);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Only traversing right children (misses when left is deeper)",
+    "Not checking if it's the last node in level",
+    "In DFS: visiting left before right",
+    "Not handling empty tree edge case",
+    "Confusing right view with inorder traversal",
+    "Not tracking level properly in DFS",
+    "Adding all rightmost nodes instead of one per level",
+    "Forgetting that left child can be visible if right is missing"
+  ],
+  "hints": [
+    "Rightmost visible node is last node processed per level",
+    "BFS naturally processes levels left to right",
+    "In DFS, visit right subtree before left",
+    "Left child can be visible if right subtree is shorter",
+    "Track which level you're at in DFS",
+    "First node visited at each depth (right-first DFS) is answer",
+    "Can also be solved by tracking rightmost node per level"
+  ],
+  "followUp": [
+    "How to find left side view instead?",
+    "What if we need top view or bottom view?",
+    "How to find boundary of binary tree?",
+    "Can we find views from all 4 directions?",
+    "What if tree nodes have different widths?",
+    "How to handle very wide trees efficiently?",
+    "Can we find diagonal view?",
+    "How to print vertical order traversal?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Google",
+    "Bloomberg",
+    "LinkedIn",
+    "Apple",
+    "Adobe",
+    "Oracle"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "BFS",
+    "DFS",
+    "Level Order Traversal",
+    "Depth First Search",
+    "Breadth First Search"
+  ],
+  "relatedProblems": [
+    "Binary Tree Level Order Traversal",
+    "Populating Next Right Pointers",
+    "Boundary of Binary Tree",
+    "Vertical Order Traversal",
+    "Binary Tree Zigzag Level Order",
+    "Bottom View of Binary Tree",
+    "Top View of Binary Tree",
+    "Diagonal Traversal of Binary Tree"
+  ]
 }

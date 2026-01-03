@@ -3,17 +3,188 @@
   "questionSlug": "longest-subarray-ones-replacement",
   "resources": {
     "leetcode": "https://leetcode.com/problems/max-consecutive-ones-iii/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Max Consecutive Ones III - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=3E4JBHSLpYk",
+        "channel": "NeetCode",
+        "duration": "9:50",
+        "language": "English"
+      },
+      {
+        "title": "Flip K Zeros Pattern",
+        "url": "https://www.youtube.com/watch?v=Mo33MjjMlyA",
+        "channel": "take U forward",
+        "duration": "16:25",
+        "language": "English"
+      },
+      {
+        "title": "Binary Array Sliding Window",
+        "url": "https://www.youtube.com/watch?v=QPfalDbqa4A",
+        "channel": "Aditya Verma",
+        "duration": "18:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Max Consecutive Ones III",
+        "url": "https://leetcode.com/problems/max-consecutive-ones-iii/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Longest Subarray with K Flips",
+        "url": "https://www.geeksforgeeks.org/find-zeroes-to-be-flipped-so-that-number-of-consecutive-1s-is-maximized/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Sliding Window Pattern",
+        "url": "https://algo.monster/problems/max_consecutive_ones",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Longest Repeating Character Replacement",
+        "url": "https://leetcode.com/problems/longest-repeating-character-replacement/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Max Consecutive Ones",
+        "url": "https://leetcode.com/problems/max-consecutive-ones/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Max Consecutive Ones II",
+        "url": "https://leetcode.com/problems/max-consecutive-ones-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Subarray of 1's After Deleting One Element",
+        "url": "https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Longest Subarray Ones Replacement when: binary array, can flip at most K zeros to ones, maximize consecutive ones, count zeros in window. Keywords: 'flip zeros', 'k flips', 'consecutive ones', 'binary array'.",
+  "approaches": [
+    {
+      "name": "Sliding Window with Zero Count (Optimal)",
+      "order": 1,
+      "intuition": "Maintain window with at most K zeros. Expand right to include elements. Count zeros in window. When zero count > K, shrink from left until count <= K. Track maximum window size. O(n) time as each element visited at most twice.",
+      "approach": "Two pointers tracking window boundaries. Count zeros in window. Shrink when zeros exceed K. Window always valid after shrinking.",
+      "steps": [
+        "Initialize left = 0, maxLength = 0, zeroCount = 0",
+        "For right from 0 to n-1:",
+        "  - If nums[right] == 0:",
+        "    - Increment zeroCount",
+        "  - While zeroCount > k:",
+        "    - If nums[left] == 0:",
+        "      - Decrement zeroCount",
+        "    - Increment left",
+        "  - Update maxLength = max(maxLength, right - left + 1)",
+        "Return maxLength"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element added once (right) and removed at most once (left): O(2n) = O(n).",
+        "spaceExplanation": "Only using pointer variables and counter. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int longestOnes(vector<int>& nums, int k) {\n        int n = nums.size();\n        int left = 0;\n        int maxLength = 0;\n        int zeroCount = 0;\n        \n        for (int right = 0; right < n; right++) {\n            if (nums[right] == 0) {\n                zeroCount++;\n            }\n            \n            while (zeroCount > k) {\n                if (nums[left] == 0) {\n                    zeroCount--;\n                }\n                left++;\n            }\n            \n            maxLength = max(maxLength, right - left + 1);\n        }\n        \n        return maxLength;\n    }\n};",
+        "java": "class Solution {\n    public int longestOnes(int[] nums, int k) {\n        int n = nums.length;\n        int left = 0;\n        int maxLength = 0;\n        int zeroCount = 0;\n        \n        for (int right = 0; right < n; right++) {\n            if (nums[right] == 0) {\n                zeroCount++;\n            }\n            \n            while (zeroCount > k) {\n                if (nums[left] == 0) {\n                    zeroCount--;\n                }\n                left++;\n            }\n            \n            maxLength = Math.max(maxLength, right - left + 1);\n        }\n        \n        return maxLength;\n    }\n}",
+        "python": "class Solution:\n    def longestOnes(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        left = 0\n        max_length = 0\n        zero_count = 0\n        \n        for right in range(n):\n            if nums[right] == 0:\n                zero_count += 1\n            \n            while zero_count > k:\n                if nums[left] == 0:\n                    zero_count -= 1\n                left += 1\n            \n            max_length = max(max_length, right - left + 1)\n        \n        return max_length",
+        "javascript": "function longestOnes(nums, k) {\n    const n = nums.length;\n    let left = 0;\n    let maxLength = 0;\n    let zeroCount = 0;\n    \n    for (let right = 0; right < n; right++) {\n        if (nums[right] === 0) {\n            zeroCount++;\n        }\n        \n        while (zeroCount > k) {\n            if (nums[left] === 0) {\n                zeroCount--;\n            }\n            left++;\n        }\n        \n        maxLength = Math.max(maxLength, right - left + 1);\n    }\n    \n    return maxLength;\n}"
+      }
+    },
+    {
+      "name": "Optimized with If Instead of While",
+      "order": 2,
+      "intuition": "Optimization: use if instead of while. We only move left by 1 when invalid. This maintains window size and only grows it when we can form a larger valid window. More elegant in practice.",
+      "approach": "Similar to approach 1, but use if condition. Window size never shrinks, only grows when valid larger window found.",
+      "steps": [
+        "Initialize left = 0, zeroCount = 0",
+        "For right from 0 to n-1:",
+        "  - If nums[right] == 0:",
+        "    - Increment zeroCount",
+        "  - If zeroCount > k:",
+        "    - If nums[left] == 0:",
+        "      - Decrement zeroCount",
+        "    - Increment left",
+        "Return right - left (final window size)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array with O(1) operations: O(n).",
+        "spaceExplanation": "Only counter and pointer variables: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int longestOnes(vector<int>& nums, int k) {\n        int n = nums.size();\n        int left = 0;\n        int zeroCount = 0;\n        \n        for (int right = 0; right < n; right++) {\n            if (nums[right] == 0) {\n                zeroCount++;\n            }\n            \n            // Use if instead of while\n            if (zeroCount > k) {\n                if (nums[left] == 0) {\n                    zeroCount--;\n                }\n                left++;\n            }\n        }\n        \n        return nums.size() - left;\n    }\n};",
+        "java": "class Solution {\n    public int longestOnes(int[] nums, int k) {\n        int n = nums.length;\n        int left = 0;\n        int zeroCount = 0;\n        \n        for (int right = 0; right < n; right++) {\n            if (nums[right] == 0) {\n                zeroCount++;\n            }\n            \n            if (zeroCount > k) {\n                if (nums[left] == 0) {\n                    zeroCount--;\n                }\n                left++;\n            }\n        }\n        \n        return nums.length - left;\n    }\n}",
+        "python": "class Solution:\n    def longestOnes(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        left = 0\n        zero_count = 0\n        \n        for right in range(n):\n            if nums[right] == 0:\n                zero_count += 1\n            \n            if zero_count > k:\n                if nums[left] == 0:\n                    zero_count -= 1\n                left += 1\n        \n        return len(nums) - left",
+        "javascript": "function longestOnes(nums, k) {\n    const n = nums.length;\n    let left = 0;\n    let zeroCount = 0;\n    \n    for (let right = 0; right < n; right++) {\n        if (nums[right] === 0) {\n            zeroCount++;\n        }\n        \n        if (zeroCount > k) {\n            if (nums[left] === 0) {\n                zeroCount--;\n            }\n            left++;\n        }\n    }\n    \n    return nums.length - left;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not counting zeros correctly in the window",
+    "Checking zeroCount >= k instead of > k",
+    "Forgetting to decrement zeroCount when removing zero from left",
+    "Not handling k = 0 edge case (no flips allowed)",
+    "Trying to track which specific zeros to flip (unnecessary)",
+    "Using extra space to store positions of zeros",
+    "Wrong window size calculation",
+    "Not updating maxLength after shrinking window"
+  ],
+  "hints": [
+    "Count zeros in current window, not ones",
+    "Window is valid when zeroCount <= k",
+    "Each element visited at most twice: O(n) time",
+    "No need to track which zeros to flip",
+    "Similar to Character Replacement but simpler",
+    "Can use if instead of while for optimization",
+    "Space complexity is O(1) - only need counter",
+    "Window size = right - left + 1"
+  ],
+  "followUp": [
+    "What if you need to return the actual flipped positions?",
+    "Can you solve if flips have different costs?",
+    "What about finding shortest subarray needing k flips?",
+    "How to handle if you can also flip ones to zeros?",
+    "What if array is circular?",
+    "Can you count all valid subarrays?",
+    "What about 2D matrix version?",
+    "How to optimize for very large k (k >= n)?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Uber",
+    "Adobe",
+    "Oracle"
+  ],
+  "tags": [
+    "Sliding Window",
+    "Array",
+    "Two Pointers",
+    "Binary Array",
+    "Variable Window"
+  ],
+  "relatedProblems": [
+    "Longest Repeating Character Replacement",
+    "Max Consecutive Ones",
+    "Max Consecutive Ones II",
+    "Longest Subarray of 1's After Deleting One Element",
+    "Minimum Number of Flips to Make Binary String Alternating",
+    "Longest Substring with At Most K Distinct Characters",
+    "Get Equal Substrings Within Budget",
+    "Minimum Number of K Consecutive Bit Flips"
+  ]
 }

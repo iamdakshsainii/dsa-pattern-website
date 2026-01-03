@@ -2,18 +2,185 @@
   "questionId": "694d4a3a98494915f3bc8eb8",
   "questionSlug": "next-greater-element",
   "resources": {
-    "leetcode": "https://leetcode.com/problems/next-greater-element-ii/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/next-greater-element-ii/",
+    "videos": [
+      {
+        "title": "Next Greater Element II - Monotonic Stack",
+        "url": "https://www.youtube.com/watch?v=ARkl69eBzhY",
+        "channel": "NeetCode",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Next Greater Element Using Stack",
+        "url": "https://www.youtube.com/watch?v=Du881K7Jtk8",
+        "channel": "take U forward",
+        "duration": "15:45",
+        "language": "English"
+      },
+      {
+        "title": "Circular Array Next Greater",
+        "url": "https://www.youtube.com/watch?v=5u4fuU5Nc7k",
+        "channel": "TECH DOSE",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Next Greater Element II Solution",
+        "url": "https://leetcode.com/problems/next-greater-element-ii/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Monotonic Stack for Next Greater",
+        "url": "https://www.geeksforgeeks.org/next-greater-element/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Next Greater Element Pattern",
+        "url": "https://algo.monster/problems/next_greater_element",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Next Greater Element I",
+        "url": "https://leetcode.com/problems/next-greater-element-i/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Daily Temperatures",
+        "url": "https://leetcode.com/problems/daily-temperatures/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Online Stock Span",
+        "url": "https://leetcode.com/problems/online-stock-span/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "132 Pattern",
+        "url": "https://leetcode.com/problems/132-pattern/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Next Greater Element when finding next larger value in sequence. Key indicators: next greater, next warmer, monotonic stack, circular array, decreasing stack.",
+  "approaches": [
+    {
+      "name": "Monotonic Stack (Optimal)",
+      "order": 1,
+      "intuition": "Use monotonic decreasing stack to efficiently find next greater elements. Stack maintains indices of elements in decreasing order. When larger element found, pop smaller elements and set their next greater. For circular array, traverse twice.",
+      "approach": "Maintain decreasing stack of indices. When current element greater than stack top, pop and record result. For circular array, iterate twice (n to 2n-1).",
+      "steps": [
+        "Initialize result array with -1 (default no greater)",
+        "Create empty stack for indices",
+        "For i from 0 to 2n-1 (for circular):",
+        " - Get actual index: idx = i % n",
+        " - While stack not empty and nums[idx] > nums[stack.top()]:",
+        "   - Pop index from stack",
+        "   - Set result[popped] = nums[idx]",
+        " - If i < n: push idx to stack",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each element pushed and popped at most once. Two passes: O(2n) = O(n).",
+        "spaceExplanation": "Stack stores at most n indices. Result array size n. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n, -1);\n        stack<int> st; // stores indices\n        \n        // Traverse twice for circular array\n        for (int i = 0; i < 2 * n; i++) {\n            int idx = i % n;\n            \n            // Pop smaller elements and set their next greater\n            while (!st.empty() && nums[idx] > nums[st.top()]) {\n                result[st.top()] = nums[idx];\n                st.pop();\n            }\n            \n            // Only push indices in first pass\n            if (i < n) {\n                st.push(idx);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] nextGreaterElements(int[] nums) {\n        int n = nums.length;\n        int[] result = new int[n];\n        Arrays.fill(result, -1);\n        Stack<Integer> stack = new Stack<>(); // stores indices\n        \n        // Traverse twice for circular array\n        for (int i = 0; i < 2 * n; i++) {\n            int idx = i % n;\n            \n            // Pop smaller elements and set their next greater\n            while (!stack.isEmpty() && nums[idx] > nums[stack.peek()]) {\n                result[stack.pop()] = nums[idx];\n            }\n            \n            // Only push indices in first pass\n            if (i < n) {\n                stack.push(idx);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreaterElements(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        result = [-1] * n\n        stack = []  # stores indices\n        \n        # Traverse twice for circular array\n        for i in range(2 * n):\n            idx = i % n\n            \n            # Pop smaller elements and set their next greater\n            while stack and nums[idx] > nums[stack[-1]]:\n                result[stack.pop()] = nums[idx]\n            \n            # Only push indices in first pass\n            if i < n:\n                stack.append(idx)\n        \n        return result",
+        "javascript": "function nextGreaterElements(nums) {\n    const n = nums.length;\n    const result = new Array(n).fill(-1);\n    const stack = []; // stores indices\n    \n    // Traverse twice for circular array\n    for (let i = 0; i < 2 * n; i++) {\n        const idx = i % n;\n        \n        // Pop smaller elements and set their next greater\n        while (stack.length > 0 && nums[idx] > nums[stack[stack.length - 1]]) {\n            result[stack.pop()] = nums[idx];\n        }\n        \n        // Only push indices in first pass\n        if (i < n) {\n            stack.push(idx);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Brute Force (For Understanding)",
+      "order": 2,
+      "intuition": "For each element, scan right (wrapping around) until finding greater element. Simple but inefficient. Useful for understanding problem before optimizing.",
+      "approach": "For each index, check all subsequent elements (with wrapping) until finding greater one.",
+      "steps": [
+        "Initialize result array with -1",
+        "For i from 0 to n-1:",
+        " - For j from 1 to n:",
+        "   - Get next index: nextIdx = (i + j) % n",
+        "   - If nums[nextIdx] > nums[i]:",
+        "     - result[i] = nums[nextIdx]",
+        "     - Break",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "For each of n elements, scan up to n elements. Total: O(n²).",
+        "spaceExplanation": "Only result array needed (output). Space: O(1) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n, -1);\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = 1; j < n; j++) {\n                int nextIdx = (i + j) % n;\n                if (nums[nextIdx] > nums[i]) {\n                    result[i] = nums[nextIdx];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] nextGreaterElements(int[] nums) {\n        int n = nums.length;\n        int[] result = new int[n];\n        Arrays.fill(result, -1);\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = 1; j < n; j++) {\n                int nextIdx = (i + j) % n;\n                if (nums[nextIdx] > nums[i]) {\n                    result[i] = nums[nextIdx];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreaterElements(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        result = [-1] * n\n        \n        for i in range(n):\n            for j in range(1, n):\n                next_idx = (i + j) % n\n                if nums[next_idx] > nums[i]:\n                    result[i] = nums[next_idx]\n                    break\n        \n        return result",
+        "javascript": "function nextGreaterElements(nums) {\n    const n = nums.length;\n    const result = new Array(n).fill(-1);\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = 1; j < n; j++) {\n            const nextIdx = (i + j) % n;\n            if (nums[nextIdx] > nums[i]) {\n                result[i] = nums[nextIdx];\n                break;\n            }\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling circular array (forgetting to wrap around)",
+    "Storing values instead of indices in stack",
+    "Only traversing once for circular array",
+    "Not initializing result with -1",
+    "Pushing indices in second pass (causes duplicates)",
+    "Not using modulo for circular indexing",
+    "Comparing values when should compare with stack indices",
+    "Not maintaining decreasing order in stack"
+  ],
+  "hints": [
+    "Monotonic stack maintains decreasing order",
+    "Stack stores indices, not values",
+    "When current > stack top, found next greater",
+    "For circular, traverse array twice",
+    "Use modulo (%) for circular indexing",
+    "Only push indices in first pass",
+    "Initialize result with -1 for elements without greater",
+    "Each element pushed and popped at most once"
+  ],
+  "followUp": [
+    "What about next smaller element?",
+    "How to find previous greater element?",
+    "What if array is not circular?",
+    "How to handle equal elements?",
+    "Can we find next greater for queries efficiently?",
+    "What about finding k-th next greater?",
+    "How to handle very large arrays?",
+    "What if we need distance to next greater?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Bloomberg",
+    "Apple",
+    "Adobe"
+  ],
+  "tags": [
+    "Stack",
+    "Array",
+    "Monotonic Stack",
+    "Circular Array",
+    "Next Greater"
+  ],
+  "relatedProblems": [
+    "Next Greater Element I",
+    "Daily Temperatures",
+    "Online Stock Span",
+    "132 Pattern",
+    "Largest Rectangle in Histogram",
+    "Trapping Rain Water",
+    "Sum of Subarray Minimums",
+    "Remove K Digits"
+  ]
 }

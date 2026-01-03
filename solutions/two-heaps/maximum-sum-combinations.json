@@ -3,17 +3,184 @@
   "questionSlug": "maximum-sum-combinations",
   "resources": {
     "leetcode": "https://www.interviewbit.com/problems/maximum-sum-combinations/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum Sum Combinations Problem",
+        "url": "https://www.youtube.com/watch?v=3e_9AlVVjJE",
+        "channel": "TECH DOSE",
+        "duration": "15:30",
+        "language": "English"
+      },
+      {
+        "title": "Find K Largest Pair Sums",
+        "url": "https://www.youtube.com/watch?v=zAMLHvJw-5M",
+        "channel": "Pepcoding",
+        "duration": "18:45",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Sum Combinations Explained",
+        "url": "https://www.youtube.com/watch?v=EqE2fJz_4uk",
+        "channel": "Code with Alisha",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Sum Combinations",
+        "url": "https://www.interviewbit.com/problems/maximum-sum-combinations/",
+        "source": "InterviewBit"
+      },
+      {
+        "title": "Find K Pairs with Largest Sums",
+        "url": "https://www.geeksforgeeks.org/k-maximum-sum-combinations-two-arrays/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Heap-based Pair Sum Problems",
+        "url": "https://algo.monster/problems/k_largest_pairs",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find K Pairs with Smallest Sums",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Largest Element in an Array",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Top K Frequent Elements",
+        "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Smallest Element in a Sorted Matrix",
+        "url": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Maximum Sum Combinations pattern when finding K largest sums from pairs of two arrays. Key indicators: K largest/smallest pairs, combinations from two arrays, pair sums, top K elements from Cartesian product.",
+  "approaches": [
+    {
+      "name": "Max Heap with Set (Optimal)",
+      "order": 1,
+      "intuition": "Sort both arrays in descending order. Start with largest possible sum (A[0] + B[0]). Use max heap to explore pair sums in decreasing order. For each popped pair (i, j), push neighbors (i+1, j) and (i, j+1). Use set to avoid duplicate pairs. Continue until K sums extracted.",
+      "approach": "Sort arrays descending. Use max heap initialized with (A[0]+B[0], 0, 0). Track visited pairs with set. Pop from heap K times. For each pop, add unvisited neighbors to heap. Collect popped sums.",
+      "steps": [
+        "Sort A and B in descending order",
+        "Initialize max heap with (A[0] + B[0], 0, 0)",
+        "Initialize visited set with (0, 0)",
+        "Initialize result array",
+        "For K iterations:",
+        "  - If heap empty: break",
+        "  - Pop (sum, i, j) from heap",
+        "  - Add sum to result",
+        "  - If (i+1, j) not visited and i+1 < len(A):",
+        "    - Push (A[i+1] + B[j], i+1, j) to heap",
+        "    - Mark (i+1, j) as visited",
+        "  - If (i, j+1) not visited and j+1 < len(B):",
+        "    - Push (A[i] + B[j+1], i, j+1) to heap",
+        "    - Mark (i, j+1) as visited",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n log n + k log k)",
+        "space": "O(k)",
+        "timeExplanation": "Sorting: O(n log n) each array. Heap operations: k pops and pushes, each O(log k). Total: O(n log n + k log k).",
+        "spaceExplanation": "Heap and visited set can grow to O(k). Total: O(k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> solve(vector<int>& A, vector<int>& B, int C) {\n        // Sort in descending order\n        sort(A.begin(), A.end(), greater<int>());\n        sort(B.begin(), B.end(), greater<int>());\n        \n        // Max heap: (sum, i, j)\n        priority_queue<tuple<int, int, int>> maxHeap;\n        maxHeap.push({A[0] + B[0], 0, 0});\n        \n        set<pair<int, int>> visited;\n        visited.insert({0, 0});\n        \n        vector<int> result;\n        \n        for (int k = 0; k < C && !maxHeap.empty(); k++) {\n            auto [sum, i, j] = maxHeap.top();\n            maxHeap.pop();\n            result.push_back(sum);\n            \n            // Add neighbor (i+1, j)\n            if (i + 1 < A.size() && visited.find({i + 1, j}) == visited.end()) {\n                maxHeap.push({A[i + 1] + B[j], i + 1, j});\n                visited.insert({i + 1, j});\n            }\n            \n            // Add neighbor (i, j+1)\n            if (j + 1 < B.size() && visited.find({i, j + 1}) == visited.end()) {\n                maxHeap.push({A[i] + B[j + 1], i, j + 1});\n                visited.insert({i, j + 1});\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public ArrayList<Integer> solve(ArrayList<Integer> A, ArrayList<Integer> B, int C) {\n        // Sort in descending order\n        Collections.sort(A, Collections.reverseOrder());\n        Collections.sort(B, Collections.reverseOrder());\n        \n        // Max heap: [sum, i, j]\n        PriorityQueue<int[]> maxHeap = new PriorityQueue<>(\n            (a, b) -> Integer.compare(b[0], a[0])\n        );\n        maxHeap.offer(new int[]{A.get(0) + B.get(0), 0, 0});\n        \n        Set<String> visited = new HashSet<>();\n        visited.add(\"0,0\");\n        \n        ArrayList<Integer> result = new ArrayList<>();\n        \n        for (int k = 0; k < C && !maxHeap.isEmpty(); k++) {\n            int[] current = maxHeap.poll();\n            int sum = current[0];\n            int i = current[1];\n            int j = current[2];\n            result.add(sum);\n            \n            // Add neighbor (i+1, j)\n            if (i + 1 < A.size() && !visited.contains((i + 1) + \",\" + j)) {\n                maxHeap.offer(new int[]{A.get(i + 1) + B.get(j), i + 1, j});\n                visited.add((i + 1) + \",\" + j);\n            }\n            \n            // Add neighbor (i, j+1)\n            if (j + 1 < B.size() && !visited.contains(i + \",\" + (j + 1))) {\n                maxHeap.offer(new int[]{A.get(i) + B.get(j + 1), i, j + 1});\n                visited.add(i + \",\" + (j + 1));\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "import heapq\n\nclass Solution:\n    def solve(self, A, B, C):\n        # Sort in descending order\n        A.sort(reverse=True)\n        B.sort(reverse=True)\n        \n        # Max heap (negate for max heap)\n        max_heap = [(-A[0] - B[0], 0, 0)]\n        visited = {(0, 0)}\n        result = []\n        \n        for _ in range(C):\n            if not max_heap:\n                break\n            \n            neg_sum, i, j = heapq.heappop(max_heap)\n            result.append(-neg_sum)\n            \n            # Add neighbor (i+1, j)\n            if i + 1 < len(A) and (i + 1, j) not in visited:\n                heapq.heappush(max_heap, (-A[i + 1] - B[j], i + 1, j))\n                visited.add((i + 1, j))\n            \n            # Add neighbor (i, j+1)\n            if j + 1 < len(B) and (i, j + 1) not in visited:\n                heapq.heappush(max_heap, (-A[i] - B[j + 1], i, j + 1))\n                visited.add((i, j + 1))\n        \n        return result",
+        "javascript": "function solve(A, B, C) {\n    // Sort in descending order\n    A.sort((a, b) => b - a);\n    B.sort((a, b) => b - a);\n    \n    // Max heap: [sum, i, j]\n    const maxHeap = [[A[0] + B[0], 0, 0]];\n    const visited = new Set(['0,0']);\n    const result = [];\n    \n    for (let k = 0; k < C && maxHeap.length > 0; k++) {\n        // Sort to maintain heap property\n        maxHeap.sort((a, b) => b[0] - a[0]);\n        const [sum, i, j] = maxHeap.shift();\n        result.push(sum);\n        \n        // Add neighbor (i+1, j)\n        if (i + 1 < A.length && !visited.has(`${i + 1},${j}`)) {\n            maxHeap.push([A[i + 1] + B[j], i + 1, j]);\n            visited.add(`${i + 1},${j}`);\n        }\n        \n        // Add neighbor (i, j+1)\n        if (j + 1 < B.length && !visited.has(`${i},${j + 1}`)) {\n            maxHeap.push([A[i] + B[j + 1], i, j + 1]);\n            visited.add(`${i},${j + 1}`);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Generate All Sums and Sort",
+      "order": 2,
+      "intuition": "Generate all n*n possible pair sums. Sort them in descending order. Return first K sums. Simple but inefficient for large arrays or when K << n*n.",
+      "approach": "Compute all pair sums A[i] + B[j] for all i, j. Store in array. Sort descending. Return first K elements.",
+      "steps": [
+        "Initialize sums array",
+        "For i from 0 to len(A)-1:",
+        "  - For j from 0 to len(B)-1:",
+        "    - Add A[i] + B[j] to sums",
+        "Sort sums in descending order",
+        "Return first K elements from sums"
+      ],
+      "complexity": {
+        "time": "O(n² log n²) = O(n² log n)",
+        "space": "O(n²)",
+        "timeExplanation": "Generating all sums: O(n²). Sorting n² sums: O(n² log n). Total: O(n² log n).",
+        "spaceExplanation": "Storing all n² sums. O(n²) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> solve(vector<int>& A, vector<int>& B, int C) {\n        vector<int> sums;\n        \n        // Generate all pair sums\n        for (int i = 0; i < A.size(); i++) {\n            for (int j = 0; j < B.size(); j++) {\n                sums.push_back(A[i] + B[j]);\n            }\n        }\n        \n        // Sort in descending order\n        sort(sums.begin(), sums.end(), greater<int>());\n        \n        // Return first C elements\n        vector<int> result;\n        for (int i = 0; i < C && i < sums.size(); i++) {\n            result.push_back(sums[i]);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public ArrayList<Integer> solve(ArrayList<Integer> A, ArrayList<Integer> B, int C) {\n        ArrayList<Integer> sums = new ArrayList<>();\n        \n        // Generate all pair sums\n        for (int i = 0; i < A.size(); i++) {\n            for (int j = 0; j < B.size(); j++) {\n                sums.add(A.get(i) + B.get(j));\n            }\n        }\n        \n        // Sort in descending order\n        Collections.sort(sums, Collections.reverseOrder());\n        \n        // Return first C elements\n        ArrayList<Integer> result = new ArrayList<>();\n        for (int i = 0; i < C && i < sums.size(); i++) {\n            result.add(sums.get(i));\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def solve(self, A, B, C):\n        # Generate all pair sums\n        sums = []\n        for i in range(len(A)):\n            for j in range(len(B)):\n                sums.append(A[i] + B[j])\n        \n        # Sort in descending order\n        sums.sort(reverse=True)\n        \n        # Return first C elements\n        return sums[:C]",
+        "javascript": "function solve(A, B, C) {\n    const sums = [];\n    \n    // Generate all pair sums\n    for (let i = 0; i < A.length; i++) {\n        for (let j = 0; j < B.length; j++) {\n            sums.push(A[i] + B[j]);\n        }\n    }\n    \n    // Sort in descending order\n    sums.sort((a, b) => b - a);\n    \n    // Return first C elements\n    return sums.slice(0, C);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting arrays before using heap approach",
+    "Forgetting to track visited pairs, causing duplicates",
+    "Not handling case when K > n²",
+    "Using min heap instead of max heap for largest sums",
+    "Not checking array bounds when adding neighbors",
+    "Generating all n² pairs even when K << n²",
+    "Not breaking early when heap is empty"
+  ],
+  "hints": [
+    "Sort both arrays in descending order first",
+    "Largest sum is always A[0] + B[0] after sorting",
+    "Use max heap to explore sums in decreasing order",
+    "From pair (i, j), next candidates are (i+1, j) and (i, j+1)",
+    "Track visited pairs to avoid duplicates in heap",
+    "Much more efficient than generating all n² sums when K is small"
+  ],
+  "followUp": [
+    "What if you need K smallest sums instead of largest?",
+    "How to extend to three or more arrays?",
+    "What if arrays are not sortable (objects with complex comparison)?",
+    "Can you solve without extra space for visited set?",
+    "How to handle if K is very large (close to n²)?",
+    "What if you need the actual pairs, not just sums?",
+    "How to find Kth largest sum without finding all K?",
+    "Can you solve if arrays are streams and very large?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Bloomberg",
+    "Uber",
+    "Apple"
+  ],
+  "tags": [
+    "Heap",
+    "Array",
+    "Sorting",
+    "Two Heaps",
+    "Hash Table"
+  ],
+  "relatedProblems": [
+    "Find K Pairs with Smallest Sums",
+    "Kth Smallest Element in a Sorted Matrix",
+    "Find K-th Smallest Pair Distance",
+    "Kth Largest Element in an Array",
+    "Top K Frequent Elements",
+    "Merge k Sorted Lists",
+    "Find Median from Data Stream"
+  ]
 }

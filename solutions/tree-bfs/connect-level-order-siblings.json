@@ -3,17 +3,192 @@
   "questionSlug": "connect-level-order-siblings",
   "resources": {
     "leetcode": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Populating Next Right Pointers - BFS",
+        "url": "https://www.youtube.com/watch?v=U4hFQCa1Cq0",
+        "channel": "NeetCode",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Connect Nodes at Same Level",
+        "url": "https://www.youtube.com/watch?v=7rrH3Sp-9-Y",
+        "channel": "take U forward",
+        "duration": "14:15",
+        "language": "English"
+      },
+      {
+        "title": "Level Order Next Pointers",
+        "url": "https://www.youtube.com/watch?v=fLwZbXXiMWE",
+        "channel": "TECH DOSE",
+        "duration": "12:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Populating Next Right Pointers Solution",
+        "url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Connect Level Order Siblings Guide",
+        "url": "https://www.geeksforgeeks.org/connect-nodes-at-same-level/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Level Linking Pattern",
+        "url": "https://algo.monster/problems/populating_next_right_pointers",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Populating Next Right Pointers II",
+        "url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Right Side View",
+        "url": "https://leetcode.com/problems/binary-tree-right-side-view/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Flatten Binary Tree to Linked List",
+        "url": "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Connect Level Order Siblings when linking nodes at same level. Key indicators: connect next pointers, link same level nodes, create level-wise linked list, populate next pointers.",
+  "approaches": [
+    {
+      "name": "BFS with Level Processing (Optimal)",
+      "order": 1,
+      "intuition": "Use BFS to process nodes level by level. For each level, link nodes from left to right. Last node of level points to null. Track previous node to link with current.",
+      "approach": "Process tree level by level using queue. Within each level, maintain previous node pointer. Link previous.next to current node. After level, set last node's next to null.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize queue with root",
+        "While queue not empty:",
+        " - Get current level size",
+        " - Initialize prev = null",
+        " - For each node in current level:",
+        "   - Dequeue current node",
+        "   - If prev not null, set prev.next = current",
+        "   - Set prev = current",
+        "   - Enqueue left and right children",
+        " - Set prev.next = null (last node in level)",
+        "Return root"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node exactly once. Linking operation is O(1) per node. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Queue stores at most w nodes (max width). In worst case (complete tree), w = n/2. Space: O(w)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    Node* connect(Node* root) {\n        if (!root) return nullptr;\n        \n        queue<Node*> q;\n        q.push(root);\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            Node* prev = nullptr;\n            \n            for (int i = 0; i < levelSize; i++) {\n                Node* node = q.front();\n                q.pop();\n                \n                if (prev) {\n                    prev->next = node;\n                }\n                prev = node;\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n            \n            // Last node in level points to null\n            if (prev) prev->next = nullptr;\n        }\n        \n        return root;\n    }\n};",
+        "java": "class Solution {\n    public Node connect(Node root) {\n        if (root == null) return null;\n        \n        Queue<Node> queue = new LinkedList<>();\n        queue.offer(root);\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            Node prev = null;\n            \n            for (int i = 0; i < levelSize; i++) {\n                Node node = queue.poll();\n                \n                if (prev != null) {\n                    prev.next = node;\n                }\n                prev = node;\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            \n            // Last node in level points to null\n            if (prev != null) prev.next = null;\n        }\n        \n        return root;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def connect(self, root: 'Optional[Node]') -> 'Optional[Node]':\n        if not root:\n            return None\n        \n        queue = deque([root])\n        \n        while queue:\n            level_size = len(queue)\n            prev = None\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                \n                if prev:\n                    prev.next = node\n                prev = node\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            # Last node in level points to None\n            if prev:\n                prev.next = None\n        \n        return root",
+        "javascript": "function connect(root) {\n    if (!root) return null;\n    \n    const queue = [root];\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        let prev = null;\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            \n            if (prev) {\n                prev.next = node;\n            }\n            prev = node;\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        // Last node in level points to null\n        if (prev) prev.next = null;\n    }\n    \n    return root;\n}"
+      }
+    },
+    {
+      "name": "Level Order with O(1) Space (Optimal for Perfect Tree)",
+      "order": 2,
+      "intuition": "For perfect binary tree, can use already established next pointers to traverse levels. Use leftmost node of level as anchor. Connect children using parent's next pointers.",
+      "approach": "Use current level's next pointers to establish next level's connections. Start from leftmost, traverse right using next. Connect children before moving down.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize leftmost = root",
+        "While leftmost.left exists (has next level):",
+        " - Initialize current = leftmost",
+        " - While current exists:",
+        "   - Connect current.left.next = current.right",
+        "   - If current.next exists:",
+        "     - Connect current.right.next = current.next.left",
+        "   - Move current = current.next",
+        " - Move leftmost = leftmost.left",
+        "Return root"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Visit each node exactly once to establish connections. Each node processed in O(1). Total: O(n).",
+        "spaceExplanation": "No additional data structures used. Only constant extra variables. Space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    Node* connect(Node* root) {\n        if (!root) return nullptr;\n        \n        Node* leftmost = root;\n        \n        while (leftmost->left) {\n            Node* current = leftmost;\n            \n            while (current) {\n                // Connect left child to right child\n                current->left->next = current->right;\n                \n                // Connect right child to next node's left child\n                if (current->next) {\n                    current->right->next = current->next->left;\n                }\n                \n                current = current->next;\n            }\n            \n            leftmost = leftmost->left;\n        }\n        \n        return root;\n    }\n};",
+        "java": "class Solution {\n    public Node connect(Node root) {\n        if (root == null) return null;\n        \n        Node leftmost = root;\n        \n        while (leftmost.left != null) {\n            Node current = leftmost;\n            \n            while (current != null) {\n                // Connect left child to right child\n                current.left.next = current.right;\n                \n                // Connect right child to next node's left child\n                if (current.next != null) {\n                    current.right.next = current.next.left;\n                }\n                \n                current = current.next;\n            }\n            \n            leftmost = leftmost.left;\n        }\n        \n        return root;\n    }\n}",
+        "python": "class Solution:\n    def connect(self, root: 'Optional[Node]') -> 'Optional[Node]':\n        if not root:\n            return None\n        \n        leftmost = root\n        \n        while leftmost.left:\n            current = leftmost\n            \n            while current:\n                # Connect left child to right child\n                current.left.next = current.right\n                \n                # Connect right child to next node's left child\n                if current.next:\n                    current.right.next = current.next.left\n                \n                current = current.next\n            \n            leftmost = leftmost.left\n        \n        return root",
+        "javascript": "function connect(root) {\n    if (!root) return null;\n    \n    let leftmost = root;\n    \n    while (leftmost.left) {\n        let current = leftmost;\n        \n        while (current) {\n            // Connect left child to right child\n            current.left.next = current.right;\n            \n            // Connect right child to next node's left child\n            if (current.next) {\n                current.right.next = current.next.left;\n            }\n            \n            current = current.next;\n        }\n        \n        leftmost = leftmost.left;\n    }\n    \n    return root;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not setting last node's next to null explicitly",
+    "Forgetting to track previous node in level",
+    "Linking nodes across different levels",
+    "Not handling single node edge case",
+    "Confusing next pointer with parent-child relationship",
+    "Not checking if children exist before enqueuing",
+    "In O(1) space: forgetting to connect across parent boundaries",
+    "Not moving to leftmost node of next level"
+  ],
+  "hints": [
+    "Process nodes level by level using BFS",
+    "Track previous node to link with current",
+    "Last node in each level should point to null",
+    "For perfect tree, can use O(1) space approach",
+    "Already established next pointers help traverse levels",
+    "Connect children while traversing current level",
+    "Leftmost node of each level is the starting point"
+  ],
+  "followUp": [
+    "How to handle non-perfect binary tree?",
+    "Can we solve without using queue?",
+    "What if tree is very wide (millions of nodes per level)?",
+    "How to disconnect/remove next pointers?",
+    "Can we connect nodes diagonally instead?",
+    "What if we need to connect alternate levels?",
+    "How to find nth node in level-wise traversal?",
+    "Can we build this structure during tree construction?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Google",
+    "Bloomberg",
+    "LinkedIn",
+    "Apple",
+    "Adobe"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "BFS",
+    "Linked List",
+    "Level Order Traversal",
+    "Breadth First Search",
+    "Perfect Binary Tree"
+  ],
+  "relatedProblems": [
+    "Populating Next Right Pointers II",
+    "Binary Tree Level Order Traversal",
+    "Binary Tree Right Side View",
+    "Flatten Binary Tree to Linked List",
+    "Binary Tree Zigzag Level Order",
+    "Serialize and Deserialize Binary Tree",
+    "Vertical Order Traversal",
+    "Complete Binary Tree Inserter"
+  ]
 }

@@ -2,18 +2,192 @@
   "questionId": "694d4a3a98494915f3bc8ee4",
   "questionSlug": "balanced-parentheses-subsets",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/generate-parentheses/",
+    "videos": [
+      {
+        "title": "Generate Parentheses - Leetcode 22",
+        "url": "https://www.youtube.com/watch?v=s9fokUqJ76A",
+        "channel": "NeetCode",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Generate Valid Parentheses Combinations",
+        "url": "https://www.youtube.com/watch?v=qBbZ3tS0McI",
+        "channel": "TECH DOSE",
+        "duration": "16:45",
+        "language": "English"
+      },
+      {
+        "title": "Backtracking for Parentheses Generation",
+        "url": "https://www.youtube.com/watch?v=eyCj_u3PoJE",
+        "channel": "take U forward",
+        "duration": "19:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Generate Parentheses Solution",
+        "url": "https://leetcode.com/problems/generate-parentheses/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "All Combinations of Balanced Parentheses",
+        "url": "https://www.geeksforgeeks.org/print-all-combinations-of-balanced-parentheses/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Backtracking for Valid Parentheses",
+        "url": "https://algo.monster/problems/generate_parentheses",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Valid Parentheses",
+        "url": "https://leetcode.com/problems/valid-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove Invalid Parentheses",
+        "url": "https://leetcode.com/problems/remove-invalid-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Valid Parentheses",
+        "url": "https://leetcode.com/problems/longest-valid-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Different Ways to Add Parentheses",
+        "url": "https://leetcode.com/problems/different-ways-to-add-parentheses/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Balanced Parentheses Subsets pattern when generating all valid combinations of parentheses. Key indicators: generate all valid parentheses, n pairs of parentheses, balanced brackets, well-formed parentheses strings.",
+  "approaches": [
+    {
+      "name": "Backtracking with Constraints (Optimal)",
+      "order": 1,
+      "intuition": "Build parentheses string character by character using backtracking. Only add '(' if we have remaining open parentheses to use. Only add ')' if it won't make string invalid (more close than open). Track count of open and close parentheses used. When both reach n, we have valid combination.",
+      "approach": "Use recursive backtracking. At each step, try adding '(' if open < n, and try adding ')' if close < open. Base case: when string length is 2*n, add to result. Backtrack by building string incrementally.",
+      "steps": [
+        "Initialize result list and empty current string",
+        "Define backtrack function(current, open, close, n):",
+        " - If current.length == 2*n:",
+        "   - Add current to result",
+        "   - Return",
+        " - If open < n:",
+        "   - Add '(' to current",
+        "   - Recursively call backtrack(current, open+1, close, n)",
+        "   - Remove last character (backtrack)",
+        " - If close < open:",
+        "   - Add ')' to current",
+        "   - Recursively call backtrack(current, open, close+1, n)",
+        "   - Remove last character (backtrack)",
+        "Call backtrack('', 0, 0, n)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(4^n / √n) - Catalan number",
+        "space": "O(n)",
+        "timeExplanation": "Number of valid combinations is the nth Catalan number: C(n) = (2n)! / ((n+1)! * n!). This is approximately 4^n / (n * √n). We generate each valid combination.",
+        "spaceExplanation": "Recursion depth is 2n (maximum string length). Current string takes O(n) space. Total: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    void backtrack(vector<string>& result, string current, int open, int close, int n) {\n        if (current.length() == 2 * n) {\n            result.push_back(current);\n            return;\n        }\n        \n        // Add '(' if we can\n        if (open < n) {\n            backtrack(result, current + '(', open + 1, close, n);\n        }\n        \n        // Add ')' if it keeps string valid\n        if (close < open) {\n            backtrack(result, current + ')', open, close + 1, n);\n        }\n    }\n    \npublic:\n    vector<string> generateParenthesis(int n) {\n        vector<string> result;\n        backtrack(result, \"\", 0, 0, n);\n        return result;\n    }\n};",
+        "java": "class Solution {\n    private void backtrack(List<String> result, StringBuilder current, int open, int close, int n) {\n        if (current.length() == 2 * n) {\n            result.add(current.toString());\n            return;\n        }\n        \n        // Add '(' if we can\n        if (open < n) {\n            current.append('(');\n            backtrack(result, current, open + 1, close, n);\n            current.deleteCharAt(current.length() - 1);\n        }\n        \n        // Add ')' if it keeps string valid\n        if (close < open) {\n            current.append(')');\n            backtrack(result, current, open, close + 1, n);\n            current.deleteCharAt(current.length() - 1);\n        }\n    }\n    \n    public List<String> generateParenthesis(int n) {\n        List<String> result = new ArrayList<>();\n        backtrack(result, new StringBuilder(), 0, 0, n);\n        return result;\n    }\n}",
+        "python": "class Solution:\n    def generateParenthesis(self, n: int) -> List[str]:\n        result = []\n        \n        def backtrack(current, open_count, close_count):\n            if len(current) == 2 * n:\n                result.append(current)\n                return\n            \n            # Add '(' if we can\n            if open_count < n:\n                backtrack(current + '(', open_count + 1, close_count)\n            \n            # Add ')' if it keeps string valid\n            if close_count < open_count:\n                backtrack(current + ')', open_count, close_count + 1)\n        \n        backtrack('', 0, 0)\n        return result",
+        "javascript": "function generateParenthesis(n) {\n    const result = [];\n    \n    function backtrack(current, open, close) {\n        if (current.length === 2 * n) {\n            result.push(current);\n            return;\n        }\n        \n        // Add '(' if we can\n        if (open < n) {\n            backtrack(current + '(', open + 1, close);\n        }\n        \n        // Add ')' if it keeps string valid\n        if (close < open) {\n            backtrack(current + ')', open, close + 1);\n        }\n    }\n    \n    backtrack('', 0, 0);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Dynamic Programming (Closure Number)",
+      "order": 2,
+      "intuition": "Build valid combinations for n pairs using combinations from smaller values. Each valid string can be decomposed as '(' + (valid string with i pairs) + ')' + (valid string with n-1-i pairs). Use DP to build up from base case n=0 (empty string) to n.",
+      "approach": "Use DP where dp[i] contains all valid combinations for i pairs. For each n, iterate through all ways to split: use i pairs inside first parentheses, n-1-i pairs outside. Combine results from smaller subproblems.",
+      "steps": [
+        "Initialize dp array where dp[i] = list of valid strings with i pairs",
+        "Base case: dp[0] = ['']",
+        "For i from 1 to n:",
+        " - dp[i] = []",
+        " - For j from 0 to i-1:",
+        "   - For left in dp[j]:",
+        "     - For right in dp[i-1-j]:",
+        "       - Add '(' + left + ')' + right to dp[i]",
+        "Return dp[n]"
+      ],
+      "complexity": {
+        "time": "O(4^n / √n)",
+        "space": "O(4^n / √n)",
+        "timeExplanation": "Generate all valid combinations (Catalan number). Each combination created once. Same asymptotic complexity as backtracking.",
+        "spaceExplanation": "Store all valid combinations for each value from 0 to n. Total combinations is O(4^n / √n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> generateParenthesis(int n) {\n        vector<vector<string>> dp(n + 1);\n        dp[0] = {\"\"};\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                for (const string& left : dp[j]) {\n                    for (const string& right : dp[i - 1 - j]) {\n                        dp[i].push_back(\"(\" + left + \")\" + right);\n                    }\n                }\n            }\n        }\n        \n        return dp[n];\n    }\n};",
+        "java": "class Solution {\n    public List<String> generateParenthesis(int n) {\n        List<List<String>> dp = new ArrayList<>();\n        \n        for (int i = 0; i <= n; i++) {\n            dp.add(new ArrayList<>());\n        }\n        \n        dp.get(0).add(\"\");\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                for (String left : dp.get(j)) {\n                    for (String right : dp.get(i - 1 - j)) {\n                        dp.get(i).add(\"(\" + left + \")\" + right);\n                    }\n                }\n            }\n        }\n        \n        return dp.get(n);\n    }\n}",
+        "python": "class Solution:\n    def generateParenthesis(self, n: int) -> List[str]:\n        dp = [[] for _ in range(n + 1)]\n        dp[0] = ['']\n        \n        for i in range(1, n + 1):\n            for j in range(i):\n                for left in dp[j]:\n                    for right in dp[i - 1 - j]:\n                        dp[i].append(f'({left}){right}')\n        \n        return dp[n]",
+        "javascript": "function generateParenthesis(n) {\n    const dp = Array.from({ length: n + 1 }, () => []);\n    dp[0] = [''];\n    \n    for (let i = 1; i <= n; i++) {\n        for (let j = 0; j < i; j++) {\n            for (const left of dp[j]) {\n                for (const right of dp[i - 1 - j]) {\n                    dp[i].push(`(${left})${right}`);\n                }\n            }\n        }\n    }\n    \n    return dp[n];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Adding ')' before '(' (violates validity constraint)",
+    "Not tracking both open and close parentheses counts separately",
+    "Allowing close count to exceed open count (makes invalid string)",
+    "Not checking if open < n before adding '('",
+    "Generating all 2^(2n) strings then filtering (too slow)",
+    "Forgetting base case in recursion (when length == 2*n)",
+    "Not backtracking properly in recursive solution",
+    "Modifying shared string/list without copying in recursion"
+  ],
+  "hints": [
+    "Use backtracking to build strings character by character",
+    "Only add '(' if you haven't used all n open parentheses",
+    "Only add ')' if it won't make string invalid (close < open)",
+    "Base case: when string length reaches 2*n, add to result",
+    "Number of valid combinations is the nth Catalan number",
+    "Can also solve with DP: build n-pair solutions from smaller solutions",
+    "Key insight: at any point, close_count ≤ open_count ≤ n"
+  ],
+  "followUp": [
+    "How to check if a given string is valid? (Use stack)",
+    "What if you need the kth valid combination? (Can optimize with math)",
+    "How to generate valid strings with different bracket types []{}()?",
+    "What if you need to count valid combinations without generating?",
+    "How to find longest valid parentheses substring in a string?",
+    "What if you need minimum insertions to make string valid?",
+    "How to handle if n is very large (> 10)?",
+    "What if you need to remove minimum parentheses to make valid?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Uber",
+    "Oracle"
+  ],
+  "tags": [
+    "String",
+    "Backtracking",
+    "Dynamic Programming",
+    "Recursion"
+  ],
+  "relatedProblems": [
+    "Valid Parentheses",
+    "Remove Invalid Parentheses",
+    "Longest Valid Parentheses",
+    "Different Ways to Add Parentheses",
+    "Minimum Add to Make Parentheses Valid",
+    "Minimum Remove to Make Valid Parentheses",
+    "Check if a Parentheses String Can Be Valid",
+    "Score of Parentheses"
+  ]
 }

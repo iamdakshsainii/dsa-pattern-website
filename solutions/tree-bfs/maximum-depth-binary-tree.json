@@ -3,17 +3,183 @@
   "questionSlug": "maximum-depth-binary-tree",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum Depth of Binary Tree",
+        "url": "https://www.youtube.com/watch?v=hTM3phVI6YQ",
+        "channel": "NeetCode",
+        "duration": "5:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Max Depth - DFS & BFS",
+        "url": "https://www.youtube.com/watch?v=YT1994beXn0",
+        "channel": "take U forward",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Tree Height Calculation",
+        "url": "https://www.youtube.com/watch?v=_pnqMz5nrRs",
+        "channel": "Abdul Bari",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Depth Solution",
+        "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find Tree Height Guide",
+        "url": "https://www.geeksforgeeks.org/write-a-c-program-to-find-the-maximum-depth-or-height-of-a-tree/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Tree Depth Pattern",
+        "url": "https://algo.monster/problems/maximum_depth_binary_tree",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Minimum Depth of Binary Tree",
+        "url": "https://leetcode.com/problems/minimum-depth-of-binary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Balanced Binary Tree",
+        "url": "https://leetcode.com/problems/balanced-binary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Diameter of Binary Tree",
+        "url": "https://leetcode.com/problems/diameter-of-binary-tree/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Depth of N-ary Tree",
+        "url": "https://leetcode.com/problems/maximum-depth-of-n-ary-tree/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Maximum Depth when finding tree height or longest path. Key indicators: maximum depth, tree height, farthest leaf, longest root-to-leaf path.",
+  "approaches": [
+    {
+      "name": "DFS Recursive (Optimal)",
+      "order": 1,
+      "intuition": "Height of tree equals 1 plus maximum height of its subtrees. Use recursion to find max depth of left and right subtrees, return 1 + max of both. Base case: null node has depth 0.",
+      "approach": "Recursively compute max depth. For each node, depth is 1 + max(left depth, right depth).",
+      "steps": [
+        "If node is null, return 0",
+        "Recursively compute leftDepth = maxDepth(left)",
+        "Recursively compute rightDepth = maxDepth(right)",
+        "Return 1 + max(leftDepth, rightDepth)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node exactly once. Each node processed in O(1) time. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Recursion stack depth equals tree height h. Worst case (skewed tree): h = n, O(n). Best case (balanced): h = log n, O(log n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n        if (!root) return 0;\n        \n        int leftDepth = maxDepth(root->left);\n        int rightDepth = maxDepth(root->right);\n        \n        return 1 + max(leftDepth, rightDepth);\n    }\n};",
+        "java": "class Solution {\n    public int maxDepth(TreeNode root) {\n        if (root == null) return 0;\n        \n        int leftDepth = maxDepth(root.left);\n        int rightDepth = maxDepth(root.right);\n        \n        return 1 + Math.max(leftDepth, rightDepth);\n    }\n}",
+        "python": "class Solution:\n    def maxDepth(self, root: Optional[TreeNode]) -> int:\n        if not root:\n            return 0\n        \n        left_depth = self.maxDepth(root.left)\n        right_depth = self.maxDepth(root.right)\n        \n        return 1 + max(left_depth, right_depth)",
+        "javascript": "function maxDepth(root) {\n    if (!root) return 0;\n    \n    const leftDepth = maxDepth(root.left);\n    const rightDepth = maxDepth(root.right);\n    \n    return 1 + Math.max(leftDepth, rightDepth);\n}"
+      }
+    },
+    {
+      "name": "BFS with Level Counting (Alternative)",
+      "order": 2,
+      "intuition": "Use BFS to process tree level by level. Count number of levels traversed. Last level reached equals maximum depth.",
+      "approach": "Use queue for BFS. Track depth/level counter. Process each level completely, increment depth. Return depth after all levels processed.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize queue with root and depth = 0",
+        "While queue not empty:",
+        " - Increment depth",
+        " - Get current level size",
+        " - For each node in current level:",
+        "   - Dequeue node",
+        "   - Enqueue left child if exists",
+        "   - Enqueue right child if exists",
+        "Return depth"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node exactly once. Each node processed in O(1) time. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Queue stores at most w nodes (max width). In worst case (complete tree), w = n/2. Space: O(w) ≈ O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n        if (!root) return 0;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        int depth = 0;\n        \n        while (!q.empty()) {\n            depth++;\n            int levelSize = q.size();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n        }\n        \n        return depth;\n    }\n};",
+        "java": "class Solution {\n    public int maxDepth(TreeNode root) {\n        if (root == null) return 0;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        int depth = 0;\n        \n        while (!queue.isEmpty()) {\n            depth++;\n            int levelSize = queue.size();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n        }\n        \n        return depth;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def maxDepth(self, root: Optional[TreeNode]) -> int:\n        if not root:\n            return 0\n        \n        queue = deque([root])\n        depth = 0\n        \n        while queue:\n            depth += 1\n            level_size = len(queue)\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        \n        return depth",
+        "javascript": "function maxDepth(root) {\n    if (!root) return 0;\n    \n    const queue = [root];\n    let depth = 0;\n    \n    while (queue.length > 0) {\n        depth++;\n        const levelSize = queue.length;\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n    }\n    \n    return depth;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting base case (null returns 0)",
+    "Using min instead of max",
+    "Not adding 1 to subtree depths",
+    "Counting nodes instead of depth",
+    "Starting depth at 0 instead of 1 for root",
+    "Not tracking level properly in BFS",
+    "Confusing depth with number of nodes",
+    "Off-by-one errors in depth calculation"
+  ],
+  "hints": [
+    "Tree depth = 1 + max depth of subtrees",
+    "Null node has depth 0",
+    "Leaf node has depth 1",
+    "DFS recursion is most elegant",
+    "BFS counts levels explicitly",
+    "Height and maximum depth are same concept",
+    "Can also solve iteratively with stack"
+  ],
+  "followUp": [
+    "How to find diameter of tree?",
+    "What if we need depth of each node?",
+    "How to find deepest leaf node?",
+    "Can we do this iteratively without queue?",
+    "What if tree has parent pointers?",
+    "How to handle n-ary tree?",
+    "Can we find depth in O(1) space?",
+    "How to find all nodes at maximum depth?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Google",
+    "Apple",
+    "LinkedIn",
+    "Bloomberg",
+    "Adobe"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "DFS",
+    "BFS",
+    "Recursion",
+    "Depth First Search",
+    "Breadth First Search"
+  ],
+  "relatedProblems": [
+    "Minimum Depth of Binary Tree",
+    "Balanced Binary Tree",
+    "Diameter of Binary Tree",
+    "Binary Tree Level Order Traversal",
+    "Maximum Depth of N-ary Tree",
+    "Count Complete Tree Nodes",
+    "Path Sum",
+    "Binary Tree Paths"
+  ]
 }

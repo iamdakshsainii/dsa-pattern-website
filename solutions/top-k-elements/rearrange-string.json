@@ -2,18 +2,190 @@
   "questionId": "694d4a3a98494915f3bc8f02",
   "questionSlug": "rearrange-string",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/reorganize-string/",
+    "videos": [
+      {
+        "title": "Reorganize String - Leetcode 767",
+        "url": "https://www.youtube.com/watch?v=2g_b1aYTHeg",
+        "channel": "NeetCode",
+        "duration": "11:20",
+        "language": "English"
+      },
+      {
+        "title": "Rearrange String Heap Solution",
+        "url": "https://www.youtube.com/watch?v=zaM_GLLvysw",
+        "channel": "TECH DOSE",
+        "duration": "15:45",
+        "language": "English"
+      },
+      {
+        "title": "Reorganize String Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=_SiwrPXG9-g",
+        "channel": "take U forward",
+        "duration": "19:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Reorganize String Solution",
+        "url": "https://leetcode.com/problems/reorganize-string/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Rearrange String No Adjacent Same",
+        "url": "https://www.geeksforgeeks.org/rearrange-characters-string-no-two-adjacent/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Greedy String Rearrangement",
+        "url": "https://algo.monster/problems/reorganize_string",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Task Scheduler",
+        "url": "https://leetcode.com/problems/task-scheduler/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Rearrange String k Distance Apart",
+        "url": "https://leetcode.com/problems/rearrange-string-k-distance-apart/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Sort Characters By Frequency",
+        "url": "https://leetcode.com/problems/sort-characters-by-frequency/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Happy String",
+        "url": "https://leetcode.com/problems/longest-happy-string/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Rearrange String pattern when reorganizing characters to avoid adjacency. Key indicators: no two adjacent same characters, rearrange string, max heap by frequency, greedy placement.",
+  "approaches": [
+    {
+      "name": "Max Heap Greedy (Optimal)",
+      "order": 1,
+      "intuition": "Greedily place most frequent character first (avoiding adjacency). Use max heap to track frequencies. Always pick character with highest frequency that's not same as previous. If can't find such character, impossible.",
+      "approach": "Count frequencies. Build max heap. Repeatedly extract most frequent char, append to result, decrease frequency. If frequency still > 0, store temporarily and add back after placing different char next.",
+      "steps": [
+        "Count character frequencies using HashMap",
+        "Build max heap from frequencies",
+        "Initialize result string",
+        "Initialize previous character = null",
+        "While heap not empty:",
+        " - Extract most frequent character",
+        " - Append to result",
+        " - If previous != null: add previous back to heap",
+        " - Decrease current character frequency",
+        " - If frequency > 0: set as previous (don't add to heap yet)",
+        " - Else: set previous = null",
+        "If previous still exists: return '' (impossible)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Count frequencies: O(n). Build heap of k unique chars: O(k). Process n characters with heap operations: O(n log k). Total: O(n log k).",
+        "spaceExplanation": "Heap stores k unique characters. O(k) space where k ≤ 26 for lowercase letters."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string reorganizeString(string s) {\n        unordered_map<char, int> freq;\n        for (char c : s) {\n            freq[c]++;\n        }\n        \n        // Check if possible\n        int maxFreq = 0;\n        for (auto& [ch, count] : freq) {\n            maxFreq = max(maxFreq, count);\n        }\n        if (maxFreq > (s.length() + 1) / 2) {\n            return \"\";\n        }\n        \n        auto comp = [](const pair<char,int>& a, const pair<char,int>& b) {\n            return a.second < b.second;\n        };\n        priority_queue<pair<char,int>, vector<pair<char,int>>, decltype(comp)> maxHeap(comp);\n        \n        for (auto& [ch, count] : freq) {\n            maxHeap.push({ch, count});\n        }\n        \n        string result;\n        pair<char,int> prev = {'#', 0};\n        \n        while (!maxHeap.empty()) {\n            auto [ch, count] = maxHeap.top();\n            maxHeap.pop();\n            \n            result += ch;\n            \n            if (prev.second > 0) {\n                maxHeap.push(prev);\n            }\n            \n            count--;\n            prev = {ch, count};\n        }\n        \n        return result.length() == s.length() ? result : \"\";\n    }\n};",
+        "java": "class Solution {\n    public String reorganizeString(String s) {\n        Map<Character, Integer> freq = new HashMap<>();\n        for (char c : s.toCharArray()) {\n            freq.put(c, freq.getOrDefault(c, 0) + 1);\n        }\n        \n        // Check if possible\n        int maxFreq = 0;\n        for (int count : freq.values()) {\n            maxFreq = Math.max(maxFreq, count);\n        }\n        if (maxFreq > (s.length() + 1) / 2) {\n            return \"\";\n        }\n        \n        PriorityQueue<Map.Entry<Character, Integer>> maxHeap = \n            new PriorityQueue<>((a, b) -> b.getValue() - a.getValue());\n        maxHeap.addAll(freq.entrySet());\n        \n        StringBuilder result = new StringBuilder();\n        Map.Entry<Character, Integer> prev = null;\n        \n        while (!maxHeap.isEmpty()) {\n            Map.Entry<Character, Integer> curr = maxHeap.poll();\n            result.append(curr.getKey());\n            \n            if (prev != null && prev.getValue() > 0) {\n                maxHeap.offer(prev);\n            }\n            \n            curr.setValue(curr.getValue() - 1);\n            prev = curr;\n        }\n        \n        return result.length() == s.length() ? result.toString() : \"\";\n    }\n}",
+        "python": "from collections import Counter\nimport heapq\n\nclass Solution:\n    def reorganizeString(self, s: str) -> str:\n        freq = Counter(s)\n        \n        # Check if possible\n        max_freq = max(freq.values())\n        if max_freq > (len(s) + 1) // 2:\n            return \"\"\n        \n        # Python heapq is min heap, use negative for max heap\n        max_heap = [(-count, char) for char, count in freq.items()]\n        heapq.heapify(max_heap)\n        \n        result = []\n        prev_count, prev_char = 0, ''\n        \n        while max_heap:\n            count, char = heapq.heappop(max_heap)\n            result.append(char)\n            \n            if prev_count < 0:\n                heapq.heappush(max_heap, (prev_count, prev_char))\n            \n            count += 1  # was negative, so +1 decreases\n            prev_count, prev_char = count, char\n        \n        return ''.join(result) if len(result) == len(s) else \"\"",
+        "javascript": "class MaxHeap {\n    constructor(compareFn) {\n        this.heap = [];\n        this.compare = compareFn;\n    }\n    \n    push(val) {\n        this.heap.push(val);\n        this.bubbleUp(this.heap.length - 1);\n    }\n    \n    pop() {\n        if (this.heap.length === 0) return null;\n        if (this.heap.length === 1) return this.heap.pop();\n        \n        const max = this.heap[0];\n        this.heap[0] = this.heap.pop();\n        this.bubbleDown(0);\n        return max;\n    }\n    \n    size() {\n        return this.heap.length;\n    }\n    \n    bubbleUp(idx) {\n        while (idx > 0) {\n            const parent = Math.floor((idx - 1) / 2);\n            if (this.compare(this.heap[parent], this.heap[idx]) >= 0) break;\n            [this.heap[parent], this.heap[idx]] = [this.heap[idx], this.heap[parent]];\n            idx = parent;\n        }\n    }\n    \n    bubbleDown(idx) {\n        while (true) {\n            const left = 2 * idx + 1;\n            const right = 2 * idx + 2;\n            let largest = idx;\n            \n            if (left < this.heap.length && this.compare(this.heap[left], this.heap[largest]) > 0) {\n                largest = left;\n            }\n            if (right < this.heap.length && this.compare(this.heap[right], this.heap[largest]) > 0) {\n                largest = right;\n            }\n            if (largest === idx) break;\n            \n            [this.heap[idx], this.heap[largest]] = [this.heap[largest], this.heap[idx]];\n            idx = largest;\n        }\n    }\n}\n\nfunction reorganizeString(s) {\n    const freq = new Map();\n    for (const char of s) {\n        freq.set(char, (freq.get(char) || 0) + 1);\n    }\n    \n    // Check if possible\n    const maxFreq = Math.max(...freq.values());\n    if (maxFreq > Math.ceil(s.length / 2)) {\n        return \"\";\n    }\n    \n    const maxHeap = new MaxHeap((a, b) => a[1] - b[1]);\n    for (const [char, count] of freq.entries()) {\n        maxHeap.push([char, count]);\n    }\n    \n    let result = '';\n    let prev = null;\n    \n    while (maxHeap.size() > 0) {\n        const [char, count] = maxHeap.pop();\n        result += char;\n        \n        if (prev && prev[1] > 0) {\n            maxHeap.push(prev);\n        }\n        \n        prev = [char, count - 1];\n    }\n    \n    return result.length === s.length ? result : \"\";\n}"
+      }
+    },
+    {
+      "name": "Even-Odd Position Placement",
+      "order": 2,
+      "intuition": "Place most frequent character at even positions (0, 2, 4, ...), then odd positions. This ensures no two same characters adjacent. If most frequent appears more than (n+1)/2 times, impossible.",
+      "approach": "Count frequencies. Find most frequent character. Place it at even indices first. If any left, return empty. Then place remaining characters at available positions.",
+      "steps": [
+        "Count character frequencies",
+        "Find character with maximum frequency",
+        "Check if maxFreq > (n+1)/2: return ''",
+        "Create result array of size n",
+        "Start index = 0",
+        "Place most frequent char at even positions (0, 2, 4, ...)",
+        "For remaining characters:",
+        " - Place at next available position",
+        " - Wrap to odd positions (1, 3, 5, ...) if needed",
+        "Return result as string"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Count frequencies: O(n). Place characters: O(n). Total: O(n). Note: O(1) if considering only 26 lowercase letters.",
+        "spaceExplanation": "Frequency map for 26 letters: O(1). Result array: O(n) but that's output."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string reorganizeString(string s) {\n        int n = s.length();\n        vector<int> freq(26, 0);\n        char maxChar = 'a';\n        int maxFreq = 0;\n        \n        for (char c : s) {\n            freq[c - 'a']++;\n            if (freq[c - 'a'] > maxFreq) {\n                maxFreq = freq[c - 'a'];\n                maxChar = c;\n            }\n        }\n        \n        if (maxFreq > (n + 1) / 2) {\n            return \"\";\n        }\n        \n        vector<char> result(n);\n        int idx = 0;\n        \n        // Place most frequent character at even positions\n        while (freq[maxChar - 'a']-- > 0) {\n            result[idx] = maxChar;\n            idx += 2;\n        }\n        \n        // Place remaining characters\n        for (int i = 0; i < 26; i++) {\n            char ch = 'a' + i;\n            while (freq[i]-- > 0) {\n                if (idx >= n) {\n                    idx = 1; // Switch to odd positions\n                }\n                result[idx] = ch;\n                idx += 2;\n            }\n        }\n        \n        return string(result.begin(), result.end());\n    }\n};",
+        "java": "class Solution {\n    public String reorganizeString(String s) {\n        int n = s.length();\n        int[] freq = new int[26];\n        char maxChar = 'a';\n        int maxFreq = 0;\n        \n        for (char c : s.toCharArray()) {\n            freq[c - 'a']++;\n            if (freq[c - 'a'] > maxFreq) {\n                maxFreq = freq[c - 'a'];\n                maxChar = c;\n            }\n        }\n        \n        if (maxFreq > (n + 1) / 2) {\n            return \"\";\n        }\n        \n        char[] result = new char[n];\n        int idx = 0;\n        \n        // Place most frequent character at even positions\n        while (freq[maxChar - 'a']-- > 0) {\n            result[idx] = maxChar;\n            idx += 2;\n        }\n        \n        // Place remaining characters\n        for (int i = 0; i < 26; i++) {\n            char ch = (char)('a' + i);\n            while (freq[i]-- > 0) {\n                if (idx >= n) {\n                    idx = 1;\n                }\n                result[idx] = ch;\n                idx += 2;\n            }\n        }\n        \n        return new String(result);\n    }\n}",
+        "python": "class Solution:\n    def reorganizeString(self, s: str) -> str:\n        from collections import Counter\n        \n        n = len(s)\n        freq = Counter(s)\n        max_char = max(freq, key=freq.get)\n        max_freq = freq[max_char]\n        \n        if max_freq > (n + 1) // 2:\n            return \"\"\n        \n        result = [''] * n\n        idx = 0\n        \n        # Place most frequent character at even positions\n        for _ in range(freq[max_char]):\n            result[idx] = max_char\n            idx += 2\n        del freq[max_char]\n        \n        # Place remaining characters\n        for char, count in freq.items():\n            for _ in range(count):\n                if idx >= n:\n                    idx = 1\n                result[idx] = char\n                idx += 2\n        \n        return ''.join(result)",
+        "javascript": "function reorganizeString(s) {\n    const n = s.length;\n    const freq = new Array(26).fill(0);\n    let maxChar = 'a';\n    let maxFreq = 0;\n    \n    for (const char of s) {\n        const idx = char.charCodeAt(0) - 97;\n        freq[idx]++;\n        if (freq[idx] > maxFreq) {\n            maxFreq = freq[idx];\n            maxChar = char;\n        }\n    }\n    \n    if (maxFreq > Math.ceil(n / 2)) {\n        return \"\";\n    }\n    \n    const result = new Array(n);\n    let idx = 0;\n    \n    // Place most frequent character at even positions\n    const maxIdx = maxChar.charCodeAt(0) - 97;\n    while (freq[maxIdx]-- > 0) {\n        result[idx] = maxChar;\n        idx += 2;\n    }\n    \n    // Place remaining characters\n    for (let i = 0; i < 26; i++) {\n        const char = String.fromCharCode(97 + i);\n        while (freq[i]-- > 0) {\n            if (idx >= n) {\n                idx = 1;\n            }\n            result[idx] = char;\n            idx += 2;\n        }\n    }\n    \n    return result.join('');\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if rearrangement is possible before starting",
+    "Using min heap instead of max heap",
+    "Not storing previous character properly in heap approach",
+    "Placing characters randomly instead of greedily by frequency",
+    "Forgetting to add previous character back to heap",
+    "Off-by-one errors in even/odd position placement",
+    "Not handling case where most frequent char exceeds (n+1)/2",
+    "Creating result of wrong size"
+  ],
+  "hints": [
+    "If maxFreq > (n+1)/2, rearrangement is impossible",
+    "Greedy: always place most frequent character first",
+    "Use max heap to track frequencies",
+    "Store previous character temporarily to avoid consecutive placement",
+    "Alternative: place most frequent at even positions (0,2,4,...)",
+    "Then place remaining characters at available positions",
+    "Even-odd approach is O(n) but only works for fixed alphabet size"
+  ],
+  "followUp": [
+    "What if we need k distance apart instead of just 1?",
+    "How to maximize length if impossible to use all characters?",
+    "What if we have constraints on certain character positions?",
+    "How to handle if some characters must be together?",
+    "What if we need lexicographically smallest rearrangement?",
+    "How to solve if alphabet size is very large (Unicode)?",
+    "What if we need to count number of valid rearrangements?",
+    "How to optimize for multiple rearrangement queries?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Bloomberg",
+    "Uber",
+    "Apple",
+    "Adobe"
+  ],
+  "tags": [
+    "String",
+    "Hash Table",
+    "Heap",
+    "Greedy",
+    "Sorting",
+    "Counting"
+  ],
+  "relatedProblems": [
+    "Task Scheduler",
+    "Rearrange String k Distance Apart",
+    "Sort Characters By Frequency",
+    "Longest Happy String",
+    "Distant Barcodes",
+    "Maximum Length of a Concatenated String"
+  ]
 }

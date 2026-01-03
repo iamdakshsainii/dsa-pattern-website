@@ -3,17 +3,181 @@
   "questionSlug": "max-sum-subarray-k",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum Sum Subarray of Size K - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=KtpqeN0Goro",
+        "channel": "take U forward",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Sliding Window Technique - Max Sum",
+        "url": "https://www.youtube.com/watch?v=jM2dhDPYMQM",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Fixed Size Sliding Window Pattern",
+        "url": "https://www.youtube.com/watch?v=MK-NZ4hN7rs",
+        "channel": "Aditya Verma",
+        "duration": "15:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Sum Subarray of Size K",
+        "url": "https://www.geeksforgeeks.org/find-maximum-minimum-sum-subarray-size-k/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Sliding Window Technique",
+        "url": "https://algo.monster/problems/sliding_window_intro",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Fixed Size Sliding Window",
+        "url": "https://leetcode.com/discuss/study-guide/1773891/Sliding-Window-Technique-and-Question-Bank",
+        "source": "LeetCode"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Average Subarray I",
+        "url": "https://leetcode.com/problems/maximum-average-subarray-i/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Size Subarray Sum",
+        "url": "https://leetcode.com/problems/minimum-size-subarray-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Points You Can Obtain from Cards",
+        "url": "https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Substring Without Repeating Characters",
+        "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Max Sum Subarray K when: fixed window size K, find maximum sum, contiguous subarray, optimize from O(n*k) brute force. Keywords: 'size k', 'maximum sum', 'subarray', 'window'.",
+  "approaches": [
+    {
+      "name": "Sliding Window (Optimal)",
+      "order": 1,
+      "intuition": "Instead of recalculating sum for each window of size k, slide the window by removing leftmost element and adding new rightmost element. This reduces time from O(n*k) to O(n). Maintain running sum and update maximum.",
+      "approach": "Calculate sum of first k elements. Then slide window: subtract arr[i-k], add arr[i], update max. Single pass through array.",
+      "steps": [
+        "Calculate sum of first k elements as windowSum",
+        "Initialize maxSum = windowSum",
+        "Iterate from index k to n-1:",
+        "  - Remove left element: windowSum -= arr[i-k]",
+        "  - Add new element: windowSum += arr[i]",
+        "  - Update maxSum = max(maxSum, windowSum)",
+        "Return maxSum"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array of n elements. Each element visited once.",
+        "spaceExplanation": "Only storing windowSum and maxSum variables. Constant space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxSumSubarray(vector<int>& arr, int k) {\n        int n = arr.size();\n        if (n < k) return -1;\n        \n        // Calculate sum of first window\n        int windowSum = 0;\n        for (int i = 0; i < k; i++) {\n            windowSum += arr[i];\n        }\n        \n        int maxSum = windowSum;\n        \n        // Slide the window\n        for (int i = k; i < n; i++) {\n            windowSum = windowSum - arr[i - k] + arr[i];\n            maxSum = max(maxSum, windowSum);\n        }\n        \n        return maxSum;\n    }\n};",
+        "java": "class Solution {\n    public int maxSumSubarray(int[] arr, int k) {\n        int n = arr.length;\n        if (n < k) return -1;\n        \n        // Calculate sum of first window\n        int windowSum = 0;\n        for (int i = 0; i < k; i++) {\n            windowSum += arr[i];\n        }\n        \n        int maxSum = windowSum;\n        \n        // Slide the window\n        for (int i = k; i < n; i++) {\n            windowSum = windowSum - arr[i - k] + arr[i];\n            maxSum = Math.max(maxSum, windowSum);\n        }\n        \n        return maxSum;\n    }\n}",
+        "python": "class Solution:\n    def maxSumSubarray(self, arr: List[int], k: int) -> int:\n        n = len(arr)\n        if n < k:\n            return -1\n        \n        # Calculate sum of first window\n        window_sum = sum(arr[:k])\n        max_sum = window_sum\n        \n        # Slide the window\n        for i in range(k, n):\n            window_sum = window_sum - arr[i - k] + arr[i]\n            max_sum = max(max_sum, window_sum)\n        \n        return max_sum",
+        "javascript": "function maxSumSubarray(arr, k) {\n    const n = arr.length;\n    if (n < k) return -1;\n    \n    // Calculate sum of first window\n    let windowSum = 0;\n    for (let i = 0; i < k; i++) {\n        windowSum += arr[i];\n    }\n    \n    let maxSum = windowSum;\n    \n    // Slide the window\n    for (let i = k; i < n; i++) {\n        windowSum = windowSum - arr[i - k] + arr[i];\n        maxSum = Math.max(maxSum, windowSum);\n    }\n    \n    return maxSum;\n}"
+      }
+    },
+    {
+      "name": "Brute Force",
+      "order": 2,
+      "intuition": "Calculate sum for every possible window of size k. Check all starting positions from 0 to n-k. For each position, sum k elements. Track maximum sum seen.",
+      "approach": "Nested loops: outer loop for window start position, inner loop to calculate sum of k elements. Update max after each window.",
+      "steps": [
+        "Initialize maxSum = INT_MIN",
+        "For i from 0 to n-k:",
+        "  - Initialize currentSum = 0",
+        "  - For j from i to i+k-1:",
+        "    - currentSum += arr[j]",
+        "  - Update maxSum = max(maxSum, currentSum)",
+        "Return maxSum"
+      ],
+      "complexity": {
+        "time": "O(n*k)",
+        "space": "O(1)",
+        "timeExplanation": "Outer loop runs (n-k+1) times. Inner loop runs k times. Total: O(n*k).",
+        "spaceExplanation": "Only storing sum variables. Constant space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxSumSubarray(vector<int>& arr, int k) {\n        int n = arr.size();\n        if (n < k) return -1;\n        \n        int maxSum = INT_MIN;\n        \n        for (int i = 0; i <= n - k; i++) {\n            int currentSum = 0;\n            for (int j = i; j < i + k; j++) {\n                currentSum += arr[j];\n            }\n            maxSum = max(maxSum, currentSum);\n        }\n        \n        return maxSum;\n    }\n};",
+        "java": "class Solution {\n    public int maxSumSubarray(int[] arr, int k) {\n        int n = arr.length;\n        if (n < k) return -1;\n        \n        int maxSum = Integer.MIN_VALUE;\n        \n        for (int i = 0; i <= n - k; i++) {\n            int currentSum = 0;\n            for (int j = i; j < i + k; j++) {\n                currentSum += arr[j];\n            }\n            maxSum = Math.max(maxSum, currentSum);\n        }\n        \n        return maxSum;\n    }\n}",
+        "python": "class Solution:\n    def maxSumSubarray(self, arr: List[int], k: int) -> int:\n        n = len(arr)\n        if n < k:\n            return -1\n        \n        max_sum = float('-inf')\n        \n        for i in range(n - k + 1):\n            current_sum = sum(arr[i:i+k])\n            max_sum = max(max_sum, current_sum)\n        \n        return max_sum",
+        "javascript": "function maxSumSubarray(arr, k) {\n    const n = arr.length;\n    if (n < k) return -1;\n    \n    let maxSum = -Infinity;\n    \n    for (let i = 0; i <= n - k; i++) {\n        let currentSum = 0;\n        for (let j = i; j < i + k; j++) {\n            currentSum += arr[j];\n        }\n        maxSum = Math.max(maxSum, currentSum);\n    }\n    \n    return maxSum;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to check if array size < k",
+    "Off-by-one error in loop: using i < n instead of i <= n-k",
+    "Not initializing maxSum with first window sum",
+    "Integer overflow when dealing with large sums",
+    "Modifying original array instead of using window sum",
+    "Wrong index calculation: arr[i-k] vs arr[i-k+1]",
+    "Not handling negative numbers correctly",
+    "Using wrong loop bounds causing array out of bounds"
+  ],
+  "hints": [
+    "Fixed window size k suggests sliding window approach",
+    "Calculate first window sum separately to initialize",
+    "Slide by: remove left, add right element",
+    "Time complexity improves from O(n*k) to O(n)",
+    "Track maximum sum as you slide",
+    "Edge case: array size less than k",
+    "Works with negative numbers too",
+    "Window sum update: sum = sum - arr[i-k] + arr[i]"
+  ],
+  "followUp": [
+    "What if k is variable and you need minimum size subarray with sum >= target?",
+    "Can you find all subarrays of size k with sum > threshold?",
+    "What if you need maximum average instead of sum?",
+    "How to handle circular array?",
+    "What if array is very large and doesn't fit in memory?",
+    "Can you extend to 2D matrix with k x k window?",
+    "What if negative numbers are not allowed?",
+    "How to find k-th largest sum instead of maximum?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Adobe",
+    "Goldman Sachs",
+    "Morgan Stanley"
+  ],
+  "tags": [
+    "Sliding Window",
+    "Array",
+    "Fixed Window",
+    "Subarray"
+  ],
+  "relatedProblems": [
+    "Maximum Average Subarray I",
+    "Minimum Size Subarray Sum",
+    "Longest Substring Without Repeating Characters",
+    "Maximum Points You Can Obtain from Cards",
+    "Sliding Window Maximum",
+    "Subarray Sum Equals K",
+    "Minimum Window Substring",
+    "Longest Substring with At Most K Distinct Characters"
+  ]
 }

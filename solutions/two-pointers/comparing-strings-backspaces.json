@@ -17,121 +17,173 @@
         "channel": "Nick White",
         "duration": "11:20",
         "language": "English"
+      },
+      {
+        "title": "O(1) Space Solution Explained",
+        "url": "https://www.youtube.com/watch?v=jfZGBM7JZjk",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "13:15",
+        "language": "English"
       }
     ],
     "articles": [
       {
         "title": "Backspace String Compare Solution",
-        "url": "https://leetcode.com/problems/backspace-string-compare/solution/",
-        "source": "LeetCode Editorial"
+        "url": "https://leetcode.com/problems/backspace-string-compare/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Two Pointers from End",
+        "url": "https://www.geeksforgeeks.org/backspace-string-compare/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "String Processing Patterns",
+        "url": "https://algo.monster/problems/backspace_compare",
+        "source": "AlgoMonster"
       }
     ],
     "practice": [
       {
-        "title": "Practice on GeeksforGeeks",
-        "url": "https://www.geeksforgeeks.org/backspace-string-compare/",
-        "platform": "GeeksforGeeks"
+        "title": "Remove All Adjacent Duplicates In String",
+        "url": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Crawler Log Folder",
+        "url": "https://leetcode.com/problems/crawler-log-folder/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Make The String Great",
+        "url": "https://leetcode.com/problems/make-the-string-great/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Build an Array With Stack Operations",
+        "url": "https://leetcode.com/problems/build-an-array-with-stack-operations/",
+        "platform": "LeetCode"
       }
     ],
     "discussions": []
   },
-  "patternTriggers": "Use Two Pointers when processing strings from the end, especially when dealing with operations that affect previous characters like backspaces.",
+  "patternTriggers": "Use Comparing Strings with Backspaces when: processing strings with delete operations, comparing final results, can process from end to avoid building strings. Keywords: 'backspace', '#', 'compare strings', 'delete characters'.",
   "approaches": [
     {
       "name": "Stack/String Builder",
       "order": 1,
-      "intuition": "Build the final strings after processing backspaces using a stack or string builder, then compare them.",
-      "approach": "Process each character: if it's not '#', add it; if it's '#', remove the last character. Compare the final strings.",
+      "intuition": "Build final strings after processing backspaces using stack. For each character: if not '#', push; if '#', pop. Compare final strings. Straightforward but uses O(n) space.",
+      "approach": "Process each string character by character. Use stack to handle backspaces. Compare resulting strings.",
       "steps": [
-        "Create a helper function to build final string:",
-        "  Iterate through each character",
-        "  If char is not '#': append to result",
-        "  If char is '#' and result is not empty: remove last character",
-        "  Return the final string",
-        "Build final strings for both inputs",
-        "Compare and return if they're equal"
+        "Create helper function buildString(s):",
+        "  - Initialize empty stack/list",
+        "  - For each character c in s:",
+        "    - If c != '#': append to stack",
+        "    - If c == '#' and stack not empty: pop from stack",
+        "  - Return stack as string",
+        "Build final strings for both s and t",
+        "Compare and return if equal"
       ],
       "complexity": {
         "time": "O(n + m)",
         "space": "O(n + m)",
-        "timeExplanation": "Process both strings once where n and m are lengths",
-        "spaceExplanation": "Store the processed strings"
+        "timeExplanation": "Process both strings once: O(n) for s, O(m) for t. Total: O(n + m).",
+        "spaceExplanation": "Stack stores characters from both strings: O(n + m)."
       },
       "code": {
-        "cpp": "string buildString(const string& s) {\n    string result;\n    for (char c : s) {\n        if (c != '#') {\n            result.push_back(c);\n        } else if (!result.empty()) {\n            result.pop_back();\n        }\n    }\n    return result;\n}\n\nbool backspaceCompare(string s, string t) {\n    return buildString(s) == buildString(t);\n}",
-        "java": "private String buildString(String s) {\n    StringBuilder result = new StringBuilder();\n    for (char c : s.toCharArray()) {\n        if (c != '#') {\n            result.append(c);\n        } else if (result.length() > 0) {\n            result.deleteCharAt(result.length() - 1);\n        }\n    }\n    return result.toString();\n}\n\npublic boolean backspaceCompare(String s, String t) {\n    return buildString(s).equals(buildString(t));\n}",
-        "python": "def build_string(s):\n    result = []\n    for char in s:\n        if char != '#':\n            result.append(char)\n        elif result:\n            result.pop()\n    return ''.join(result)\n\ndef backspace_compare(s, t):\n    return build_string(s) == build_string(t)",
+        "cpp": "class Solution {\npublic:\n    string buildString(const string& s) {\n        string result;\n        for (char c : s) {\n            if (c != '#') {\n                result.push_back(c);\n            } else if (!result.empty()) {\n                result.pop_back();\n            }\n        }\n        return result;\n    }\n    \n    bool backspaceCompare(string s, string t) {\n        return buildString(s) == buildString(t);\n    }\n};",
+        "java": "class Solution {\n    private String buildString(String s) {\n        StringBuilder result = new StringBuilder();\n        for (char c : s.toCharArray()) {\n            if (c != '#') {\n                result.append(c);\n            } else if (result.length() > 0) {\n                result.deleteCharAt(result.length() - 1);\n            }\n        }\n        return result.toString();\n    }\n    \n    public boolean backspaceCompare(String s, String t) {\n        return buildString(s).equals(buildString(t));\n    }\n}",
+        "python": "class Solution:\n    def buildString(self, s: str) -> str:\n        result = []\n        for char in s:\n            if char != '#':\n                result.append(char)\n            elif result:\n                result.pop()\n        return ''.join(result)\n    \n    def backspaceCompare(self, s: str, t: str) -> bool:\n        return self.buildString(s) == self.buildString(t)",
         "javascript": "function buildString(s) {\n    const result = [];\n    for (const char of s) {\n        if (char !== '#') {\n            result.push(char);\n        } else if (result.length > 0) {\n            result.pop();\n        }\n    }\n    return result.join('');\n}\n\nfunction backspaceCompare(s, t) {\n    return buildString(s) === buildString(t);\n}"
       }
     },
     {
-      "name": "Two Pointers (Optimal)",
+      "name": "Two Pointers from End (Optimal)",
       "order": 2,
-      "intuition": "Process both strings from the end using two pointers. Skip characters that are deleted by backspaces without building new strings.",
-      "approach": "Use two pointers starting from the end of both strings. Track how many backspaces we encounter and skip the corresponding characters.",
+      "intuition": "Process strings from end using two pointers. Skip characters deleted by backspaces without building new strings. Track backspace count, skip corresponding characters. O(1) space!",
+      "approach": "Start from end of both strings. Track backspaces, skip deleted characters. Compare valid characters.",
       "steps": [
-        "Initialize pointers i and j at end of strings s and t",
-        "Initialize skipS and skipT counters to 0",
-        "While there are characters to process:",
-        "  Process string s from right:",
-        "    While i >= 0:",
-        "      If s[i] is '#': increment skipS, decrement i",
-        "      Else if skipS > 0: decrement skipS and i",
-        "      Else: break (found valid character)",
-        "  Process string t similarly",
-        "  Compare characters at i and j:",
-        "    If both are valid and different: return false",
-        "    If one is valid and other isn't: return false",
-        "  Move both pointers left",
-        "Return true if we processed all characters"
+        "Initialize i = len(s) - 1, j = len(t) - 1",
+        "Initialize skipS = 0, skipT = 0",
+        "While i >= 0 or j >= 0:",
+        "  - Find next valid char in s:",
+        "    - While i >= 0:",
+        "      - If s[i] == '#': skipS++, i--",
+        "      - Else if skipS > 0: skipS--, i--",
+        "      - Else: break (found valid char)",
+        "  - Find next valid char in t (similar logic)",
+        "  - If both valid and different: return false",
+        "  - If one valid, other not: return false",
+        "  - Move both pointers: i--, j--",
+        "Return true"
       ],
       "complexity": {
         "time": "O(n + m)",
         "space": "O(1)",
-        "timeExplanation": "Process both strings once",
-        "spaceExplanation": "Only pointer and counter variables"
+        "timeExplanation": "Each character processed at most twice (once for backspace, once for skip): O(n + m).",
+        "spaceExplanation": "Only pointer and counter variables: O(1) constant space."
       },
       "code": {
-        "cpp": "bool backspaceCompare(string s, string t) {\n    int i = s.length() - 1;\n    int j = t.length() - 1;\n    int skipS = 0, skipT = 0;\n    \n    while (i >= 0 || j >= 0) {\n        // Find next valid character in s\n        while (i >= 0) {\n            if (s[i] == '#') {\n                skipS++;\n                i--;\n            } else if (skipS > 0) {\n                skipS--;\n                i--;\n            } else {\n                break;\n            }\n        }\n        \n        // Find next valid character in t\n        while (j >= 0) {\n            if (t[j] == '#') {\n                skipT++;\n                j--;\n            } else if (skipT > 0) {\n                skipT--;\n                j--;\n            } else {\n                break;\n            }\n        }\n        \n        // Compare characters\n        if (i >= 0 && j >= 0 && s[i] != t[j]) {\n            return false;\n        }\n        \n        // One string finished but not the other\n        if ((i >= 0) != (j >= 0)) {\n            return false;\n        }\n        \n        i--;\n        j--;\n    }\n    \n    return true;\n}",
-        "java": "public boolean backspaceCompare(String s, String t) {\n    int i = s.length() - 1;\n    int j = t.length() - 1;\n    int skipS = 0, skipT = 0;\n    \n    while (i >= 0 || j >= 0) {\n        // Find next valid character in s\n        while (i >= 0) {\n            if (s.charAt(i) == '#') {\n                skipS++;\n                i--;\n            } else if (skipS > 0) {\n                skipS--;\n                i--;\n            } else {\n                break;\n            }\n        }\n        \n        // Find next valid character in t\n        while (j >= 0) {\n            if (t.charAt(j) == '#') {\n                skipT++;\n                j--;\n            } else if (skipT > 0) {\n                skipT--;\n                j--;\n            } else {\n                break;\n            }\n        }\n        \n        // Compare characters\n        if (i >= 0 && j >= 0 && s.charAt(i) != t.charAt(j)) {\n            return false;\n        }\n        \n        // One string finished but not the other\n        if ((i >= 0) != (j >= 0)) {\n            return false;\n        }\n        \n        i--;\n        j--;\n    }\n    \n    return true;\n}",
-        "python": "def backspace_compare(s, t):\n    i, j = len(s) - 1, len(t) - 1\n    skip_s, skip_t = 0, 0\n    \n    while i >= 0 or j >= 0:\n        # Find next valid character in s\n        while i >= 0:\n            if s[i] == '#':\n                skip_s += 1\n                i -= 1\n            elif skip_s > 0:\n                skip_s -= 1\n                i -= 1\n            else:\n                break\n        \n        # Find next valid character in t\n        while j >= 0:\n            if t[j] == '#':\n                skip_t += 1\n                j -= 1\n            elif skip_t > 0:\n                skip_t -= 1\n                j -= 1\n            else:\n                break\n        \n        # Compare characters\n        if i >= 0 and j >= 0 and s[i] != t[j]:\n            return False\n        \n        # One string finished but not the other\n        if (i >= 0) != (j >= 0):\n            return False\n        \n        i -= 1\n        j -= 1\n    \n    return True",
+        "cpp": "class Solution {\npublic:\n    bool backspaceCompare(string s, string t) {\n        int i = s.length() - 1;\n        int j = t.length() - 1;\n        int skipS = 0, skipT = 0;\n        \n        while (i >= 0 || j >= 0) {\n            // Find next valid character in s\n            while (i >= 0) {\n                if (s[i] == '#') {\n                    skipS++;\n                    i--;\n                } else if (skipS > 0) {\n                    skipS--;\n                    i--;\n                } else {\n                    break;\n                }\n            }\n            \n            // Find next valid character in t\n            while (j >= 0) {\n                if (t[j] == '#') {\n                    skipT++;\n                    j--;\n                } else if (skipT > 0) {\n                    skipT--;\n                    j--;\n                } else {\n                    break;\n                }\n            }\n            \n            // Compare characters\n            if (i >= 0 && j >= 0 && s[i] != t[j]) {\n                return false;\n            }\n            \n            // One string finished but not the other\n            if ((i >= 0) != (j >= 0)) {\n                return false;\n            }\n            \n            i--;\n            j--;\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean backspaceCompare(String s, String t) {\n        int i = s.length() - 1;\n        int j = t.length() - 1;\n        int skipS = 0, skipT = 0;\n        \n        while (i >= 0 || j >= 0) {\n            // Find next valid character in s\n            while (i >= 0) {\n                if (s.charAt(i) == '#') {\n                    skipS++;\n                    i--;\n                } else if (skipS > 0) {\n                    skipS--;\n                    i--;\n                } else {\n                    break;\n                }\n            }\n            \n            // Find next valid character in t\n            while (j >= 0) {\n                if (t.charAt(j) == '#') {\n                    skipT++;\n                    j--;\n                } else if (skipT > 0) {\n                    skipT--;\n                    j--;\n                } else {\n                    break;\n                }\n            }\n            \n            // Compare characters\n            if (i >= 0 && j >= 0 && s.charAt(i) != t.charAt(j)) {\n                return false;\n            }\n            \n            // One string finished but not the other\n            if ((i >= 0) != (j >= 0)) {\n                return false;\n            }\n            \n            i--;\n            j--;\n        }\n        \n        return true;\n    }\n}",
+        "python": "class Solution:\n    def backspaceCompare(self, s: str, t: str) -> bool:\n        i, j = len(s) - 1, len(t) - 1\n        skip_s, skip_t = 0, 0\n        \n        while i >= 0 or j >= 0:\n            # Find next valid character in s\n            while i >= 0:\n                if s[i] == '#':\n                    skip_s += 1\n                    i -= 1\n                elif skip_s > 0:\n                    skip_s -= 1\n                    i -= 1\n                else:\n                    break\n            \n            # Find next valid character in t\n            while j >= 0:\n                if t[j] == '#':\n                    skip_t += 1\n                    j -= 1\n                elif skip_t > 0:\n                    skip_t -= 1\n                    j -= 1\n                else:\n                    break\n            \n            # Compare characters\n            if i >= 0 and j >= 0 and s[i] != t[j]:\n                return False\n            \n            # One string finished but not the other\n            if (i >= 0) != (j >= 0):\n                return False\n            \n            i -= 1\n            j -= 1\n        \n        return True",
         "javascript": "function backspaceCompare(s, t) {\n    let i = s.length - 1;\n    let j = t.length - 1;\n    let skipS = 0, skipT = 0;\n    \n    while (i >= 0 || j >= 0) {\n        // Find next valid character in s\n        while (i >= 0) {\n            if (s[i] === '#') {\n                skipS++;\n                i--;\n            } else if (skipS > 0) {\n                skipS--;\n                i--;\n            } else {\n                break;\n            }\n        }\n        \n        // Find next valid character in t\n        while (j >= 0) {\n            if (t[j] === '#') {\n                skipT++;\n                j--;\n            } else if (skipT > 0) {\n                skipT--;\n                j--;\n            } else {\n                break;\n            }\n        }\n        \n        // Compare characters\n        if (i >= 0 && j >= 0 && s[i] !== t[j]) {\n            return false;\n        }\n        \n        // One string finished but not the other\n        if ((i >= 0) !== (j >= 0)) {\n            return false;\n        }\n        \n        i--;\n        j--;\n    }\n    \n    return true;\n}"
       }
     }
   ],
   "commonMistakes": [
     "Processing strings from left to right (should process from right)",
-    "Not handling the case where one string finishes before the other",
-    "Forgetting to track the skip count for backspaces",
-    "Not checking if both indices are valid before comparing",
-    "Moving pointers at wrong times"
+    "Not handling case where one string finishes before other",
+    "Forgetting to track skip count for backspaces",
+    "Not checking if both indices valid before comparing",
+    "Moving pointers at wrong times",
+    "Decrementing pointer without checking bounds",
+    "Not resetting skip counter for each string",
+    "Comparing characters before ensuring both are valid"
   ],
   "hints": [
-    "Think about processing the strings from the end rather than the beginning",
-    "Keep track of how many characters should be skipped due to backspaces",
-    "You can solve this in O(1) space by not building new strings",
-    "Handle the case where strings have different lengths after processing backspaces"
+    "Process strings from end, not beginning",
+    "Track how many characters to skip due to backspaces",
+    "Can solve in O(1) space by not building new strings",
+    "Handle different length strings after processing",
+    "Backspace only affects characters to the left",
+    "Multiple consecutive backspaces accumulate",
+    "Both strings might end with backspaces",
+    "Check both pointers in valid range before comparing"
   ],
   "followUp": [
-    "What if the backspace character is different (not '#')?",
-    "Can you extend this to handle multiple types of editing operations?",
-    "What if you need to return the final processed strings instead of just comparing?",
-    "How would you handle Unicode characters or emojis?"
+    "What if backspace character is different (not '#')?",
+    "Can you extend to handle multiple editing operations?",
+    "What if you need to return final processed strings?",
+    "How to handle Unicode characters or emojis?",
+    "What if backspace can delete multiple characters?",
+    "Can you make it work with streams?",
+    "What if there are multiple types of delete operations?",
+    "How to optimize for very long strings?"
   ],
   "companies": [
     "Google",
     "Facebook",
     "Amazon",
-    "Microsoft"
+    "Microsoft",
+    "Bloomberg",
+    "Apple",
+    "Adobe"
   ],
   "tags": [
     "Two Pointers",
     "String",
-    "Stack"
+    "Stack",
+    "Simulation"
   ],
   "relatedProblems": [
-    "Backspace String Compare",
     "Remove All Adjacent Duplicates In String",
-    "Crawler Log Folder"
+    "Remove All Adjacent Duplicates in String II",
+    "Crawler Log Folder",
+    "Make The String Great",
+    "Build an Array With Stack Operations",
+    "Backspace String Compare",
+    "Simplify Path",
+    "Valid Parentheses"
   ]
 }

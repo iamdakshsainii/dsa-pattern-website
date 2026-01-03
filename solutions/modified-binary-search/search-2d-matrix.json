@@ -2,18 +2,185 @@
   "questionId": "694d4a3a98494915f3bc8ef0",
   "questionSlug": "search-2d-matrix",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/search-a-2d-matrix/",
+    "videos": [
+      {
+        "title": "Search a 2D Matrix - Binary Search",
+        "url": "https://www.youtube.com/watch?v=Ber2pi2C0j0",
+        "channel": "NeetCode",
+        "duration": "7:50",
+        "language": "English"
+      },
+      {
+        "title": "2D Matrix Binary Search",
+        "url": "https://www.youtube.com/watch?v=ZYpYur0znng",
+        "channel": "take U forward",
+        "duration": "18:40",
+        "language": "English"
+      },
+      {
+        "title": "Search in Sorted Matrix",
+        "url": "https://www.youtube.com/watch?v=W9QJ8HaRvJQ",
+        "channel": "Aditya Verma",
+        "duration": "13:25",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Search a 2D Matrix",
+        "url": "https://leetcode.com/problems/search-a-2d-matrix/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Binary Search in 2D Array",
+        "url": "https://www.geeksforgeeks.org/search-in-row-wise-and-column-wise-sorted-matrix/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "2D Matrix Search Algorithms",
+        "url": "https://algo.monster/problems/binary_search_2d",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Search a 2D Matrix II",
+        "url": "https://leetcode.com/problems/search-a-2d-matrix-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Peak Element II",
+        "url": "https://leetcode.com/problems/find-a-peak-element-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Smallest Element in Sorted Matrix",
+        "url": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search in Rotated Sorted Array",
+        "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Search 2D Matrix when matrix is row-wise and column-wise sorted. Key indicators: 2D sorted matrix, each row sorted, first element of row > last of previous row, find target, treat as 1D array, O(log(m*n)) solution.",
+  "approaches": [
+    {
+      "name": "Treat as 1D Array Binary Search (Optimal)",
+      "order": 1,
+      "intuition": "Matrix can be treated as sorted 1D array due to special property: first element of each row > last element of previous row. Use binary search on virtual 1D array. Convert 1D index to 2D coordinates: row = index / cols, col = index % cols. O(log(m*n)) time.",
+      "approach": "Binary search on flattened matrix. Use index mapping: mid -> (mid/n, mid%n) to access matrix elements. Standard binary search logic.",
+      "steps": [
+        "Get dimensions: m = rows, n = cols",
+        "Initialize left = 0, right = m*n - 1",
+        "While left <= right:",
+        "  - mid = left + (right - left) / 2",
+        "  - Convert to 2D: row = mid / n, col = mid % n",
+        "  - value = matrix[row][col]",
+        "  - If value == target: return true",
+        "  - If value < target: left = mid + 1",
+        "  - Else: right = mid - 1",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(log(m*n))",
+        "space": "O(1)",
+        "timeExplanation": "Binary search on m*n elements. Divides space in half: log(m*n) iterations.",
+        "spaceExplanation": "Only pointer variables. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool searchMatrix(vector<vector<int>>& matrix, int target) {\n        if (matrix.empty() || matrix[0].empty()) return false;\n        \n        int m = matrix.size();\n        int n = matrix[0].size();\n        int left = 0, right = m * n - 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            int row = mid / n;\n            int col = mid % n;\n            int value = matrix[row][col];\n            \n            if (value == target) {\n                return true;\n            } else if (value < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean searchMatrix(int[][] matrix, int target) {\n        if (matrix.length == 0 || matrix[0].length == 0) return false;\n        \n        int m = matrix.length;\n        int n = matrix[0].length;\n        int left = 0, right = m * n - 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            int row = mid / n;\n            int col = mid % n;\n            int value = matrix[row][col];\n            \n            if (value == target) {\n                return true;\n            } else if (value < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:\n        if not matrix or not matrix[0]:\n            return False\n        \n        m, n = len(matrix), len(matrix[0])\n        left, right = 0, m * n - 1\n        \n        while left <= right:\n            mid = left + (right - left) // 2\n            row = mid // n\n            col = mid % n\n            value = matrix[row][col]\n            \n            if value == target:\n                return True\n            elif value < target:\n                left = mid + 1\n            else:\n                right = mid - 1\n        \n        return False",
+        "javascript": "function searchMatrix(matrix, target) {\n    if (matrix.length === 0 || matrix[0].length === 0) return false;\n    \n    const m = matrix.length;\n    const n = matrix[0].length;\n    let left = 0, right = m * n - 1;\n    \n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        const row = Math.floor(mid / n);\n        const col = mid % n;\n        const value = matrix[row][col];\n        \n        if (value === target) {\n            return true;\n        } else if (value < target) {\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Two Binary Searches (Alternative)",
+      "order": 2,
+      "intuition": "First find correct row using binary search on first column or last column. Then binary search within that row. Two O(log m) + O(log n) = O(log m + log n) searches.",
+      "approach": "Binary search rows to find potential row containing target. Then binary search within that row.",
+      "steps": [
+        "Find row using binary search:",
+        "  - Compare target with matrix[mid][0] and matrix[mid][n-1]",
+        "  - Narrow down to row where target could exist",
+        "If valid row found:",
+        "  - Binary search within that row",
+        "  - Return true if found",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(log m + log n)",
+        "space": "O(1)",
+        "timeExplanation": "Find row: O(log m). Search row: O(log n). Total: O(log m + log n).",
+        "spaceExplanation": "Only pointer variables. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool searchMatrix(vector<vector<int>>& matrix, int target) {\n        if (matrix.empty() || matrix[0].empty()) return false;\n        \n        int m = matrix.size();\n        int n = matrix[0].size();\n        \n        // Find the row\n        int top = 0, bottom = m - 1;\n        int targetRow = -1;\n        \n        while (top <= bottom) {\n            int mid = top + (bottom - top) / 2;\n            \n            if (matrix[mid][0] <= target && target <= matrix[mid][n - 1]) {\n                targetRow = mid;\n                break;\n            } else if (target < matrix[mid][0]) {\n                bottom = mid - 1;\n            } else {\n                top = mid + 1;\n            }\n        }\n        \n        if (targetRow == -1) return false;\n        \n        // Binary search in the row\n        int left = 0, right = n - 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (matrix[targetRow][mid] == target) {\n                return true;\n            } else if (matrix[targetRow][mid] < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean searchMatrix(int[][] matrix, int target) {\n        if (matrix.length == 0 || matrix[0].length == 0) return false;\n        \n        int m = matrix.length;\n        int n = matrix[0].length;\n        \n        // Find the row\n        int top = 0, bottom = m - 1;\n        int targetRow = -1;\n        \n        while (top <= bottom) {\n            int mid = top + (bottom - top) / 2;\n            \n            if (matrix[mid][0] <= target && target <= matrix[mid][n - 1]) {\n                targetRow = mid;\n                break;\n            } else if (target < matrix[mid][0]) {\n                bottom = mid - 1;\n            } else {\n                top = mid + 1;\n            }\n        }\n        \n        if (targetRow == -1) return false;\n        \n        // Binary search in the row\n        int left = 0, right = n - 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (matrix[targetRow][mid] == target) {\n                return true;\n            } else if (matrix[targetRow][mid] < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:\n        if not matrix or not matrix[0]:\n            return False\n        \n        m, n = len(matrix), len(matrix[0])\n        \n        # Find the row\n        top, bottom = 0, m - 1\n        target_row = -1\n        \n        while top <= bottom:\n            mid = top + (bottom - top) // 2\n            \n            if matrix[mid][0] <= target <= matrix[mid][n - 1]:\n                target_row = mid\n                break\n            elif target < matrix[mid][0]:\n                bottom = mid - 1\n            else:\n                top = mid + 1\n        \n        if target_row == -1:\n            return False\n        \n        # Binary search in the row\n        left, right = 0, n - 1\n        \n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            if matrix[target_row][mid] == target:\n                return True\n            elif matrix[target_row][mid] < target:\n                left = mid + 1\n            else:\n                right = mid - 1\n        \n        return False",
+        "javascript": "function searchMatrix(matrix, target) {\n    if (matrix.length === 0 || matrix[0].length === 0) return false;\n    \n    const m = matrix.length;\n    const n = matrix[0].length;\n    \n    // Find the row\n    let top = 0, bottom = m - 1;\n    let targetRow = -1;\n    \n    while (top <= bottom) {\n        const mid = top + Math.floor((bottom - top) / 2);\n        \n        if (matrix[mid][0] <= target && target <= matrix[mid][n - 1]) {\n            targetRow = mid;\n            break;\n        } else if (target < matrix[mid][0]) {\n            bottom = mid - 1;\n        } else {\n            top = mid + 1;\n        }\n    }\n    \n    if (targetRow === -1) return false;\n    \n    // Binary search in the row\n    let left = 0, right = n - 1;\n    \n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (matrix[targetRow][mid] === target) {\n            return true;\n        } else if (matrix[targetRow][mid] < target) {\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling empty matrix edge case",
+    "Wrong index conversion (row = mid % n instead of mid / n)",
+    "Integer overflow when calculating m*n",
+    "Confusing row-major vs column-major indexing",
+    "Not considering matrix with single row or column",
+    "Off-by-one errors in boundary calculations",
+    "Using wrong division operator (float vs integer)",
+    "Not checking if matrix is truly sorted as described"
+  ],
+  "hints": [
+    "Matrix can be viewed as sorted 1D array",
+    "Convert 1D index to 2D: row = index / cols, col = index % cols",
+    "Total elements: m * n",
+    "Use standard binary search on virtual 1D array",
+    "Time complexity: O(log(m*n))",
+    "Alternative: O(log m + log n) with two searches",
+    "First element of row > last of previous row is key property",
+    "Handle edge cases: empty matrix, single element"
+  ],
+  "followUp": [
+    "What if rows not connected (Search 2D Matrix II)?",
+    "How to find k-th smallest element?",
+    "What about finding all occurrences?",
+    "Can you handle duplicates?",
+    "What if matrix is very sparse?",
+    "How to optimize for rectangular matrices?",
+    "What about finding median?",
+    "Can you extend to 3D matrix?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "LinkedIn",
+    "Oracle"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Matrix",
+    "2D Array"
+  ],
+  "relatedProblems": [
+    "Search a 2D Matrix II",
+    "Find Peak Element II",
+    "Kth Smallest Element in Sorted Matrix",
+    "Search in Rotated Sorted Array",
+    "Find Minimum in Rotated Sorted Array",
+    "Binary Search",
+    "Search Insert Position",
+    "Find Right Interval"
+  ]
 }

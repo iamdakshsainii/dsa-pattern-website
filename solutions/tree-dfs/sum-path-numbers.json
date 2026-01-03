@@ -3,17 +3,189 @@
   "questionSlug": "sum-path-numbers",
   "resources": {
     "leetcode": "https://leetcode.com/problems/sum-root-to-leaf-numbers/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Sum Root to Leaf Numbers - Leetcode 129",
+        "url": "https://www.youtube.com/watch?v=2W1y_7nqJIk",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Sum of Root to Leaf Numbers",
+        "url": "https://www.youtube.com/watch?v=A-ov8fDsDrc",
+        "channel": "TECH DOSE",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Binary Tree Path Numbers Sum",
+        "url": "https://www.youtube.com/watch?v=6vZlhlQ0ego",
+        "channel": "take U forward",
+        "duration": "14:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sum Root to Leaf Numbers",
+        "url": "https://leetcode.com/problems/sum-root-to-leaf-numbers/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Sum of All Root to Leaf Paths",
+        "url": "https://www.geeksforgeeks.org/sum-numbers-formed-root-leaf-paths/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Root to Leaf Path Numbers Tutorial",
+        "url": "https://algo.monster/problems/sum_root_to_leaf_numbers",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Path Sum",
+        "url": "https://leetcode.com/problems/path-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Path Sum II",
+        "url": "https://leetcode.com/problems/path-sum-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Paths",
+        "url": "https://leetcode.com/problems/binary-tree-paths/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Smallest String Starting From Leaf",
+        "url": "https://leetcode.com/problems/smallest-string-starting-from-leaf/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Sum Path Numbers pattern when forming numbers from root-to-leaf paths and summing them. Key indicators: root to leaf paths form numbers, concatenate node values, sum all path numbers, digits along path.",
+  "approaches": [
+    {
+      "name": "Recursive DFS with Current Number (Optimal)",
+      "order": 1,
+      "intuition": "Traverse tree using DFS, building number as we go down each path. At each node, update current number by multiplying by 10 and adding node value (like building decimal number digit by digit). When we reach leaf, add complete number to total sum. Return accumulated sum from both subtrees.",
+      "approach": "Use recursive DFS with current number parameter. At each node, compute newNumber = currentNumber * 10 + node.val. If leaf node, return this number. Otherwise, recursively sum from left and right children with updated number.",
+      "steps": [
+        "Define helper function dfs(node, currentNumber):",
+        " - If node is null, return 0",
+        " - currentNumber = currentNumber * 10 + node.val",
+        " - If node is leaf (no children):",
+        "   - Return currentNumber",
+        " - Recursively get sum from left: leftSum = dfs(node.left, currentNumber)",
+        " - Recursively get sum from right: rightSum = dfs(node.right, currentNumber)",
+        " - Return leftSum + rightSum",
+        "Call dfs(root, 0) from main function",
+        "Return the result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node exactly once in DFS traversal. n nodes total. O(n) time.",
+        "spaceExplanation": "Recursion call stack depth equals tree height h. O(h) space."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int dfs(TreeNode* node, int currentNumber) {\n        if (node == nullptr) return 0;\n        \n        currentNumber = currentNumber * 10 + node->val;\n        \n        // If leaf node, return the number formed\n        if (node->left == nullptr && node->right == nullptr) {\n            return currentNumber;\n        }\n        \n        // Sum from left and right subtrees\n        return dfs(node->left, currentNumber) + dfs(node->right, currentNumber);\n    }\n    \npublic:\n    int sumNumbers(TreeNode* root) {\n        return dfs(root, 0);\n    }\n};",
+        "java": "class Solution {\n    private int dfs(TreeNode node, int currentNumber) {\n        if (node == null) return 0;\n        \n        currentNumber = currentNumber * 10 + node.val;\n        \n        // If leaf node, return the number formed\n        if (node.left == null && node.right == null) {\n            return currentNumber;\n        }\n        \n        // Sum from left and right subtrees\n        return dfs(node.left, currentNumber) + dfs(node.right, currentNumber);\n    }\n    \n    public int sumNumbers(TreeNode root) {\n        return dfs(root, 0);\n    }\n}",
+        "python": "class Solution:\n    def sumNumbers(self, root: TreeNode) -> int:\n        def dfs(node, current_number):\n            if not node:\n                return 0\n            \n            current_number = current_number * 10 + node.val\n            \n            # If leaf node, return the number formed\n            if not node.left and not node.right:\n                return current_number\n            \n            # Sum from left and right subtrees\n            return dfs(node.left, current_number) + dfs(node.right, current_number)\n        \n        return dfs(root, 0)",
+        "javascript": "function sumNumbers(root) {\n    function dfs(node, currentNumber) {\n        if (node === null) return 0;\n        \n        currentNumber = currentNumber * 10 + node.val;\n        \n        // If leaf node, return the number formed\n        if (node.left === null && node.right === null) {\n            return currentNumber;\n        }\n        \n        // Sum from left and right subtrees\n        return dfs(node.left, currentNumber) + dfs(node.right, currentNumber);\n    }\n    \n    return dfs(root, 0);\n}"
+      }
+    },
+    {
+      "name": "Iterative DFS with Stack",
+      "order": 2,
+      "intuition": "Convert recursive approach to iterative using explicit stack. Store (node, currentNumber) pairs in stack. Pop from stack, update number. If leaf, add to total sum. Otherwise, push children with updated number to stack.",
+      "approach": "Use stack to store (node, currentNumber) pairs. Process nodes iteratively, building number at each step. When reaching leaf, add number to sum. Push children to stack with updated numbers.",
+      "steps": [
+        "Initialize totalSum = 0",
+        "Initialize stack with (root, 0)",
+        "While stack is not empty:",
+        " - Pop (node, currentNumber) from stack",
+        " - If node is null, continue",
+        " - currentNumber = currentNumber * 10 + node.val",
+        " - If node is leaf:",
+        "   - totalSum += currentNumber",
+        "   - Continue to next iteration",
+        " - Push (node.right, currentNumber) to stack if exists",
+        " - Push (node.left, currentNumber) to stack if exists",
+        "Return totalSum"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once. n nodes in tree. O(n) time complexity.",
+        "spaceExplanation": "Stack stores at most h nodes (tree height). O(h) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int sumNumbers(TreeNode* root) {\n        if (root == nullptr) return 0;\n        \n        int totalSum = 0;\n        stack<pair<TreeNode*, int>> stk;\n        stk.push({root, 0});\n        \n        while (!stk.empty()) {\n            auto [node, currentNumber] = stk.top();\n            stk.pop();\n            \n            if (node == nullptr) continue;\n            \n            currentNumber = currentNumber * 10 + node->val;\n            \n            // If leaf node, add to total\n            if (node->left == nullptr && node->right == nullptr) {\n                totalSum += currentNumber;\n                continue;\n            }\n            \n            // Push children to stack\n            if (node->right) stk.push({node->right, currentNumber});\n            if (node->left) stk.push({node->left, currentNumber});\n        }\n        \n        return totalSum;\n    }\n};",
+        "java": "class Solution {\n    public int sumNumbers(TreeNode root) {\n        if (root == null) return 0;\n        \n        int totalSum = 0;\n        Stack<Pair<TreeNode, Integer>> stack = new Stack<>();\n        stack.push(new Pair<>(root, 0));\n        \n        while (!stack.isEmpty()) {\n            Pair<TreeNode, Integer> pair = stack.pop();\n            TreeNode node = pair.getKey();\n            int currentNumber = pair.getValue();\n            \n            if (node == null) continue;\n            \n            currentNumber = currentNumber * 10 + node.val;\n            \n            // If leaf node, add to total\n            if (node.left == null && node.right == null) {\n                totalSum += currentNumber;\n                continue;\n            }\n            \n            // Push children to stack\n            if (node.right != null) {\n                stack.push(new Pair<>(node.right, currentNumber));\n            }\n            if (node.left != null) {\n                stack.push(new Pair<>(node.left, currentNumber));\n            }\n        }\n        \n        return totalSum;\n    }\n}",
+        "python": "class Solution:\n    def sumNumbers(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        \n        total_sum = 0\n        stack = [(root, 0)]\n        \n        while stack:\n            node, current_number = stack.pop()\n            \n            if not node:\n                continue\n            \n            current_number = current_number * 10 + node.val\n            \n            # If leaf node, add to total\n            if not node.left and not node.right:\n                total_sum += current_number\n                continue\n            \n            # Push children to stack\n            if node.right:\n                stack.append((node.right, current_number))\n            if node.left:\n                stack.append((node.left, current_number))\n        \n        return total_sum",
+        "javascript": "function sumNumbers(root) {\n    if (root === null) return 0;\n    \n    let totalSum = 0;\n    const stack = [[root, 0]];\n    \n    while (stack.length > 0) {\n        const [node, currentNumber] = stack.pop();\n        \n        if (node === null) continue;\n        \n        const newNumber = currentNumber * 10 + node.val;\n        \n        // If leaf node, add to total\n        if (node.left === null && node.right === null) {\n            totalSum += newNumber;\n            continue;\n        }\n        \n        // Push children to stack\n        if (node.right) stack.push([node.right, newNumber]);\n        if (node.left) stack.push([node.left, newNumber]);\n    }\n    \n    return totalSum;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not multiplying by 10 when moving to next digit",
+    "Adding to sum at every node instead of only at leaves",
+    "Forgetting to handle single-node tree (root is leaf)",
+    "Not passing updated number to children recursively",
+    "Integer overflow with very deep trees (use long if needed)",
+    "Checking for leaf incorrectly (must check both children are null)",
+    "Not initializing currentNumber to 0 at root",
+    "Modifying global state without proper handling"
+  ],
+  "hints": [
+    "Build number digit by digit: newNumber = currentNumber * 10 + digit",
+    "Only add complete number to sum when reaching leaf node",
+    "Pass current number as parameter in recursion",
+    "Each path from root to leaf forms one complete number",
+    "Use DFS (either recursive or iterative) to traverse all paths",
+    "Handle edge case: single node tree is both root and leaf",
+    "Consider using long if tree can be very deep (> 10 levels)"
+  ],
+  "followUp": [
+    "What if digits can be multi-digit (not just 0-9)?",
+    "How to find the path that forms the maximum number?",
+    "What if you need to return all numbers instead of just sum?",
+    "How to handle if tree can have negative values?",
+    "What if paths can go from any node to any node (not root-to-leaf)?",
+    "How to solve if you need product instead of sum?",
+    "What if node values are strings instead of integers?",
+    "How to handle very large trees that don't fit in memory?"
+  ],
+  "companies": [
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "Oracle"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "Depth-First Search",
+    "Recursion",
+    "Stack"
+  ],
+  "relatedProblems": [
+    "Path Sum",
+    "Path Sum II",
+    "Binary Tree Paths",
+    "Path Sum III",
+    "Smallest String Starting From Leaf",
+    "Binary Tree Maximum Path Sum",
+    "Count Paths That Can Form Palindrome",
+    "Step-By-Step Directions From Binary Tree Node"
+  ]
 }

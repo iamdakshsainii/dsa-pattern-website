@@ -3,17 +3,187 @@
   "questionSlug": "path-given-sequence",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/check-root-leaf-path-given-sequence/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Check if Path Exists with Given Sequence",
+        "url": "https://www.youtube.com/watch?v=HdGmiIWD9Vw",
+        "channel": "Nick White",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Binary Tree Path Sum Sequence",
+        "url": "https://www.youtube.com/watch?v=Jg4E4KZstFE",
+        "channel": "TECH DOSE",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Root to Leaf Path with Sequence",
+        "url": "https://www.youtube.com/watch?v=73r3KWiEvyk",
+        "channel": "Tushar Roy",
+        "duration": "11:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Check Root to Leaf Path for Given Sequence",
+        "url": "https://www.geeksforgeeks.org/check-root-leaf-path-given-sequence/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Verify Path Sequence in Binary Tree",
+        "url": "https://algo.monster/problems/binary_tree_path_sequence",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Binary Tree Path Validation",
+        "url": "https://www.educative.io/answers/how-to-check-if-a-given-sequence-is-a-valid-path-in-a-binary-tree",
+        "source": "Educative"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Path Sum",
+        "url": "https://leetcode.com/problems/path-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Path Sum II",
+        "url": "https://leetcode.com/problems/path-sum-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Sum Root to Leaf Numbers",
+        "url": "https://leetcode.com/problems/sum-root-to-leaf-numbers/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Paths",
+        "url": "https://leetcode.com/problems/binary-tree-paths/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Path Given Sequence pattern when verifying if a specific sequence of values exists as a root-to-leaf path. Key indicators: check if path exists, given sequence/array of values, root to leaf path, validate path matches sequence exactly.",
+  "approaches": [
+    {
+      "name": "Recursive DFS with Index Tracking (Optimal)",
+      "order": 1,
+      "intuition": "Traverse tree using DFS while tracking current index in sequence. At each node, verify value matches sequence[index]. If we reach a leaf node and index equals sequence length - 1, we found valid path. Otherwise, continue recursion on children with incremented index.",
+      "approach": "Use recursive DFS with index parameter. At each node, check if value matches sequence[index]. If it's a leaf and we've matched entire sequence, return true. Recursively check left and right children with index + 1.",
+      "steps": [
+        "Define helper function dfs(node, sequence, index)",
+        "Base case: if node is null, return false",
+        "If index >= sequence.length or node.val != sequence[index], return false",
+        "If node is leaf (no children):",
+        " - Return true if index == sequence.length - 1",
+        " - Otherwise return false (sequence too long)",
+        "Recursively check left child: dfs(node.left, sequence, index + 1)",
+        "Recursively check right child: dfs(node.right, sequence, index + 1)",
+        "Return true if either left or right returns true",
+        "Call dfs(root, sequence, 0) from main function"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node at most once. n nodes in tree. O(n) time.",
+        "spaceExplanation": "Recursion depth is tree height h. O(h) space for call stack."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    bool dfs(TreeNode* node, vector<int>& sequence, int index) {\n        if (node == nullptr) return false;\n        \n        // Check if current node matches sequence\n        if (index >= sequence.size() || node->val != sequence[index]) {\n            return false;\n        }\n        \n        // If leaf node, check if we've matched entire sequence\n        if (node->left == nullptr && node->right == nullptr) {\n            return index == sequence.size() - 1;\n        }\n        \n        // Recursively check left and right subtrees\n        return dfs(node->left, sequence, index + 1) || \n               dfs(node->right, sequence, index + 1);\n    }\n    \npublic:\n    bool findPath(TreeNode* root, vector<int>& sequence) {\n        if (sequence.empty()) return false;\n        return dfs(root, sequence, 0);\n    }\n};",
+        "java": "class Solution {\n    private boolean dfs(TreeNode node, int[] sequence, int index) {\n        if (node == null) return false;\n        \n        // Check if current node matches sequence\n        if (index >= sequence.length || node.val != sequence[index]) {\n            return false;\n        }\n        \n        // If leaf node, check if we've matched entire sequence\n        if (node.left == null && node.right == null) {\n            return index == sequence.length - 1;\n        }\n        \n        // Recursively check left and right subtrees\n        return dfs(node.left, sequence, index + 1) || \n               dfs(node.right, sequence, index + 1);\n    }\n    \n    public boolean findPath(TreeNode root, int[] sequence) {\n        if (sequence == null || sequence.length == 0) return false;\n        return dfs(root, sequence, 0);\n    }\n}",
+        "python": "class Solution:\n    def findPath(self, root: TreeNode, sequence: List[int]) -> bool:\n        def dfs(node, index):\n            if not node:\n                return False\n            \n            # Check if current node matches sequence\n            if index >= len(sequence) or node.val != sequence[index]:\n                return False\n            \n            # If leaf node, check if we've matched entire sequence\n            if not node.left and not node.right:\n                return index == len(sequence) - 1\n            \n            # Recursively check left and right subtrees\n            return dfs(node.left, index + 1) or dfs(node.right, index + 1)\n        \n        if not sequence:\n            return False\n        return dfs(root, 0)",
+        "javascript": "function findPath(root, sequence) {\n    function dfs(node, index) {\n        if (node === null) return false;\n        \n        // Check if current node matches sequence\n        if (index >= sequence.length || node.val !== sequence[index]) {\n            return false;\n        }\n        \n        // If leaf node, check if we've matched entire sequence\n        if (node.left === null && node.right === null) {\n            return index === sequence.length - 1;\n        }\n        \n        // Recursively check left and right subtrees\n        return dfs(node.left, index + 1) || dfs(node.right, index + 1);\n    }\n    \n    if (!sequence || sequence.length === 0) return false;\n    return dfs(root, 0);\n}"
+      }
+    },
+    {
+      "name": "Iterative DFS with Stack",
+      "order": 2,
+      "intuition": "Convert recursive approach to iterative using explicit stack. Store (node, index) pairs in stack. Pop from stack, verify current node matches sequence[index]. If leaf and sequence complete, return true. Otherwise push children with incremented index.",
+      "approach": "Use stack to store (node, index) pairs. Process nodes iteratively, checking if value matches sequence[index]. For leaf nodes, verify entire sequence matched. Push children to stack with index + 1.",
+      "steps": [
+        "Initialize stack with (root, 0)",
+        "While stack is not empty:",
+        " - Pop (node, index) from stack",
+        " - If node is null, continue",
+        " - If index >= sequence.length or node.val != sequence[index], continue",
+        " - If node is leaf:",
+        "   - If index == sequence.length - 1, return true",
+        "   - Otherwise continue",
+        " - Push (node.right, index + 1) to stack",
+        " - Push (node.left, index + 1) to stack",
+        "If loop completes without finding path, return false"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node at most once. n nodes total. O(n) time.",
+        "spaceExplanation": "Stack stores at most h nodes (tree height). O(h) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool findPath(TreeNode* root, vector<int>& sequence) {\n        if (sequence.empty() || root == nullptr) return false;\n        \n        stack<pair<TreeNode*, int>> stk;\n        stk.push({root, 0});\n        \n        while (!stk.empty()) {\n            auto [node, index] = stk.top();\n            stk.pop();\n            \n            if (node == nullptr) continue;\n            \n            // Check if current node matches sequence\n            if (index >= sequence.size() || node->val != sequence[index]) {\n                continue;\n            }\n            \n            // If leaf node, check if we've matched entire sequence\n            if (node->left == nullptr && node->right == nullptr) {\n                if (index == sequence.size() - 1) {\n                    return true;\n                }\n                continue;\n            }\n            \n            // Push children to stack\n            stk.push({node->right, index + 1});\n            stk.push({node->left, index + 1});\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean findPath(TreeNode root, int[] sequence) {\n        if (sequence == null || sequence.length == 0 || root == null) {\n            return false;\n        }\n        \n        Stack<Pair<TreeNode, Integer>> stack = new Stack<>();\n        stack.push(new Pair<>(root, 0));\n        \n        while (!stack.isEmpty()) {\n            Pair<TreeNode, Integer> pair = stack.pop();\n            TreeNode node = pair.getKey();\n            int index = pair.getValue();\n            \n            if (node == null) continue;\n            \n            // Check if current node matches sequence\n            if (index >= sequence.length || node.val != sequence[index]) {\n                continue;\n            }\n            \n            // If leaf node, check if we've matched entire sequence\n            if (node.left == null && node.right == null) {\n                if (index == sequence.length - 1) {\n                    return true;\n                }\n                continue;\n            }\n            \n            // Push children to stack\n            stack.push(new Pair<>(node.right, index + 1));\n            stack.push(new Pair<>(node.left, index + 1));\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def findPath(self, root: TreeNode, sequence: List[int]) -> bool:\n        if not sequence or not root:\n            return False\n        \n        stack = [(root, 0)]\n        \n        while stack:\n            node, index = stack.pop()\n            \n            if not node:\n                continue\n            \n            # Check if current node matches sequence\n            if index >= len(sequence) or node.val != sequence[index]:\n                continue\n            \n            # If leaf node, check if we've matched entire sequence\n            if not node.left and not node.right:\n                if index == len(sequence) - 1:\n                    return True\n                continue\n            \n            # Push children to stack\n            stack.append((node.right, index + 1))\n            stack.append((node.left, index + 1))\n        \n        return False",
+        "javascript": "function findPath(root, sequence) {\n    if (!sequence || sequence.length === 0 || root === null) {\n        return false;\n    }\n    \n    const stack = [[root, 0]];\n    \n    while (stack.length > 0) {\n        const [node, index] = stack.pop();\n        \n        if (node === null) continue;\n        \n        // Check if current node matches sequence\n        if (index >= sequence.length || node.val !== sequence[index]) {\n            continue;\n        }\n        \n        // If leaf node, check if we've matched entire sequence\n        if (node.left === null && node.right === null) {\n            if (index === sequence.length - 1) {\n                return true;\n            }\n            continue;\n        }\n        \n        // Push children to stack\n        stack.push([node.right, index + 1]);\n        stack.push([node.left, index + 1]);\n    }\n    \n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if we've reached end of sequence at leaf node",
+    "Continuing search after sequence is fully matched (should stop at leaf)",
+    "Not handling empty sequence or null root edge cases",
+    "Forgetting that path must end at a leaf node",
+    "Not incrementing index when moving to children",
+    "Checking sequence length after accessing sequence[index]",
+    "Returning true when partial sequence matches but not at leaf",
+    "Not checking both children when one doesn't match"
+  ],
+  "hints": [
+    "Path must go from root to leaf - verify we reach leaf when sequence ends",
+    "Use index to track current position in sequence",
+    "At each node, verify node.val == sequence[index]",
+    "Only return true if at leaf AND index is at last element of sequence",
+    "Sequence length must equal path length from root to leaf",
+    "Check bounds before accessing sequence[index]",
+    "Both recursive and iterative solutions work well"
+  ],
+  "followUp": [
+    "What if sequence can match any path (not just root-to-leaf)?",
+    "How to find all paths that match given sequence?",
+    "What if you need to return the path nodes instead of boolean?",
+    "How to handle if tree can have duplicate values?",
+    "What if sequence can be a subsequence (allow skipping nodes)?",
+    "How to count number of paths matching sequence?",
+    "What if tree is very large and doesn't fit in memory?",
+    "How to handle if sequence can be reversed?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Google",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Oracle"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "Depth-First Search",
+    "Recursion",
+    "Stack"
+  ],
+  "relatedProblems": [
+    "Path Sum",
+    "Path Sum II",
+    "Binary Tree Paths",
+    "Sum Root to Leaf Numbers",
+    "Path Sum III",
+    "Longest Univalue Path",
+    "Step-By-Step Directions From Binary Tree Node",
+    "Count Paths That Can Form Palindrome"
+  ]
 }

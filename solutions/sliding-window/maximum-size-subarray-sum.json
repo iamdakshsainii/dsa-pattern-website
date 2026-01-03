@@ -3,17 +3,189 @@
   "questionSlug": "maximum-size-subarray-sum",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/problems/minimum-window-substring-substring/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Minimum Window Substring - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=jSto0O4AJbM",
+        "channel": "NeetCode",
+        "duration": "15:40",
+        "language": "English"
+      },
+      {
+        "title": "Two HashMap Sliding Window",
+        "url": "https://www.youtube.com/watch?v=e1HlptlipB0",
+        "channel": "take U forward",
+        "duration": "22:35",
+        "language": "English"
+      },
+      {
+        "title": "Variable Window with Frequency Map",
+        "url": "https://www.youtube.com/watch?v=iwv1llyN6mo",
+        "channel": "Aditya Verma",
+        "duration": "25:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Minimum Window Substring",
+        "url": "https://leetcode.com/problems/minimum-window-substring/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Two Pointer with HashMap Pattern",
+        "url": "https://www.geeksforgeeks.org/find-the-smallest-window-in-a-string-containing-all-characters-of-another-string/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Character Frequency Matching",
+        "url": "https://algo.monster/problems/minimum_window",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Permutation in String",
+        "url": "https://leetcode.com/problems/permutation-in-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find All Anagrams in a String",
+        "url": "https://leetcode.com/problems/find-all-anagrams-in-a-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Substring with Concatenation of All Words",
+        "url": "https://leetcode.com/problems/substring-with-concatenation-of-all-words/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Substring with At Most K Distinct Characters",
+        "url": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Minimum Window Substring when: find smallest window containing all characters of target, character frequency matching, two HashMaps, minimize window length. Keywords: 'minimum window', 'contains all', 'substring covering'.",
+  "approaches": [
+    {
+      "name": "Sliding Window with Two HashMaps (Optimal)",
+      "order": 1,
+      "intuition": "Use two HashMaps: one for target character frequencies, one for window. Expand right to include characters. Track how many characters have required frequency (formed). When all characters formed, shrink from left to minimize. Update minimum when valid window found. O(S + T) time.",
+      "approach": "Two pointers with frequency maps. Expand right until valid. Shrink left while valid to minimize. Track minimum length window.",
+      "steps": [
+        "Build frequency map for string t",
+        "Initialize left = 0, minLength = INT_MAX, formed = 0, required = distinct chars in t",
+        "Initialize windowCounts map",
+        "For right from 0 to s.length-1:",
+        "  - Add s[right] to windowCounts",
+        "  - If s[right] in t and windowCounts[s[right]] == tCounts[s[right]]:",
+        "    - Increment formed",
+        "  - While formed == required (valid window):",
+        "    - Update minLength and result if smaller",
+        "    - Remove s[left] from window",
+        "    - If s[left] in t and windowCounts < required:",
+        "      - Decrement formed",
+        "    - Increment left",
+        "Return result substring or empty string"
+      ],
+      "complexity": {
+        "time": "O(S + T)",
+        "space": "O(S + T)",
+        "timeExplanation": "Build target map: O(T). Each character in S visited at most twice: O(2S). Total: O(S + T).",
+        "spaceExplanation": "Two HashMaps storing character frequencies: O(S + T) for unique characters."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string minWindow(string s, string t) {\n        if (s.empty() || t.empty()) return \"\";\n        \n        unordered_map<char, int> tCounts, windowCounts;\n        for (char c : t) tCounts[c]++;\n        \n        int required = tCounts.size();\n        int formed = 0;\n        int left = 0;\n        int minLength = INT_MAX;\n        int minLeft = 0;\n        \n        for (int right = 0; right < s.length(); right++) {\n            char c = s[right];\n            windowCounts[c]++;\n            \n            if (tCounts.count(c) && windowCounts[c] == tCounts[c]) {\n                formed++;\n            }\n            \n            while (formed == required && left <= right) {\n                if (right - left + 1 < minLength) {\n                    minLength = right - left + 1;\n                    minLeft = left;\n                }\n                \n                char leftChar = s[left];\n                windowCounts[leftChar]--;\n                if (tCounts.count(leftChar) && windowCounts[leftChar] < tCounts[leftChar]) {\n                    formed--;\n                }\n                left++;\n            }\n        }\n        \n        return minLength == INT_MAX ? \"\" : s.substr(minLeft, minLength);\n    }\n};",
+        "java": "class Solution {\n    public String minWindow(String s, String t) {\n        if (s.isEmpty() || t.isEmpty()) return \"\";\n        \n        Map<Character, Integer> tCounts = new HashMap<>();\n        for (char c : t.toCharArray()) {\n            tCounts.put(c, tCounts.getOrDefault(c, 0) + 1);\n        }\n        \n        int required = tCounts.size();\n        int formed = 0;\n        int left = 0;\n        int minLength = Integer.MAX_VALUE;\n        int minLeft = 0;\n        \n        Map<Character, Integer> windowCounts = new HashMap<>();\n        \n        for (int right = 0; right < s.length(); right++) {\n            char c = s.charAt(right);\n            windowCounts.put(c, windowCounts.getOrDefault(c, 0) + 1);\n            \n            if (tCounts.containsKey(c) && windowCounts.get(c).intValue() == tCounts.get(c).intValue()) {\n                formed++;\n            }\n            \n            while (formed == required && left <= right) {\n                if (right - left + 1 < minLength) {\n                    minLength = right - left + 1;\n                    minLeft = left;\n                }\n                \n                char leftChar = s.charAt(left);\n                windowCounts.put(leftChar, windowCounts.get(leftChar) - 1);\n                if (tCounts.containsKey(leftChar) && windowCounts.get(leftChar) < tCounts.get(leftChar)) {\n                    formed--;\n                }\n                left++;\n            }\n        }\n        \n        return minLength == Integer.MAX_VALUE ? \"\" : s.substring(minLeft, minLeft + minLength);\n    }\n}",
+        "python": "class Solution:\n    def minWindow(self, s: str, t: str) -> str:\n        if not s or not t:\n            return \"\"\n        \n        t_counts = Counter(t)\n        window_counts = {}\n        \n        required = len(t_counts)\n        formed = 0\n        left = 0\n        min_length = float('inf')\n        min_left = 0\n        \n        for right in range(len(s)):\n            c = s[right]\n            window_counts[c] = window_counts.get(c, 0) + 1\n            \n            if c in t_counts and window_counts[c] == t_counts[c]:\n                formed += 1\n            \n            while formed == required and left <= right:\n                if right - left + 1 < min_length:\n                    min_length = right - left + 1\n                    min_left = left\n                \n                left_char = s[left]\n                window_counts[left_char] -= 1\n                if left_char in t_counts and window_counts[left_char] < t_counts[left_char]:\n                    formed -= 1\n                left += 1\n        \n        return \"\" if min_length == float('inf') else s[min_left:min_left + min_length]",
+        "javascript": "function minWindow(s, t) {\n    if (!s || !t) return \"\";\n    \n    const tCounts = new Map();\n    for (const c of t) {\n        tCounts.set(c, (tCounts.get(c) || 0) + 1);\n    }\n    \n    const required = tCounts.size;\n    let formed = 0;\n    let left = 0;\n    let minLength = Infinity;\n    let minLeft = 0;\n    \n    const windowCounts = new Map();\n    \n    for (let right = 0; right < s.length; right++) {\n        const c = s[right];\n        windowCounts.set(c, (windowCounts.get(c) || 0) + 1);\n        \n        if (tCounts.has(c) && windowCounts.get(c) === tCounts.get(c)) {\n            formed++;\n        }\n        \n        while (formed === required && left <= right) {\n            if (right - left + 1 < minLength) {\n                minLength = right - left + 1;\n                minLeft = left;\n            }\n            \n            const leftChar = s[left];\n            windowCounts.set(leftChar, windowCounts.get(leftChar) - 1);\n            if (tCounts.has(leftChar) && windowCounts.get(leftChar) < tCounts.get(leftChar)) {\n                formed--;\n            }\n            left++;\n        }\n    }\n    \n    return minLength === Infinity ? \"\" : s.substring(minLeft, minLeft + minLength);\n}"
+      }
+    },
+    {
+      "name": "Optimized with Filtered String",
+      "order": 2,
+      "intuition": "Optimization for large strings with few target characters: create filtered list containing only relevant characters and indices. Apply sliding window on filtered list. Reduces iterations when S >> T.",
+      "approach": "Filter S to only include characters in T with their indices. Apply sliding window on filtered list.",
+      "steps": [
+        "Build frequency map for t",
+        "Create filtered list of (char, index) for chars in t",
+        "Apply sliding window on filtered list",
+        "Track minimum window using original indices",
+        "Return substring from original string"
+      ],
+      "complexity": {
+        "time": "O(S + T)",
+        "space": "O(S + T)",
+        "timeExplanation": "Filtering: O(S). Sliding window on filtered: O(filtered_length) ≤ O(S). Total: O(S + T).",
+        "spaceExplanation": "Filtered list and HashMaps: O(S + T)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string minWindow(string s, string t) {\n        if (s.empty() || t.empty()) return \"\";\n        \n        unordered_map<char, int> tCounts;\n        for (char c : t) tCounts[c]++;\n        \n        // Filter s to only relevant characters\n        vector<pair<int, char>> filtered;\n        for (int i = 0; i < s.length(); i++) {\n            if (tCounts.count(s[i])) {\n                filtered.push_back({i, s[i]});\n            }\n        }\n        \n        int required = tCounts.size();\n        int formed = 0;\n        int left = 0;\n        int minLength = INT_MAX;\n        int minLeft = 0;\n        \n        unordered_map<char, int> windowCounts;\n        \n        for (int right = 0; right < filtered.size(); right++) {\n            char c = filtered[right].second;\n            windowCounts[c]++;\n            \n            if (windowCounts[c] == tCounts[c]) {\n                formed++;\n            }\n            \n            while (formed == required && left <= right) {\n                int start = filtered[left].first;\n                int end = filtered[right].first;\n                \n                if (end - start + 1 < minLength) {\n                    minLength = end - start + 1;\n                    minLeft = start;\n                }\n                \n                char leftChar = filtered[left].second;\n                windowCounts[leftChar]--;\n                if (windowCounts[leftChar] < tCounts[leftChar]) {\n                    formed--;\n                }\n                left++;\n            }\n        }\n        \n        return minLength == INT_MAX ? \"\" : s.substr(minLeft, minLength);\n    }\n};",
+        "java": "// Similar structure to C++",
+        "python": "class Solution:\n    def minWindow(self, s: str, t: str) -> str:\n        if not s or not t:\n            return \"\"\n        \n        t_counts = Counter(t)\n        \n        # Filter s to only relevant characters\n        filtered = [(i, c) for i, c in enumerate(s) if c in t_counts]\n        \n        required = len(t_counts)\n        formed = 0\n        left = 0\n        min_length = float('inf')\n        min_left = 0\n        \n        window_counts = {}\n        \n        for right in range(len(filtered)):\n            c = filtered[right][1]\n            window_counts[c] = window_counts.get(c, 0) + 1\n            \n            if window_counts[c] == t_counts[c]:\n                formed += 1\n            \n            while formed == required and left <= right:\n                start = filtered[left][0]\n                end = filtered[right][0]\n                \n                if end - start + 1 < min_length:\n                    min_length = end - start + 1\n                    min_left = start\n                \n                left_char = filtered[left][1]\n                window_counts[left_char] -= 1\n                if window_counts[left_char] < t_counts[left_char]:\n                    formed -= 1\n                left += 1\n        \n        return \"\" if min_length == float('inf') else s[min_left:min_left + min_length]",
+        "javascript": "// Similar structure to Python"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Comparing entire maps instead of tracking formed count",
+    "Not handling duplicate characters in target",
+    "Forgetting to check windowCounts[c] == tCounts[c] exactly",
+    "Not decrementing formed when shrinking window",
+    "Using set instead of map (loses frequency information)",
+    "Not handling empty string edge cases",
+    "Wrong substring extraction with indices",
+    "Checking formed >= required instead of formed == required"
+  ],
+  "hints": [
+    "Track how many unique characters have required frequency",
+    "Use formed counter instead of comparing entire maps",
+    "Window is valid when formed == required",
+    "Shrink window while maintaining validity",
+    "Store start index and length for result",
+    "Can optimize for sparse strings with filtering",
+    "Each character in S visited at most twice",
+    "Handle edge case: target longer than source"
+  ],
+  "followUp": [
+    "What if you need all minimum windows?",
+    "Can you find maximum window instead?",
+    "What about case-insensitive matching?",
+    "How to handle if characters have priorities?",
+    "What if target can have wildcards?",
+    "Can you optimize for very large strings?",
+    "What about finding k-th smallest window?",
+    "How to extend to 2D matrix?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "LinkedIn",
+    "Uber",
+    "Adobe",
+    "Bloomberg",
+    "Oracle"
+  ],
+  "tags": [
+    "Sliding Window",
+    "HashMap",
+    "String",
+    "Two Pointers",
+    "Variable Window"
+  ],
+  "relatedProblems": [
+    "Permutation in String",
+    "Find All Anagrams in a String",
+    "Substring with Concatenation of All Words",
+    "Longest Substring with At Most K Distinct Characters",
+    "Longest Substring Without Repeating Characters",
+    "Smallest Range Covering Elements from K Lists",
+    "Minimum Window Subsequence",
+    "Subarrays with K Different Integers"
+  ]
 }

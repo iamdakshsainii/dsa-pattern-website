@@ -2,18 +2,186 @@
   "questionId": "694d4a3a98494915f3bc8ee0",
   "questionSlug": "subsets",
   "resources": {
-    "leetcode": "https://www.educative.io/courses/grokking-the-coding-interview/gx2OqlvEnWG",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/subsets/",
+    "videos": [
+      {
+        "title": "Subsets - Leetcode 78",
+        "url": "https://www.youtube.com/watch?v=REOH22Xwdkk",
+        "channel": "NeetCode",
+        "duration": "9:32",
+        "language": "English"
+      },
+      {
+        "title": "Subsets Backtracking Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=RIN3z_2EqCE",
+        "channel": "take U forward",
+        "duration": "15:45",
+        "language": "English"
+      },
+      {
+        "title": "Generate All Subsets Using Backtracking",
+        "url": "https://www.youtube.com/watch?v=b7AYbpM5YrE",
+        "channel": "TECH DOSE",
+        "duration": "12:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Subsets Solution",
+        "url": "https://leetcode.com/problems/subsets/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Power Set Using Backtracking",
+        "url": "https://www.geeksforgeeks.org/power-set/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Subsets Pattern Explained",
+        "url": "https://algo.monster/problems/subsets",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Subsets II",
+        "url": "https://leetcode.com/problems/subsets-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Combination Sum",
+        "url": "https://leetcode.com/problems/combination-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Permutations",
+        "url": "https://leetcode.com/problems/permutations/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Letter Combinations of a Phone Number",
+        "url": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Subsets pattern when generating all possible combinations of elements. Key indicators: power set, all subsets, all combinations, 2^n results, include/exclude decisions for each element.",
+  "approaches": [
+    {
+      "name": "Backtracking (Optimal)",
+      "order": 1,
+      "intuition": "For each element, we have 2 choices: include it or exclude it. Use backtracking to explore both paths. Start with empty subset, recursively add elements and backtrack. This generates all 2^n subsets.",
+      "approach": "Use recursive backtracking. At each index, make two recursive calls: one including current element, one excluding it. When index reaches end, add current subset to result.",
+      "steps": [
+        "Initialize result list with empty subset []",
+        "Define backtrack function(index, current):",
+        " - If index == nums.length:",
+        "   - Add copy of current to result",
+        "   - Return",
+        " - Include nums[index]:",
+        "   - Add nums[index] to current",
+        "   - Recursively call backtrack(index+1, current)",
+        "   - Remove nums[index] from current (backtrack)",
+        " - Exclude nums[index]:",
+        "   - Recursively call backtrack(index+1, current)",
+        "Call backtrack(0, [])",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(2^n * n)",
+        "space": "O(n)",
+        "timeExplanation": "Generate 2^n subsets. Each subset takes O(n) time to copy. Total: O(2^n * n).",
+        "spaceExplanation": "Recursion depth is n. Current subset takes O(n). Total: O(n) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    void backtrack(vector<vector<int>>& result, vector<int>& current, \n                   vector<int>& nums, int index) {\n        if (index == nums.size()) {\n            result.push_back(current);\n            return;\n        }\n        \n        // Include nums[index]\n        current.push_back(nums[index]);\n        backtrack(result, current, nums, index + 1);\n        current.pop_back();\n        \n        // Exclude nums[index]\n        backtrack(result, current, nums, index + 1);\n    }\n    \npublic:\n    vector<vector<int>> subsets(vector<int>& nums) {\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(result, current, nums, 0);\n        return result;\n    }\n};",
+        "java": "class Solution {\n    private void backtrack(List<List<Integer>> result, List<Integer> current, \n                          int[] nums, int index) {\n        if (index == nums.length) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        // Include nums[index]\n        current.add(nums[index]);\n        backtrack(result, current, nums, index + 1);\n        current.remove(current.size() - 1);\n        \n        // Exclude nums[index]\n        backtrack(result, current, nums, index + 1);\n    }\n    \n    public List<List<Integer>> subsets(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(result, new ArrayList<>(), nums, 0);\n        return result;\n    }\n}",
+        "python": "class Solution:\n    def subsets(self, nums: List[int]) -> List[List[int]]:\n        result = []\n        \n        def backtrack(index, current):\n            if index == len(nums):\n                result.append(current[:])\n                return\n            \n            # Include nums[index]\n            current.append(nums[index])\n            backtrack(index + 1, current)\n            current.pop()\n            \n            # Exclude nums[index]\n            backtrack(index + 1, current)\n        \n        backtrack(0, [])\n        return result",
+        "javascript": "function subsets(nums) {\n    const result = [];\n    \n    function backtrack(index, current) {\n        if (index === nums.length) {\n            result.push([...current]);\n            return;\n        }\n        \n        // Include nums[index]\n        current.push(nums[index]);\n        backtrack(index + 1, current);\n        current.pop();\n        \n        // Exclude nums[index]\n        backtrack(index + 1, current);\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Iterative (Cascading)",
+      "order": 2,
+      "intuition": "Start with empty subset []. For each element, take all existing subsets and create new subsets by adding current element to each. This cascades through all elements, building subsets level by level.",
+      "approach": "Start with result containing empty subset. For each number, iterate through current result, create copy of each subset, add current number to copy, add new subset to result.",
+      "steps": [
+        "Initialize result = [[]]",
+        "For each num in nums:",
+        " - Get current size of result",
+        " - For i from 0 to current size:",
+        "   - Create copy of result[i]",
+        "   - Add num to copy",
+        "   - Add copy to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(2^n * n)",
+        "space": "O(1)",
+        "timeExplanation": "For each of n elements, we double the number of subsets. Each subset copy takes O(n). Total: O(2^n * n).",
+        "spaceExplanation": "No extra space except for output. O(1) excluding output."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> subsets(vector<int>& nums) {\n        vector<vector<int>> result = {{}};\n        \n        for (int num : nums) {\n            int n = result.size();\n            for (int i = 0; i < n; i++) {\n                vector<int> subset = result[i];\n                subset.push_back(num);\n                result.push_back(subset);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> subsets(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        result.add(new ArrayList<>());\n        \n        for (int num : nums) {\n            int n = result.size();\n            for (int i = 0; i < n; i++) {\n                List<Integer> subset = new ArrayList<>(result.get(i));\n                subset.add(num);\n                result.add(subset);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def subsets(self, nums: List[int]) -> List[List[int]]:\n        result = [[]]\n        \n        for num in nums:\n            n = len(result)\n            for i in range(n):\n                subset = result[i][:]\n                subset.append(num)\n                result.append(subset)\n        \n        return result",
+        "javascript": "function subsets(nums) {\n    const result = [[]];\n    \n    for (const num of nums) {\n        const n = result.length;\n        for (let i = 0; i < n; i++) {\n            const subset = [...result[i]];\n            subset.push(num);\n            result.push(subset);\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not copying the current subset when adding to result (reference issue)",
+    "Forgetting to backtrack (remove element after recursive call)",
+    "Not starting with empty subset in result",
+    "Confusing subsets with permutations (order doesn't matter in subsets)",
+    "Modifying result while iterating in iterative approach",
+    "Not understanding that there are exactly 2^n subsets",
+    "Trying to use nested loops instead of backtracking",
+    "Forgetting the base case in recursive approach"
+  ],
+  "hints": [
+    "For each element, you have 2 choices: include it or exclude it",
+    "Total number of subsets is 2^n (each element in or out)",
+    "Can solve with backtracking or iteratively by cascading",
+    "Start with empty subset, build up from there",
+    "In backtracking, make decision at each index: take or skip",
+    "In iterative, double the subsets at each step by adding current element",
+    "Remember to copy subsets when adding to result"
+  ],
+  "followUp": [
+    "What if array has duplicate elements? (Subsets II)",
+    "How to generate only subsets of specific size k?",
+    "How to count subsets without generating all of them?",
+    "What if you need subsets in lexicographic order?",
+    "How to generate subsets iteratively without extra space?",
+    "What if you need subsets that satisfy certain condition?",
+    "How to handle very large n (> 20)?",
+    "What if you need to stream subsets one at a time?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Adobe",
+    "Bloomberg",
+    "Uber"
+  ],
+  "tags": [
+    "Array",
+    "Backtracking",
+    "Bit Manipulation"
+  ],
+  "relatedProblems": [
+    "Subsets II",
+    "Permutations",
+    "Combination Sum",
+    "Generate Parentheses",
+    "Letter Combinations of a Phone Number",
+    "Combinations",
+    "Partition to K Equal Sum Subsets"
+  ]
 }

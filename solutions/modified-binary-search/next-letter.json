@@ -3,17 +3,181 @@
   "questionSlug": "next-letter",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-smallest-letter-greater-than-target/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Find Smallest Letter Greater Than Target",
+        "url": "https://www.youtube.com/watch?v=X45c37QBh-s",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search on Letters",
+        "url": "https://www.youtube.com/watch?v=ZTPQL94yTZI",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:20",
+        "language": "English"
+      },
+      {
+        "title": "Next Greater Letter Solution",
+        "url": "https://www.youtube.com/watch?v=K1sc2FxVG0s",
+        "channel": "TECH DOSE",
+        "duration": "12:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Smallest Letter Greater Than Target",
+        "url": "https://leetcode.com/problems/find-smallest-letter-greater-than-target/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Binary Search Letter Variations",
+        "url": "https://www.geeksforgeeks.org/ceiling-in-a-sorted-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Circular Array Binary Search",
+        "url": "https://algo.monster/problems/binary_search_boundary",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Search Insert Position",
+        "url": "https://leetcode.com/problems/search-insert-position/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Ceiling Number",
+        "url": "https://www.geeksforgeeks.org/ceiling-in-a-sorted-array/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "First Bad Version",
+        "url": "https://leetcode.com/problems/first-bad-version/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Right Interval",
+        "url": "https://leetcode.com/problems/find-right-interval/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Next Letter when finding smallest letter > target in circular sorted array. Key indicators: sorted letters, wrap around, smallest greater, ceiling letter, binary search on characters.",
+  "approaches": [
+    {
+      "name": "Modified Binary Search with Wrap-Around (Optimal)",
+      "order": 1,
+      "intuition": "Similar to ceiling but with wrap-around. Find smallest letter > target. If none exists, wrap to first letter. Track best candidate during binary search.",
+      "approach": "Binary search with result tracking. When letters[mid] > target, update result and search left. Else search right. Handle wrap-around by defaulting to letters[0].",
+      "steps": [
+        "Initialize left = 0, right = n-1",
+        "Initialize result = letters[0] (default wrap-around)",
+        "While left <= right:",
+        "  - Calculate mid = left + (right - left) / 2",
+        "  - If letters[mid] > target:",
+        "    * Update result = letters[mid]",
+        "    * Search left: right = mid - 1",
+        "  - Else (letters[mid] <= target):",
+        "    * Search right: left = mid + 1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search on n letters. Divides search space in half. log n iterations.",
+        "spaceExplanation": "Only variables for pointers and result. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    char nextGreatestLetter(vector<char>& letters, char target) {\n        int left = 0, right = letters.size() - 1;\n        char result = letters[0];  // Default wrap-around\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (letters[mid] > target) {\n                result = letters[mid];  // Potential answer\n                right = mid - 1;  // Search for smaller\n            } else {\n                left = mid + 1;  // Need larger letter\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public char nextGreatestLetter(char[] letters, char target) {\n        int left = 0, right = letters.length - 1;\n        char result = letters[0];  // Default wrap-around\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (letters[mid] > target) {\n                result = letters[mid];  // Potential answer\n                right = mid - 1;  // Search for smaller\n            } else {\n                left = mid + 1;  // Need larger letter\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreatestLetter(self, letters: List[str], target: str) -> str:\n        left, right = 0, len(letters) - 1\n        result = letters[0]  # Default wrap-around\n        \n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            if letters[mid] > target:\n                result = letters[mid]  # Potential answer\n                right = mid - 1  # Search for smaller\n            else:\n                left = mid + 1  # Need larger letter\n        \n        return result",
+        "javascript": "function nextGreatestLetter(letters, target) {\n    let left = 0, right = letters.length - 1;\n    let result = letters[0];  // Default wrap-around\n    \n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (letters[mid] > target) {\n            result = letters[mid];  // Potential answer\n            right = mid - 1;  // Search for smaller\n        } else {\n            left = mid + 1;  // Need larger letter\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Linear Scan with Wrap (Alternative)",
+      "order": 2,
+      "intuition": "Scan array linearly. Return first letter > target. If none found, array is circular so return first letter.",
+      "approach": "Iterate through letters. Return first letter > target. If loop completes, return letters[0] for wrap-around.",
+      "steps": [
+        "Iterate through letters array",
+        "For each letter:",
+        "  - If letter > target: return letter",
+        "If no letter found: return letters[0] (wrap-around)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "May scan all n letters in worst case. Linear time: O(n).",
+        "spaceExplanation": "Only loop variable used. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    char nextGreatestLetter(vector<char>& letters, char target) {\n        for (char letter : letters) {\n            if (letter > target) {\n                return letter;\n            }\n        }\n        return letters[0];  // Wrap-around\n    }\n};",
+        "java": "class Solution {\n    public char nextGreatestLetter(char[] letters, char target) {\n        for (char letter : letters) {\n            if (letter > target) {\n                return letter;\n            }\n        }\n        return letters[0];  // Wrap-around\n    }\n}",
+        "python": "class Solution:\n    def nextGreatestLetter(self, letters: List[str], target: str) -> str:\n        for letter in letters:\n            if letter > target:\n                return letter\n        return letters[0]  # Wrap-around",
+        "javascript": "function nextGreatestLetter(letters, target) {\n    for (const letter of letters) {\n        if (letter > target) {\n            return letter;\n        }\n    }\n    return letters[0];  // Wrap-around\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using >= instead of > (need strictly greater)",
+    "Forgetting wrap-around to first letter",
+    "Not initializing result to letters[0]",
+    "Handling duplicates incorrectly",
+    "Comparing characters incorrectly",
+    "Not considering empty array edge case",
+    "Using wrong binary search termination condition",
+    "Returning index instead of character"
+  ],
+  "hints": [
+    "Need strictly greater (>), not greater or equal",
+    "Array is circular - wraps to beginning",
+    "Binary search can solve in O(log n)",
+    "Default result should be letters[0] for wrap",
+    "When letters[mid] > target, potential answer found",
+    "Search left to find smaller valid answer",
+    "When letters[mid] <= target, search right",
+    "Duplicates don't affect logic"
+  ],
+  "followUp": [
+    "What if array is unsorted?",
+    "How to find previous letter instead?",
+    "What about case sensitivity?",
+    "Can you handle Unicode characters?",
+    "What if target not in valid range?",
+    "How to find k-th next letter?",
+    "What about circular array of numbers?",
+    "How to optimize for multiple queries?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "LinkedIn",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Oracle"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "String",
+    "Circular Array"
+  ],
+  "relatedProblems": [
+    "Ceiling Number",
+    "Search Insert Position",
+    "Find Right Interval",
+    "First Bad Version",
+    "Minimum Difference Element",
+    "Number Range",
+    "Search in Rotated Sorted Array",
+    "Find Peak Element"
+  ]
 }

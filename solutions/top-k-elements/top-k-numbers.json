@@ -2,18 +2,187 @@
   "questionId": "694d4a3a98494915f3bc8ef8",
   "questionSlug": "top-k-numbers",
   "resources": {
-    "leetcode": "https://github.com/dipjul/Grokking-the-Coding-Interview-Patterns-for-Coding-Questions",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+    "videos": [
+      {
+        "title": "Kth Largest Element in Array - Leetcode 215",
+        "url": "https://www.youtube.com/watch?v=XEmy13g1Qxc",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Top K Elements Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=FrWsXEoc3KY",
+        "channel": "TECH DOSE",
+        "duration": "14:50",
+        "language": "English"
+      },
+      {
+        "title": "QuickSelect Algorithm Explained",
+        "url": "https://www.youtube.com/watch?v=hGK_5n81drs",
+        "channel": "take U forward",
+        "duration": "20:35",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth Largest Element Solution",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Top K Elements Pattern",
+        "url": "https://www.geeksforgeeks.org/k-largestor-smallest-elements-in-an-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "QuickSelect Algorithm",
+        "url": "https://algo.monster/problems/kth_largest_element",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Top K Frequent Elements",
+        "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "K Closest Points to Origin",
+        "url": "https://leetcode.com/problems/k-closest-points-to-origin/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Kth Largest Element in Stream",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find K Pairs with Smallest Sums",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Top K Numbers pattern when finding k largest or smallest elements. Key indicators: kth largest/smallest, top k elements, min/max heap of size k, QuickSelect algorithm, partial sorting.",
+  "approaches": [
+    {
+      "name": "Min Heap of Size K (Optimal for Small K)",
+      "order": 1,
+      "intuition": "To find k largest, maintain min heap of size k. Heap contains k largest elements seen so far, with smallest at root. For each element, if larger than heap root, replace root. Final heap contains k largest elements.",
+      "approach": "Build min heap of first k elements. For remaining elements, if element > heap root, remove root and add element. At end, extract all from heap or return root for kth largest.",
+      "steps": [
+        "Create min heap",
+        "Add first k elements to heap",
+        "For each remaining element:",
+        " - If element > heap.peek():",
+        "   - Remove heap root",
+        "   - Add element to heap",
+        "Extract all k elements from heap (or just root for kth largest)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Build initial heap: O(k). Process n-k elements, each with O(log k) heap operation. Total: O(n log k).",
+        "spaceExplanation": "Heap stores k elements. O(k) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        priority_queue<int, vector<int>, greater<int>> minHeap;\n        \n        for (int num : nums) {\n            minHeap.push(num);\n            if (minHeap.size() > k) {\n                minHeap.pop();\n            }\n        }\n        \n        return minHeap.top();\n    }\n    \n    // To return all k largest elements:\n    vector<int> topKLargest(vector<int>& nums, int k) {\n        priority_queue<int, vector<int>, greater<int>> minHeap;\n        \n        for (int num : nums) {\n            minHeap.push(num);\n            if (minHeap.size() > k) {\n                minHeap.pop();\n            }\n        }\n        \n        vector<int> result;\n        while (!minHeap.empty()) {\n            result.push_back(minHeap.top());\n            minHeap.pop();\n        }\n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int findKthLargest(int[] nums, int k) {\n        PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n        \n        for (int num : nums) {\n            minHeap.offer(num);\n            if (minHeap.size() > k) {\n                minHeap.poll();\n            }\n        }\n        \n        return minHeap.peek();\n    }\n    \n    // To return all k largest elements:\n    public List<Integer> topKLargest(int[] nums, int k) {\n        PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n        \n        for (int num : nums) {\n            minHeap.offer(num);\n            if (minHeap.size() > k) {\n                minHeap.poll();\n            }\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        while (!minHeap.isEmpty()) {\n            result.add(minHeap.poll());\n        }\n        return result;\n    }\n}",
+        "python": "import heapq\n\nclass Solution:\n    def findKthLargest(self, nums: List[int], k: int) -> int:\n        min_heap = []\n        \n        for num in nums:\n            heapq.heappush(min_heap, num)\n            if len(min_heap) > k:\n                heapq.heappop(min_heap)\n        \n        return min_heap[0]\n    \n    # To return all k largest elements:\n    def topKLargest(self, nums: List[int], k: int) -> List[int]:\n        min_heap = []\n        \n        for num in nums:\n            heapq.heappush(min_heap, num)\n            if len(min_heap) > k:\n                heapq.heappop(min_heap)\n        \n        return list(min_heap)",
+        "javascript": "class MinHeap {\n    constructor() {\n        this.heap = [];\n    }\n    \n    push(val) {\n        this.heap.push(val);\n        this.bubbleUp(this.heap.length - 1);\n    }\n    \n    pop() {\n        if (this.heap.length === 0) return null;\n        if (this.heap.length === 1) return this.heap.pop();\n        \n        const min = this.heap[0];\n        this.heap[0] = this.heap.pop();\n        this.bubbleDown(0);\n        return min;\n    }\n    \n    peek() {\n        return this.heap[0];\n    }\n    \n    size() {\n        return this.heap.length;\n    }\n    \n    bubbleUp(idx) {\n        while (idx > 0) {\n            const parent = Math.floor((idx - 1) / 2);\n            if (this.heap[parent] <= this.heap[idx]) break;\n            [this.heap[parent], this.heap[idx]] = [this.heap[idx], this.heap[parent]];\n            idx = parent;\n        }\n    }\n    \n    bubbleDown(idx) {\n        while (true) {\n            const left = 2 * idx + 1;\n            const right = 2 * idx + 2;\n            let smallest = idx;\n            \n            if (left < this.heap.length && this.heap[left] < this.heap[smallest]) {\n                smallest = left;\n            }\n            if (right < this.heap.length && this.heap[right] < this.heap[smallest]) {\n                smallest = right;\n            }\n            if (smallest === idx) break;\n            \n            [this.heap[idx], this.heap[smallest]] = [this.heap[smallest], this.heap[idx]];\n            idx = smallest;\n        }\n    }\n}\n\nfunction findKthLargest(nums, k) {\n    const minHeap = new MinHeap();\n    \n    for (const num of nums) {\n        minHeap.push(num);\n        if (minHeap.size() > k) {\n            minHeap.pop();\n        }\n    }\n    \n    return minHeap.peek();\n}\n\n// To return all k largest elements:\nfunction topKLargest(nums, k) {\n    const minHeap = new MinHeap();\n    \n    for (const num of nums) {\n        minHeap.push(num);\n        if (minHeap.size() > k) {\n            minHeap.pop();\n        }\n    }\n    \n    const result = [];\n    while (minHeap.size() > 0) {\n        result.push(minHeap.pop());\n    }\n    return result;\n}"
+      }
+    },
+    {
+      "name": "QuickSelect (Optimal Average Case)",
+      "order": 2,
+      "intuition": "QuickSelect is selection algorithm based on QuickSort. Partition array around pivot. If pivot is at position k-1, it's kth largest. If pivot position > k-1, recurse left. Otherwise recurse right. Average O(n) time.",
+      "approach": "Choose pivot, partition array. Compare pivot position with k. Recurse on correct partition until pivot is at position k-1 (for kth largest, position n-k for 0-indexed).",
+      "steps": [
+        "Define partition function:",
+        " - Choose pivot (e.g., rightmost element)",
+        " - Partition: larger elements to left, smaller to right",
+        " - Return pivot final index",
+        "Define quickSelect(left, right, k):",
+        " - If left == right: return nums[left]",
+        " - pivotIndex = partition(left, right)",
+        " - If pivotIndex == n - k: return nums[pivotIndex]",
+        " - If pivotIndex > n - k: quickSelect(left, pivotIndex-1, k)",
+        " - Else: quickSelect(pivotIndex+1, right, k)",
+        "Call quickSelect(0, n-1, k)"
+      ],
+      "complexity": {
+        "time": "O(n) average, O(n²) worst",
+        "space": "O(1)",
+        "timeExplanation": "Average case: each partition reduces problem size by half, giving O(n + n/2 + n/4 + ...) = O(n). Worst case (bad pivots): O(n²).",
+        "spaceExplanation": "In-place partitioning. O(1) space excluding recursion stack."
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int partition(vector<int>& nums, int left, int right) {\n        int pivot = nums[right];\n        int i = left;\n        \n        for (int j = left; j < right; j++) {\n            if (nums[j] >= pivot) { // For kth largest, put larger elements left\n                swap(nums[i], nums[j]);\n                i++;\n            }\n        }\n        swap(nums[i], nums[right]);\n        return i;\n    }\n    \n    int quickSelect(vector<int>& nums, int left, int right, int k) {\n        if (left == right) {\n            return nums[left];\n        }\n        \n        int pivotIndex = partition(nums, left, right);\n        \n        if (pivotIndex == k - 1) {\n            return nums[pivotIndex];\n        } else if (pivotIndex > k - 1) {\n            return quickSelect(nums, left, pivotIndex - 1, k);\n        } else {\n            return quickSelect(nums, pivotIndex + 1, right, k);\n        }\n    }\n    \npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        return quickSelect(nums, 0, nums.size() - 1, k);\n    }\n};",
+        "java": "class Solution {\n    private int partition(int[] nums, int left, int right) {\n        int pivot = nums[right];\n        int i = left;\n        \n        for (int j = left; j < right; j++) {\n            if (nums[j] >= pivot) { // For kth largest\n                int temp = nums[i];\n                nums[i] = nums[j];\n                nums[j] = temp;\n                i++;\n            }\n        }\n        int temp = nums[i];\n        nums[i] = nums[right];\n        nums[right] = temp;\n        return i;\n    }\n    \n    private int quickSelect(int[] nums, int left, int right, int k) {\n        if (left == right) {\n            return nums[left];\n        }\n        \n        int pivotIndex = partition(nums, left, right);\n        \n        if (pivotIndex == k - 1) {\n            return nums[pivotIndex];\n        } else if (pivotIndex > k - 1) {\n            return quickSelect(nums, left, pivotIndex - 1, k);\n        } else {\n            return quickSelect(nums, pivotIndex + 1, right, k);\n        }\n    }\n    \n    public int findKthLargest(int[] nums, int k) {\n        return quickSelect(nums, 0, nums.length - 1, k);\n    }\n}",
+        "python": "class Solution:\n    def findKthLargest(self, nums: List[int], k: int) -> int:\n        def partition(left, right):\n            pivot = nums[right]\n            i = left\n            \n            for j in range(left, right):\n                if nums[j] >= pivot:  # For kth largest\n                    nums[i], nums[j] = nums[j], nums[i]\n                    i += 1\n            \n            nums[i], nums[right] = nums[right], nums[i]\n            return i\n        \n        def quickselect(left, right, k):\n            if left == right:\n                return nums[left]\n            \n            pivot_index = partition(left, right)\n            \n            if pivot_index == k - 1:\n                return nums[pivot_index]\n            elif pivot_index > k - 1:\n                return quickselect(left, pivot_index - 1, k)\n            else:\n                return quickselect(pivot_index + 1, right, k)\n        \n        return quickselect(0, len(nums) - 1, k)",
+        "javascript": "function findKthLargest(nums, k) {\n    function partition(left, right) {\n        const pivot = nums[right];\n        let i = left;\n        \n        for (let j = left; j < right; j++) {\n            if (nums[j] >= pivot) { // For kth largest\n                [nums[i], nums[j]] = [nums[j], nums[i]];\n                i++;\n            }\n        }\n        [nums[i], nums[right]] = [nums[right], nums[i]];\n        return i;\n    }\n    \n    function quickSelect(left, right, k) {\n        if (left === right) {\n            return nums[left];\n        }\n        \n        const pivotIndex = partition(left, right);\n        \n        if (pivotIndex === k - 1) {\n            return nums[pivotIndex];\n        } else if (pivotIndex > k - 1) {\n            return quickSelect(left, pivotIndex - 1, k);\n        } else {\n            return quickSelect(pivotIndex + 1, right, k);\n        }\n    }\n    \n    return quickSelect(0, nums.length - 1, k);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using max heap instead of min heap for k largest",
+    "Not maintaining heap size exactly k",
+    "Wrong partition logic in QuickSelect (ascending vs descending)",
+    "Comparing with wrong index (k vs n-k vs k-1)",
+    "Not handling duplicates correctly in partition",
+    "Forgetting to swap pivot to correct position after partition",
+    "Using O(n log n) full sort when O(n) or O(n log k) is possible",
+    "Not randomizing pivot choice (leads to worst case O(n²))"
+  ],
+  "hints": [
+    "Min heap of size k keeps k largest elements",
+    "Heap root is kth largest (smallest of k largest)",
+    "QuickSelect doesn't need full sorting, just correct position",
+    "Partition in descending order for kth largest",
+    "Average time: QuickSelect O(n), Heap O(n log k)",
+    "Heap better when k is small, QuickSelect when k is large",
+    "Can optimize QuickSelect with random pivot selection"
+  ],
+  "followUp": [
+    "What if you need k smallest instead of largest?",
+    "How to handle if array can't fit in memory?",
+    "What if you need top k in sorted order?",
+    "How to optimize for multiple queries with different k?",
+    "What if elements are streamed (online algorithm)?",
+    "How to parallelize top k finding?",
+    "What if you need both kth smallest and largest?",
+    "How to handle if k changes dynamically?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Google",
+    "Microsoft",
+    "Apple",
+    "LinkedIn",
+    "Bloomberg",
+    "Uber",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Heap",
+    "Divide and Conquer",
+    "Sorting",
+    "QuickSelect"
+  ],
+  "relatedProblems": [
+    "Kth Smallest Element in a Sorted Matrix",
+    "Top K Frequent Elements",
+    "K Closest Points to Origin",
+    "Kth Largest Element in a Stream",
+    "Find K Pairs with Smallest Sums",
+    "Wiggle Sort II",
+    "Third Maximum Number"
+  ]
 }

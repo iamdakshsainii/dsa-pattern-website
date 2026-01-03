@@ -3,17 +3,187 @@
   "questionSlug": "remove-adjacent-duplicates-ii",
   "resources": {
     "leetcode": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string-ii/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Remove Adjacent Duplicates II - Stack",
+        "url": "https://www.youtube.com/watch?v=w6LcypDgC3w",
+        "channel": "NeetCode",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Remove K Consecutive Duplicates",
+        "url": "https://www.youtube.com/watch?v=Gj3g9fmQjfM",
+        "channel": "TECH DOSE",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Stack with Count Pattern",
+        "url": "https://www.youtube.com/watch?v=1GTunEorN18",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Remove Duplicates II Solution",
+        "url": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string-ii/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Remove K Consecutive Characters",
+        "url": "https://www.geeksforgeeks.org/remove-all-adjacent-duplicates-string-set-2/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Stack with Counter Pattern",
+        "url": "https://algo.monster/problems/remove_adjacent_duplicates_k",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Remove All Adjacent Duplicates",
+        "url": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Remove K Digits",
+        "url": "https://leetcode.com/problems/remove-k-digits/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Construct String With Repeat Limit",
+        "url": "https://leetcode.com/problems/construct-string-with-repeat-limit/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Make The String Great",
+        "url": "https://leetcode.com/problems/make-the-string-great/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Remove Adjacent Duplicates II when eliminating k consecutive identical elements. Key indicators: remove k duplicates, consecutive count, stack with frequency, cascade removal k elements.",
+  "approaches": [
+    {
+      "name": "Stack with Count Pairs (Optimal)",
+      "order": 1,
+      "intuition": "Store characters with their consecutive counts in stack. When count reaches k, remove the group. This handles cascading removals as new consecutive sequences may form after removal.",
+      "approach": "Stack stores (char, count) pairs. Increment count if same char, push new if different. Remove when count == k.",
+      "steps": [
+        "Create empty stack of (char, count) pairs",
+        "For each character in string:",
+        " - If stack not empty and stack.top().char == current:",
+        "   - Increment stack.top().count",
+        "   - If count == k: pop from stack",
+        " - Else:",
+        "   - Push (current, 1) to stack",
+        "Build result from stack",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Process each character once. Each push/pop is O(1). Building result is O(n). Total: O(n).",
+        "spaceExplanation": "Stack stores at most n characters. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string removeDuplicates(string s, int k) {\n        stack<pair<char, int>> st; // (character, count)\n        \n        for (char c : s) {\n            if (!st.empty() && st.top().first == c) {\n                st.top().second++;\n                if (st.top().second == k) {\n                    st.pop();\n                }\n            } else {\n                st.push({c, 1});\n            }\n        }\n        \n        // Build result from stack\n        string result = \"\";\n        while (!st.empty()) {\n            auto [ch, count] = st.top();\n            st.pop();\n            result = string(count, ch) + result;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public String removeDuplicates(String s, int k) {\n        Stack<int[]> stack = new Stack<>(); // [char, count]\n        \n        for (char c : s.toCharArray()) {\n            if (!stack.isEmpty() && stack.peek()[0] == c) {\n                stack.peek()[1]++;\n                if (stack.peek()[1] == k) {\n                    stack.pop();\n                }\n            } else {\n                stack.push(new int[]{c, 1});\n            }\n        }\n        \n        // Build result from stack\n        StringBuilder result = new StringBuilder();\n        while (!stack.isEmpty()) {\n            int[] pair = stack.pop();\n            char ch = (char) pair[0];\n            int count = pair[1];\n            for (int i = 0; i < count; i++) {\n                result.insert(0, ch);\n            }\n        }\n        \n        return result.toString();\n    }\n}",
+        "python": "class Solution:\n    def removeDuplicates(self, s: str, k: int) -> str:\n        stack = []  # [(char, count)]\n        \n        for char in s:\n            if stack and stack[-1][0] == char:\n                stack[-1] = (char, stack[-1][1] + 1)\n                if stack[-1][1] == k:\n                    stack.pop()\n            else:\n                stack.append((char, 1))\n        \n        # Build result from stack\n        result = []\n        for char, count in stack:\n            result.append(char * count)\n        \n        return ''.join(result)",
+        "javascript": "function removeDuplicates(s, k) {\n    const stack = []; // [[char, count]]\n    \n    for (const char of s) {\n        if (stack.length > 0 && stack[stack.length - 1][0] === char) {\n            stack[stack.length - 1][1]++;\n            if (stack[stack.length - 1][1] === k) {\n                stack.pop();\n            }\n        } else {\n            stack.push([char, 1]);\n        }\n    }\n    \n    // Build result from stack\n    let result = '';\n    for (const [char, count] of stack) {\n        result += char.repeat(count);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Array with Count Array (Space Optimized)",
+      "order": 2,
+      "intuition": "Use array as stack with separate count array. Avoids pair storage overhead. Track current position in result array and counts for each position.",
+      "approach": "Build result array character by character. Track count for each position. Remove k when count reaches k.",
+      "steps": [
+        "Create result array and count array",
+        "Initialize index = 0",
+        "For each character:",
+        " - result[index] = character",
+        " - If index > 0 and result[index] == result[index-1]:",
+        "   - count[index] = count[index-1] + 1",
+        " - Else: count[index] = 1",
+        " - If count[index] == k:",
+        "   - index -= k (remove k characters)",
+        " - Else: index++",
+        "Return result[0:index]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Process each character once. Each operation O(1). Total: O(n).",
+        "spaceExplanation": "Result array and count array each size n. Space: O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string removeDuplicates(string s, int k) {\n        vector<int> count(s.length());\n        int idx = 0;\n        \n        for (char c : s) {\n            s[idx] = c;\n            \n            if (idx > 0 && s[idx] == s[idx - 1]) {\n                count[idx] = count[idx - 1] + 1;\n            } else {\n                count[idx] = 1;\n            }\n            \n            if (count[idx] == k) {\n                idx -= k;\n            }\n            idx++;\n        }\n        \n        return s.substr(0, idx);\n    }\n};",
+        "java": "class Solution {\n    public String removeDuplicates(String s, int k) {\n        char[] result = s.toCharArray();\n        int[] count = new int[s.length()];\n        int idx = 0;\n        \n        for (char c : result) {\n            result[idx] = c;\n            \n            if (idx > 0 && result[idx] == result[idx - 1]) {\n                count[idx] = count[idx - 1] + 1;\n            } else {\n                count[idx] = 1;\n            }\n            \n            if (count[idx] == k) {\n                idx -= k;\n            }\n            idx++;\n        }\n        \n        return new String(result, 0, idx);\n    }\n}",
+        "python": "class Solution:\n    def removeDuplicates(self, s: str, k: int) -> str:\n        result = list(s)\n        count = [0] * len(s)\n        idx = 0\n        \n        for char in s:\n            result[idx] = char\n            \n            if idx > 0 and result[idx] == result[idx - 1]:\n                count[idx] = count[idx - 1] + 1\n            else:\n                count[idx] = 1\n            \n            if count[idx] == k:\n                idx -= k\n            idx += 1\n        \n        return ''.join(result[:idx])",
+        "javascript": "function removeDuplicates(s, k) {\n    const result = s.split('');\n    const count = new Array(s.length).fill(0);\n    let idx = 0;\n    \n    for (const char of s) {\n        result[idx] = char;\n        \n        if (idx > 0 && result[idx] === result[idx - 1]) {\n            count[idx] = count[idx - 1] + 1;\n        } else {\n            count[idx] = 1;\n        }\n        \n        if (count[idx] === k) {\n            idx -= k;\n        }\n        idx++;\n    }\n    \n    return result.slice(0, idx).join('');\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not storing counts with characters",
+    "Removing groups before reaching k count",
+    "Not handling cascading removals",
+    "Comparing counts incorrectly",
+    "Building result in wrong order from stack",
+    "Not resetting count for different characters",
+    "Using O(nk) approach by removing repeatedly",
+    "Forgetting to handle empty string result"
+  ],
+  "hints": [
+    "Stack stores (character, count) pairs",
+    "Increment count when same character",
+    "Remove entire group when count reaches k",
+    "Cascading removals happen automatically",
+    "Can optimize space by using arrays instead of pairs",
+    "Each character processed at most once",
+    "Result length <= original string length",
+    "Similar to Remove Adjacent Duplicates but with count"
+  ],
+  "followUp": [
+    "What if k varies for different characters?",
+    "How to handle case-insensitive duplicates?",
+    "Can we do this with streaming input?",
+    "What if we want to track number of removals?",
+    "How to optimize for very large k?",
+    "What if string is too large for memory?",
+    "Can we parallelize this operation?",
+    "How to handle Unicode characters efficiently?"
+  ],
+  "companies": [
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Google",
+    "Bloomberg",
+    "Adobe",
+    "Apple"
+  ],
+  "tags": [
+    "Stack",
+    "String",
+    "Duplicates",
+    "Count",
+    "Adjacent"
+  ],
+  "relatedProblems": [
+    "Remove All Adjacent Duplicates",
+    "Remove K Digits",
+    "Make The String Great",
+    "Construct String With Repeat Limit",
+    "Valid Parentheses",
+    "Backspace String Compare",
+    "Simplify Path",
+    "Decode String"
+  ]
 }

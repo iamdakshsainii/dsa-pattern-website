@@ -3,17 +3,182 @@
   "questionSlug": "max-absolute-sum-subarray",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum Absolute Sum of Any Subarray - Leetcode 1749",
+        "url": "https://www.youtube.com/watch?v=X_kCvi-OHbI",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Absolute Sum - Kadane's Algorithm",
+        "url": "https://www.youtube.com/watch?v=2B8l9hSLxyg",
+        "channel": "TECH DOSE",
+        "duration": "12:40",
+        "language": "English"
+      },
+      {
+        "title": "Max Absolute Value Subarray Sum",
+        "url": "https://www.youtube.com/watch?v=3eoF-kKT9xM",
+        "channel": "take U forward",
+        "duration": "11:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Absolute Sum of Any Subarray",
+        "url": "https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Max Absolute Sum Solution",
+        "url": "https://algo.monster/liteproblems/1749",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Maximum Absolute Subarray Sum",
+        "url": "https://www.geeksforgeeks.org/maximum-absolute-difference-value-index-sums/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Subarray",
+        "url": "https://leetcode.com/problems/maximum-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimum Subarray Sum",
+        "url": "https://www.geeksforgeeks.org/problems/smallest-sum-contiguous-subarray/1",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Maximum Product Subarray",
+        "url": "https://leetcode.com/problems/maximum-product-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Sum Circular Subarray",
+        "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Double Kadane's (Max and Min) when finding maximum absolute value of subarray sum. Key indicators: absolute value, contiguous subarray, need both maximum and minimum sums, take max of |maxSum| and |minSum|.",
+  "approaches": [
+    {
+      "name": "Run Both Max and Min Kadane's",
+      "order": 1,
+      "intuition": "Maximum absolute sum is either the maximum subarray sum or absolute value of minimum subarray sum. Run Kadane's algorithm twice: once for maximum sum, once for minimum sum. Return the maximum of their absolute values.",
+      "approach": "Apply standard Kadane's to find maximum subarray sum. Apply modified Kadane's to find minimum subarray sum. Return max(maxSum, |minSum|).",
+      "steps": [
+        "Find maximum subarray sum using Kadane's:",
+        "  - maxSum = nums[0], currentMax = nums[0]",
+        "  - For i from 1 to n-1:",
+        "    - currentMax = max(nums[i], currentMax + nums[i])",
+        "    - maxSum = max(maxSum, currentMax)",
+        "",
+        "Find minimum subarray sum using modified Kadane's:",
+        "  - minSum = nums[0], currentMin = nums[0]",
+        "  - For i from 1 to n-1:",
+        "    - currentMin = min(nums[i], currentMin + nums[i])",
+        "    - minSum = min(minSum, currentMin)",
+        "",
+        "Return max(maxSum, abs(minSum))"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through array: O(n) for max Kadane's + O(n) for min Kadane's = O(n) total.",
+        "spaceExplanation": "Only constant extra variables. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxAbsoluteSum(vector<int>& nums) {\n        // Find maximum subarray sum\n        int maxSum = nums[0];\n        int currentMax = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            currentMax = max(nums[i], currentMax + nums[i]);\n            maxSum = max(maxSum, currentMax);\n        }\n        \n        // Find minimum subarray sum\n        int minSum = nums[0];\n        int currentMin = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            currentMin = min(nums[i], currentMin + nums[i]);\n            minSum = min(minSum, currentMin);\n        }\n        \n        // Return maximum absolute value\n        return max(maxSum, abs(minSum));\n    }\n};",
+        "java": "class Solution {\n    public int maxAbsoluteSum(int[] nums) {\n        // Find maximum subarray sum\n        int maxSum = nums[0];\n        int currentMax = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            currentMax = Math.max(nums[i], currentMax + nums[i]);\n            maxSum = Math.max(maxSum, currentMax);\n        }\n        \n        // Find minimum subarray sum\n        int minSum = nums[0];\n        int currentMin = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            currentMin = Math.min(nums[i], currentMin + nums[i]);\n            minSum = Math.min(minSum, currentMin);\n        }\n        \n        // Return maximum absolute value\n        return Math.max(maxSum, Math.abs(minSum));\n    }\n}",
+        "python": "def maxAbsoluteSum(nums):\n    # Find maximum subarray sum\n    max_sum = nums[0]\n    current_max = nums[0]\n    \n    for i in range(1, len(nums)):\n        current_max = max(nums[i], current_max + nums[i])\n        max_sum = max(max_sum, current_max)\n    \n    # Find minimum subarray sum\n    min_sum = nums[0]\n    current_min = nums[0]\n    \n    for i in range(1, len(nums)):\n        current_min = min(nums[i], current_min + nums[i])\n        min_sum = min(min_sum, current_min)\n    \n    # Return maximum absolute value\n    return max(max_sum, abs(min_sum))",
+        "javascript": "function maxAbsoluteSum(nums) {\n    // Find maximum subarray sum\n    let maxSum = nums[0];\n    let currentMax = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        currentMax = Math.max(nums[i], currentMax + nums[i]);\n        maxSum = Math.max(maxSum, currentMax);\n    }\n    \n    // Find minimum subarray sum\n    let minSum = nums[0];\n    let currentMin = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        currentMin = Math.min(nums[i], currentMin + nums[i]);\n        minSum = Math.min(minSum, currentMin);\n    }\n    \n    // Return maximum absolute value\n    return Math.max(maxSum, Math.abs(minSum));\n}"
+      }
+    },
+    {
+      "name": "Single Pass - Track Both Max and Min",
+      "order": 2,
+      "intuition": "Instead of two separate passes, track both maximum and minimum subarray sums in single pass. At each position, update both currentMax and currentMin, then update result with maximum absolute value.",
+      "approach": "Maintain currentMax and currentMin simultaneously. Update both at each step using Kadane's logic. Track the maximum absolute value throughout.",
+      "steps": [
+        "Initialize currentMax = currentMin = nums[0]",
+        "Initialize result = abs(nums[0])",
+        "For i from 1 to n-1:",
+        "  - currentMax = max(nums[i], currentMax + nums[i])",
+        "  - currentMin = min(nums[i], currentMin + nums[i])",
+        "  - result = max(result, currentMax, abs(currentMin))",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array. O(n) time.",
+        "spaceExplanation": "Only constant variables. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxAbsoluteSum(vector<int>& nums) {\n        int currentMax = nums[0];\n        int currentMin = nums[0];\n        int result = abs(nums[0]);\n        \n        for (int i = 1; i < nums.size(); i++) {\n            currentMax = max(nums[i], currentMax + nums[i]);\n            currentMin = min(nums[i], currentMin + nums[i]);\n            \n            result = max({result, currentMax, abs(currentMin)});\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int maxAbsoluteSum(int[] nums) {\n        int currentMax = nums[0];\n        int currentMin = nums[0];\n        int result = Math.abs(nums[0]);\n        \n        for (int i = 1; i < nums.length; i++) {\n            currentMax = Math.max(nums[i], currentMax + nums[i]);\n            currentMin = Math.min(nums[i], currentMin + nums[i]);\n            \n            result = Math.max(result, Math.max(currentMax, Math.abs(currentMin)));\n        }\n        \n        return result;\n    }\n}",
+        "python": "def maxAbsoluteSum(nums):\n    current_max = nums[0]\n    current_min = nums[0]\n    result = abs(nums[0])\n    \n    for i in range(1, len(nums)):\n        current_max = max(nums[i], current_max + nums[i])\n        current_min = min(nums[i], current_min + nums[i])\n        \n        result = max(result, current_max, abs(current_min))\n    \n    return result",
+        "javascript": "function maxAbsoluteSum(nums) {\n    let currentMax = nums[0];\n    let currentMin = nums[0];\n    let result = Math.abs(nums[0]);\n    \n    for (let i = 1; i < nums.length; i++) {\n        currentMax = Math.max(nums[i], currentMax + nums[i]);\n        currentMin = Math.min(nums[i], currentMin + nums[i]);\n        \n        result = Math.max(result, currentMax, Math.abs(currentMin));\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Only finding maximum sum and forgetting minimum sum can have larger absolute value",
+    "Not taking absolute value of minimum sum before comparing",
+    "Initializing result to 0 instead of first element's absolute value",
+    "Confusing absolute value of sum with sum of absolute values",
+    "Not handling all negative arrays correctly",
+    "Forgetting that minimum sum is negative, so |minSum| is positive",
+    "Comparing maxSum with minSum directly instead of |minSum|"
+  ],
+  "hints": [
+    "Maximum absolute sum is either a very positive sum or a very negative sum",
+    "Run Kadane's algorithm to find maximum subarray sum",
+    "Run modified Kadane's to find minimum subarray sum",
+    "Take the maximum of maxSum and |minSum|",
+    "You can do both in a single pass if you track both simultaneously",
+    "Remember: absolute value makes negative sums positive"
+  ],
+  "followUp": [
+    "What if you need to return the actual subarray with max absolute sum?",
+    "How to find k subarrays with maximum absolute sum?",
+    "Can you solve for maximum absolute product instead of sum?",
+    "What if the array is circular?",
+    "How to handle this with one deletion allowed?",
+    "Can you find the subarray with sum closest to zero?",
+    "What if you want maximum |sum1 - sum2| for two non-overlapping subarrays?",
+    "How would you solve in 2D matrix?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Bloomberg",
+    "Adobe",
+    "Apple"
+  ],
+  "tags": [
+    "Array",
+    "Dynamic Programming",
+    "Kadane's Algorithm",
+    "Greedy"
+  ],
+  "relatedProblems": [
+    "Maximum Subarray",
+    "Minimum Subarray Sum",
+    "Maximum Product Subarray",
+    "Maximum Sum Circular Subarray",
+    "Best Time to Buy and Sell Stock",
+    "Maximum Subarray Sum After One Operation",
+    "Subarray Sum Equals K"
+  ]
 }

@@ -3,17 +3,188 @@
   "questionSlug": "reverse-level-order",
   "resources": {
     "leetcode": "https://leetcode.com/problems/binary-tree-level-order-traversal-ii/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Reverse Level Order Traversal Explained",
+        "url": "https://www.youtube.com/watch?v=UXnLxbTUlKg",
+        "channel": "NeetCode",
+        "duration": "7:30",
+        "language": "English"
+      },
+      {
+        "title": "Bottom-Up Level Order BFS",
+        "url": "https://www.youtube.com/watch?v=2_lRRlKkC0Y",
+        "channel": "take U forward",
+        "duration": "11:15",
+        "language": "English"
+      },
+      {
+        "title": "Level Order Traversal II Solution",
+        "url": "https://www.youtube.com/watch?v=Vvzn4QxLF_A",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Reverse Level Order Solution",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal-ii/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Bottom-Up Tree Traversal",
+        "url": "https://www.geeksforgeeks.org/reverse-level-order-traversal/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Level Order Traversal Variations",
+        "url": "https://algo.monster/problems/binary_tree_level_order_ii",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Binary Tree Zigzag Level Order",
+        "url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "N-ary Tree Level Order",
+        "url": "https://leetcode.com/problems/n-ary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Average of Levels",
+        "url": "https://leetcode.com/problems/average-of-levels-in-binary-tree/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Reverse Level Order when processing tree from bottom to top. Key indicators: bottom-up traversal, leaves before root, reverse BFS order, deepest level first.",
+  "approaches": [
+    {
+      "name": "BFS with Reverse (Optimal)",
+      "order": 1,
+      "intuition": "Perform normal BFS level order traversal collecting levels, then reverse the result. Simple and efficient approach using standard BFS pattern.",
+      "approach": "Use queue for normal BFS. Collect each level in list. After BFS completes, reverse the entire result list.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result list and queue with root",
+        "While queue not empty:",
+        " - Get current level size",
+        " - Create list for current level",
+        " - For each node in current level:",
+        "   - Dequeue node and add to level list",
+        "   - Enqueue left and right children",
+        " - Add current level to result",
+        "Reverse the result list",
+        "Return reversed result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "BFS visits each node once: O(n). Reversing result: O(h) where h is height. Total: O(n) where n is number of nodes.",
+        "spaceExplanation": "Queue stores at most w nodes (max width). Result stores all n nodes. Space: O(w + n) ≈ O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> levelOrderBottom(TreeNode* root) {\n        vector<vector<int>> result;\n        if (!root) return result;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            vector<int> currentLevel;\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                currentLevel.push_back(node->val);\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n            \n            result.push_back(currentLevel);\n        }\n        \n        reverse(result.begin(), result.end());\n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> levelOrderBottom(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        if (root == null) return result;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            List<Integer> currentLevel = new ArrayList<>();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                currentLevel.add(node.val);\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            \n            result.add(currentLevel);\n        }\n        \n        Collections.reverse(result);\n        return result;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def levelOrderBottom(self, root: Optional[TreeNode]) -> List[List[int]]:\n        if not root:\n            return []\n        \n        result = []\n        queue = deque([root])\n        \n        while queue:\n            level_size = len(queue)\n            current_level = []\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                current_level.append(node.val)\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            result.append(current_level)\n        \n        return result[::-1]",
+        "javascript": "function levelOrderBottom(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root];\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        const currentLevel = [];\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            currentLevel.push(node.val);\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        result.push(currentLevel);\n    }\n    \n    return result.reverse();\n}"
+      }
+    },
+    {
+      "name": "BFS with Prepend (Alternative)",
+      "order": 2,
+      "intuition": "Insert each level at beginning of result instead of end. This builds result in reverse order naturally without explicit reverse operation.",
+      "approach": "Use normal BFS but insert each completed level at index 0 of result. Last level processed becomes first in result.",
+      "steps": [
+        "Handle empty tree edge case",
+        "Initialize result list and queue with root",
+        "While queue not empty:",
+        " - Get current level size",
+        " - Create list for current level",
+        " - For each node in current level:",
+        "   - Dequeue node and add to level list",
+        "   - Enqueue left and right children",
+        " - Insert current level at beginning of result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n * h)",
+        "space": "O(w)",
+        "timeExplanation": "BFS visits n nodes. Each level insertion at front: O(h) levels × O(h) insertion = O(h²). Total: O(n + h²). For balanced tree, O(n + log²n) ≈ O(n).",
+        "spaceExplanation": "Queue stores at most w nodes. Result stores n nodes. Space: O(w + n) ≈ O(n)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> levelOrderBottom(TreeNode* root) {\n        vector<vector<int>> result;\n        if (!root) return result;\n        \n        queue<TreeNode*> q;\n        q.push(root);\n        \n        while (!q.empty()) {\n            int levelSize = q.size();\n            vector<int> currentLevel;\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = q.front();\n                q.pop();\n                \n                currentLevel.push_back(node->val);\n                \n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n            \n            result.insert(result.begin(), currentLevel);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> levelOrderBottom(TreeNode root) {\n        LinkedList<List<Integer>> result = new LinkedList<>();\n        if (root == null) return result;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        \n        while (!queue.isEmpty()) {\n            int levelSize = queue.size();\n            List<Integer> currentLevel = new ArrayList<>();\n            \n            for (int i = 0; i < levelSize; i++) {\n                TreeNode node = queue.poll();\n                currentLevel.add(node.val);\n                \n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            \n            result.addFirst(currentLevel);\n        }\n        \n        return result;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def levelOrderBottom(self, root: Optional[TreeNode]) -> List[List[int]]:\n        if not root:\n            return []\n        \n        result = []\n        queue = deque([root])\n        \n        while queue:\n            level_size = len(queue)\n            current_level = []\n            \n            for _ in range(level_size):\n                node = queue.popleft()\n                current_level.append(node.val)\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            result.insert(0, current_level)\n        \n        return result",
+        "javascript": "function levelOrderBottom(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root];\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        const currentLevel = [];\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            currentLevel.push(node.val);\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        result.unshift(currentLevel);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Trying to reverse queue instead of result",
+    "Not tracking level size correctly",
+    "Reversing each level instead of level order",
+    "Using inefficient prepend operations repeatedly",
+    "Forgetting to handle empty tree",
+    "Mixing up children enqueue order",
+    "Not creating new list for each level",
+    "Using deque for wrong purpose"
+  ],
+  "hints": [
+    "Normal BFS + reverse is simplest approach",
+    "Can also insert at beginning instead of reversing",
+    "Only reverse outer list, not individual levels",
+    "Prepend approach avoids explicit reverse",
+    "Java LinkedList.addFirst() is efficient for prepend",
+    "Python list.insert(0) works but O(n) per insert",
+    "Consider trade-off between reverse vs prepend"
+  ],
+  "followUp": [
+    "How to do this without reversing?",
+    "What if tree is very deep (stack overflow risk)?",
+    "Can we use DFS instead of BFS?",
+    "How to print only leaf level first?",
+    "What if we need rightmost nodes per level?",
+    "How to handle n-ary tree?",
+    "Can we do this with O(1) extra space?",
+    "How to find level with minimum sum?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn"
+  ],
+  "tags": [
+    "Tree",
+    "Binary Tree",
+    "BFS",
+    "Queue",
+    "Level Order Traversal",
+    "Bottom-Up"
+  ],
+  "relatedProblems": [
+    "Binary Tree Level Order Traversal",
+    "Binary Tree Zigzag Level Order",
+    "Average of Levels in Binary Tree",
+    "N-ary Tree Level Order Traversal",
+    "Maximum Depth of Binary Tree",
+    "Minimum Depth of Binary Tree",
+    "Binary Tree Right Side View",
+    "Populating Next Right Pointers"
+  ]
 }

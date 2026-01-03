@@ -2,18 +2,180 @@
   "questionId": "694d4a3a98494915f3bc8eec",
   "questionSlug": "bitonic-array-maximum",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/find-peak-element/",
+    "videos": [
+      {
+        "title": "Find Peak Element - Binary Search",
+        "url": "https://www.youtube.com/watch?v=kMzJy9es7Hc",
+        "channel": "NeetCode",
+        "duration": "8:40",
+        "language": "English"
+      },
+      {
+        "title": "Peak Element in Bitonic Array",
+        "url": "https://www.youtube.com/watch?v=OINnBJTRrMU",
+        "channel": "take U forward",
+        "duration": "15:20",
+        "language": "English"
+      },
+      {
+        "title": "Finding Maximum in Bitonic Sequence",
+        "url": "https://www.youtube.com/watch?v=W9QJ8HaRvJQ",
+        "channel": "Aditya Verma",
+        "duration": "11:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Peak Element",
+        "url": "https://leetcode.com/problems/find-peak-element/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Maximum in Bitonic Array",
+        "url": "https://www.geeksforgeeks.org/find-the-maximum-element-in-an-array-which-is-first-increasing-and-then-decreasing/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Peak Finding Algorithm",
+        "url": "https://algo.monster/problems/binary_search_boundary",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find Peak Element",
+        "url": "https://leetcode.com/problems/find-peak-element/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Peak Index in Mountain Array",
+        "url": "https://leetcode.com/problems/peak-index-in-a-mountain-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find in Mountain Array",
+        "url": "https://leetcode.com/problems/find-in-mountain-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Mountain in Array",
+        "url": "https://leetcode.com/problems/longest-mountain-in-array/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Bitonic Array Maximum when finding peak in increasing-then-decreasing array. Key indicators: bitonic array, mountain array, find peak/maximum, single peak guaranteed, ascending then descending, binary search optimization.",
+  "approaches": [
+    {
+      "name": "Modified Binary Search (Optimal)",
+      "order": 1,
+      "intuition": "Peak is where arr[i] > arr[i-1] and arr[i] > arr[i+1]. Use binary search: if mid is on ascending slope (arr[mid] < arr[mid+1]), peak is to right. If on descending slope (arr[mid] > arr[mid+1]), peak is at mid or left. Converge to peak in O(log n).",
+      "approach": "Binary search comparing mid with mid+1. If increasing, search right. If decreasing, search left (including mid). When left==right, found peak.",
+      "steps": [
+        "Initialize left = 0, right = n-1",
+        "While left < right:",
+        "  - mid = left + (right - left) / 2",
+        "  - If arr[mid] < arr[mid + 1]:",
+        "    * Peak is to right: left = mid + 1",
+        "  - Else (arr[mid] >= arr[mid + 1]):",
+        "    * Peak is at mid or left: right = mid",
+        "Return arr[left] (or left as index)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search divides array in half each iteration. log n iterations to find peak.",
+        "spaceExplanation": "Only pointer variables used. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findPeakElement(vector<int>& arr) {\n        int left = 0, right = arr.size() - 1;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] < arr[mid + 1]) {\n                // Ascending slope, peak is to the right\n                left = mid + 1;\n            } else {\n                // Descending slope, peak is at mid or left\n                right = mid;\n            }\n        }\n        \n        return left;  // or arr[left] for value\n    }\n};",
+        "java": "class Solution {\n    public int findPeakElement(int[] arr) {\n        int left = 0, right = arr.length - 1;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] < arr[mid + 1]) {\n                // Ascending slope, peak is to the right\n                left = mid + 1;\n            } else {\n                // Descending slope, peak is at mid or left\n                right = mid;\n            }\n        }\n        \n        return left;  // or arr[left] for value\n    }\n}",
+        "python": "class Solution:\n    def findPeakElement(self, arr: List[int]) -> int:\n        left, right = 0, len(arr) - 1\n        \n        while left < right:\n            mid = left + (right - left) // 2\n            \n            if arr[mid] < arr[mid + 1]:\n                # Ascending slope, peak is to the right\n                left = mid + 1\n            else:\n                # Descending slope, peak is at mid or left\n                right = mid\n        \n        return left  # or arr[left] for value",
+        "javascript": "function findPeakElement(arr) {\n    let left = 0, right = arr.length - 1;\n    \n    while (left < right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (arr[mid] < arr[mid + 1]) {\n            // Ascending slope, peak is to the right\n            left = mid + 1;\n        } else {\n            // Descending slope, peak is at mid or left\n            right = mid;\n        }\n    }\n    \n    return left;  // or arr[left] for value\n}"
+      }
+    },
+    {
+      "name": "Linear Scan (Brute Force)",
+      "order": 2,
+      "intuition": "Scan array from left to right. Peak is where element is greater than both neighbors. Simple but doesn't use bitonic property efficiently.",
+      "approach": "Check each element if it's greater than next. When found, return that element. Works but O(n) time.",
+      "steps": [
+        "For i from 0 to n-2:",
+        "  - If arr[i] > arr[i+1]:",
+        "    * Return i (peak found)",
+        "Return n-1 (last element is peak)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "May need to check all n elements in worst case. Linear time: O(n).",
+        "spaceExplanation": "Only loop variable. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findPeakElement(vector<int>& arr) {\n        for (int i = 0; i < arr.size() - 1; i++) {\n            if (arr[i] > arr[i + 1]) {\n                return i;\n            }\n        }\n        return arr.size() - 1;\n    }\n};",
+        "java": "class Solution {\n    public int findPeakElement(int[] arr) {\n        for (int i = 0; i < arr.length - 1; i++) {\n            if (arr[i] > arr[i + 1]) {\n                return i;\n            }\n        }\n        return arr.length - 1;\n    }\n}",
+        "python": "class Solution:\n    def findPeakElement(self, arr: List[int]) -> int:\n        for i in range(len(arr) - 1):\n            if arr[i] > arr[i + 1]:\n                return i\n        return len(arr) - 1",
+        "javascript": "function findPeakElement(arr) {\n    for (let i = 0; i < arr.length - 1; i++) {\n        if (arr[i] > arr[i + 1]) {\n            return i;\n        }\n    }\n    return arr.length - 1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using left <= right instead of left < right",
+    "Not handling single element array",
+    "Comparing arr[mid] with arr[mid-1] (should use mid+1)",
+    "Setting right = mid - 1 instead of right = mid",
+    "Not considering peak could be at boundaries",
+    "Checking both neighbors (only need mid+1)",
+    "Returning wrong value (index vs element)",
+    "Array index out of bounds on arr[mid+1]"
+  ],
+  "hints": [
+    "Compare arr[mid] with arr[mid+1] only",
+    "If arr[mid] < arr[mid+1], peak is right",
+    "If arr[mid] > arr[mid+1], peak is left or mid",
+    "Use left < right as loop condition",
+    "Set right = mid (not mid-1) when descending",
+    "When left==right, found the peak",
+    "Time complexity: O(log n)",
+    "Works for mountain/bitonic arrays"
+  ],
+  "followUp": [
+    "What if multiple peaks exist?",
+    "How to find all peaks?",
+    "What if array is not strictly bitonic?",
+    "Can you handle duplicates?",
+    "What about finding minimum in bitonic array?",
+    "How to verify array is bitonic?",
+    "What if peak could be at boundaries?",
+    "Can you extend to 2D arrays?"
+  ],
+  "companies": [
+    "Google",
+    "Facebook",
+    "Amazon",
+    "Microsoft",
+    "Apple",
+    "LinkedIn",
+    "Bloomberg",
+    "Oracle"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Peak Finding",
+    "Bitonic Array"
+  ],
+  "relatedProblems": [
+    "Find Peak Element",
+    "Peak Index in Mountain Array",
+    "Find in Mountain Array",
+    "Longest Mountain in Array",
+    "Search in Bitonic Array",
+    "Valid Mountain Array",
+    "Find Peak Element II",
+    "Search in Rotated Sorted Array"
+  ]
 }

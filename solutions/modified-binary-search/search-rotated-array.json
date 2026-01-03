@@ -2,18 +2,187 @@
   "questionId": "694d4a3a98494915f3bc8eee",
   "questionSlug": "search-rotated-array",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+    "videos": [
+      {
+        "title": "Search in Rotated Sorted Array - Binary Search",
+        "url": "https://www.youtube.com/watch?v=U8XENwh8Oy8",
+        "channel": "NeetCode",
+        "duration": "11:20",
+        "language": "English"
+      },
+      {
+        "title": "Rotated Array Search Explained",
+        "url": "https://www.youtube.com/watch?v=5BI0Rdm9Yhk",
+        "channel": "take U forward",
+        "duration": "22:45",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search on Rotated Array",
+        "url": "https://www.youtube.com/watch?v=W9QJ8HaRvJQ",
+        "channel": "Aditya Verma",
+        "duration": "16:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Search in Rotated Sorted Array",
+        "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Binary Search Rotated Array",
+        "url": "https://www.geeksforgeeks.org/search-an-element-in-a-sorted-and-pivoted-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Rotated Array Search Algorithm",
+        "url": "https://algo.monster/problems/binary_search_rotated",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Search in Rotated Sorted Array II",
+        "url": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Minimum in Rotated Sorted Array",
+        "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Peak Element",
+        "url": "https://leetcode.com/problems/find-peak-element/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search in Bitonic Array",
+        "url": "https://leetcode.com/problems/find-in-mountain-array/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Search Rotated Array when searching in rotated sorted array. Key indicators: rotated sorted array, find target, modified binary search, identify sorted half, single pass O(log n) solution.",
+  "approaches": [
+    {
+      "name": "One Pass Binary Search (Optimal)",
+      "order": 1,
+      "intuition": "At least one half (left or right of mid) is always sorted in rotated array. Identify which half is sorted by comparing arr[left] with arr[mid]. If target is in sorted half's range, search there. Else search other half. One binary search pass finds target in O(log n).",
+      "approach": "Modified binary search identifying sorted half each iteration. Check if target in sorted half's range. Adjust pointers based on where target could be.",
+      "steps": [
+        "Initialize left = 0, right = n-1",
+        "While left <= right:",
+        "  - mid = left + (right - left) / 2",
+        "  - If arr[mid] == target: return mid",
+        "  - Identify sorted half:",
+        "    * If arr[left] <= arr[mid]: left half sorted",
+        "      - If target in [arr[left], arr[mid]): right = mid - 1",
+        "      - Else: left = mid + 1",
+        "    * Else: right half sorted",
+        "      - If target in (arr[mid], arr[right]]: left = mid + 1",
+        "      - Else: right = mid - 1",
+        "Return -1 (not found)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Single binary search pass. Divides search space in half. log n iterations.",
+        "spaceExplanation": "Only pointer variables. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        int left = 0, right = nums.size() - 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (nums[mid] == target) {\n                return mid;\n            }\n            \n            // Check which half is sorted\n            if (nums[left] <= nums[mid]) {\n                // Left half is sorted\n                if (target >= nums[left] && target < nums[mid]) {\n                    right = mid - 1;  // Target in left half\n                } else {\n                    left = mid + 1;  // Target in right half\n                }\n            } else {\n                // Right half is sorted\n                if (target > nums[mid] && target <= nums[right]) {\n                    left = mid + 1;  // Target in right half\n                } else {\n                    right = mid - 1;  // Target in left half\n                }\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int search(int[] nums, int target) {\n        int left = 0, right = nums.length - 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (nums[mid] == target) {\n                return mid;\n            }\n            \n            // Check which half is sorted\n            if (nums[left] <= nums[mid]) {\n                // Left half is sorted\n                if (target >= nums[left] && target < nums[mid]) {\n                    right = mid - 1;  // Target in left half\n                } else {\n                    left = mid + 1;  // Target in right half\n                }\n            } else {\n                // Right half is sorted\n                if (target > nums[mid] && target <= nums[right]) {\n                    left = mid + 1;  // Target in right half\n                } else {\n                    right = mid - 1;  // Target in left half\n                }\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        left, right = 0, len(nums) - 1\n        \n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            if nums[mid] == target:\n                return mid\n            \n            # Check which half is sorted\n            if nums[left] <= nums[mid]:\n                # Left half is sorted\n                if nums[left] <= target < nums[mid]:\n                    right = mid - 1  # Target in left half\n                else:\n                    left = mid + 1  # Target in right half\n            else:\n                # Right half is sorted\n                if nums[mid] < target <= nums[right]:\n                    left = mid + 1  # Target in right half\n                else:\n                    right = mid - 1  # Target in left half\n        \n        return -1",
+        "javascript": "function search(nums, target) {\n    let left = 0, right = nums.length - 1;\n    \n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (nums[mid] === target) {\n            return mid;\n        }\n        \n        // Check which half is sorted\n        if (nums[left] <= nums[mid]) {\n            // Left half is sorted\n            if (target >= nums[left] && target < nums[mid]) {\n                right = mid - 1;  // Target in left half\n            } else {\n                left = mid + 1;  // Target in right half\n            }\n        } else {\n            // Right half is sorted\n            if (target > nums[mid] && target <= nums[right]) {\n                left = mid + 1;  // Target in right half\n            } else {\n                right = mid - 1;  // Target in left half\n            }\n        }\n    }\n    \n    return -1;\n}"
+      }
+    },
+    {
+      "name": "Find Pivot Then Binary Search (Two Pass)",
+      "order": 2,
+      "intuition": "First find pivot (minimum element) using binary search. This divides array into two sorted parts. Determine which part target could be in. Do standard binary search on that part. Two O(log n) passes total O(log n).",
+      "approach": "Find pivot index first. Compare target with arr[0] to determine search half. Binary search appropriate half.",
+      "steps": [
+        "Find pivot (minimum element index):",
+        "  - Use binary search comparing mid with right",
+        "Determine search range:",
+        "  - If target >= arr[0]: search [0, pivot-1]",
+        "  - Else: search [pivot, n-1]",
+        "Standard binary search in determined range",
+        "Return result or -1"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Find pivot: O(log n). Binary search: O(log n). Total: O(log n).",
+        "spaceExplanation": "Only pointer variables. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        int pivot = findPivot(nums);\n        \n        // Determine which part to search\n        if (pivot == 0 || target < nums[0]) {\n            return binarySearch(nums, target, pivot, nums.size() - 1);\n        }\n        return binarySearch(nums, target, 0, pivot - 1);\n    }\n    \nprivate:\n    int findPivot(vector<int>& nums) {\n        int left = 0, right = nums.size() - 1;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (nums[mid] > nums[right]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        return left;\n    }\n    \n    int binarySearch(vector<int>& nums, int target, int left, int right) {\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (nums[mid] == target) return mid;\n            else if (nums[mid] < target) left = mid + 1;\n            else right = mid - 1;\n        }\n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int search(int[] nums, int target) {\n        int pivot = findPivot(nums);\n        \n        // Determine which part to search\n        if (pivot == 0 || target < nums[0]) {\n            return binarySearch(nums, target, pivot, nums.length - 1);\n        }\n        return binarySearch(nums, target, 0, pivot - 1);\n    }\n    \n    private int findPivot(int[] nums) {\n        int left = 0, right = nums.length - 1;\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (nums[mid] > nums[right]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        return left;\n    }\n    \n    private int binarySearch(int[] nums, int target, int left, int right) {\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (nums[mid] == target) return mid;\n            else if (nums[mid] < target) left = mid + 1;\n            else right = mid - 1;\n        }\n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        pivot = self.findPivot(nums)\n        \n        # Determine which part to search\n        if pivot == 0 or target < nums[0]:\n            return self.binarySearch(nums, target, pivot, len(nums) - 1)\n        return self.binarySearch(nums, target, 0, pivot - 1)\n    \n    def findPivot(self, nums: List[int]) -> int:\n        left, right = 0, len(nums) - 1\n        \n        while left < right:\n            mid = left + (right - left) // 2\n            if nums[mid] > nums[right]:\n                left = mid + 1\n            else:\n                right = mid\n        return left\n    \n    def binarySearch(self, nums: List[int], target: int, left: int, right: int) -> int:\n        while left <= right:\n            mid = left + (right - left) // 2\n            if nums[mid] == target:\n                return mid\n            elif nums[mid] < target:\n                left = mid + 1\n            else:\n                right = mid - 1\n        return -1",
+        "javascript": "function search(nums, target) {\n    const pivot = findPivot(nums);\n    \n    // Determine which part to search\n    if (pivot === 0 || target < nums[0]) {\n        return binarySearch(nums, target, pivot, nums.length - 1);\n    }\n    return binarySearch(nums, target, 0, pivot - 1);\n}\n\nfunction findPivot(nums) {\n    let left = 0, right = nums.length - 1;\n    \n    while (left < right) {\n        const mid = left + Math.floor((right - left) / 2);\n        if (nums[mid] > nums[right]) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    return left;\n}\n\nfunction binarySearch(nums, target, left, right) {\n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        if (nums[mid] === target) return mid;\n        else if (nums[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return -1;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not identifying which half is sorted",
+    "Wrong range check for target in sorted half",
+    "Using strict inequality where <= needed",
+    "Not handling edge cases (single element, no rotation)",
+    "Confusing left and right half conditions",
+    "Off-by-one errors in range comparisons",
+    "Not checking arr[mid] == target first",
+    "Infinite loop due to wrong pointer updates"
+  ],
+  "hints": [
+    "At least one half is always sorted",
+    "Compare arr[left] with arr[mid] to find sorted half",
+    "If arr[left] <= arr[mid], left half is sorted",
+    "Check if target is in sorted half's range",
+    "Use inclusive/exclusive bounds carefully",
+    "One pass solution is optimal: O(log n)",
+    "Similar to standard binary search with extra logic",
+    "Edge case: array not rotated (already sorted)"
+  ],
+  "followUp": [
+    "What if array has duplicates?",
+    "How to find all occurrences?",
+    "What if rotation count unknown?",
+    "Can you handle multiple rotations?",
+    "What about finding minimum without target?",
+    "How to optimize for nearly sorted arrays?",
+    "What if target appears multiple times?",
+    "Can you extend to 2D rotated matrix?"
+  ],
+  "companies": [
+    "Facebook",
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Apple",
+    "LinkedIn",
+    "Bloomberg",
+    "Oracle"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Rotated Array",
+    "Sorted Array"
+  ],
+  "relatedProblems": [
+    "Search in Rotated Sorted Array II",
+    "Find Minimum in Rotated Sorted Array",
+    "Find Minimum in Rotated Sorted Array II",
+    "Rotation Count",
+    "Find Peak Element",
+    "Search in Bitonic Array",
+    "Order Agnostic Binary Search",
+    "Find in Mountain Array"
+  ]
 }

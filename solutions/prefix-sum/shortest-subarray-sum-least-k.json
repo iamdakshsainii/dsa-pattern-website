@@ -3,17 +3,184 @@
   "questionSlug": "shortest-subarray-sum-least-k",
   "resources": {
     "leetcode": "https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/description/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Shortest Subarray with Sum at Least K - Leetcode 862",
+        "url": "https://www.youtube.com/watch?v=T5jZfzGz0J0",
+        "channel": "HuifengGuan",
+        "duration": "22:45",
+        "language": "English"
+      },
+      {
+        "title": "Monotonic Deque for Shortest Subarray",
+        "url": "https://www.youtube.com/watch?v=8u_5sAqEq1Y",
+        "channel": "TECH DOSE",
+        "duration": "28:30",
+        "language": "English"
+      },
+      {
+        "title": "Shortest Subarray Sum K Tutorial",
+        "url": "https://www.youtube.com/watch?v=RpAT4wzN0R0",
+        "channel": "Algorithms Made Easy",
+        "duration": "19:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Shortest Subarray with Sum at Least K",
+        "url": "https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Monotonic Deque for Subarray Problems",
+        "url": "https://www.geeksforgeeks.org/shortest-subarray-with-sum-at-least-k/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Deque Optimization Tutorial",
+        "url": "https://algo.monster/problems/shortest_subarray_sum_k",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Minimum Size Subarray Sum",
+        "url": "https://leetcode.com/problems/minimum-size-subarray-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Sum of Almost Unique Subarray",
+        "url": "https://leetcode.com/problems/maximum-sum-of-almost-unique-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Subarray Sum Equals K",
+        "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Longest Continuous Subarray With Absolute Diff",
+        "url": "https://leetcode.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Shortest Subarray Sum at Least K pattern when finding minimum length subarray with sum ≥ K, especially with negative numbers. Key indicators: shortest/minimum length, sum at least K, array with negative numbers, can't use sliding window due to negatives.",
+  "approaches": [
+    {
+      "name": "Monotonic Deque with Prefix Sum (Optimal)",
+      "order": 1,
+      "intuition": "Calculate prefix sums. For each position j, find smallest i where prefixSum[j] - prefixSum[i] ≥ K. Use monotonic deque to maintain useful candidate positions. Remove from front when valid subarray found. Remove from back to maintain increasing prefix sums (smaller prefix sum at earlier position is always better).",
+      "approach": "Build prefix sum array. Use deque to store indices with increasing prefix sums. For each j, remove indices from front where sum difference ≥ K. Remove from back to maintain monotonicity (remove larger prefix sums at later positions). Track minimum length.",
+      "steps": [
+        "Build prefix sum array (size n+1, prefixSum[0]=0)",
+        "Initialize deque and minLength = Infinity",
+        "For each index j from 0 to n:",
+        " - While deque not empty and prefixSum[j] - prefixSum[deque.front()] >= K:",
+        "   - Update minLength with (j - deque.front())",
+        "   - Remove front from deque",
+        " - While deque not empty and prefixSum[j] <= prefixSum[deque.back()]:",
+        "   - Remove back from deque (maintain increasing order)",
+        " - Add j to deque",
+        "Return minLength if found, else -1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each index added and removed from deque at most once. n operations total. O(n) time.",
+        "spaceExplanation": "Prefix sum array and deque store at most n elements. O(n) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int shortestSubarray(vector<int>& nums, int k) {\n        int n = nums.size();\n        vector<long long> prefixSum(n + 1, 0);\n        \n        // Build prefix sum\n        for (int i = 0; i < n; i++) {\n            prefixSum[i + 1] = prefixSum[i] + nums[i];\n        }\n        \n        deque<int> dq;\n        int minLength = INT_MAX;\n        \n        for (int j = 0; j <= n; j++) {\n            // Check if we can form valid subarray\n            while (!dq.empty() && prefixSum[j] - prefixSum[dq.front()] >= k) {\n                minLength = min(minLength, j - dq.front());\n                dq.pop_front();\n            }\n            \n            // Maintain monotonic increasing deque\n            while (!dq.empty() && prefixSum[j] <= prefixSum[dq.back()]) {\n                dq.pop_back();\n            }\n            \n            dq.push_back(j);\n        }\n        \n        return minLength == INT_MAX ? -1 : minLength;\n    }\n};",
+        "java": "class Solution {\n    public int shortestSubarray(int[] nums, int k) {\n        int n = nums.length;\n        long[] prefixSum = new long[n + 1];\n        \n        // Build prefix sum\n        for (int i = 0; i < n; i++) {\n            prefixSum[i + 1] = prefixSum[i] + nums[i];\n        }\n        \n        Deque<Integer> dq = new ArrayDeque<>();\n        int minLength = Integer.MAX_VALUE;\n        \n        for (int j = 0; j <= n; j++) {\n            // Check if we can form valid subarray\n            while (!dq.isEmpty() && prefixSum[j] - prefixSum[dq.peekFirst()] >= k) {\n                minLength = Math.min(minLength, j - dq.pollFirst());\n            }\n            \n            // Maintain monotonic increasing deque\n            while (!dq.isEmpty() && prefixSum[j] <= prefixSum[dq.peekLast()]) {\n                dq.pollLast();\n            }\n            \n            dq.offerLast(j);\n        }\n        \n        return minLength == Integer.MAX_VALUE ? -1 : minLength;\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def shortestSubarray(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        prefix_sum = [0] * (n + 1)\n        \n        # Build prefix sum\n        for i in range(n):\n            prefix_sum[i + 1] = prefix_sum[i] + nums[i]\n        \n        dq = deque()\n        min_length = float('inf')\n        \n        for j in range(n + 1):\n            # Check if we can form valid subarray\n            while dq and prefix_sum[j] - prefix_sum[dq[0]] >= k:\n                min_length = min(min_length, j - dq.popleft())\n            \n            # Maintain monotonic increasing deque\n            while dq and prefix_sum[j] <= prefix_sum[dq[-1]]:\n                dq.pop()\n            \n            dq.append(j)\n        \n        return min_length if min_length != float('inf') else -1",
+        "javascript": "function shortestSubarray(nums, k) {\n    const n = nums.length;\n    const prefixSum = new Array(n + 1).fill(0);\n    \n    // Build prefix sum\n    for (let i = 0; i < n; i++) {\n        prefixSum[i + 1] = prefixSum[i] + nums[i];\n    }\n    \n    const dq = [];\n    let minLength = Infinity;\n    \n    for (let j = 0; j <= n; j++) {\n        // Check if we can form valid subarray\n        while (dq.length > 0 && prefixSum[j] - prefixSum[dq[0]] >= k) {\n            minLength = Math.min(minLength, j - dq.shift());\n        }\n        \n        // Maintain monotonic increasing deque\n        while (dq.length > 0 && prefixSum[j] <= prefixSum[dq[dq.length - 1]]) {\n            dq.pop();\n        }\n        \n        dq.push(j);\n    }\n    \n    return minLength === Infinity ? -1 : minLength;\n}"
+      }
+    },
+    {
+      "name": "Brute Force (Check All Subarrays)",
+      "order": 2,
+      "intuition": "Check every possible subarray. Calculate sum for each. Track minimum length among those with sum ≥ K. Simple but inefficient, especially with large arrays.",
+      "approach": "Use nested loops to generate all subarrays. For each, calculate sum. If sum ≥ K, update minimum length. Return result.",
+      "steps": [
+        "Initialize minLength = Infinity",
+        "For each starting index i from 0 to n-1:",
+        " - Initialize sum = 0",
+        " - For each ending index j from i to n-1:",
+        "   - sum += nums[j]",
+        "   - If sum >= K:",
+        "     - minLength = min(minLength, j - i + 1)",
+        "Return minLength if found, else -1"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops check all n² subarrays. O(n²) time complexity.",
+        "spaceExplanation": "Only constant extra space for variables. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int shortestSubarray(vector<int>& nums, int k) {\n        int n = nums.size();\n        int minLength = INT_MAX;\n        \n        for (int i = 0; i < n; i++) {\n            long long sum = 0;\n            for (int j = i; j < n; j++) {\n                sum += nums[j];\n                if (sum >= k) {\n                    minLength = min(minLength, j - i + 1);\n                    break; // No need to check longer subarrays from i\n                }\n            }\n        }\n        \n        return minLength == INT_MAX ? -1 : minLength;\n    }\n};",
+        "java": "class Solution {\n    public int shortestSubarray(int[] nums, int k) {\n        int n = nums.length;\n        int minLength = Integer.MAX_VALUE;\n        \n        for (int i = 0; i < n; i++) {\n            long sum = 0;\n            for (int j = i; j < n; j++) {\n                sum += nums[j];\n                if (sum >= k) {\n                    minLength = Math.min(minLength, j - i + 1);\n                    break; // No need to check longer subarrays from i\n                }\n            }\n        }\n        \n        return minLength == Integer.MAX_VALUE ? -1 : minLength;\n    }\n}",
+        "python": "class Solution:\n    def shortestSubarray(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        min_length = float('inf')\n        \n        for i in range(n):\n            total = 0\n            for j in range(i, n):\n                total += nums[j]\n                if total >= k:\n                    min_length = min(min_length, j - i + 1)\n                    break  # No need to check longer subarrays from i\n        \n        return min_length if min_length != float('inf') else -1",
+        "javascript": "function shortestSubarray(nums, k) {\n    const n = nums.length;\n    let minLength = Infinity;\n    \n    for (let i = 0; i < n; i++) {\n        let sum = 0;\n        for (let j = i; j < n; j++) {\n            sum += nums[j];\n            if (sum >= k) {\n                minLength = Math.min(minLength, j - i + 1);\n                break; // No need to check longer subarrays from i\n            }\n        }\n    }\n    \n    return minLength === Infinity ? -1 : minLength;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using sliding window (doesn't work with negative numbers)",
+    "Not maintaining monotonic property in deque correctly",
+    "Integer overflow with large sums (use long/long long)",
+    "Removing wrong end of deque (front for valid subarrays, back for monotonicity)",
+    "Not handling edge case where entire array sum < K",
+    "Forgetting to initialize prefix sum with 0 at index 0",
+    "Comparing with wrong condition (should be >= K, not == K)",
+    "Not breaking in brute force after finding valid subarray from index i"
+  ],
+  "hints": [
+    "Negative numbers prevent simple sliding window approach",
+    "Use prefix sum: subarray(i,j) sum = prefixSum[j] - prefixSum[i]",
+    "Monotonic deque maintains potential starting positions",
+    "Remove from front when valid subarray found (won't be useful anymore)",
+    "Remove from back to keep only increasing prefix sums",
+    "Smaller prefix sum at earlier position is always better than larger at later",
+    "Each index added to and removed from deque at most once → O(n)"
+  ],
+  "followUp": [
+    "What if all numbers are positive? (Sliding window works)",
+    "How to find longest subarray with sum at most K?",
+    "What if you need count of subarrays with sum >= K?",
+    "How to handle if K can be updated dynamically (Q queries)?",
+    "What if array is circular (can wrap around)?",
+    "How to solve for 2D array (submatrix with sum >= K)?",
+    "What if you need to return the actual subarray, not just length?",
+    "How to handle very large arrays that don't fit in memory?"
+  ],
+  "companies": [
+    "Google",
+    "Amazon",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Uber"
+  ],
+  "tags": [
+    "Array",
+    "Prefix Sum",
+    "Deque",
+    "Monotonic Queue",
+    "Sliding Window"
+  ],
+  "relatedProblems": [
+    "Minimum Size Subarray Sum",
+    "Subarray Sum Equals K",
+    "Maximum Sum of Almost Unique Subarray",
+    "Longest Continuous Subarray With Absolute Diff",
+    "Maximum Subarray",
+    "Continuous Subarray Sum",
+    "Subarray Product Less Than K",
+    "Number of Subarrays with Bounded Maximum"
+  ]
 }

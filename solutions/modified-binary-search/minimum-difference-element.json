@@ -3,17 +3,186 @@
   "questionSlug": "minimum-difference-element",
   "resources": {
     "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Find Closest Element in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=3RhGdmoF_ac",
+        "channel": "Back To Back SWE",
+        "duration": "13:40",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search - Minimum Difference",
+        "url": "https://www.youtube.com/watch?v=6zhGS79oQ4k",
+        "channel": "TECH DOSE",
+        "duration": "15:25",
+        "language": "English"
+      },
+      {
+        "title": "Closest Number Binary Search",
+        "url": "https://www.youtube.com/watch?v=cCiNXRSJNWQ",
+        "channel": "Aditya Verma",
+        "duration": "11:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Element with Minimum Difference",
+        "url": "https://www.geeksforgeeks.org/find-closest-number-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Search for Closest Value",
+        "url": "https://algo.monster/problems/binary_search_boundary",
+        "source": "AlgoMonster"
+      },
+      {
+        "title": "Finding Nearest Element",
+        "url": "https://www.educative.io/answers/how-to-find-the-closest-element-in-a-sorted-array",
+        "source": "Educative"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Find K Closest Elements",
+        "url": "https://leetcode.com/problems/find-k-closest-elements/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Closest Binary Search Tree Value",
+        "url": "https://leetcode.com/problems/closest-binary-search-tree-value/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Search Insert Position",
+        "url": "https://leetcode.com/problems/search-insert-position/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Find Right Interval",
+        "url": "https://leetcode.com/problems/find-right-interval/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Minimum Difference Element when finding closest value to target. Key indicators: sorted array, minimum absolute difference, closest element, nearest value, binary search optimization.",
+  "approaches": [
+    {
+      "name": "Modified Binary Search (Optimal)",
+      "order": 1,
+      "intuition": "Use binary search to narrow to two candidates: floor (largest <= target) and ceiling (smallest >= target). Element with smaller absolute difference is answer. Binary search efficiently finds these boundaries.",
+      "approach": "Binary search tracks both floor and ceiling candidates. After search completes, compare absolute differences of both candidates with target. Return element with minimum difference.",
+      "steps": [
+        "Initialize left = 0, right = n-1",
+        "If target < arr[0]: return arr[0]",
+        "If target > arr[n-1]: return arr[n-1]",
+        "Use binary search to find floor and ceiling:",
+        "  - While left <= right:",
+        "    * mid = left + (right - left) / 2",
+        "    * If arr[mid] == target: return arr[mid]",
+        "    * If arr[mid] < target: left = mid + 1",
+        "    * Else: right = mid - 1",
+        "After loop: right is floor, left is ceiling",
+        "Compare |arr[left] - target| vs |arr[right] - target|",
+        "Return element with smaller difference"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search divides array in half each iteration. log n iterations to find candidates.",
+        "spaceExplanation": "Only variables for pointers. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int searchMinDiffElement(vector<int>& arr, int target) {\n        int n = arr.size();\n        \n        // Edge cases\n        if (target < arr[0]) return arr[0];\n        if (target > arr[n - 1]) return arr[n - 1];\n        \n        int left = 0, right = n - 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] == target) {\n                return arr[mid];  // Exact match\n            }\n            \n            if (arr[mid] < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        \n        // After loop: right is floor, left is ceiling\n        // Compare which is closer\n        if (abs(arr[left] - target) < abs(arr[right] - target)) {\n            return arr[left];\n        }\n        return arr[right];\n    }\n};",
+        "java": "class Solution {\n    public int searchMinDiffElement(int[] arr, int target) {\n        int n = arr.length;\n        \n        // Edge cases\n        if (target < arr[0]) return arr[0];\n        if (target > arr[n - 1]) return arr[n - 1];\n        \n        int left = 0, right = n - 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (arr[mid] == target) {\n                return arr[mid];  // Exact match\n            }\n            \n            if (arr[mid] < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        \n        // After loop: right is floor, left is ceiling\n        // Compare which is closer\n        if (Math.abs(arr[left] - target) < Math.abs(arr[right] - target)) {\n            return arr[left];\n        }\n        return arr[right];\n    }\n}",
+        "python": "class Solution:\n    def searchMinDiffElement(self, arr: List[int], target: int) -> int:\n        n = len(arr)\n        \n        # Edge cases\n        if target < arr[0]:\n            return arr[0]\n        if target > arr[-1]:\n            return arr[-1]\n        \n        left, right = 0, n - 1\n        \n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            if arr[mid] == target:\n                return arr[mid]  # Exact match\n            \n            if arr[mid] < target:\n                left = mid + 1\n            else:\n                right = mid - 1\n        \n        # After loop: right is floor, left is ceiling\n        # Compare which is closer\n        if abs(arr[left] - target) < abs(arr[right] - target):\n            return arr[left]\n        return arr[right]",
+        "javascript": "function searchMinDiffElement(arr, target) {\n    const n = arr.length;\n    \n    // Edge cases\n    if (target < arr[0]) return arr[0];\n    if (target > arr[n - 1]) return arr[n - 1];\n    \n    let left = 0, right = n - 1;\n    \n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (arr[mid] === target) {\n            return arr[mid];  // Exact match\n        }\n        \n        if (arr[mid] < target) {\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    // After loop: right is floor, left is ceiling\n    // Compare which is closer\n    if (Math.abs(arr[left] - target) < Math.abs(arr[right] - target)) {\n        return arr[left];\n    }\n    return arr[right];\n}"
+      }
+    },
+    {
+      "name": "Linear Scan (Brute Force)",
+      "order": 2,
+      "intuition": "Scan array tracking element with minimum absolute difference. Simple but doesn't use sorted property efficiently.",
+      "approach": "Iterate through array calculating absolute difference for each element. Track minimum difference and corresponding element.",
+      "steps": [
+        "Initialize minDiff = infinity, result = arr[0]",
+        "For each element arr[i]:",
+        "  - Calculate diff = |arr[i] - target|",
+        "  - If diff < minDiff:",
+        "    * Update minDiff = diff",
+        "    * Update result = arr[i]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Must check all n elements to find minimum difference. Linear time: O(n).",
+        "spaceExplanation": "Only variables for tracking minimum. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int searchMinDiffElement(vector<int>& arr, int target) {\n        int minDiff = INT_MAX;\n        int result = arr[0];\n        \n        for (int num : arr) {\n            int diff = abs(num - target);\n            if (diff < minDiff) {\n                minDiff = diff;\n                result = num;\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int searchMinDiffElement(int[] arr, int target) {\n        int minDiff = Integer.MAX_VALUE;\n        int result = arr[0];\n        \n        for (int num : arr) {\n            int diff = Math.abs(num - target);\n            if (diff < minDiff) {\n                minDiff = diff;\n                result = num;\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def searchMinDiffElement(self, arr: List[int], target: int) -> int:\n        min_diff = float('inf')\n        result = arr[0]\n        \n        for num in arr:\n            diff = abs(num - target)\n            if diff < min_diff:\n                min_diff = diff\n                result = num\n        \n        return result",
+        "javascript": "function searchMinDiffElement(arr, target) {\n    let minDiff = Infinity;\n    let result = arr[0];\n    \n    for (const num of arr) {\n        const diff = Math.abs(num - target);\n        if (diff < minDiff) {\n            minDiff = diff;\n            result = num;\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling edge cases (target outside array range)",
+    "Comparing wrong candidates after binary search",
+    "Not using absolute difference",
+    "Returning index instead of value",
+    "Not checking for exact match (arr[mid] == target)",
+    "Confusing floor and ceiling positions",
+    "Using wrong comparison for minimum difference",
+    "Not handling empty array"
+  ],
+  "hints": [
+    "Binary search finds floor and ceiling efficiently",
+    "After search, left is ceiling, right is floor",
+    "Answer is one of these two candidates",
+    "Use absolute difference for comparison",
+    "Edge cases: target smaller/larger than all elements",
+    "Exact match has zero difference",
+    "O(log n) solution possible with binary search",
+    "Linear scan is O(n) but works for unsorted arrays"
+  ],
+  "followUp": [
+    "What if array is unsorted?",
+    "How to find k closest elements?",
+    "What if multiple elements have same difference?",
+    "Can you handle very large arrays (distributed)?",
+    "What about finding closest in 2D matrix?",
+    "How to optimize for multiple queries?",
+    "What if array has duplicates?",
+    "Can you find closest to range instead of point?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "LinkedIn",
+    "Apple",
+    "Bloomberg",
+    "Oracle"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Sorted Array",
+    "Math"
+  ],
+  "relatedProblems": [
+    "Find K Closest Elements",
+    "Closest Binary Search Tree Value",
+    "Search Insert Position",
+    "Find Right Interval",
+    "Ceiling Number",
+    "Next Letter",
+    "Number Range",
+    "Search in Rotated Sorted Array"
+  ]
 }

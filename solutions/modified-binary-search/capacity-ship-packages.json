@@ -2,18 +2,190 @@
   "questionId": "694d4a3a98494915f3bc8ef3",
   "questionSlug": "capacity-ship-packages",
   "resources": {
-    "leetcode": "",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "leetcode": "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/",
+    "videos": [
+      {
+        "title": "Capacity To Ship Packages - Binary Search",
+        "url": "https://www.youtube.com/watch?v=ER_oLmdc-nw",
+        "channel": "NeetCode",
+        "duration": "12:45",
+        "language": "English"
+      },
+      {
+        "title": "Ship Packages Within D Days Solution",
+        "url": "https://www.youtube.com/watch?v=MG-Ac4TAvTY",
+        "channel": "take U forward",
+        "duration": "24:30",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search on Capacity",
+        "url": "https://www.youtube.com/watch?v=ow5gLIO7K5I",
+        "channel": "TECH DOSE",
+        "duration": "17:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Capacity To Ship Packages Within D Days",
+        "url": "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/solutions/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Binary Search on Answer Technique",
+        "url": "https://www.geeksforgeeks.org/binary-search-on-answer/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Minimizing Maximum with Binary Search",
+        "url": "https://algo.monster/problems/binary_search_on_answer",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Koko Eating Bananas",
+        "url": "https://leetcode.com/problems/koko-eating-bananas/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Split Array Largest Sum",
+        "url": "https://leetcode.com/problems/split-array-largest-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Minimize Maximum of Array",
+        "url": "https://leetcode.com/problems/minimize-maximum-of-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Magnetic Force Between Two Balls",
+        "url": "https://leetcode.com/problems/magnetic-force-between-two-balls/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Capacity Ship Packages when minimizing maximum capacity with partition constraint. Key indicators: ship/split within days, minimize capacity, greedy partitioning, binary search on answer, consecutive elements grouping.",
+  "approaches": [
+    {
+      "name": "Binary Search on Capacity (Optimal)",
+      "order": 1,
+      "intuition": "Search space is capacity from max(weights) to sum(weights). Use binary search. For each capacity, greedily pack packages into days. If days needed <= days available, capacity works, try smaller (search left). Else need larger capacity.",
+      "approach": "Binary search on capacity [maxWeight, totalWeight]. For each mid capacity, simulate greedy packing: add packages to current day until capacity exceeded, then start new day. Count days needed. Adjust search based on feasibility.",
+      "steps": [
+        "Calculate left = max(weights) (minimum capacity)",
+        "Calculate right = sum(weights) (ship all in 1 day)",
+        "Binary search on capacity:",
+        "  - While left <= right:",
+        "    * mid = left + (right - left) / 2",
+        "    * Simulate shipping with capacity mid:",
+        "      - days = 1, currentLoad = 0",
+        "      - For each weight:",
+        "        · If currentLoad + weight > mid:",
+        "          - Start new day: days++, currentLoad = 0",
+        "        · Add weight: currentLoad += weight",
+        "    * If days <= days:",
+        "      - Update result = mid",
+        "      - Try smaller: right = mid - 1",
+        "    * Else: left = mid + 1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n * log(sum))",
+        "space": "O(1)",
+        "timeExplanation": "Binary search: log(sum - max) iterations. Each iteration checks n packages. Total: O(n * log(sum)).",
+        "spaceExplanation": "Only variables for calculation. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int shipWithinDays(vector<int>& weights, int days) {\n        int left = *max_element(weights.begin(), weights.end());\n        int right = accumulate(weights.begin(), weights.end(), 0);\n        int result = right;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (canShip(weights, days, mid)) {\n                result = mid;\n                right = mid - 1;  // Try smaller capacity\n            } else {\n                left = mid + 1;  // Need larger capacity\n            }\n        }\n        \n        return result;\n    }\n    \nprivate:\n    bool canShip(vector<int>& weights, int days, int capacity) {\n        int daysNeeded = 1;\n        int currentLoad = 0;\n        \n        for (int weight : weights) {\n            if (currentLoad + weight > capacity) {\n                daysNeeded++;\n                currentLoad = 0;\n            }\n            currentLoad += weight;\n        }\n        \n        return daysNeeded <= days;\n    }\n};",
+        "java": "class Solution {\n    public int shipWithinDays(int[] weights, int days) {\n        int left = 0, right = 0;\n        for (int weight : weights) {\n            left = Math.max(left, weight);\n            right += weight;\n        }\n        \n        int result = right;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (canShip(weights, days, mid)) {\n                result = mid;\n                right = mid - 1;  // Try smaller capacity\n            } else {\n                left = mid + 1;  // Need larger capacity\n            }\n        }\n        \n        return result;\n    }\n    \n    private boolean canShip(int[] weights, int days, int capacity) {\n        int daysNeeded = 1;\n        int currentLoad = 0;\n        \n        for (int weight : weights) {\n            if (currentLoad + weight > capacity) {\n                daysNeeded++;\n                currentLoad = 0;\n            }\n            currentLoad += weight;\n        }\n        \n        return daysNeeded <= days;\n    }\n}",
+        "python": "class Solution:\n    def shipWithinDays(self, weights: List[int], days: int) -> int:\n        left = max(weights)\n        right = sum(weights)\n        result = right\n        \n        while left <= right:\n            mid = left + (right - left) // 2\n            \n            if self.canShip(weights, days, mid):\n                result = mid\n                right = mid - 1  # Try smaller capacity\n            else:\n                left = mid + 1  # Need larger capacity\n        \n        return result\n    \n    def canShip(self, weights: List[int], days: int, capacity: int) -> bool:\n        days_needed = 1\n        current_load = 0\n        \n        for weight in weights:\n            if current_load + weight > capacity:\n                days_needed += 1\n                current_load = 0\n            current_load += weight\n        \n        return days_needed <= days",
+        "javascript": "function shipWithinDays(weights, days) {\n    let left = Math.max(...weights);\n    let right = weights.reduce((a, b) => a + b, 0);\n    let result = right;\n    \n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        \n        if (canShip(weights, days, mid)) {\n            result = mid;\n            right = mid - 1;  // Try smaller capacity\n        } else {\n            left = mid + 1;  // Need larger capacity\n        }\n    }\n    \n    return result;\n}\n\nfunction canShip(weights, days, capacity) {\n    let daysNeeded = 1;\n    let currentLoad = 0;\n    \n    for (const weight of weights) {\n        if (currentLoad + weight > capacity) {\n            daysNeeded++;\n            currentLoad = 0;\n        }\n        currentLoad += weight;\n    }\n    \n    return daysNeeded <= days;\n}"
+      }
+    },
+    {
+      "name": "Linear Search on Capacity (Brute Force)",
+      "order": 2,
+      "intuition": "Try every capacity from max weight to sum. First capacity that allows shipping in days or fewer is minimum. Inefficient but straightforward.",
+      "approach": "Iterate capacities from max(weights) upward. For each capacity, simulate shipping. Return first capacity that works within days.",
+      "steps": [
+        "Calculate minCapacity = max(weights)",
+        "Calculate maxCapacity = sum(weights)",
+        "For capacity = minCapacity to maxCapacity:",
+        "  - Simulate shipping with this capacity",
+        "  - If days needed <= days: return capacity",
+        "Return maxCapacity"
+      ],
+      "complexity": {
+        "time": "O(n * sum)",
+        "space": "O(1)",
+        "timeExplanation": "Try up to (sum - max) capacities. For each capacity check n packages. Total: O(n * sum).",
+        "spaceExplanation": "Only loop variables. Constant space: O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int shipWithinDays(vector<int>& weights, int days) {\n        int minCapacity = *max_element(weights.begin(), weights.end());\n        int maxCapacity = accumulate(weights.begin(), weights.end(), 0);\n        \n        for (int capacity = minCapacity; capacity <= maxCapacity; capacity++) {\n            int daysNeeded = 1;\n            int currentLoad = 0;\n            \n            for (int weight : weights) {\n                if (currentLoad + weight > capacity) {\n                    daysNeeded++;\n                    currentLoad = 0;\n                }\n                currentLoad += weight;\n            }\n            \n            if (daysNeeded <= days) {\n                return capacity;\n            }\n        }\n        \n        return maxCapacity;\n    }\n};",
+        "java": "class Solution {\n    public int shipWithinDays(int[] weights, int days) {\n        int minCapacity = 0, maxCapacity = 0;\n        for (int weight : weights) {\n            minCapacity = Math.max(minCapacity, weight);\n            maxCapacity += weight;\n        }\n        \n        for (int capacity = minCapacity; capacity <= maxCapacity; capacity++) {\n            int daysNeeded = 1;\n            int currentLoad = 0;\n            \n            for (int weight : weights) {\n                if (currentLoad + weight > capacity) {\n                    daysNeeded++;\n                    currentLoad = 0;\n                }\n                currentLoad += weight;\n            }\n            \n            if (daysNeeded <= days) {\n                return capacity;\n            }\n        }\n        \n        return maxCapacity;\n    }\n}",
+        "python": "class Solution:\n    def shipWithinDays(self, weights: List[int], days: int) -> int:\n        min_capacity = max(weights)\n        max_capacity = sum(weights)\n        \n        for capacity in range(min_capacity, max_capacity + 1):\n            days_needed = 1\n            current_load = 0\n            \n            for weight in weights:\n                if current_load + weight > capacity:\n                    days_needed += 1\n                    current_load = 0\n                current_load += weight\n            \n            if days_needed <= days:\n                return capacity\n        \n        return max_capacity",
+        "javascript": "function shipWithinDays(weights, days) {\n    const minCapacity = Math.max(...weights);\n    const maxCapacity = weights.reduce((a, b) => a + b, 0);\n    \n    for (let capacity = minCapacity; capacity <= maxCapacity; capacity++) {\n        let daysNeeded = 1;\n        let currentLoad = 0;\n        \n        for (const weight of weights) {\n            if (currentLoad + weight > capacity) {\n                daysNeeded++;\n                currentLoad = 0;\n            }\n            currentLoad += weight;\n        }\n        \n        if (daysNeeded <= days) {\n            return capacity;\n        }\n    }\n    \n    return maxCapacity;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Starting binary search from 1 instead of max(weights)",
+    "Not considering that packages must ship in order",
+    "Forgetting greedy packing strategy",
+    "Off-by-one error in days counting",
+    "Integer overflow when calculating sum",
+    "Wrong search direction (should minimize when feasible)",
+    "Not handling single package edge case",
+    "Incorrect capacity bounds"
+  ],
+  "hints": [
+    "Binary search on ship capacity, not on days",
+    "Minimum capacity is max(weights) (heaviest package)",
+    "Maximum capacity is sum(weights) (ship all at once)",
+    "Use greedy strategy: pack as much as possible each day",
+    "If capacity works, try smaller capacity (search left)",
+    "Packages must be shipped in given order",
+    "Time complexity: O(n * log(sum))",
+    "Similar to Split Array Largest Sum problem"
+  ],
+  "followUp": [
+    "What if packages can be reordered?",
+    "How to maximize utilization instead?",
+    "What if some packages can be split?",
+    "Can you minimize wasted capacity per day?",
+    "What about multiple ships?",
+    "How to handle priority packages?",
+    "What if days vary in capacity?",
+    "Can you solve with dynamic capacity changes?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Facebook",
+    "Microsoft",
+    "Apple",
+    "Bloomberg",
+    "Oracle",
+    "Adobe"
+  ],
+  "tags": [
+    "Binary Search",
+    "Array",
+    "Binary Search on Answer",
+    "Greedy"
+  ],
+  "relatedProblems": [
+    "Split Array Largest Sum",
+    "Koko Eating Bananas",
+    "Minimize Maximum of Array",
+    "Magnetic Force Between Two Balls",
+    "Minimum Number of Days to Make M Bouquets",
+    "Divide Chocolate",
+    "Find the Smallest Divisor Given a Threshold",
+    "Maximum Number of Tasks You Can Assign"
+  ]
 }

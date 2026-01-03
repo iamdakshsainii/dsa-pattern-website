@@ -17,6 +17,13 @@
         "channel": "Ayushi Sharma",
         "duration": "8:20",
         "language": "English"
+      },
+      {
+        "title": "Squares of Sorted Array Explained",
+        "url": "https://www.youtube.com/watch?v=3QJzHqNAEXs",
+        "channel": "Nick White",
+        "duration": "7:15",
+        "language": "English"
       }
     ],
     "articles": [
@@ -24,23 +31,48 @@
         "title": "Squares of a Sorted Array Solution",
         "url": "https://leetcode.com/problems/squares-of-a-sorted-array/solution/",
         "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Two Pointers Pattern - Complete Guide",
+        "url": "https://leetcode.com/discuss/study-guide/1688903/solved-all-two-pointers-problems-in-100-days",
+        "source": "LeetCode Discuss"
+      },
+      {
+        "title": "Squares of Sorted Array Explained",
+        "url": "https://www.geeksforgeeks.org/squares-of-a-sorted-array/",
+        "source": "GeeksforGeeks"
       }
     ],
     "practice": [
       {
-        "title": "Practice on GeeksforGeeks",
-        "url": "https://www.geeksforgeeks.org/squares-of-a-sorted-array/",
-        "platform": "GeeksforGeeks"
+        "title": "Merge Sorted Array",
+        "url": "https://leetcode.com/problems/merge-sorted-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Sort Transformed Array",
+        "url": "https://leetcode.com/problems/sort-transformed-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Sort Array By Parity",
+        "url": "https://leetcode.com/problems/sort-array-by-parity/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Intersection of Two Arrays",
+        "url": "https://leetcode.com/problems/intersection-of-two-arrays/",
+        "platform": "LeetCode"
       }
     ],
     "discussions": []
   },
-  "patternTriggers": "Use Two Pointers when dealing with sorted arrays where you need to compare elements from both ends. The negative numbers squared can be larger than positive numbers squared.",
+  "patternTriggers": "Use Two Pointers when dealing with sorted arrays where you need to compare elements from both ends. The negative numbers squared can be larger than positive numbers squared. Keywords: 'sorted array', 'squares', 'negative and positive', 'merge from ends'.",
   "approaches": [
     {
       "name": "Brute Force",
       "order": 1,
-      "intuition": "Square each element and then sort the resulting array.",
+      "intuition": "Square each element and then sort the resulting array. Simple but not optimal due to sorting overhead.",
       "approach": "Iterate through the array, square each element, and sort the result.",
       "steps": [
         "Create a result array of the same size",
@@ -52,8 +84,8 @@
       "complexity": {
         "time": "O(n log n)",
         "space": "O(n)",
-        "timeExplanation": "O(n) for squaring + O(n log n) for sorting",
-        "spaceExplanation": "O(n) for the result array"
+        "timeExplanation": "O(n) for squaring + O(n log n) for sorting = O(n log n).",
+        "spaceExplanation": "O(n) for the result array (excluding sorting space)."
       },
       "code": {
         "cpp": "vector<int> sortedSquares(vector<int>& nums) {\n    vector<int> result(nums.size());\n    \n    for (int i = 0; i < nums.size(); i++) {\n        result[i] = nums[i] * nums[i];\n    }\n    \n    sort(result.begin(), result.end());\n    return result;\n}",
@@ -65,7 +97,7 @@
     {
       "name": "Two Pointers (Optimal)",
       "order": 2,
-      "intuition": "Since the array is sorted, the largest squares will be at either end. Use two pointers from both ends and fill result array from right to left with the larger square.",
+      "intuition": "Since the array is sorted, the largest squares will be at either end (large negative or large positive). Use two pointers from both ends and fill result array from right to left with the larger square. This is the optimal O(n) solution!",
       "approach": "Use two pointers starting from both ends, compare absolute values, and place the larger square at the end of result array.",
       "steps": [
         "Initialize left pointer at index 0",
@@ -82,8 +114,8 @@
       "complexity": {
         "time": "O(n)",
         "space": "O(n)",
-        "timeExplanation": "Single pass through the array with two pointers",
-        "spaceExplanation": "O(n) for the result array (output space)"
+        "timeExplanation": "Single pass through the array with two pointers: O(n).",
+        "spaceExplanation": "O(n) for the result array (output space, not counted as auxiliary)."
       },
       "code": {
         "cpp": "vector<int> sortedSquares(vector<int>& nums) {\n    int n = nums.size();\n    vector<int> result(n);\n    int left = 0, right = n - 1;\n    int index = n - 1;\n    \n    while (left <= right) {\n        int leftSquare = nums[left] * nums[left];\n        int rightSquare = nums[right] * nums[right];\n        \n        if (leftSquare > rightSquare) {\n            result[index] = leftSquare;\n            left++;\n        } else {\n            result[index] = rightSquare;\n            right--;\n        }\n        index--;\n    }\n    \n    return result;\n}",
@@ -97,26 +129,43 @@
     "Forgetting that negative numbers when squared become positive and can be larger",
     "Filling the result array from left to right instead of right to left",
     "Not handling the case when left and right pointers meet (left == right)",
-    "Using <= in the while condition instead of < when it should be <="
+    "Using < in the while condition instead of <=",
+    "Comparing nums[left] and nums[right] instead of their squares",
+    "Not understanding why we fill from right to left",
+    "Trying to modify the input array in-place",
+    "Integer overflow for very large numbers (need long long in C++)"
   ],
   "hints": [
     "The largest squared values will be at either end of the sorted array",
     "Think about filling the result array from the end rather than the beginning",
     "Compare absolute values or compare squared values directly",
-    "The two pointers approach eliminates the need for sorting"
+    "The two pointers approach eliminates the need for sorting",
+    "Negative numbers with large absolute values will have large squares",
+    "The input array is already sorted - use this property!",
+    "Work backwards - place the largest square at the end first",
+    "Both pointers move inward, result index moves backward"
   ],
   "followUp": [
     "What if the array was not sorted?",
     "Can you do this in-place with O(1) extra space?",
     "How would you handle very large numbers that might overflow when squared?",
-    "What if you need to return only the k largest squares?"
+    "What if you need to return only the k largest squares?",
+    "How would you modify this for cubes instead of squares?",
+    "Can you solve this recursively?",
+    "What if the array can contain duplicates?",
+    "How would you optimize for arrays that are mostly positive or mostly negative?"
   ],
   "companies": [
     "Facebook",
     "Google",
     "Amazon",
     "Microsoft",
-    "Apple"
+    "Apple",
+    "Bloomberg",
+    "Adobe",
+    "LinkedIn",
+    "Yandex",
+    "Goldman Sachs"
   ],
   "tags": [
     "Array",
@@ -126,6 +175,10 @@
   "relatedProblems": [
     "Merge Sorted Array",
     "Sort Transformed Array",
-    "Squares of a Sorted Array II"
+    "Sort Array By Parity",
+    "Sort Array By Parity II",
+    "Intersection of Two Arrays",
+    "K Closest Points to Origin",
+    "Minimum Absolute Difference"
   ]
 }

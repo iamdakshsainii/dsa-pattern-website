@@ -3,17 +3,180 @@
   "questionSlug": "minimum-subarray-sum",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/problems/smallest-sum-contiguous-subarray/1",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Minimum Subarray Sum - Modified Kadane's",
+        "url": "https://www.youtube.com/watch?v=zKv5PKTQ3Kg",
+        "channel": "TECH DOSE",
+        "duration": "11:25",
+        "language": "English"
+      },
+      {
+        "title": "Smallest Sum Contiguous Subarray",
+        "url": "https://www.youtube.com/watch?v=9C3hcOEBrA4",
+        "channel": "take U forward",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Find Minimum Sum Subarray - Kadane Variation",
+        "url": "https://www.youtube.com/watch?v=bXWRD6vq3yk",
+        "channel": "Pepcoding",
+        "duration": "13:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Smallest Sum Contiguous Subarray",
+        "url": "https://www.geeksforgeeks.org/problems/smallest-sum-contiguous-subarray/1",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Minimum Subarray Sum Problem",
+        "url": "https://www.geeksforgeeks.org/minimum-sum-subarray-of-given-size/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Kadane's Algorithm Variations",
+        "url": "https://algo.monster/problems/kadanes_algorithm",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Subarray",
+        "url": "https://leetcode.com/problems/maximum-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Sum Circular Subarray",
+        "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Absolute Sum of Any Subarray",
+        "url": "https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Subarray Sum Equals K",
+        "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Modified Kadane's Algorithm (minimum version) when finding minimum sum of contiguous subarray. Key indicators: contiguous subarray, minimum sum, inverse of maximum subarray problem, need to track smallest running sum.",
+  "approaches": [
+    {
+      "name": "Modified Kadane's Algorithm (Minimum)",
+      "order": 1,
+      "intuition": "Similar to maximum subarray but track minimum. At each position, decide whether to extend current subarray or start new one. If current sum becomes positive, it won't help make future sums smaller, so restart. Track minimum sum seen so far.",
+      "approach": "Traverse array maintaining current sum and minimum sum. At each element, add it to current sum. If current sum is greater than element itself, start fresh from current element. Update minimum throughout.",
+      "steps": [
+        "Initialize minSum = nums[0], currentSum = nums[0]",
+        "For i from 1 to n-1:",
+        "  - currentSum = min(nums[i], currentSum + nums[i])",
+        "  - minSum = min(minSum, currentSum)",
+        "Return minSum",
+        "",
+        "Alternative formulation:",
+        "- If currentSum > 0: reset currentSum = 0",
+        "- Add current element to currentSum",
+        "- Update minSum = min(minSum, currentSum)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array of length n. O(n) time.",
+        "spaceExplanation": "Only two variables used. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minSubArray(vector<int>& nums) {\n        int minSum = nums[0];\n        int currentSum = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            // Either extend existing subarray or start new one\n            currentSum = min(nums[i], currentSum + nums[i]);\n            minSum = min(minSum, currentSum);\n        }\n        \n        return minSum;\n    }\n};",
+        "java": "class Solution {\n    public int minSubArray(int[] nums) {\n        int minSum = nums[0];\n        int currentSum = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            // Either extend existing subarray or start new one\n            currentSum = Math.min(nums[i], currentSum + nums[i]);\n            minSum = Math.min(minSum, currentSum);\n        }\n        \n        return minSum;\n    }\n}",
+        "python": "def minSubArray(nums):\n    min_sum = nums[0]\n    current_sum = nums[0]\n    \n    for i in range(1, len(nums)):\n        # Either extend existing subarray or start new one\n        current_sum = min(nums[i], current_sum + nums[i])\n        min_sum = min(min_sum, current_sum)\n    \n    return min_sum",
+        "javascript": "function minSubArray(nums) {\n    let minSum = nums[0];\n    let currentSum = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        // Either extend existing subarray or start new one\n        currentSum = Math.min(nums[i], currentSum + nums[i]);\n        minSum = Math.min(minSum, currentSum);\n    }\n    \n    return minSum;\n}"
+      }
+    },
+    {
+      "name": "Negate and Use Maximum Subarray",
+      "order": 2,
+      "intuition": "Minimum subarray sum in original array equals negative of maximum subarray sum in negated array. Negate all elements, find maximum subarray sum using standard Kadane's, then negate the result.",
+      "approach": "Create negated array where each element is multiplied by -1. Apply standard Kadane's algorithm to find maximum subarray sum. Negate the result to get minimum subarray sum of original array.",
+      "steps": [
+        "Create negated array: negated[i] = -nums[i] for all i",
+        "Apply Kadane's algorithm on negated array:",
+        "  - maxSum = negated[0]",
+        "  - currentSum = negated[0]",
+        "  - For i from 1 to n-1:",
+        "    - currentSum = max(negated[i], currentSum + negated[i])",
+        "    - maxSum = max(maxSum, currentSum)",
+        "Return -maxSum (negate back)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n) or O(1)",
+        "timeExplanation": "Negation: O(n), Kadane's: O(n). Total: O(n).",
+        "spaceExplanation": "O(n) if creating new array, O(1) if modifying in-place and restoring."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minSubArray(vector<int>& nums) {\n        // Negate all elements\n        for (int& num : nums) {\n            num = -num;\n        }\n        \n        // Find maximum subarray sum in negated array\n        int maxSum = nums[0];\n        int currentSum = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            currentSum = max(nums[i], currentSum + nums[i]);\n            maxSum = max(maxSum, currentSum);\n        }\n        \n        // Restore original array (optional)\n        for (int& num : nums) {\n            num = -num;\n        }\n        \n        // Return negative of max sum\n        return -maxSum;\n    }\n};",
+        "java": "class Solution {\n    public int minSubArray(int[] nums) {\n        // Negate all elements\n        for (int i = 0; i < nums.length; i++) {\n            nums[i] = -nums[i];\n        }\n        \n        // Find maximum subarray sum in negated array\n        int maxSum = nums[0];\n        int currentSum = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            currentSum = Math.max(nums[i], currentSum + nums[i]);\n            maxSum = Math.max(maxSum, currentSum);\n        }\n        \n        // Restore original array (optional)\n        for (int i = 0; i < nums.length; i++) {\n            nums[i] = -nums[i];\n        }\n        \n        // Return negative of max sum\n        return -maxSum;\n    }\n}",
+        "python": "def minSubArray(nums):\n    # Negate all elements\n    negated = [-num for num in nums]\n    \n    # Find maximum subarray sum in negated array\n    max_sum = negated[0]\n    current_sum = negated[0]\n    \n    for i in range(1, len(negated)):\n        current_sum = max(negated[i], current_sum + negated[i])\n        max_sum = max(max_sum, current_sum)\n    \n    # Return negative of max sum\n    return -max_sum",
+        "javascript": "function minSubArray(nums) {\n    // Negate all elements\n    const negated = nums.map(num => -num);\n    \n    // Find maximum subarray sum in negated array\n    let maxSum = negated[0];\n    let currentSum = negated[0];\n    \n    for (let i = 1; i < negated.length; i++) {\n        currentSum = Math.max(negated[i], currentSum + negated[i]);\n        maxSum = Math.max(maxSum, currentSum);\n    }\n    \n    // Return negative of max sum\n    return -maxSum;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Initializing minSum to 0 instead of nums[0] - fails when all elements positive",
+    "Using max instead of min in the algorithm (confusing with maximum subarray)",
+    "Not handling single element array correctly",
+    "Resetting currentSum to 0 when it should compare with nums[i]",
+    "Forgetting to update minSum inside the loop",
+    "Not restoring original array after negation approach (if needed)",
+    "Confusing minimum subarray with minimum element"
+  ],
+  "hints": [
+    "This is the mirror problem of maximum subarray - use similar logic",
+    "At each position, extend current subarray or start fresh based on minimum",
+    "If current sum becomes positive, it increases future sums, so consider restarting",
+    "Initialize both minSum and currentSum to first element",
+    "Alternative: negate array, find max subarray, negate result",
+    "The minimum subarray must end at some position - check all positions"
+  ],
+  "followUp": [
+    "How to return the actual subarray indices, not just the sum?",
+    "What if the array is circular?",
+    "How to find both minimum and maximum subarray sums in one pass?",
+    "Can you solve for k non-overlapping subarrays with minimum sum?",
+    "What if you must include at least one positive element?",
+    "How to find subarray with sum closest to zero?",
+    "Can you extend to find minimum product subarray?",
+    "What if you can delete at most one element to minimize sum?"
+  ],
+  "companies": [
+    "Amazon",
+    "Google",
+    "Microsoft",
+    "Facebook",
+    "Bloomberg",
+    "Adobe",
+    "Uber"
+  ],
+  "tags": [
+    "Array",
+    "Dynamic Programming",
+    "Greedy",
+    "Kadane's Algorithm"
+  ],
+  "relatedProblems": [
+    "Maximum Subarray",
+    "Maximum Sum Circular Subarray",
+    "Maximum Absolute Sum of Any Subarray",
+    "Maximum Product Subarray",
+    "Subarray Sum Equals K",
+    "Minimum Size Subarray Sum",
+    "Smallest Range Covering Elements from K Lists"
+  ]
 }

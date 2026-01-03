@@ -3,17 +3,186 @@
   "questionSlug": "maximum-product-subarray",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-product-subarray/",
-    "videos": [],
-    "articles": [],
-    "practice": [],
+    "videos": [
+      {
+        "title": "Maximum Product Subarray - Leetcode 152",
+        "url": "https://www.youtube.com/watch?v=lXVy6YWFcRM",
+        "channel": "NeetCode",
+        "duration": "11:45",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Product Subarray Explained",
+        "url": "https://www.youtube.com/watch?v=hnswaLJvr6g",
+        "channel": "take U forward",
+        "duration": "16:20",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Product Subarray - Dynamic Programming",
+        "url": "https://www.youtube.com/watch?v=Y6B-7ZcAjms",
+        "channel": "TECH DOSE",
+        "duration": "14:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Product Subarray Solution",
+        "url": "https://leetcode.com/problems/maximum-product-subarray/solution/",
+        "source": "LeetCode Editorial"
+      },
+      {
+        "title": "Maximum Product Subarray Explained",
+        "url": "https://www.geeksforgeeks.org/maximum-product-subarray/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Maximum Product Subarray Problem",
+        "url": "https://algo.monster/liteproblems/152",
+        "source": "AlgoMonster"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Maximum Subarray",
+        "url": "https://leetcode.com/problems/maximum-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Maximum Product of Three Numbers",
+        "url": "https://leetcode.com/problems/maximum-product-of-three-numbers/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Product of Array Except Self",
+        "url": "https://leetcode.com/problems/product-of-array-except-self/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Subarray Product Less Than K",
+        "url": "https://leetcode.com/problems/subarray-product-less-than-k/",
+        "platform": "LeetCode"
+      }
+    ],
     "discussions": []
   },
-  "patternTriggers": "",
-  "approaches": [],
-  "commonMistakes": [],
-  "hints": [],
-  "followUp": [],
-  "companies": [],
-  "tags": [],
-  "relatedProblems": []
+  "patternTriggers": "Use Modified Kadane's with Min/Max tracking when finding maximum product of contiguous subarray. Key indicators: contiguous subarray, maximum product, negative numbers can flip signs, zeros reset the product, need both min and max products.",
+  "approaches": [
+    {
+      "name": "Track Both Max and Min Products",
+      "order": 1,
+      "intuition": "Unlike sum, product has special properties: negative * negative = positive, so minimum product can become maximum when multiplied by negative number. Track both maximum and minimum products ending at current position. Swap them when encountering negative numbers. Zeros reset both to zero.",
+      "approach": "Maintain maxProduct and minProduct ending at current position. When encountering negative number, swap max and min before multiplying. Update global maximum. Handle zeros by resetting.",
+      "steps": [
+        "Initialize maxProd = minProd = result = nums[0]",
+        "For i from 1 to n-1:",
+        "  - If nums[i] < 0: swap(maxProd, minProd)",
+        "  - maxProd = max(nums[i], maxProd * nums[i])",
+        "  - minProd = min(nums[i], minProd * nums[i])",
+        "  - result = max(result, maxProd)",
+        "Return result",
+        "",
+        "Alternative: calculate all three candidates each time:",
+        "- tempMax = max(nums[i], maxProd * nums[i], minProd * nums[i])",
+        "- tempMin = min(nums[i], maxProd * nums[i], minProd * nums[i])",
+        "- maxProd = tempMax, minProd = tempMin"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array of length n. O(n) time.",
+        "spaceExplanation": "Only constant extra variables. O(1) space."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxProduct(vector<int>& nums) {\n        int maxProd = nums[0];\n        int minProd = nums[0];\n        int result = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            // If negative, swap max and min\n            if (nums[i] < 0) {\n                swap(maxProd, minProd);\n            }\n            \n            // Update max and min products\n            maxProd = max(nums[i], maxProd * nums[i]);\n            minProd = min(nums[i], minProd * nums[i]);\n            \n            // Update result\n            result = max(result, maxProd);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int maxProduct(int[] nums) {\n        int maxProd = nums[0];\n        int minProd = nums[0];\n        int result = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            // If negative, swap max and min\n            if (nums[i] < 0) {\n                int temp = maxProd;\n                maxProd = minProd;\n                minProd = temp;\n            }\n            \n            // Update max and min products\n            maxProd = Math.max(nums[i], maxProd * nums[i]);\n            minProd = Math.min(nums[i], minProd * nums[i]);\n            \n            // Update result\n            result = Math.max(result, maxProd);\n        }\n        \n        return result;\n    }\n}",
+        "python": "def maxProduct(nums):\n    max_prod = nums[0]\n    min_prod = nums[0]\n    result = nums[0]\n    \n    for i in range(1, len(nums)):\n        # If negative, swap max and min\n        if nums[i] < 0:\n            max_prod, min_prod = min_prod, max_prod\n        \n        # Update max and min products\n        max_prod = max(nums[i], max_prod * nums[i])\n        min_prod = min(nums[i], min_prod * nums[i])\n        \n        # Update result\n        result = max(result, max_prod)\n    \n    return result",
+        "javascript": "function maxProduct(nums) {\n    let maxProd = nums[0];\n    let minProd = nums[0];\n    let result = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        // If negative, swap max and min\n        if (nums[i] < 0) {\n            [maxProd, minProd] = [minProd, maxProd];\n        }\n        \n        // Update max and min products\n        maxProd = Math.max(nums[i], maxProd * nums[i]);\n        minProd = Math.min(nums[i], minProd * nums[i]);\n        \n        // Update result\n        result = Math.max(result, maxProd);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Calculate All Three Candidates",
+      "order": 2,
+      "intuition": "At each position, maximum product can come from: (1) current element alone, (2) maxProduct * current, or (3) minProduct * current (if current is negative). Calculate all three, take max for maxProduct and min for minProduct. This avoids explicit swapping.",
+      "approach": "For each element, calculate three candidates for max and three for min. Take maximum/minimum of all candidates. This handles all cases including negatives and zeros.",
+      "steps": [
+        "Initialize maxProd = minProd = result = nums[0]",
+        "For i from 1 to n-1:",
+        "  - candidate1 = nums[i]",
+        "  - candidate2 = maxProd * nums[i]",
+        "  - candidate3 = minProd * nums[i]",
+        "  - tempMax = max(candidate1, candidate2, candidate3)",
+        "  - tempMin = min(candidate1, candidate2, candidate3)",
+        "  - maxProd = tempMax",
+        "  - minProd = tempMin",
+        "  - result = max(result, maxProd)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array. O(n) time.",
+        "spaceExplanation": "Constant extra space. O(1)."
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxProduct(vector<int>& nums) {\n        int maxProd = nums[0];\n        int minProd = nums[0];\n        int result = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            int tempMax = max({nums[i], maxProd * nums[i], minProd * nums[i]});\n            int tempMin = min({nums[i], maxProd * nums[i], minProd * nums[i]});\n            \n            maxProd = tempMax;\n            minProd = tempMin;\n            result = max(result, maxProd);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int maxProduct(int[] nums) {\n        int maxProd = nums[0];\n        int minProd = nums[0];\n        int result = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            int tempMax = Math.max(nums[i], \n                          Math.max(maxProd * nums[i], minProd * nums[i]));\n            int tempMin = Math.min(nums[i],\n                          Math.min(maxProd * nums[i], minProd * nums[i]));\n            \n            maxProd = tempMax;\n            minProd = tempMin;\n            result = Math.max(result, maxProd);\n        }\n        \n        return result;\n    }\n}",
+        "python": "def maxProduct(nums):\n    max_prod = nums[0]\n    min_prod = nums[0]\n    result = nums[0]\n    \n    for i in range(1, len(nums)):\n        temp_max = max(nums[i], max_prod * nums[i], min_prod * nums[i])\n        temp_min = min(nums[i], max_prod * nums[i], min_prod * nums[i])\n        \n        max_prod = temp_max\n        min_prod = temp_min\n        result = max(result, max_prod)\n    \n    return result",
+        "javascript": "function maxProduct(nums) {\n    let maxProd = nums[0];\n    let minProd = nums[0];\n    let result = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        const tempMax = Math.max(nums[i], maxProd * nums[i], minProd * nums[i]);\n        const tempMin = Math.min(nums[i], maxProd * nums[i], minProd * nums[i]);\n        \n        maxProd = tempMax;\n        minProd = tempMin;\n        result = Math.max(result, maxProd);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Only tracking maximum product without tracking minimum - fails with negatives",
+    "Not swapping max and min when encountering negative numbers",
+    "Forgetting to compare with current element alone (nums[i])",
+    "Not handling zeros correctly - they should reset both max and min",
+    "Initializing result to 0 or 1 instead of nums[0]",
+    "Integer overflow with very large products - may need long/BigInteger",
+    "Not considering that two negatives make a positive"
+  ],
+  "hints": [
+    "Track both maximum AND minimum products - minimum can become maximum",
+    "When you multiply by a negative number, max becomes min and vice versa",
+    "At each position, you have three choices: start fresh, extend max, extend min",
+    "Zeros effectively reset both max and min products to zero",
+    "The maximum product must end at some position - check all positions",
+    "If you see a negative number, swap your max and min before multiplying"
+  ],
+  "followUp": [
+    "How to return the actual subarray indices?",
+    "What if array is circular?",
+    "How to find k-th maximum product subarray?",
+    "Can you handle this with overflow concerns (very large products)?",
+    "What if you can skip at most one element?",
+    "How to find minimum product subarray?",
+    "Can you solve for maximum product of k elements (not necessarily contiguous)?",
+    "What if negative numbers give you a bonus multiplier?"
+  ],
+  "companies": [
+    "Amazon",
+    "Microsoft",
+    "Facebook",
+    "Google",
+    "LinkedIn",
+    "Apple",
+    "Bloomberg",
+    "Adobe"
+  ],
+  "tags": [
+    "Array",
+    "Dynamic Programming",
+    "Greedy",
+    "Kadane's Algorithm Variation"
+  ],
+  "relatedProblems": [
+    "Maximum Subarray",
+    "Maximum Product of Three Numbers",
+    "Subarray Product Less Than K",
+    "Product of Array Except Self",
+    "Maximum Absolute Sum of Any Subarray",
+    "Best Time to Buy and Sell Stock",
+    "Maximum Sum Circular Subarray"
+  ]
 }
