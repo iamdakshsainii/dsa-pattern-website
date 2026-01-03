@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { getSheetBySlug, getQuestionsForSheet, getUserProgress } from "@/lib/db"
 import { getCurrentUser } from "@/lib/auth"
-import QuestionCard from "@/components/question-card"
+import QuestionCard from "@/components/questions/question-card"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle2, FileSpreadsheet } from "lucide-react"
