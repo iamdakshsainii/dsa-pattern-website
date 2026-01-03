@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eba",
   "questionSlug": "remove-nodes-linked-list",
+  "title": "Remove Nodes Linked List",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/remove-nodes-from-linked-list/",
     "videos": [

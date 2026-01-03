@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e9b",
   "questionSlug": "max-sum-circular-array",
+  "title": "Max Sum Circular Array",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ef0",
   "questionSlug": "search-2d-matrix",
+  "title": "Search 2d Matrix",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/search-a-2d-matrix/",
     "videos": [

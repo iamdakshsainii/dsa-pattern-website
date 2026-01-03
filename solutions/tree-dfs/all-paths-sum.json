@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ecc",
   "questionSlug": "all-paths-sum",
+  "title": "All Paths Sum",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/path-sum-iii/",
     "videos": [

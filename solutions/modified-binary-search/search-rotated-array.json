@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eee",
   "questionSlug": "search-rotated-array",
+  "title": "Search Rotated Array",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
     "videos": [

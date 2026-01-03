@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e92",
   "questionSlug": "longest-subarray-ones-replacement",
+  "title": "Longest Subarray Ones Replacement",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/max-consecutive-ones-iii/",
     "videos": [

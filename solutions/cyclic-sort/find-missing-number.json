@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ea9",
   "questionSlug": "find-missing-number",
+  "title": "Find Missing Number",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/missing-number/",
     "videos": [

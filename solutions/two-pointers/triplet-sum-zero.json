@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e7c",
   "questionSlug": "triplet-sum-zero",
+  "title": "Triplet Sum Zero",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/3sum/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8f0a",
   "questionSlug": "minimum-add-parentheses-valid",
+  "title": "Minimum Add Parentheses Valid",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/",
     "videos": [

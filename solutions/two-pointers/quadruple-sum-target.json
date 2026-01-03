@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e81",
   "questionSlug": "quadruple-sum-target",
+  "title": "Quadruple Sum Target",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/4sum/",
     "videos": [

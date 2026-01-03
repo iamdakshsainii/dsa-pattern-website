@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ebd",
   "questionSlug": "remove-k-digits",
+  "title": "Remove K Digits",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/remove-k-digits/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e89",
   "questionSlug": "palindrome-linkedlist",
+  "title": "Palindrome Linkedlist",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/palindrome-linked-list/",
     "videos": [

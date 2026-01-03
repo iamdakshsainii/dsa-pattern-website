@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e93",
   "questionSlug": "minimum-size-subarray-sum",
+  "title": "Minimum Size Subarray Sum",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/minimum-size-subarray-sum/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e8d",
   "questionSlug": "smallest-subarray-given-sum",
+  "title": "Smallest Subarray Given Sum",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/minimum-size-subarray-sum/",
     "videos": [

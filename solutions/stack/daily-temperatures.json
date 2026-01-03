@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eb9",
   "questionSlug": "daily-temperatures",
+  "title": "Daily Temperatures",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/daily-temperatures/",
     "videos": [

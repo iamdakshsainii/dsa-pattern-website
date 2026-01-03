@@ -4,10 +4,11 @@ import clientPromise from "@/lib/mongodb"
 import PatternDetailPage from "@/components/pattern-detail-page"
 
 export default async function PatternPage({ params }) {
-  const { slug } = await params
+  const { slug: patternSlug } = await params
+  const slug = patternSlug
   const pattern = await getPattern(slug)
 
-  // Fetch questions using slug
+  // Fetch questions using slug (now includes companies/tags from JSON)
   const questions = await getQuestionsByPattern(slug)
 
   // Fetch solutions for all questions

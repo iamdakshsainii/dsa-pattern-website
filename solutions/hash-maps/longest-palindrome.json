@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ec0",
   "questionSlug": "longest-palindrome",
+  "title": "Longest Palindrome",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/longest-palindrome/",
     "videos": [

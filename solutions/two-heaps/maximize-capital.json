@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ede",
   "questionSlug": "maximize-capital",
+  "title": "Maximize Capital",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/ipo/",
     "videos": [

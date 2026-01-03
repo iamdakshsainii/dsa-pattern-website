@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e7f",
   "questionSlug": "subarrays-product-less-target",
+  "title": "Subarrays Product Less Target",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/subarray-product-less-than-k/",
     "videos": [

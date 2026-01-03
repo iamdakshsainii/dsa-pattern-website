@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ef2",
   "questionSlug": "koko-eating-bananas",
+  "title": "Koko Eating Bananas",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/koko-eating-bananas/",
     "videos": [

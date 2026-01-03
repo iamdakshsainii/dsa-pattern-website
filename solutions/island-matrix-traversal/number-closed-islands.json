@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ed9",
   "questionSlug": "number-closed-islands",
+  "title": "Number Closed Islands",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/number-of-closed-islands/",
     "videos": [

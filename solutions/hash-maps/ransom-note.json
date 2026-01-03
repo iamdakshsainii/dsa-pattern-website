@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ec1",
   "questionSlug": "ransom-note",
+  "title": "Ransom Note",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/ransom-note/",
     "videos": [

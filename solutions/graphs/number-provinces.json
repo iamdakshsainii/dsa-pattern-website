@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ed5",
   "questionSlug": "number-provinces",
+  "title": "Number Provinces",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/number-of-provinces/",
     "videos": [

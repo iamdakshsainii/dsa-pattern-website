@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ea6",
   "questionSlug": "minimum-meeting-rooms",
+  "title": "Minimum Meeting Rooms",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/problems/attend-all-meetings-ii/1",
     "videos": [

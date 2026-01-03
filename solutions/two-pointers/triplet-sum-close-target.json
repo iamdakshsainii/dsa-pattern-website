@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e7d",
   "questionSlug": "triplet-sum-close-target",
+  "title": "Triplet Sum Close Target",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/3sum-closest/",
     "videos": [

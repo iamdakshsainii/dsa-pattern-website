@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e8e",
   "questionSlug": "longest-substring-k-distinct",
+  "title": "Longest Substring K Distinct",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/problems/longest-k-unique-characters-substring0853/1",
     "videos": [

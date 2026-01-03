@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eca",
   "questionSlug": "right-view-binary-tree",
+  "title": "Right View Binary Tree",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/binary-tree-right-side-view/",
     "videos": [

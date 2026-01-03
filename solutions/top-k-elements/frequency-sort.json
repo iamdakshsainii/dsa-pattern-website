@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8efd",
   "questionSlug": "frequency-sort",
+  "title": "Frequency Sort",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/sort-characters-by-frequency/",
     "videos": [

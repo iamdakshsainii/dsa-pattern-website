@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e86",
   "questionSlug": "happy-number",
+  "title": "Happy Number",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/happy-number/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8efc",
   "questionSlug": "top-k-frequent-numbers",
+  "title": "Top K Frequent Numbers",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/top-k-frequent-elements/",
     "videos": [

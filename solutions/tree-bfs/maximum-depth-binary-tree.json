@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ec7",
   "questionSlug": "maximum-depth-binary-tree",
+  "title": "Maximum Depth Binary Tree",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
     "videos": [

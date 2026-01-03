@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ecf",
   "questionSlug": "count-paths-sum",
+  "title": "Count Paths Sum",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/path-sum-iii/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8f01",
   "questionSlug": "sum-elements",
+  "title": "Sum Elements",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/sum-of-all-subset-xor-totals/",
     "videos": [

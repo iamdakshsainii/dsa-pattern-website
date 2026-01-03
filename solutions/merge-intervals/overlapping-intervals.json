@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ea5",
   "questionSlug": "overlapping-intervals",
+  "title": "Overlapping Intervals",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/check-if-any-two-intervals-overlap-among-a-given-set-of-intervals/",
     "videos": [

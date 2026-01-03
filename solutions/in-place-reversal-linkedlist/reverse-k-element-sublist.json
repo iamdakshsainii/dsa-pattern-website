@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eb2",
   "questionSlug": "reverse-k-element-sublist",
+  "title": "Reverse K Element Sublist",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
     "videos": [

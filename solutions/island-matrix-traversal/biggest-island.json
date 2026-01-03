@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ed6",
   "questionSlug": "number-islands",
+  "title": "Biggest Island",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/number-of-islands/",
     "videos": [

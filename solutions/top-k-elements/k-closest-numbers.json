@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eff",
   "questionSlug": "k-closest-numbers",
+  "title": "K Closest Numbers",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-k-closest-elements/",
     "videos": [

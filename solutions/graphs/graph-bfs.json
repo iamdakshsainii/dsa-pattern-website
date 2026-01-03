@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ed3",
   "questionSlug": "graph-bfs",
+  "title": "Graph Bfs",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "",
     "videos": [

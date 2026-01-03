@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eea",
   "questionSlug": "search-sorted-infinite-array",
+  "title": "Search Sorted Infinite Array",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/find-position-element-sorted-array-infinite-numbers/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8f00",
   "questionSlug": "maximum-distinct-elements",
+  "title": "Maximum Distinct Elements",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-number-of-distinct-elements-after-operations/",
     "videos": [

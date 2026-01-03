@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e91",
   "questionSlug": "longest-substring-same-letters-replacement",
+  "title": "Longest Substring Same Letters Replacement",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/longest-repeating-character-replacement/",
     "videos": [

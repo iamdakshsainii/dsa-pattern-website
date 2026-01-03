@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eb1",
   "questionSlug": "reverse-sublist",
+  "title": "Reverse Sublist",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/reverse-linked-list-ii/",
     "videos": [

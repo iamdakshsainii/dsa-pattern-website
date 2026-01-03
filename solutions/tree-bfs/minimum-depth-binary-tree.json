@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ec6",
   "questionSlug": "minimum-depth-binary-tree",
+  "title": "Minimum Depth Binary Tree",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/minimum-depth-of-binary-tree/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eb3",
   "questionSlug": "reverse-alternating-k-sublist",
+  "title": "Reverse Alternating K Sublist",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/reverse-alternate-k-nodes-in-a-singly-linked-list/",
     "videos": [
@@ -166,4 +168,5 @@
     "Swap Nodes in Pairs",
     "Reverse Nodes in Even Length Groups",
     "Reorder List"
-  ]}
+  ]
+}

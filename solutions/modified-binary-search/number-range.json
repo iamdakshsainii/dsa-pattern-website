@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ee9",
   "questionSlug": "number-range",
+  "title": "Number Range",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
     "videos": [

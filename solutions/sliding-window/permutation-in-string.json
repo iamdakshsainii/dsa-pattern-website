@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e95",
   "questionSlug": "permutation-in-string",
+  "title": "Permutation In String",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/permutation-in-string/",
     "videos": [

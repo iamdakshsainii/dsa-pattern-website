@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ef5",
   "questionSlug": "two-single-numbers",
+  "title": "Two Single Numbers",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/single-number-iii/",
     "videos": [

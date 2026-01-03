@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8f09",
   "questionSlug": "maximum-length-pair-chain",
+  "title": "Maximum Length Pair Chain",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-length-of-pair-chain/",
     "videos": [

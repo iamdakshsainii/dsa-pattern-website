@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ecd",
   "questionSlug": "sum-path-numbers",
+  "title": "Sum Path Numbers",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/sum-root-to-leaf-numbers/",
     "videos": [

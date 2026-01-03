@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ee3",
   "questionSlug": "string-permutations-case",
+  "title": "String Permutations Case",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/letter-case-permutation/",
     "videos": [

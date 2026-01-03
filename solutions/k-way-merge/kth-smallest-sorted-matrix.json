@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8f06",
   "questionSlug": "kth-smallest-sorted-matrix",
+  "title": "Kth Smallest Sorted Matrix",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/",
     "videos": [

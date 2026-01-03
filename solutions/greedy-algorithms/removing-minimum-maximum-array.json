@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8f0d",
   "questionSlug": "removing-minimum-maximum-array",
+  "title": "Removing Minimum Maximum Array",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/removing-minimum-and-maximum-from-array/",
     "videos": [

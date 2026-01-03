@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e82",
   "questionSlug": "comparing-strings-backspaces",
+  "title": "Comparing Strings Backspaces",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/backspace-string-compare/",
     "videos": [

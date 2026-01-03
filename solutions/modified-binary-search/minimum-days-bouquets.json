@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ef1",
   "questionSlug": "minimum-days-bouquets",
+  "title": "Minimum Days Bouquets",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/",
     "videos": [

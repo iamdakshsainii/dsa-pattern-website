@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e98",
   "questionSlug": "maximum-product-subarray",
+  "title": "Maximum Product Subarray",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-product-subarray/",
     "videos": [

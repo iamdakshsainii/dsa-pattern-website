@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eab",
   "questionSlug": "find-duplicate-number-cyclic",
+  "title": "Find Duplicate Number Cyclic",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-the-duplicate-number/",
     "videos": [

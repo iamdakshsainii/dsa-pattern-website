@@ -158,9 +158,12 @@ export default function QuestionList({ questions, patternSlug, solutions, userPr
         const isCheckboxLoading = loading[question._id]
         const isBookmarkLoading = loading[`bookmark-${question._id}`]
 
+        // FIX: Use combination of _id and slug for unique key
+        const uniqueKey = `${question._id}-${question.slug || question.title}`
+
         return (
           <Card
-            key={question._id}
+            key={uniqueKey}
             className={`p-6 hover:shadow-lg transition-all ${
               isCompleted ? "bg-green-50/50 dark:bg-green-950/20 border-green-300 dark:border-green-800" : ""
             }`}
@@ -201,7 +204,7 @@ export default function QuestionList({ questions, patternSlug, solutions, userPr
                 </div>
 
                 {/* Tags */}
-                {solution?.tags && (
+                {solution?.tags && solution.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {solution.tags.slice(0, 3).map((tag) => (
                       <Badge key={tag} variant="secondary" className="text-xs">
@@ -260,8 +263,9 @@ export default function QuestionList({ questions, patternSlug, solutions, userPr
                     {isBookmarked ? "Bookmarked" : "Bookmark"}
                   </Button>
 
+                  {/* FIX: Correct URL path */}
                   <Button variant="default" size="sm" asChild>
-                    <Link href={`/questions/${question._id}`}>
+                    <Link href={`/patterns/${patternSlug}/questions/${question._id}`}>
                       <Code className="w-4 h-4 mr-1" />
                       View Solution
                     </Link>

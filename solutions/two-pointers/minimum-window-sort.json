@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e83",
   "questionSlug": "minimum-window-sort",
+  "title": "Minimum Window Sort",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/shortest-unsorted-continuous-subarray/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ed8",
   "questionSlug": "flood-fill",
+  "title": "Flood Fill",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/flood-fill/",
     "videos": [

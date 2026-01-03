@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ea7",
   "questionSlug": "maximum-cpu-load",
+  "title": "Maximum Cpu Load",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/maximum-cpu-load-from-the-given-list-of-jobs/",
     "videos": [

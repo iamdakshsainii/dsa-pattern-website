@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8f07",
   "questionSlug": "smallest-number-range",
+  "title": "Smallest Number Range",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/",
     "videos": [

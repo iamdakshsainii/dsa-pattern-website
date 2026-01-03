@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ea0",
   "questionSlug": "shortest-subarray-sum-least-k",
+  "title": "Shortest Subarray Sum Least K",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/description/",
     "videos": [

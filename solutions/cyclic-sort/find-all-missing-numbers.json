@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eaa",
   "questionSlug": "find-all-missing-numbers",
+  "title": "Find All Missing Numbers",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eae",
   "questionSlug": "first-k-missing-positive",
+  "title": "First K Missing Positive",
+  "difficulty": "Hard",
   "resources": {
     "leetcode": "https://leetcode.com/problems/kth-missing-positive-number/",
     "videos": [

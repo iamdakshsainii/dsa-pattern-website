@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e7b",
   "questionSlug": "squaring-sorted-array",
+  "title": "Squaring Sorted Array",
+  "difficulty": "Easy",
   "resources": {
     "leetcode": "https://leetcode.com/problems/squares-of-a-sorted-array/",
     "videos": [

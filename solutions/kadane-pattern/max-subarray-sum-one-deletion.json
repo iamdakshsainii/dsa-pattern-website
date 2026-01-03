@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e99",
   "questionSlug": "max-subarray-sum-one-deletion",
+  "title": "Max Subarray Sum One Deletion",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-subarray-sum-with-one-deletion/description/",
     "videos": [

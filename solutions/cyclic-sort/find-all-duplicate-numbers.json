@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eac",
   "questionSlug": "find-all-duplicate-numbers",
+  "title": "Find All Duplicate Numbers",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-all-duplicates-in-an-array/",
     "videos": [

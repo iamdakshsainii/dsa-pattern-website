@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ece",
   "questionSlug": "path-given-sequence",
+  "title": "Path Given Sequence",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/check-root-leaf-path-given-sequence/",
     "videos": [

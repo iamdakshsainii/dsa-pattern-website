@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,10 +12,24 @@ import {
   TrendingUp,
   CheckCircle2,
   Clock,
-  Target
+  Target,
+  ArrowUpDown
 } from "lucide-react"
 import QuestionList from "@/components/question-list"
 import PatternProgress from "@/components/pattern-progress"
+import FilterBar from "@/components/filters/filter-bar"
+import {
+  filterQuestions,
+  sortQuestions,
+  getFilterStats
+} from "@/lib/filter-utils"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export default function PatternDetailPage({
   pattern,
@@ -24,11 +39,102 @@ export default function PatternDetailPage({
   currentUser,
   patternSlug
 }) {
+  const searchParams = useSearchParams()
+
+  // Initialize filters from URL or defaults
+  const [filters, setFilters] = useState({
+    difficulty: searchParams.get('difficulty') || 'All',
+    status: searchParams.get('status') || 'All',
+    company: searchParams.get('company') || 'All',
+    tag: searchParams.get('tag') || 'All',
+    search: searchParams.get('search') || ''
+  })
+
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'Default')
   const [localProgress, setLocalProgress] = useState(userProgress?.completed || [])
+
+  // Update URL when filters change (optimized - no router push)
+  const updateFilters = (newFilters) => {
+    setFilters(newFilters)
+
+    // Update URL params without navigation (faster)
+    const params = new URLSearchParams()
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (value && value !== 'All' && value !== '') {
+        params.set(key, value)
+      }
+    })
+    if (sortBy !== 'Default') {
+      params.set('sort', sortBy)
+    }
+
+    const queryString = params.toString()
+    const newUrl = `/patterns/${patternSlug}${queryString ? `?${queryString}` : ''}`
+
+    // Use window.history instead of router.push for instant updates
+    window.history.replaceState(null, '', newUrl)
+  }
+
+  const updateSort = (value) => {
+    setSortBy(value)
+
+    // Update URL without navigation
+    const params = new URLSearchParams(searchParams)
+    if (value !== 'Default') {
+      params.set('sort', value)
+    } else {
+      params.delete('sort')
+    }
+
+    const newUrl = `/patterns/${patternSlug}?${params.toString()}`
+    window.history.replaceState(null, '', newUrl)
+  }
 
   const handleProgressUpdate = (newProgress) => {
     setLocalProgress(newProgress)
   }
+
+  // Get unique companies and tags (from questions directly - already loaded)
+  const companies = useMemo(() => {
+    const allCompanies = new Set()
+    questions.forEach(q => {
+      if (q.companies && Array.isArray(q.companies)) {
+        q.companies.forEach(c => allCompanies.add(c))
+      }
+    })
+    return Array.from(allCompanies).sort()
+  }, [questions])
+
+  const tags = useMemo(() => {
+    const allTags = new Set()
+    questions.forEach(q => {
+      if (q.tags && Array.isArray(q.tags)) {
+        q.tags.forEach(t => allTags.add(t))
+      }
+    })
+    return Array.from(allTags).sort()
+  }, [questions])
+
+  // Apply filters and sorting (use questions directly - no need to enrich)
+  const progressData = useMemo(() => ({
+    completed: localProgress,
+    inProgress: userProgress?.inProgress || [],
+    bookmarks: userProgress?.bookmarks || []
+  }), [localProgress, userProgress])
+
+  const filteredQuestions = useMemo(() => {
+    const filtered = filterQuestions(questions, filters, progressData)
+    return sortQuestions(filtered, sortBy, progressData)
+  }, [questions, filters, sortBy, progressData])
+
+  // Calculate statistics
+  const stats = useMemo(() => {
+    return getFilterStats(filteredQuestions, progressData)
+  }, [filteredQuestions, progressData])
+
+  const totalStats = useMemo(() => {
+    return getFilterStats(questions, progressData)
+  }, [questions, progressData])
 
   if (!pattern) {
     return (
@@ -124,7 +230,7 @@ export default function PatternDetailPage({
                     <span className="text-sm">Easy</span>
                   </div>
                   <Badge variant="outline" className="text-green-600">
-                    {difficultyCount.Easy}
+                    {totalStats.completedByDifficulty.Easy}/{totalStats.byDifficulty.Easy}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
@@ -133,7 +239,7 @@ export default function PatternDetailPage({
                     <span className="text-sm">Medium</span>
                   </div>
                   <Badge variant="outline" className="text-yellow-600">
-                    {difficultyCount.Medium}
+                    {totalStats.completedByDifficulty.Medium}/{totalStats.byDifficulty.Medium}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
@@ -142,7 +248,7 @@ export default function PatternDetailPage({
                     <span className="text-sm">Hard</span>
                   </div>
                   <Badge variant="outline" className="text-red-600">
-                    {difficultyCount.Hard}
+                    {totalStats.completedByDifficulty.Hard}/{totalStats.byDifficulty.Hard}
                   </Badge>
                 </div>
               </div>
@@ -207,7 +313,7 @@ export default function PatternDetailPage({
             )}
           </div>
 
-          {/* Main Content - Questions */}
+          {/* Main Content - Questions with Filters */}
           <div className="lg:col-span-3 space-y-6">
             {/* Pattern Progress Tracker */}
             <PatternProgress
@@ -253,30 +359,47 @@ export default function PatternDetailPage({
               </div>
             )}
 
-            {/* Practice Problems Header */}
+            {/* Filter Bar */}
+            <FilterBar
+              filters={filters}
+              onFilterChange={updateFilters}
+              companies={companies}
+              tags={tags}
+            />
+
+            {/* Results Header with Sort */}
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold">Practice Problems</h2>
                 <p className="text-muted-foreground">
-                  {totalQuestions} problems to master this pattern
+                  Showing {stats.total} of {totalQuestions} problems
+                  {stats.total !== totalQuestions && ` (${totalQuestions - stats.total} filtered out)`}
                 </p>
               </div>
-              {!currentUser && (
-                <Link href="/auth/login">
-                  <Button>
-                    Login to Track Progress
-                  </Button>
-                </Link>
-              )}
+
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                <Select value={sortBy} onValueChange={updateSort}>
+                  <SelectTrigger className="w-[160px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Default">Default Order</SelectItem>
+                    <SelectItem value="Difficulty">Difficulty</SelectItem>
+                    <SelectItem value="Title">Title (A-Z)</SelectItem>
+                    <SelectItem value="Status">Status</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Questions List */}
-            {questions.length > 0 ? (
+            {filteredQuestions.length > 0 ? (
               <QuestionList
-                questions={questions}
+                questions={filteredQuestions}
                 patternSlug={patternSlug}
                 solutions={solutions}
-                userProgress={userProgress}
+                userProgress={progressData}
                 currentUser={currentUser}
                 onProgressUpdate={handleProgressUpdate}
               />
@@ -284,13 +407,20 @@ export default function PatternDetailPage({
               <Card className="p-12">
                 <div className="text-center">
                   <p className="text-muted-foreground mb-4">
-                    No problems found for this pattern yet.
+                    No problems match your filters.
                   </p>
-                  <Link href="/patterns">
-                    <Button variant="outline">
-                      Browse Other Patterns
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="outline"
+                    onClick={() => updateFilters({
+                      difficulty: 'All',
+                      status: 'All',
+                      company: 'All',
+                      tag: 'All',
+                      search: ''
+                    })}
+                  >
+                    Clear Filters
+                  </Button>
                 </div>
               </Card>
             )}

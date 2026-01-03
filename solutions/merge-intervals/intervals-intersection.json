@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ea4",
   "questionSlug": "intervals-intersection",
+  "title": "Intervals Intersection",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/interval-list-intersections/description/",
     "videos": [

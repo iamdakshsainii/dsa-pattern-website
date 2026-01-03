@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8f08",
   "questionSlug": "valid-palindrome-ii",
+  "title": "Valid Palindrome Ii",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/valid-palindrome-ii/",
     "videos": [

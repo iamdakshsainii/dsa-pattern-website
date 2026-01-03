@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e7e",
   "questionSlug": "triplets-smaller-sum",
+  "title": "Triplets Smaller Sum",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://www.geeksforgeeks.org/problems/count-triplets-with-sum-smaller-than-x5549/1",
     "videos": [

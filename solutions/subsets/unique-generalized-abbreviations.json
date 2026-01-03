@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ee5",
   "questionSlug": "unique-generalized-abbreviations",
+  "title": "Unique Generalized Abbreviations",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/generalized-abbreviation/",
     "videos": [

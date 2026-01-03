@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8ec9",
   "questionSlug": "connect-level-order-siblings",
+  "title": "Connect Level Order Siblings",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/",
     "videos": [

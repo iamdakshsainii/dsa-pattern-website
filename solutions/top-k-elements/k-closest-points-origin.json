@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8efa",
   "questionSlug": "k-closest-points-origin",
+  "title": "K Closest Points Origin",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/k-closest-points-to-origin/",
     "videos": [

@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8eb6",
   "questionSlug": "balanced-parentheses",
+  "title": "Balanced Parentheses",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/valid-parentheses/",
     "videos": [

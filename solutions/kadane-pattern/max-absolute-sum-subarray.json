@@ -1,6 +1,8 @@
 {
   "questionId": "694d4a3a98494915f3bc8e9a",
   "questionSlug": "max-absolute-sum-subarray",
+  "title": "Max Absolute Sum Subarray",
+  "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/",
     "videos": [
