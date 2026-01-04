@@ -1,369 +1,266 @@
-# DSA Pattern Mastery Platform 🚀
+# 🚀 DSA Patterns - Master Data Structures & Algorithms
 
-**Master patterns, not problems.** A comprehensive platform to ace coding interviews through pattern-based learning inspired by **Padho with Pratyush**.
+<div align="center">
 
-## 🎯 Philosophy
+![DSA Patterns Platform](https://img.shields.io/badge/DSA-Patterns-blue?style=for-the-badge)
+![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)
+![MongoDB](https://img.shields.io/badge/MongoDB-6.0-green?style=for-the-badge&logo=mongodb)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-> "Don't memorize solutions. Recognize patterns."
+**A comprehensive platform for mastering Data Structures & Algorithms through pattern-based learning**
 
-This platform teaches you to **think** like an expert by mastering algorithmic patterns. When you understand Two Pointers, you unlock 50+ problems. Learn Sliding Window, and another 40 become trivial.
+[Live Demo](#) • [Features](#-features) • [Get Started](#-getting-started)
 
-## ✨ Complete Feature List
+</div>
 
-### 🧠 Pattern-First Learning
-- **27+ Algorithmic Patterns** with detailed explanations
-- **Pattern Triggers**: Learn to recognize WHEN to apply each pattern
-- **Common Mistakes**: Avoid pitfalls before you make them
-- **Complexity Analysis**: Time and space complexity for every pattern
+---
 
-### 📚 Smart Question Organization
-- **200+ Curated Problems** from top problem sets
-- **Difficulty Levels**: Easy, Medium, Hard
-- **Problem Ladder**: Discovery → Stabilization → Twist → Interview
-- **Pattern Triggers per Question**: One-line explanation of why this pattern applies
-- **4-Part Resource System**:
-  - LeetCode problem links
-  - YouTube video explanations
-  - GeeksforGeeks articles
-  - Additional learning articles
+## 📖 About
 
-### 💻 Solution Pages
-- **Approach Section**: Step-by-step problem-solving approach
-- **Multi-Language Code**: Solutions in 6 languages (C++, Java, Python, JavaScript, C#, Go)
-- **Interactive Code Tabs**: Switch between languages with copy functionality
-- **Complexity Analysis**: Detailed time/space complexity with explanations
-- **Common Mistakes**: What to avoid when implementing
+DSA Patterns is a modern learning platform designed to help students and developers master Data Structures & Algorithms through a **pattern-based approach**. Learn by understanding core patterns that appear repeatedly in coding interviews instead of solving problems randomly.
 
-### 📊 Curated Problem Sheets
-Access 7 famous problem lists:
-1. **Blind 75** (75 problems)
-2. **NeetCode 150** (150 problems)
-3. **Striver A2Z DSA** (450 problems)
-4. **Grind 169** (169 problems)
-5. **LeetCode Top 100** (100 problems)
-6. **AlgoExpert 160** (160 problems)
-7. **Love Babbar 450** (450 problems)
+### 🎯 Why Use DSA Patterns?
 
-### 🎨 Modern Design
-- **Clean Blue & Purple Theme**: Coding-focused, distraction-free
-- **Mobile Responsive**: Learn on any device
-- **Fast Performance**: Optimized MongoDB queries
-- **Intuitive Navigation**: Easy to browse patterns and questions
+- 80% of coding problems follow recognizable patterns
+- Learn one pattern, solve dozens of problems
+- Structured learning path from basics to advanced
+- Perfect for FAANG interview preparation
+- Track your progress with detailed analytics
+
+---
+
+## ✨ Key Features
+
+### 📚 Learning & Practice
+- **22+ DSA Patterns** with 150+ curated problems
+- Multiple solution approaches (Brute Force, Optimal)
+- Time & space complexity analysis for every solution
+- Pattern sheets (Blind 75, NeetCode 150, Striver SDE)
+- Step-by-step explanations with examples
+
+### 📊 Progress Tracking
+- Real-time dashboard with statistics
+- GitHub-style activity heatmap
+- Daily streak counter
+- Pattern mastery tracking
+- Difficulty-wise problem breakdown
+
+### 🏆 Achievements & Gamification
+- 10+ unlockable achievement badges
+- Real-time toast notifications for milestones
+- Profile completion tracker
+- Weekly challenges and contests
+
+### 👤 Profile Management
+- Professional profile with avatar upload
+- Education and work experience
+- Social links (GitHub, LinkedIn, LeetCode, Codeforces)
+- Skills showcase
+- Resume upload and management
+
+### 💼 Career Tools
+- **Resume Manager** - Upload, view, and share your resume
+- **Interview Prep Checklist** - 6-step preparation guide
+- **Company Tracker** - Track problems by target companies
+- **Daily Challenges** - Personalized problem recommendations
+
+### 💬 Community
+- Active WhatsApp community with 500+ members
+- Study groups and mock interviews
+- Job referrals and placement support
+- Success stories from FAANG employees
+
+### 🔖 Organization
+- Bookmark important problems
+- Take notes for each problem
+- Advanced search and filtering
+- Recent activity tracking
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 16 (App Router, React 19)
-- **Language**: JavaScript (JSX for components)
-- **Database**: MongoDB (flexible, easy to extend)
-- **Styling**: Tailwind CSS v4
-- **UI Components**: Radix UI + shadcn/ui
-- **Deployment**: Vercel-ready
+**Frontend:** Next.js 16, React 19, Tailwind CSS, shadcn/ui
+**Backend:** Next.js API Routes, MongoDB
+**Storage:** Cloudinary (Images & Files)
+**Auth:** JWT Authentication
+**Charts:** Recharts
+**Deployment:** Vercel/Railway ready
 
-## 🚀 Quick Start
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
+- Node.js 18 or higher
+- MongoDB (local or MongoDB Atlas)
+- Cloudinary account (for file uploads)
 
-- Node.js 18+ installed
-- MongoDB (local or MongoDB Atlas account - free tier works)
+### Installation
 
-### Local Setup
+1. **Clone the repository**
+```bash
+git clone https://github.com/yourusername/dsa-patterns-platform.git
+cd dsa-patterns-platform
+```
 
-1. **Clone or download the project**
-
-2. **Install dependencies**:
+2. **Install dependencies**
 ```bash
 npm install
 ```
 
-3. **Set up MongoDB**:
+3. **Set up environment variables**
 
-   **Option A: MongoDB Atlas (Cloud - Recommended)**
-   - Go to [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
-   - Create free account
-   - Create new cluster (free M0 tier)
-   - Click "Connect" → "Connect your application"
-   - Copy connection string
-   
-   **Option B: Local MongoDB**
-   - Install MongoDB locally
-   - Start MongoDB service
-   - Connection string: `mongodb://localhost:27017`
+Create a `.env.local` file in the root directory:
 
-4. **Create `.env.local` file**:
-```bash
-MONGODB_URI=your_mongodb_connection_string_here
+```env
+# MongoDB Connection
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dsa_patterns
+
+# JWT Secret (generate a random string)
+JWT_SECRET=your_super_secret_jwt_key_here
+
+# Cloudinary Configuration
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-5. **Seed the database**:
+4. **Seed the database**
 ```bash
+# Seed patterns and questions
 npm run seed
+
+# Seed collections for achievements, resumes, etc.
+npm run seed-db
 ```
 
-This creates:
-- `dsa_patterns` database
-- `patterns` collection (pattern metadata)
-- `questions` collection (problem details with solutions)
-- `user_progress` collection (for future auth integration)
-
-6. **Start development server**:
+5. **Run the development server**
 ```bash
 npm run dev
 ```
 
-7. **Open [http://localhost:3000](http://localhost:3000)**
-
-## 📁 Project Structure
-
+6. **Open your browser**
 ```
-├── app/
-│   ├── auth/                    # Login, Sign-up pages (UI only)
-│   ├── dashboard/               # User dashboard
-│   ├── patterns/                # Pattern listing
-│   │   └── [slug]/              # Pattern detail with questions
-│   ├── questions/               
-│   │   └── [id]/                # Solution page (approach + code)
-│   ├── sheets/                  # Curated problem lists
-│   ├── layout.jsx               # Root layout
-│   ├── globals.css              # Tailwind + theme
-│   └── page.jsx                 # Landing page
-│
-├── components/
-│   ├── ui/                      # shadcn/ui components
-│   ├── question-list.jsx        # Question cards with links
-│   └── solution-tabs.jsx        # Multi-language code tabs
-│
-├── lib/
-│   ├── mongodb.js               # MongoDB connection (singleton)
-│   └── db.js                    # Database helper functions
-│
-├── scripts/
-│   └── seed-db.js               # Database seeding script
-│
-└── public/images/               # Static assets
+http://localhost:3000
 ```
 
-## 🗄️ Database Schema (MongoDB)
+---
 
-### Collections
+## 💻 For Contributors & Developers
 
-**patterns**
-```javascript
+### Using VS Code
+
+**Recommended VS Code Extensions:**
+
+1. **ES7+ React/Redux/React-Native snippets** - `dsznajder.es7-react-js-snippets`
+2. **Tailwind CSS IntelliSense** - `bradlc.vscode-tailwindcss`
+3. **ESLint** - `dbaeumer.vscode-eslint`
+4. **Prettier** - `esbenp.prettier-vscode`
+5. **Auto Rename Tag** - `formulahendry.auto-rename-tag`
+6. **Path Intellisense** - `christian-kohler.path-intellisense`
+
+**VS Code Settings (`.vscode/settings.json`):**
+
+```json
 {
-  _id: ObjectId,
-  name: "Two Pointers",
-  slug: "two-pointers",
-  description: "Use two pointers...",
-  order: 1,
-  questionCount: 15,
-  complexity: { time: "O(n)", space: "O(1)" },
-  whenToUse: ["Array is sorted", "..."],
-  commonMistakes: ["Off-by-one errors", "..."]
-}
-```
-
-**questions**
-```javascript
-{
-  _id: ObjectId,
-  pattern_id: "two-pointers",
-  title: "Two Sum II",
-  slug: "two-sum-ii",
-  difficulty: "Easy",
-  level: "Discovery",
-  order: 1,
-  patternTriggers: "Array is sorted...",
-  approach: ["Step 1", "Step 2", "..."],
-  solutions: {
-    cpp: "class Solution {...}",
-    python: "class Solution:...",
-    javascript: "var twoSum = ...",
-    // ... more languages
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
   },
-  complexity: {
-    time: "O(n)",
-    space: "O(1)",
-    timeExplanation: "...",
-    spaceExplanation: "..."
-  },
-  commonMistakes: ["..."],
-  links: {
-    leetcode: "https://...",
-    youtube: "https://...",
-    gfg: "https://...",
-    article: "https://..."
-  }
-}
-```
-
-**user_progress** (for future use)
-```javascript
-{
-  _id: ObjectId,
-  user_id: "user123",
-  question_id: ObjectId,
-  status: "completed",
-  confidence: 3,
-  notes: "My approach was...",
-  last_attempted: Date
-}
-```
-
-## 📖 How to Add New Content
-
-### Adding New Patterns
-
-Edit `scripts/seed-db.js` and add to the `patterns` array:
-
-```javascript
-{
-  name: "Your Pattern Name",
-  slug: "your-pattern-slug",
-  description: "What this pattern does...",
-  order: 28, // next order number
-  questionCount: 0,
-  complexity: { time: "O(n)", space: "O(1)" },
-  whenToUse: [
-    "When you see X condition",
-    "When problem asks for Y",
-  ],
-  commonMistakes: [
-    "Mistake 1",
-    "Mistake 2",
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
   ]
 }
 ```
 
-### Adding New Questions
-
-Add to the `questions` array in `scripts/seed-db.js`:
-
-```javascript
-{
-  pattern_id: "two-pointers", // match pattern slug
-  title: "Your Question Title",
-  slug: "your-question-slug",
-  difficulty: "Medium",
-  level: "Stabilization",
-  order: 1,
-  patternTriggers: "Why this pattern applies...",
-  approach: [
-    "Step 1: Do this",
-    "Step 2: Then this",
-  ],
-  solutions: {
-    cpp: "// Your C++ solution",
-    python: "# Your Python solution",
-    javascript: "// Your JavaScript solution",
-  },
-  complexity: {
-    time: "O(n)",
-    space: "O(1)",
-    timeExplanation: "We traverse once...",
-    spaceExplanation: "Only use constant variables..."
-  },
-  commonMistakes: [
-    "Forgetting edge case X",
-  ],
-  links: {
-    leetcode: "https://leetcode.com/...",
-    youtube: "https://youtube.com/...",
-    gfg: "https://geeksforgeeks.org/...",
-  }
-}
-```
-
-Then re-run:
-```bash
-npm run seed
-```
-
-## 🎨 Design System
-
-### Colors
-- **Primary**: Blue (#3B82F6) - Buttons, links
-- **Accent**: Purple (#A855F7) - Highlights
-- **Background**: White/Light gray
-- **Success**: Green - Completed
-- **Warning**: Yellow - In Progress
-- **Danger**: Red - Difficult
-
-### Typography
-- **Font**: Inter (clean, modern)
-- Consistent spacing and sizing
-- Readable code blocks
-
-## 🔑 Key Differentiators
-
-### vs Other Platforms
-✅ **Pattern Recognition Training** - Not just problem lists  
-✅ **Multi-Resource Links** - 4 learning sources per question  
-✅ **Solution Approach** - Step-by-step before code  
-✅ **Multi-Language Support** - 6+ languages  
-✅ **Easy to Extend** - Simple JSON format  
-✅ **No Complex Setup** - Just MongoDB + Next.js  
-✅ **Flexible Schema** - MongoDB allows evolution  
-
-## 🐛 Troubleshooting
-
-### No data showing
-1. Check MongoDB connection string in `.env.local`
-2. Verify database was seeded: `npm run seed`
-3. Check terminal for connection errors
-4. Ensure MongoDB service is running (if local)
-
-### MongoDB connection failed
-- **Atlas**: Check IP whitelist (allow 0.0.0.0/0 for dev)
-- **Local**: Ensure MongoDB service is running
-- **Credentials**: Verify username/password in connection string
-
-### Seed script errors
-- MongoDB connection must be active first
-- Check for duplicate slugs in seed data
-- Clear old data: Delete `dsa_patterns` database and re-run seed
-
-## 🚢 Deployment
-
-### Deploy to Vercel (One Click)
-
-1. Push code to GitHub
-2. Connect GitHub repo to Vercel
-3. Add environment variable:
-   - `MONGODB_URI`: Your MongoDB Atlas connection string
-4. Deploy
-5. Run seed script once deployed (or seed before deployment)
-
-### Alternative Platforms
-- Netlify
-- Railway (has built-in MongoDB option)
-- AWS Amplify
-- Self-hosted with Docker
-
-## 📊 Platform Stats
-
-- 27+ Algorithmic Patterns
-- 200+ Curated Problems  
-- 6 Programming Languages
-- 4-Part Resource System
-- 7 Famous Problem Sheets
-- 100% Mobile Responsive
-- 0 Complex Setup Steps
-
-## 🙏 Credits & Inspiration
-
-**Special Thanks to:**
-- **[Padho with Pratyush](https://www.youtube.com/@padho_with_pratyush)** - Creator of the original DSA pattern sheet that inspired this platform
-- Striver's A2Z DSA Sheet
-- NeetCode
-- LeetCode Patterns Community
-
-This platform is a tribute to pattern-based learning and making quality DSA education accessible to everyone.
-
-## 📝 License
-
-MIT License - Free to use, modify, and share
+**Keyboard Shortcuts (VS Code):**
+- `Ctrl + P` - Quick file navigation
+- `Ctrl + Shift + P` - Command palette
+- `Ctrl + ~` - Open integrated terminal
+- `Ctrl + B` - Toggle sidebar
+- `Alt + Click` - Multi-cursor editing
 
 ---
 
-**Remember**: Patterns over problems. Understanding over memorization. Thinking over grinding. 
+## 📚 Usage Guide
 
-Happy learning! 🎯
+### For Students
+
+1. **Sign up** for a free account
+2. **Complete your profile** to unlock all features
+3. **Choose a learning pattern** (start with Two Pointers or Sliding Window)
+4. **Solve problems** with detailed explanations
+5. **Track your progress** on the dashboard
+6. **Earn achievements** as you improve
+7. **Join the community** for support and motivation
+
+### For Recruiters
+
+1. Browse student profiles with detailed stats
+2. View uploaded resumes and projects
+3. Check problem-solving metrics
+4. See social profiles and portfolios
+5. Connect with top performers
+
+---
+
+## 🔐 Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `MONGODB_URI` | MongoDB connection string | Yes |
+| `JWT_SECRET` | Secret key for JWT tokens | Yes |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Yes |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | Yes |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | Yes |
+
+---
+
+## 📝 Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm start            # Start production server
+npm run lint         # Run ESLint
+npm run seed         # Seed patterns and questions
+npm run seed-db      # Seed database collections
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+**Please ensure:**
+- Code follows ESLint rules
+- All tests pass
+- Documentation is updated
+- Commit messages are clear
+
+---
+
+---
+
+## 🙏 Acknowledgments
+
+- Problem collection inspired by NeetCode, Blind 75, and Striver's SDE Sheet
+- UI components from [shadcn/ui](https://ui.shadcn.com/)
+- Icons from [Lucide Icons](https://lucide.dev/)
+- Community support from 500+ active learners
+
+---
+
+## 🌟 Show Your Support
+
+If this project helped you, please give it a ⭐️ on GitHub!
