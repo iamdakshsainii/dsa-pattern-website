@@ -458,7 +458,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container px-4 py-16">
+      {/* <section className="container px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <Card className="p-8 border-2 bg-gradient-to-br from-card to-primary/5">
             <div className="flex flex-col md:flex-row items-center gap-6">
@@ -490,7 +490,7 @@ export default async function HomePage() {
             </div>
           </Card>
         </div>
-      </section>
+      </section> */}
 
       <section className="container px-4 py-20">
         <div className="max-w-4xl mx-auto">
