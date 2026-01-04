@@ -1,6 +1,3 @@
-// scripts/add-difficulty-to-json.js
-// Adds difficulty field to all question JSON files that don't have it
-
 const fs = require('fs').promises;
 const path = require('path');
 

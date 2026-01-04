@@ -1,6 +1,3 @@
-// scripts/seed-database.js
-// Run this script once to set up all MongoDB collections and indexes
-
 import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'

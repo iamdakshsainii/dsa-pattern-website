@@ -1,6 +1,3 @@
-// Alternative setup script that uses direct MongoDB connection
-// Usage: node scripts/setup-profile-db-v2.js
-
 require('dotenv').config({ path: '.env.local' })
 const { MongoClient } = require('mongodb')
 

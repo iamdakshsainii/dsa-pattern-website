@@ -1,5 +1,3 @@
-// scripts/add-acceptance-rates.js
-// Run this script to add acceptance rates to your questions
 
 const { MongoClient } = require('mongodb');
 

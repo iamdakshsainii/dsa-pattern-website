@@ -1,7 +1,3 @@
-// Save as: scripts/fix-pattern-order-direct.js
-// Run: node scripts/fix-pattern-order-direct.js
-// This version has the MongoDB URI hardcoded (no .env needed)
-
 const { MongoClient } = require('mongodb');
 
 // Direct MongoDB connection (no .env file needed)

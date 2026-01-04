@@ -25,7 +25,7 @@ export default async function BookmarksPage() {
     redirect("/auth/login")
   }
 
-  // ✅ FIX: Fetch bookmarks with proper error handling
+  //Fetch bookmarks with proper error handling
   let questions = []
   let userProgress = {
     completed: [],

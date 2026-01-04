@@ -1,6 +1,3 @@
-// Replace: components/patterns-client-page.jsx
-// ✨ ONLY CHANGE: Added order number badges to cards
-
 'use client'
 
 import { useState, useMemo, useEffect } from "react"

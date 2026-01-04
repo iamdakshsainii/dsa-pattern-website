@@ -1,4 +1,4 @@
-// app/api/auth/signup/route.js
+
 import { NextResponse } from "next/server"
 import { getUser, createUser } from "@/lib/db"
 import { hashPassword, createToken, isValidEmail, validatePassword } from "@/lib/auth"

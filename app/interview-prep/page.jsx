@@ -9,7 +9,6 @@ import InterviewChecklist from '@/components/career/interview-checklist'
 export default function InterviewPrepPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur sticky top-0 z-10">
         <div className="container max-w-6xl mx-auto flex h-16 items-center gap-4 px-4">
           <Link href="/dashboard">
@@ -25,9 +24,8 @@ export default function InterviewPrepPage() {
         </div>
       </header>
 
-      {/* Content */}
+
       <div className="container max-w-6xl mx-auto p-6 space-y-6">
-        {/* Info Banner */}
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-2">🎯 Get Interview Ready</h2>
           <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -37,14 +35,10 @@ export default function InterviewPrepPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Checklist - 2 columns */}
           <div className="lg:col-span-2">
             <InterviewChecklist />
           </div>
-
-          {/* Sidebar - Resources */}
           <div className="space-y-6">
-            {/* Quick Tips */}
             <Card className="p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Target className="h-5 w-5 text-orange-600" />
@@ -70,7 +64,7 @@ export default function InterviewPrepPage() {
               </ul>
             </Card>
 
-            {/* Resources */}
+
             <Card className="p-6">
               <div className="flex items-center gap-2 mb-4">
                 <BookOpen className="h-5 w-5 text-blue-600" />
@@ -109,7 +103,7 @@ export default function InterviewPrepPage() {
                 <h3 className="font-semibold">Join Community</h3>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
-                Connect with peers preparing for interviews
+                Connect with peers preparing for interviews according to your preference
               </p>
               <Link href="/community">
                 <Button className="w-full bg-green-600 hover:bg-green-700">
@@ -140,7 +134,7 @@ export default function InterviewPrepPage() {
               </h4>
               <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                 <li>• Past experiences</li>
-                <li>• STAR method answers</li>
+                <li>• STAR method answers (best for explaining)</li>
                 <li>• Team collaboration</li>
               </ul>
             </div>
