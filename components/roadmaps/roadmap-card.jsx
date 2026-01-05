@@ -14,6 +14,11 @@ import {
 } from "lucide-react"
 
 export default function RoadmapCard({ roadmap, userProgress, compact = false }) {
+
+  if (!roadmap) {
+    return null
+  }
+
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "Beginner":
@@ -31,27 +36,29 @@ export default function RoadmapCard({ roadmap, userProgress, compact = false }) 
   const isStarted = userProgress && userProgress.startedAt
   const isCompleted = userProgress?.completedAt
 
-  // 🆕 NEW: Compact mode rendering
+  const cardColor = roadmap.color || '#3b82f6'
+
+  // Compact mode rendering
   if (compact) {
     return (
       <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
         <div
           className="h-2 w-full"
-          style={{ backgroundColor: roadmap.color }}
+          style={{ backgroundColor: cardColor }}
         />
 
         <div className="p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="text-3xl" role="img" aria-label={roadmap.title}>
-              {roadmap.icon}
+            <div className="text-3xl" role="img" aria-label={roadmap.title || 'Roadmap'}>
+              {roadmap.icon || '📚'}
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-bold group-hover:text-primary transition-colors line-clamp-1">
-                {roadmap.title}
+                {roadmap.title || 'Untitled Roadmap'}
               </h3>
               <div className="flex items-center gap-2 mt-1">
                 <Badge variant="outline" className="text-xs">
-                  {roadmap.category}
+                  {roadmap.category || 'General'}
                 </Badge>
               </div>
             </div>
@@ -67,13 +74,12 @@ export default function RoadmapCard({ roadmap, userProgress, compact = false }) 
             </div>
           )}
 
-          <Link href={`/roadmaps/${roadmap.slug}`}>
+          <Link href={`/roadmaps/${roadmap.slug || '#'}`}>
             <Button
               className="w-full"
               variant={isStarted ? "default" : "outline"}
               size="sm"
             >
-              {/* 🆕 NEW: Start Learning vs Continue logic */}
               {isCompleted ? (
                 <>
                   Review Roadmap
@@ -97,31 +103,32 @@ export default function RoadmapCard({ roadmap, userProgress, compact = false }) 
     )
   }
 
-  // Regular (non-compact) card - existing code
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div
         className="h-2 w-full"
-        style={{ backgroundColor: roadmap.color }}
+        style={{ backgroundColor: cardColor }}
       />
 
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="text-4xl" role="img" aria-label={roadmap.title}>
-              {roadmap.icon}
+            <div className="text-4xl" role="img" aria-label={roadmap.title || 'Roadmap'}>
+              {roadmap.icon || '📚'}
             </div>
             <div>
               <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
-                {roadmap.title}
+                {roadmap.title || 'Untitled Roadmap'}
               </h3>
               <div className="flex items-center gap-2 mt-1">
                 <Badge variant="outline" className="text-xs">
-                  {roadmap.category}
+                  {roadmap.category || 'General'}
                 </Badge>
-                <Badge className={getDifficultyColor(roadmap.difficulty)}>
-                  {roadmap.difficulty}
-                </Badge>
+                {roadmap.difficulty && (
+                  <Badge className={getDifficultyColor(roadmap.difficulty)}>
+                    {roadmap.difficulty}
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
@@ -135,7 +142,7 @@ export default function RoadmapCard({ roadmap, userProgress, compact = false }) 
         </div>
 
         <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-          {roadmap.description}
+          {roadmap.description || 'No description available'}
         </p>
 
         {isStarted && (
@@ -153,7 +160,7 @@ export default function RoadmapCard({ roadmap, userProgress, compact = false }) 
             <Clock className="h-4 w-4 text-muted-foreground" />
             <div>
               <div className="text-xs text-muted-foreground">Duration</div>
-              <div className="text-sm font-medium">{roadmap.estimatedWeeks}w</div>
+              <div className="text-sm font-medium">{roadmap.estimatedWeeks || 0}w</div>
             </div>
           </div>
 
@@ -192,12 +199,11 @@ export default function RoadmapCard({ roadmap, userProgress, compact = false }) 
           </div>
         )}
 
-        <Link href={`/roadmaps/${roadmap.slug}`}>
+        <Link href={`/roadmaps/${roadmap.slug || '#'}`}>
           <Button
             className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
             variant={isStarted ? "default" : "outline"}
           >
-            {/* 🆕 NEW: Start Learning vs Continue logic */}
             {isCompleted ? (
               <>
                 Review Roadmap

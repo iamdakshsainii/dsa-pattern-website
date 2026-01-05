@@ -13,7 +13,7 @@ export default async function NodeDetailPage({ params }) {
     notFound()
   }
 
-
+  // ✅ FIX: Pass slug instead of ObjectId
   const nodes = await getRoadmapNodes(slug)  // ← Changed this line
   const node = nodes.find(n => n.nodeId === nodeId)
 
