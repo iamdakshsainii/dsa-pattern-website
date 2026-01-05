@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,6 @@ import ResourceActionButtons from '@/components/roadmaps/content/resource-action
 export default function NodeDetailClient({
   node,
   roadmapSlug,
-  roadmapId,
   roadmapTitle,
   roadmapIcon,
   weekNumber,
@@ -30,7 +29,11 @@ export default function NodeDetailClient({
     new Set(initialCompletedSubtopics || [])
   )
 
-  const progress = node.subtopics?.length > 0
+  useEffect(() => {
+    setCompletedSubtopics(new Set(initialCompletedSubtopics || []))
+  }, [initialCompletedSubtopics])
+
+  const progressPercentage = node.subtopics?.length > 0
     ? (completedSubtopics.size / node.subtopics.length) * 100
     : 0
 
@@ -55,7 +58,7 @@ export default function NodeDetailClient({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          roadmapId: roadmapId,
+          roadmapId: roadmapSlug,
           nodeId: node.nodeId,
           subtopicId
         })
@@ -87,18 +90,16 @@ export default function NodeDetailClient({
       return
     }
 
-    const allSubtopicIds = new Set(
-      node.subtopics.map(st => st.subtopicId)
-    )
+    const allSubtopicIds = node.subtopics.map(st => st.subtopicId)
     const previousState = new Set(completedSubtopics)
-    setCompletedSubtopics(allSubtopicIds)
+    setCompletedSubtopics(new Set(allSubtopicIds))
 
     try {
       const response = await fetch('/api/roadmaps/node/mark-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          roadmapId: roadmapId,
+          roadmapId: roadmapSlug,
           nodeId: node.nodeId
         })
       })
@@ -142,7 +143,7 @@ export default function NodeDetailClient({
             <Badge variant="outline">
               {node.subtopics?.length || 0} subtopics
             </Badge>
-            {progress === 100 && (
+            {progressPercentage === 100 && (
               <Badge className="bg-green-500">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
                 Completed
@@ -155,10 +156,10 @@ export default function NodeDetailClient({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">Your Progress</span>
                 <span className="text-sm font-medium">
-                  {completedSubtopics.size}/{node.subtopics?.length || 0} completed • {Math.round(progress)}%
+                  {completedSubtopics.size}/{node.subtopics?.length || 0} completed • {Math.round(progressPercentage)}%
                 </span>
               </div>
-              <Progress value={progress} className="h-2" />
+              <Progress value={progressPercentage} className="h-2" />
             </div>
           )}
         </div>

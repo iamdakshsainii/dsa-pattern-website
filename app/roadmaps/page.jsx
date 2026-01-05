@@ -9,7 +9,6 @@ export const metadata = {
 
 export default async function RoadmapsPage() {
   const currentUser = await getCurrentUser()
-
   const roadmaps = await getRoadmaps()
 
   let userActiveRoadmaps = []

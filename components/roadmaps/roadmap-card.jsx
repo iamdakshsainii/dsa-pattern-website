@@ -14,9 +14,9 @@ import {
 } from "lucide-react"
 
 export default function RoadmapCard({ roadmap, userProgress, compact = false }) {
-
+  // ✅ FIX: Add null check at the very beginning
   if (!roadmap) {
-    return null
+    return null // Don't render anything if roadmap is null
   }
 
   const getDifficultyColor = (difficulty) => {
@@ -36,6 +36,7 @@ export default function RoadmapCard({ roadmap, userProgress, compact = false }) 
   const isStarted = userProgress && userProgress.startedAt
   const isCompleted = userProgress?.completedAt
 
+  // ✅ FIX: Add fallback color
   const cardColor = roadmap.color || '#3b82f6'
 
   // Compact mode rendering
@@ -103,6 +104,7 @@ export default function RoadmapCard({ roadmap, userProgress, compact = false }) 
     )
   }
 
+  // Regular (non-compact) card
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div

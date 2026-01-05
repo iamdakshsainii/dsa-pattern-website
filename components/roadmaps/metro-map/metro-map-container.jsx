@@ -14,7 +14,6 @@ export default function MetroMapContainer({
   const [expandedNodeId, setExpandedNodeId] = useState(null)
   const containerRef = useRef(null)
 
-  // Group nodes by week
   const groupedNodes = nodes.reduce((acc, node) => {
     const week = node.weekNumber || 1
     if (!acc[week]) acc[week] = []
@@ -24,7 +23,32 @@ export default function MetroMapContainer({
 
   const weeks = Object.keys(groupedNodes).sort((a, b) => Number(a) - Number(b))
 
-  // Scroll to active node on mount
+  const isWeekUnlocked = (weekNum) => {
+    const week = parseInt(weekNum)
+
+    if (week === 1) return true
+
+    if (!currentUser) return false
+
+    const previousWeek = week - 1
+    const previousWeekNodes = groupedNodes[previousWeek] || []
+
+    let totalSubtopics = 0
+    let completedSubtopics = 0
+
+    previousWeekNodes.forEach(node => {
+      const subtopicsCount = node.subtopics?.length || 0
+      totalSubtopics += subtopicsCount
+
+      const nodeProgress = userProgress?.nodesProgress?.find(np => np.nodeId === node.nodeId)
+      completedSubtopics += nodeProgress?.completedSubtopics?.length || 0
+    })
+
+    const isComplete = totalSubtopics > 0 && completedSubtopics === totalSubtopics
+
+    return isComplete
+  }
+
   useEffect(() => {
     if (userProgress?.currentNodeId && containerRef.current) {
       const activeElement = document.getElementById(`node-${userProgress.currentNodeId}`)
@@ -61,7 +85,6 @@ export default function MetroMapContainer({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-      {/* Main Metro Map */}
       <div className="lg:col-span-3">
         <div className="mb-6">
           {currentUser && (
@@ -85,28 +108,32 @@ export default function MetroMapContainer({
           className="relative bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-gray-900/50 dark:to-gray-800/50 rounded-xl p-8 min-h-screen"
         >
           <div className="max-w-3xl mx-auto space-y-12">
-            {weeks.map((week, index) => (
-              <PhaseGroup
-                key={week}
-                weekNumber={week}
-                nodes={groupedNodes[week]}
-                userProgress={userProgress}
-                currentUser={currentUser}
-                expandedNodeId={expandedNodeId}
-                currentNodeId={currentNodeId}
-                onNodeClick={handleNodeClick}
-                onMarkComplete={onMarkComplete}
-                getNodeStatus={getNodeStatus}
-                isNodeUnlocked={isNodeUnlocked}
-                isLastPhase={index === weeks.length - 1}
-                roadmapSlug={roadmap.slug}
-              />
-            ))}
+            {weeks.map((week, index) => {
+              const isUnlocked = isWeekUnlocked(week)
+
+              return (
+                <PhaseGroup
+                  key={week}
+                  weekNumber={week}
+                  nodes={groupedNodes[week]}
+                  userProgress={userProgress}
+                  currentUser={currentUser}
+                  expandedNodeId={expandedNodeId}
+                  currentNodeId={currentNodeId}
+                  onNodeClick={handleNodeClick}
+                  onMarkComplete={onMarkComplete}
+                  getNodeStatus={getNodeStatus}
+                  isNodeUnlocked={isNodeUnlocked}
+                  isLastPhase={index === weeks.length - 1}
+                  roadmapSlug={roadmap.slug}
+                  isWeekLocked={!isUnlocked}
+                />
+              )
+            })}
           </div>
         </div>
       </div>
 
-      {/* Progress Sidebar */}
       <div className="lg:col-span-1 hidden lg:block">
         <ProgressSidebar
           roadmap={roadmap}

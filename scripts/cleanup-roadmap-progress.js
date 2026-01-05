@@ -1,12 +1,8 @@
 import { MongoClient } from "mongodb"
 
-const MONGODB_URI = process.env.MONGODB_URI
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://dakshsaini:%40Daksh2003@cluster0.rcxv8zy.mongodb.net/dsa_patterns?retryWrites=true&w=majority"
 
-if (!MONGODB_URI) {
-  console.error('❌ ERROR: MONGODB_URI environment variable is not set!')
-  console.error('Please set MONGODB_URI in your .env.local file')
-  process.exit(1)
-}
+
 
 async function cleanupProgress() {
   const client = new MongoClient(MONGODB_URI)

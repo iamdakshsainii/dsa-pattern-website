@@ -19,13 +19,15 @@ import MetroMapContainer from "@/components/roadmaps/metro-map/metro-map-contain
 export default function RoadmapDetailClient({
   roadmap,
   nodes,
-  initialUserProgress,
+  userProgress: initialUserProgress,
   currentUser
 }) {
   const [userProgress, setUserProgress] = useState(initialUserProgress)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const refreshProgress = async () => {
+    if (!currentUser) return
+
     setIsRefreshing(true)
     try {
       const response = await fetch(
@@ -43,14 +45,15 @@ export default function RoadmapDetailClient({
   }
 
   useEffect(() => {
-  if (!currentUser) return
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && currentUser) {
+        refreshProgress()
+      }
+    }
 
-  const interval = setInterval(() => {
-    refreshProgress()
-  }, 5000)
-
-  return () => clearInterval(interval)
-}, [roadmap.slug, currentUser])
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [currentUser, roadmap.slug])
 
   const overallProgress = userProgress?.overallProgress || 0
 
@@ -249,6 +252,7 @@ export default function RoadmapDetailClient({
               roadmap={roadmap}
               currentUser={currentUser}
               onMarkComplete={handleMarkComplete}
+              onProgressUpdate={refreshProgress}
             />
           </div>
         </div>

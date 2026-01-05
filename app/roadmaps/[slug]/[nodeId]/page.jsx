@@ -36,17 +36,16 @@ export default async function NodeDetailPage({ params }) {
       completedSubtopics = nodeProgress?.completedSubtopics || []
     }
   }
-
-  return (
-    <NodeDetailClient
-      node={node}
-      roadmapSlug={slug}
-      roadmapId={roadmap._id.toString()}
-      roadmapTitle={roadmap.title}
-      roadmapIcon={roadmap.icon}
-      weekNumber={node.weekNumber}
-      currentUser={currentUser}
-      initialCompletedSubtopics={completedSubtopics}
-    />
-  )
+return (
+  <NodeDetailClient
+    node={node}
+    roadmapSlug={slug}
+    // roadmapId={roadmap._id.toString()}
+    roadmapTitle={roadmap.title}
+    roadmapIcon={roadmap.icon}
+    weekNumber={node.weekNumber}
+    currentUser={currentUser}
+    initialCompletedSubtopics={completedSubtopics}
+  />
+)
 }
