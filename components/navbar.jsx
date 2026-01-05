@@ -28,9 +28,12 @@ import {
   ClipboardCheck,
   MessageCircle,
   Layers,
+  MapPin,
+  Shield,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import ProfileAvatar from "./profile/profile-avatar"
+import { isAdmin } from "@/lib/admin"
 
 export default function Navbar({ currentUser }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -83,6 +86,7 @@ export default function Navbar({ currentUser }) {
     { name: "Home", href: "/", icon: Home },
     { name: "Patterns", href: "/patterns", icon: Grid3x3 },
     { name: "Sheets", href: "/sheets", icon: BookOpen },
+    { name: "Roadmaps", href: "/roadmaps", icon: MapPin },
   ]
 
   const isActive = (href) => {
@@ -238,6 +242,18 @@ export default function Navbar({ currentUser }) {
                       Edit Profile
                     </Link>
                   </DropdownMenuItem>
+
+                  {isAdmin(currentUser) && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" className="cursor-pointer flex items-center">
+                          <Shield className="h-4 w-4 mr-2 text-red-600" />
+                          Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
 
                   <DropdownMenuSeparator />
 

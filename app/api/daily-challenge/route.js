@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
-import { getPatterns, getQuestionsByPattern } from "@/lib/db"
+import clientPromise from "@/lib/mongodb"
 
 export async function GET(request) {
   try {
@@ -9,35 +9,30 @@ export async function GET(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Get all patterns
-    const patterns = await getPatterns()
-    if (!patterns || patterns.length === 0) {
-      return NextResponse.json({ error: "No patterns found" }, { status: 404 })
-    }
+    const client = await clientPromise
+    const db = client.db("dsa_patterns")
 
-    // Get all questions from all patterns
-    let allQuestions = []
-    for (const pattern of patterns) {
-      const questions = await getQuestionsByPattern(pattern.slug)
-      allQuestions.push(...questions.map(q => ({ ...q, pattern: pattern.slug })))
-    }
+    // Get all questions directly from database
+    const allQuestions = await db.collection("questions").find({}).toArray()
 
     if (allQuestions.length === 0) {
       return NextResponse.json({ error: "No questions found" }, { status: 404 })
     }
 
-    // Use current date as seed for deterministic daily selection
+    // Generate daily challenge based on date
     const today = new Date()
     const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
     const seed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
 
-    // Select question based on seed (same question for all users on the same day)
     const questionIndex = seed % allQuestions.length
     const challenge = allQuestions[questionIndex]
 
     return NextResponse.json({
       success: true,
-      challenge,
+      challenge: {
+        ...challenge,
+        _id: challenge._id.toString()
+      },
       date: dateString
     })
   } catch (error) {

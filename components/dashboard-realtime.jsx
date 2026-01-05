@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import {
   Target, CheckCircle2, Circle,
   BookMarked, ArrowLeft, RefreshCw, Flame,
-  Calendar, Grid3x3, ChevronDown, FileText, ClipboardCheck
+  Calendar, Grid3x3, ChevronDown, FileText, ClipboardCheck, MapPin
 } from 'lucide-react'
 import {
   DropdownMenu,
@@ -18,7 +18,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// Phase 2 Components
 import ProfileCompletionWidget from './dashboard/profile-completion-widget'
 import AchievementShowcase from './dashboard/achievement-showcase'
 import DailyChallengeCard from './dashboard/daily-challenge-card'
@@ -26,9 +25,90 @@ import SkillsChart from './dashboard/skills-chart'
 import PatternProgressGrid from './dashboard/pattern-progress-grid'
 import { BadgeToastManager } from './achievements/badge-unlock-toast'
 
-// ✨ PHASE 4: Community Components
 import CommunityBanner from './community/community-banner'
 import WhatsAppWidget from './community/whatsapp-widget'
+
+function YourRoadmapsWidget({ userId }) {
+  const [activeRoadmaps, setActiveRoadmaps] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchActiveRoadmaps()
+  }, [])
+
+  const fetchActiveRoadmaps = async () => {
+    try {
+      const response = await fetch('/api/roadmaps/user/active', {
+        credentials: 'include'
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setActiveRoadmaps(data.activeRoadmaps || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch roadmaps:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) return null
+
+  if (activeRoadmaps.length === 0) {
+    return (
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Your Roadmaps</h3>
+        <div className="text-center py-8">
+          <MapPin className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground mb-4">
+            Start a learning roadmap to track your progress
+          </p>
+          <Link href="/roadmaps">
+            <Button size="sm">Explore Roadmaps</Button>
+          </Link>
+        </div>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold">Your Roadmaps</h3>
+        <Link href="/roadmaps">
+          <Button variant="ghost" size="sm">View All</Button>
+        </Link>
+      </div>
+      <div className="space-y-3">
+        {activeRoadmaps.slice(0, 3).map((progress) => (
+          <Link
+            key={progress.roadmapId}
+            href={`/roadmaps/${progress.roadmapId}`}
+            className="block p-3 rounded-lg hover:bg-accent transition-colors border"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-2xl">{progress.roadmap?.icon}</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm truncate">
+                  {progress.roadmap?.title}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {Math.round(progress.overallProgress)}% complete
+                </p>
+              </div>
+            </div>
+            <Progress value={progress.overallProgress} className="h-1.5" />
+          </Link>
+        ))}
+      </div>
+      <Link href="/roadmaps">
+        <Button variant="outline" className="w-full mt-3" size="sm">
+          Explore All Roadmaps
+        </Button>
+      </Link>
+    </Card>
+  )
+}
 
 export default function DashboardRealTime({ userId, userName, userEmail }) {
   const [stats, setStats] = useState(null)
@@ -175,11 +255,9 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <BadgeToastManager />
 
-      {/* ✨ PHASE 4: Community Banner */}
       <CommunityBanner />
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        {/* Header */}
         <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <Link href="/">
@@ -208,7 +286,6 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
           </Button>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0">
             <div className="flex items-center justify-between">
@@ -254,12 +331,10 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             <ProfileCompletionWidget />
             <AchievementShowcase stats={stats} />
 
-            {/* Activity Heatmap */}
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -333,7 +408,6 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
               </div>
             </Card>
 
-            {/* Solved Problems */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Solved Problems</h3>
               <div className="space-y-4">
@@ -373,14 +447,13 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
             <PatternProgressGrid patterns={allPatterns} />
           </div>
 
-          {/* Right Column */}
           <div className="space-y-6">
             <DailyChallengeCard userProgress={{ completed: stats.recentActivity?.map(a => a.problemId) || [] }} />
 
-            {/* ✨ PHASE 4: WhatsApp Widget */}
+            <YourRoadmapsWidget userId={userId} />
+
             <WhatsAppWidget />
 
-            {/* Recent Submissions */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Recent Submissions</h3>
               <div className="space-y-2 max-h-[600px] overflow-y-auto">
@@ -437,7 +510,6 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
               </div>
             </Card>
 
-            {/* Quick Actions */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <div className="space-y-2">
@@ -447,13 +519,18 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
                     All Patterns
                   </Button>
                 </Link>
+                <Link href="/roadmaps">
+                  <Button className="w-full justify-start" variant="outline">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Learning Roadmaps
+                  </Button>
+                </Link>
                 <Link href="/bookmarks">
                   <Button className="w-full justify-start" variant="outline">
                     <BookMarked className="h-4 w-4 mr-2" />
                     Bookmarks
                   </Button>
                 </Link>
-                {/* ✨ PHASE 3: Career Links */}
                 <Link href="/resume">
                   <Button className="w-full justify-start" variant="outline">
                     <FileText className="h-4 w-4 mr-2" />

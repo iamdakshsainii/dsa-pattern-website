@@ -11,15 +11,18 @@ export default async function ProfilePage() {
   }
 
   const fullProfile = await getFullUserProfile(user.id)
+   if (!fullProfile) {
+    redirect("/auth/login")
+  }
   const completion = calculateProfileCompletion(fullProfile?.profile)
 
   return (
     <ProfileView
       user={{
-        id: fullProfile.id,
+        id: fullProfile._id,
         name: fullProfile.name,
         email: fullProfile.email,
-        createdAt: fullProfile.createdAt
+        createdAt: user.createdAt || new Date()
       }}
       profile={fullProfile.profile}
       completionPercentage={completion}

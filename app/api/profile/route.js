@@ -11,6 +11,10 @@ export async function GET(request) {
 
     const profile = await getFullUserProfile(user.id)
 
+    if (!profile) {
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 })
+    }
+
     const completionFields = [
       profile.profile?.bio,
       profile.profile?.location,
