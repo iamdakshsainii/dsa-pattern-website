@@ -1,0 +1,132 @@
+{
+  "roadmapId": "machine-learning-roadmap",
+  "nodes": [
+    {
+      "nodeId": "ml-week-1-node-1",
+      "weekNumber": 1,
+      "title": "Introduction to Machine Learning",
+      "description": "Learn the fundamental concepts and terminology of machine learning",
+      "estimatedHours": 8,
+      "prerequisites": [],
+      "subtopics": [
+        {
+          "subtopicId": "ml-w1-subtopic-1",
+          "title": "What is Machine Learning?",
+          "description": "Understanding ML fundamentals and types",
+          "estimatedMinutes": 30,
+          "contentType": "external",
+          "resourceLinks": {
+            "youtube": "https://www.youtube.com/watch?v=example1",
+            "article": "https://example.com/ml-intro",
+            "practice": "https://kaggle.com/example"
+          }
+        },
+        {
+          "subtopicId": "ml-w1-subtopic-2",
+          "title": "Types of Machine Learning",
+          "description": "Supervised, unsupervised, and reinforcement learning",
+          "estimatedMinutes": 45,
+          "contentType": "external",
+          "resourceLinks": {
+            "youtube": "https://www.youtube.com/watch?v=example2",
+            "article": "https://example.com/ml-types"
+          }
+        }
+      ],
+      "keyTakeaways": [
+        "Machine learning enables computers to learn from data",
+        "Three main types: supervised, unsupervised, reinforcement",
+        "Applications range from recommendation systems to autonomous vehicles"
+      ]
+    },
+    {
+      "nodeId": "ml-week-1-node-2",
+      "weekNumber": 1,
+      "title": "Python for ML",
+      "description": "Essential Python libraries and tools for machine learning",
+      "estimatedHours": 6,
+      "prerequisites": ["ml-week-1-node-1"],
+      "subtopics": [
+        {
+          "subtopicId": "ml-w1-subtopic-3",
+          "title": "NumPy Basics",
+          "description": "Arrays, operations, and broadcasting",
+          "estimatedMinutes": 60,
+          "contentType": "external",
+          "resourceLinks": {
+            "youtube": "https://www.youtube.com/watch?v=example3",
+            "article": "https://numpy.org/doc/stable/user/quickstart.html",
+            "practice": "https://kaggle.com/numpy-practice"
+          }
+        },
+        {
+          "subtopicId": "ml-w1-subtopic-4",
+          "title": "Pandas for Data Manipulation",
+          "description": "DataFrames, data cleaning, and analysis",
+          "estimatedMinutes": 90,
+          "contentType": "external",
+          "resourceLinks": {
+            "youtube": "https://www.youtube.com/watch?v=example4",
+            "article": "https://pandas.pydata.org/docs/",
+            "practice": "https://kaggle.com/pandas-practice"
+          }
+        }
+      ],
+      "keyTakeaways": [
+        "NumPy is essential for numerical computations",
+        "Pandas simplifies data manipulation and analysis",
+        "These libraries form the foundation of ML workflows"
+      ]
+    },
+    {
+      "nodeId": "ml-week-2-node-1",
+      "weekNumber": 2,
+      "title": "Linear Regression",
+      "description": "Understanding and implementing linear regression models",
+      "estimatedHours": 10,
+      "prerequisites": ["ml-week-1-node-2"],
+      "subtopics": [
+        {
+          "subtopicId": "ml-w2-subtopic-1",
+          "title": "Simple Linear Regression",
+          "description": "Single variable regression analysis",
+          "estimatedMinutes": 60,
+          "contentType": "external",
+          "resourceLinks": {
+            "youtube": "https://www.youtube.com/watch?v=example5",
+            "article": "https://example.com/linear-regression",
+            "practice": "https://kaggle.com/linear-regression"
+          }
+        },
+        {
+          "subtopicId": "ml-w2-subtopic-2",
+          "title": "Multiple Linear Regression",
+          "description": "Multi-variable regression models",
+          "estimatedMinutes": 90,
+          "contentType": "external",
+          "resourceLinks": {
+            "youtube": "https://www.youtube.com/watch?v=example6",
+            "article": "https://example.com/multiple-regression"
+          }
+        },
+        {
+          "subtopicId": "ml-w2-subtopic-3",
+          "title": "Gradient Descent",
+          "description": "Optimization algorithm for model training",
+          "estimatedMinutes": 75,
+          "contentType": "external",
+          "resourceLinks": {
+            "youtube": "https://www.youtube.com/watch?v=example7",
+            "article": "https://example.com/gradient-descent",
+            "practice": "https://kaggle.com/gradient-descent"
+          }
+        }
+      ],
+      "keyTakeaways": [
+        "Linear regression models linear relationships between variables",
+        "Gradient descent optimizes model parameters",
+        "Multiple regression handles multiple input features"
+      ]
+    }
+  ]
+}

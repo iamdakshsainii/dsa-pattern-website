@@ -4,23 +4,22 @@ import { useState, useEffect } from "react"
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle2 } from "lucide-react"
 
-export default function PatternProgress({ questions, patternSlug, initialProgress = [] }) {
+export default function PatternProgress({ questions, patternSlug, initialProgress = [], currentUser }) {
   const [completedQuestions, setCompletedQuestions] = useState(initialProgress)
 
   useEffect(() => {
-    // Load progress when component mounts
-    loadProgress()
+    if (currentUser) {
+      loadProgress()
+    }
 
-    // Listen for progress updates - FIXED: Handle both event types
     const handleProgressUpdate = (event) => {
-      // Method 1: Custom event with detail
+      if (!currentUser) return
+
       if (event.detail) {
         if (event.detail.pattern === patternSlug || event.detail.patternSlug === patternSlug) {
-          // Reload from server to ensure accuracy
           loadProgress()
         }
       } else {
-        // Method 2: Generic dashboard-refresh event
         loadProgress()
       }
     }
@@ -32,16 +31,15 @@ export default function PatternProgress({ questions, patternSlug, initialProgres
       window.removeEventListener('pattern-progress-update', handleProgressUpdate)
       window.removeEventListener('dashboard-refresh', handleProgressUpdate)
     }
-  }, [patternSlug])
+  }, [patternSlug, currentUser])
 
   const loadProgress = async () => {
     try {
       const response = await fetch('/api/progress', {
         credentials: 'include',
-        cache: 'no-store' // FIXED: Prevent caching
+        cache: 'no-store'
       })
 
-      // If user is not logged in (401), just return silently
       if (response.status === 401) {
         setCompletedQuestions([])
         return
@@ -49,17 +47,13 @@ export default function PatternProgress({ questions, patternSlug, initialProgres
 
       if (response.ok) {
         const data = await response.json()
-
-        // Filter completed questions for THIS pattern only
         const patternQuestionIds = questions.map(q => q._id)
         const completedInThisPattern = data.completed.filter(id =>
           patternQuestionIds.includes(id)
         )
-
         setCompletedQuestions(completedInThisPattern)
       }
     } catch (error) {
-      // Only log unexpected errors, not 401s
       if (!error.message?.includes('401')) {
         console.error('Failed to load progress:', error)
       }
@@ -69,6 +63,10 @@ export default function PatternProgress({ questions, patternSlug, initialProgres
   const totalQuestions = questions.length
   const solvedCount = completedQuestions.length
   const percentage = totalQuestions > 0 ? (solvedCount / totalQuestions) * 100 : 0
+
+  if (!currentUser) {
+    return null
+  }
 
   return (
     <div className="p-6 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">

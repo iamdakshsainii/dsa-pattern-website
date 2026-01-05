@@ -354,6 +354,7 @@ export default function PatternDetailPage({
               questions={questions}
               patternSlug={patternSlug}
               initialProgress={localProgress}
+              currentUser={currentUser} 
             />
 
             {/* Stats Grid */}

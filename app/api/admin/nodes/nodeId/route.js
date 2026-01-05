@@ -4,7 +4,6 @@ import { isAdmin } from "@/lib/admin"
 import { connectToDatabase } from "@/lib/db"
 import { ObjectId } from "mongodb"
 
-// GET /api/admin/nodes/[id]
 export async function GET(request, { params }) {
   try {
     const user = await getCurrentUser()
@@ -12,11 +11,11 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
     }
 
-    const { id } = await params
+    const { nodeId } = await params
     const { db } = await connectToDatabase()
 
     const node = await db.collection("roadmap_nodes").findOne({
-      _id: new ObjectId(id)
+      _id: new ObjectId(nodeId)
     })
 
     if (!node) {
@@ -35,7 +34,6 @@ export async function GET(request, { params }) {
   }
 }
 
-// PUT /api/admin/nodes/[id]
 export async function PUT(request, { params }) {
   try {
     const user = await getCurrentUser()
@@ -43,11 +41,10 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
     }
 
-    const { id } = await params
+    const { nodeId } = await params
     const body = await request.json()
     const { db } = await connectToDatabase()
 
-    // Process subtopics
     const subtopics = body.subtopics?.map((sub, idx) => ({
       ...sub,
       subtopicId: sub.subtopicId || `${body.nodeId}-sub-${idx + 1}`,
@@ -73,7 +70,7 @@ export async function PUT(request, { params }) {
     }
 
     const result = await db.collection("roadmap_nodes").updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(nodeId) },
       { $set: updateData }
     )
 
@@ -88,7 +85,6 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE /api/admin/nodes/[id]
 export async function DELETE(request, { params }) {
   try {
     const user = await getCurrentUser()
@@ -96,11 +92,11 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
     }
 
-    const { id } = await params
+    const { nodeId } = await params
     const { db } = await connectToDatabase()
 
     const result = await db.collection("roadmap_nodes").deleteOne({
-      _id: new ObjectId(id)
+      _id: new ObjectId(nodeId)
     })
 
     if (result.deletedCount === 0) {

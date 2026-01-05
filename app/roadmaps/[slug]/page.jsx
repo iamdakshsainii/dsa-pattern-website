@@ -3,8 +3,7 @@ import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
 import { getRoadmap, getRoadmapNodes, getUser, getUserRoadmapProgress } from "@/lib/db"
 import RoadmapDetailClient from "./roadmap-detail-client"
-// ❌ REMOVE THIS LINE:
-// import { ProgressProvider } from "@/contexts/progress-context"
+import AuthCTABanner from "@/components/roadmaps/auth-cta-banner"
 
 export default async function RoadmapDetailPage({ params }) {
   const { slug } = await params
@@ -15,9 +14,9 @@ export default async function RoadmapDetailPage({ params }) {
   }
 
   const nodes = await getRoadmapNodes(slug)
-
   const cookieStore = await cookies()
   const authToken = cookieStore.get("auth-token")
+
   let currentUser = null
   let userProgress = null
 
@@ -29,12 +28,15 @@ export default async function RoadmapDetailPage({ params }) {
     }
   }
 
- return (
-  <RoadmapDetailClient
-    roadmap={roadmap}
-    nodes={nodes}
-    userProgress={userProgress}  // ← Passed as prop
-    currentUser={currentUser}
-  />
-)
+  return (
+    <>
+      {!currentUser && <AuthCTABanner />}
+      <RoadmapDetailClient
+        roadmap={roadmap}
+        nodes={nodes}
+        userProgress={userProgress}
+        currentUser={currentUser}
+      />
+    </>
+  )
 }

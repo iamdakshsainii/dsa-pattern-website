@@ -84,8 +84,8 @@ export default function MetroMapContainer({
   const currentNodeId = userProgress?.currentNodeId
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-      <div className="lg:col-span-3">
+    <div className={`grid grid-cols-1 ${currentUser ? 'lg:grid-cols-4' : ''} gap-8`}>
+      <div className={currentUser ? 'lg:col-span-3' : ''}>
         <div className="mb-6">
           {currentUser && (
             <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border">
@@ -134,14 +134,16 @@ export default function MetroMapContainer({
         </div>
       </div>
 
-      <div className="lg:col-span-1 hidden lg:block">
-        <ProgressSidebar
-          roadmap={roadmap}
-          nodes={nodes}
-          userProgress={userProgress}
-          overallProgress={overallProgress}
-        />
-      </div>
+      {currentUser && (
+        <div className="lg:col-span-1 hidden lg:block">
+          <ProgressSidebar
+            roadmap={roadmap}
+            nodes={nodes}
+            userProgress={userProgress}
+            overallProgress={overallProgress}
+          />
+        </div>
+      )}
     </div>
   )
 }
