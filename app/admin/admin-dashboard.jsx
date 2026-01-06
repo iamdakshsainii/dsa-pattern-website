@@ -2,11 +2,14 @@
 
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Shield, MapPin, Bug, BarChart3, FileText } from "lucide-react"
+import { Shield, MapPin, Bug, BarChart3, FileText, ClipboardList } from "lucide-react"
 import AdminStats from "./admin-stats"
 import RoadmapManager from "./roadmap-manager"
 import NodeManager from "./node-manager"
 import BugReports from "./bug-reports"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 
 export default function AdminDashboard({ currentUser }) {
   const [activeTab, setActiveTab] = useState("stats")
@@ -27,7 +30,7 @@ export default function AdminDashboard({ currentUser }) {
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="stats" className="gap-2">
               <BarChart3 className="h-4 w-4" />
               Statistics
@@ -39,6 +42,10 @@ export default function AdminDashboard({ currentUser }) {
             <TabsTrigger value="nodes" className="gap-2">
               <FileText className="h-4 w-4" />
               Nodes
+            </TabsTrigger>
+            <TabsTrigger value="quiz" className="gap-2">
+              <ClipboardList className="h-4 w-4" />
+              Quiz Manager
             </TabsTrigger>
             <TabsTrigger value="bugs" className="gap-2">
               <Bug className="h-4 w-4" />
@@ -56,6 +63,21 @@ export default function AdminDashboard({ currentUser }) {
 
           <TabsContent value="nodes">
             <NodeManager />
+          </TabsContent>
+
+          <TabsContent value="quiz">
+            <Card className="p-8 text-center">
+              <ClipboardList className="h-16 w-16 mx-auto mb-4 text-blue-600" />
+              <h2 className="text-2xl font-bold mb-2">Quiz Manager</h2>
+              <p className="text-muted-foreground mb-6">
+                Manage quiz questions, topics, and resources for all roadmaps
+              </p>
+              <Link href="/admin/quiz-manager">
+                <Button size="lg">
+                  Open Quiz Manager
+                </Button>
+              </Link>
+            </Card>
           </TabsContent>
 
           <TabsContent value="bugs">

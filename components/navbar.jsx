@@ -30,6 +30,7 @@ import {
   Layers,
   MapPin,
   Shield,
+  BarChart3,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import ProfileAvatar from "./profile/profile-avatar"
@@ -243,6 +244,13 @@ export default function Navbar({ currentUser }) {
                     </Link>
                   </DropdownMenuItem>
 
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile/activities" className="cursor-pointer flex items-center">
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Activity
+                    </Link>
+                  </DropdownMenuItem>
+
                   {isAdmin(currentUser) && (
                     <>
                       <DropdownMenuSeparator />
@@ -351,6 +359,18 @@ export default function Navbar({ currentUser }) {
                 >
                   <User className="h-5 w-5" />
                   Profile
+                </Link>
+
+                <Link
+                  href="/profile/activities"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/profile/activities"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <BarChart3 className="h-5 w-5" />
+                  Activity
                 </Link>
 
                 <Link

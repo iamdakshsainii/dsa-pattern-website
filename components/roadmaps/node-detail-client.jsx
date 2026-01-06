@@ -241,6 +241,7 @@ export default function NodeDetailClient({
                           subtopicId={subtopic.subtopicId}
                           roadmapSlug={roadmapSlug}
                           nodeId={node.nodeId}
+                          currentUser={currentUser}
                         />
                       </div>
                     </div>

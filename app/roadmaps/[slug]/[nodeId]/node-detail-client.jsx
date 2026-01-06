@@ -15,6 +15,8 @@ import {
   ChevronRight
 } from 'lucide-react'
 import ResourceActionButtons from '@/components/roadmaps/content/resource-action-buttons'
+import ProgressUnlockCard from '@/components/roadmaps/progress-unlock-card'
+import SubtopicLockIcon from '@/components/roadmaps/subtopic-lock-icon'
 
 export default function NodeDetailClient({
   node,
@@ -25,6 +27,8 @@ export default function NodeDetailClient({
   currentUser,
   initialCompletedSubtopics
 }) {
+  console.log('🔍 NodeDetailClient - currentUser:', currentUser)
+
   const [completedSubtopics, setCompletedSubtopics] = useState(
     new Set(initialCompletedSubtopics || [])
   )
@@ -143,7 +147,7 @@ export default function NodeDetailClient({
             <Badge variant="outline">
               {node.subtopics?.length || 0} subtopics
             </Badge>
-            {progressPercentage === 100 && (
+            {currentUser && progressPercentage === 100 && (
               <Badge className="bg-green-500">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
                 Completed
@@ -166,6 +170,12 @@ export default function NodeDetailClient({
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-5xl">
+        {!currentUser && (
+          <div className="mb-6">
+            <ProgressUnlockCard />
+          </div>
+        )}
+
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Learning Path</h2>
@@ -205,11 +215,7 @@ export default function NodeDetailClient({
                         />
                       ) : (
                         <div className="mt-1">
-                          {isCompleted ? (
-                            <CheckCircle2 className="h-5 w-5 text-green-600" />
-                          ) : (
-                            <Circle className="h-5 w-5 text-gray-400" />
-                          )}
+                          <SubtopicLockIcon />
                         </div>
                       )}
 
@@ -237,6 +243,7 @@ export default function NodeDetailClient({
                           subtopicId={subtopic.subtopicId}
                           roadmapSlug={roadmapSlug}
                           nodeId={node.nodeId}
+                          currentUser={currentUser}
                         />
                       </div>
                     </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -102,8 +102,12 @@ export default function NodeFormModal({ isOpen, onClose, node, roadmapId, onSucc
     setSaving(true)
 
     try {
-      const url = node ? `/api/admin/nodes/${node._id}` : '/api/admin/nodes'
-      const method = node ? 'PUT' : 'POST'
+      // Use either _id or nodeId depending on what the node has
+      const nodeIdentifier = node?._id || node?.nodeId
+      const url = nodeIdentifier
+        ? `/api/admin/nodes/${nodeIdentifier}`
+        : '/api/admin/nodes'
+      const method = nodeIdentifier ? 'PUT' : 'POST'
 
       const payload = {
         ...formData,
@@ -111,6 +115,8 @@ export default function NodeFormModal({ isOpen, onClose, node, roadmapId, onSucc
         published: publishNow || formData.published,
         wasPublished: node?.published
       }
+
+      console.log('Submitting to:', url, 'Method:', method)
 
       const res = await fetch(url, {
         method,
@@ -126,9 +132,10 @@ export default function NodeFormModal({ isOpen, onClose, node, roadmapId, onSucc
         onSuccess()
       } else {
         const error = await res.json()
-        throw new Error(error.error)
+        throw new Error(error.error || 'Failed to save node')
       }
     } catch (error) {
+      console.error('Save error:', error)
       toast({
         title: "Error",
         description: error.message || "Failed to save node",
@@ -146,6 +153,11 @@ export default function NodeFormModal({ isOpen, onClose, node, roadmapId, onSucc
           <DialogTitle>
             {node ? "Edit Node" : "Create New Node"}
           </DialogTitle>
+          <DialogDescription>
+            {node
+              ? "Update the node details below. Changes will be saved to your roadmap."
+              : "Fill in the details to create a new learning node for your roadmap."}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">

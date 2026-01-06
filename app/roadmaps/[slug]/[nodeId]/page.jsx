@@ -13,8 +13,7 @@ export default async function NodeDetailPage({ params }) {
     notFound()
   }
 
-  // ✅ FIX: Pass slug instead of ObjectId
-  const nodes = await getRoadmapNodes(slug)  // ← Changed this line
+  const nodes = await getRoadmapNodes(slug)
   const node = nodes.find(n => n.nodeId === nodeId)
 
   if (!node) {
@@ -22,30 +21,43 @@ export default async function NodeDetailPage({ params }) {
   }
 
   const cookieStore = await cookies()
-  const authToken = cookieStore.get("auth-token")
+  const authToken = cookieStore.get("auth-token") 
   let currentUser = null
   let completedSubtopics = []
 
   if (authToken) {
-    const payload = verifyToken(authToken.value)
-    if (payload) {
-      currentUser = await getUser(payload.email)
-      // ✅ FIX: Also pass slug here for consistency
-      const progress = await getUserRoadmapProgress(payload.id, slug)
-      const nodeProgress = progress?.nodesProgress?.find(np => np.nodeId === nodeId)
-      completedSubtopics = nodeProgress?.completedSubtopics || []
+    try {
+      const payload = verifyToken(authToken.value)
+
+      if (payload && payload.email) {
+        currentUser = await getUser(payload.email)
+
+        if (currentUser && currentUser._id) {
+          const progress = await getUserRoadmapProgress(currentUser._id.toString(), slug)
+          const nodeProgress = progress?.nodesProgress?.find(np => np.nodeId === nodeId)
+          completedSubtopics = nodeProgress?.completedSubtopics || []
+        }
+      }
+    } catch (error) {
+      console.error('Auth error:', error)
     }
   }
-return (
-  <NodeDetailClient
-    node={node}
-    roadmapSlug={slug}
-    // roadmapId={roadmap._id.toString()}
-    roadmapTitle={roadmap.title}
-    roadmapIcon={roadmap.icon}
-    weekNumber={node.weekNumber}
-    currentUser={currentUser}
-    initialCompletedSubtopics={completedSubtopics}
-  />
-)
+
+  const serializedUser = currentUser ? {
+    _id: currentUser._id.toString(),
+    email: currentUser.email,
+    name: currentUser.name,
+  } : null
+
+  return (
+    <NodeDetailClient
+      node={node}
+      roadmapSlug={slug}
+      roadmapTitle={roadmap.title}
+      roadmapIcon={roadmap.icon}
+      weekNumber={node.weekNumber}
+      currentUser={serializedUser}
+      initialCompletedSubtopics={completedSubtopics}
+    />
+  )
 }

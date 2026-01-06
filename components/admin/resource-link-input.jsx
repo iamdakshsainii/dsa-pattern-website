@@ -23,7 +23,7 @@ function detectLinkType(url) {
     return 'practice'
   }
 
-  return 'article' // Default to article
+  return 'article'
 }
 
 function getIcon(type) {
@@ -46,6 +46,8 @@ export default function ResourceLinkInput({
 }) {
   const [newLink, setNewLink] = useState('')
 
+  const safeLinks = Array.isArray(links) ? links : []
+
   const handleAdd = () => {
     if (!newLink.trim()) return
 
@@ -56,12 +58,12 @@ export default function ResourceLinkInput({
       addedAt: new Date().toISOString()
     }
 
-    onChange([...links, linkData])
+    onChange([...safeLinks, linkData])
     setNewLink('')
   }
 
   const handleRemove = (index) => {
-    onChange(links.filter((_, i) => i !== index))
+    onChange(safeLinks.filter((_, i) => i !== index))
   }
 
   const handleKeyPress = (e) => {
@@ -73,28 +75,30 @@ export default function ResourceLinkInput({
 
   return (
     <div className="space-y-2">
-      {/* Existing Links */}
-      {links.map((link, index) => (
-        <div key={index} className="flex items-center gap-2 p-2 border rounded-lg bg-muted/50">
-          {getIcon(link.type)}
-          <div className="flex-1 min-w-0">
-            <p className="text-sm truncate">{link.url}</p>
-            <Badge variant="outline" className="text-xs mt-1">
-              {link.type}
-            </Badge>
-          </div>
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            onClick={() => handleRemove(index)}
-          >
-            <Trash2 className="h-3 w-3 text-red-600" />
-          </Button>
+      {safeLinks.length > 0 && (
+        <div className="space-y-2">
+          {safeLinks.map((link, index) => (
+            <div key={index} className="flex items-center gap-2 p-2 border rounded-lg bg-muted/50">
+              {getIcon(link.type)}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm truncate">{link.url}</p>
+                <Badge variant="outline" className="text-xs mt-1">
+                  {link.type}
+                </Badge>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => handleRemove(index)}
+              >
+                <Trash2 className="h-3 w-3 text-red-600" />
+              </Button>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
 
-      {/* Add New Link */}
       <div className="flex gap-2">
         <Input
           value={newLink}

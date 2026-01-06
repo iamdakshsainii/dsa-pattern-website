@@ -23,6 +23,7 @@ import AchievementShowcase from './dashboard/achievement-showcase'
 import DailyChallengeCard from './dashboard/daily-challenge-card'
 import SkillsChart from './dashboard/skills-chart'
 import PatternProgressGrid from './dashboard/pattern-progress-grid'
+import QuizSummaryWidget from './dashboard/quiz-summary-widget'
 import { BadgeToastManager } from './achievements/badge-unlock-toast'
 
 import CommunityBanner from './community/community-banner'
@@ -451,6 +452,8 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
             <DailyChallengeCard userProgress={{ completed: stats.recentActivity?.map(a => a.problemId) || [] }} />
 
             <YourRoadmapsWidget userId={userId} />
+
+            <QuizSummaryWidget />
 
             <WhatsAppWidget />
 

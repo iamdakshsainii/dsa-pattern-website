@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, Edit, Trash2, FileText, Copy, Eye, EyeOff } from "lucide-react"
+import { Plus, Edit, Trash2, Copy, Eye, FileText, Archive } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import NodeFormModal from "./node-form-modal"
 
@@ -23,7 +23,7 @@ export default function NodeManager() {
   const [selectedNodes, setSelectedNodes] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingNode, setEditingNode] = useState(null)
-  const [showDrafts, setShowDrafts] = useState(true)
+  const [filterMode, setFilterMode] = useState('all')
   const { toast } = useToast()
 
   useEffect(() => {
@@ -148,15 +148,17 @@ export default function NodeManager() {
     )
   }
 
-  const filteredNodes = showDrafts
-    ? nodes
-    : nodes.filter(n => n.published)
+  const filteredNodes = nodes.filter(n => {
+    if (filterMode === 'published') return n.published
+    if (filterMode === 'draft') return !n.published
+    return true
+  })
 
+  const publishedCount = nodes.filter(n => n.published).length
   const draftCount = nodes.filter(n => !n.published).length
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Node Manager</h2>
@@ -170,7 +172,6 @@ export default function NodeManager() {
         </Button>
       </div>
 
-      {/* Roadmap Selector & Filters */}
       <Card className="p-4">
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex-1 min-w-[200px]">
@@ -190,22 +191,39 @@ export default function NodeManager() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant={showDrafts ? "default" : "outline"}
-              onClick={() => setShowDrafts(!showDrafts)}
-            >
-              {showDrafts ? <Eye className="h-4 w-4 mr-2" /> : <EyeOff className="h-4 w-4 mr-2" />}
-              {showDrafts ? "Showing All" : "Published Only"}
-            </Button>
-            {draftCount > 0 && (
-              <Badge variant="secondary">{draftCount} drafts</Badge>
-            )}
+            <div className="flex rounded-lg border">
+              <Button
+                size="sm"
+                variant={filterMode === 'all' ? "default" : "ghost"}
+                onClick={() => setFilterMode('all')}
+                className="rounded-r-none"
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                All ({nodes.length})
+              </Button>
+              <Button
+                size="sm"
+                variant={filterMode === 'published' ? "default" : "ghost"}
+                onClick={() => setFilterMode('published')}
+                className="rounded-none border-x"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Published ({publishedCount})
+              </Button>
+              <Button
+                size="sm"
+                variant={filterMode === 'draft' ? "default" : "ghost"}
+                onClick={() => setFilterMode('draft')}
+                className="rounded-l-none"
+              >
+                <Archive className="h-4 w-4 mr-2" />
+                Drafts ({draftCount})
+              </Button>
+            </div>
           </div>
         </div>
       </Card>
 
-      {/* Bulk Actions */}
       {selectedNodes.length > 0 && (
         <Card className="p-4 bg-blue-50 dark:bg-blue-950 border-blue-200">
           <div className="flex items-center justify-between">
@@ -227,11 +245,12 @@ export default function NodeManager() {
         </Card>
       )}
 
-      {/* Nodes List */}
       {filteredNodes.length === 0 ? (
         <Card className="p-12 text-center">
           <p className="text-muted-foreground">
-            {selectedRoadmap ? 'No nodes found for this roadmap' : 'Select a roadmap to view nodes'}
+            {selectedRoadmap
+              ? `No ${filterMode === 'all' ? '' : filterMode} nodes found for this roadmap`
+              : 'Select a roadmap to view nodes'}
           </p>
         </Card>
       ) : (
@@ -279,7 +298,6 @@ export default function NodeManager() {
         </div>
       )}
 
-      {/* Create/Edit Modal */}
       <NodeFormModal
         isOpen={isModalOpen}
         onClose={() => {
