@@ -16,11 +16,11 @@ export async function GET(request) {
 
     const { db } = await connectToDatabase()
 
-    const query = roadmapId ? { roadmapId } : {}
-    const nodes = await db.collection("roadmap_nodes")
-      .find(query)
-      .sort({ weekNumber: 1, order: 1 })
-      .toArray()
+   const query = roadmapId ? { roadmapId } : {}
+const nodes = await db.collection("roadmap_nodes")
+  .find(query)
+  .sort({ weekNumber: 1, order: 1 })  
+  .toArray()
 
     return NextResponse.json({
       nodes: nodes.map(n => ({

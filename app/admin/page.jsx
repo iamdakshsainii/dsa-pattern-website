@@ -11,8 +11,8 @@ export const metadata = {
 export default async function AdminPage() {
   const user = await getCurrentUser()
 
-  if (!user || !isAdmin(user)) {
-    redirect('/')
+  if (!user || !isAdmin(user)) { 
+    redirect('/dashboard')
   }
 
   return <AdminDashboard currentUser={user} />

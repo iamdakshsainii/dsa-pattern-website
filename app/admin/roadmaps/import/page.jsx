@@ -1,13 +1,17 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 export default function ImportRoadmapPage() {
+  const router = useRouter()
   const [file, setFile] = useState(null)
   const [roadmapId, setRoadmapId] = useState("")
   const [loading, setLoading] = useState(false)
@@ -33,6 +37,12 @@ export default function ImportRoadmapPage() {
 
       const result = await response.json()
       setResult(result)
+
+      if (!result.error) {
+        setTimeout(() => {
+          router.push('/admin/roadmaps')
+        }, 2000)
+      }
     } catch (error) {
       setResult({ error: error.message })
     } finally {
@@ -41,15 +51,23 @@ export default function ImportRoadmapPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-2xl">
-      <h1 className="text-3xl font-bold mb-6">Import Roadmap Nodes</h1>
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="w-full max-w-2xl">
+        <Link href="/admin/roadmaps">
+          <Button variant="ghost" size="sm" className="mb-4">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Roadmaps
+          </Button>
+        </Link>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>JSON Format Example</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <pre className="bg-muted p-4 rounded text-xs overflow-x-auto">
+        <h1 className="text-3xl font-bold mb-6 text-center">Import Roadmap Nodes</h1>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>JSON Format Example</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <pre className="bg-muted p-4 rounded text-xs overflow-x-auto">
 {`{
   "roadmapId": "machine-learning-roadmap",
   "nodes": [
@@ -73,44 +91,45 @@ export default function ImportRoadmapPage() {
     }
   ]
 }`}
-          </pre>
-        </CardContent>
-      </Card>
+            </pre>
+          </CardContent>
+        </Card>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="roadmapId">Roadmap ID (optional if in JSON)</Label>
-          <Input
-            id="roadmapId"
-            value={roadmapId}
-            onChange={(e) => setRoadmapId(e.target.value)}
-            placeholder="machine-learning-roadmap"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="roadmapId">Roadmap ID (optional if in JSON)</Label>
+            <Input
+              id="roadmapId"
+              value={roadmapId}
+              onChange={(e) => setRoadmapId(e.target.value)}
+              placeholder="machine-learning-roadmap"
+            />
+          </div>
 
-        <div>
-          <Label htmlFor="file">Upload JSON File</Label>
-          <Input
-            id="file"
-            type="file"
-            accept=".json"
-            onChange={(e) => setFile(e.target.files[0])}
-            required
-          />
-        </div>
+          <div>
+            <Label htmlFor="file">Upload JSON File</Label>
+            <Input
+              id="file"
+              type="file"
+              accept=".json"
+              onChange={(e) => setFile(e.target.files[0])}
+              required
+            />
+          </div>
 
-        <Button type="submit" disabled={loading || !file}>
-          {loading ? "Importing..." : "Import Nodes"}
-        </Button>
-      </form>
+          <Button type="submit" disabled={loading || !file} className="w-full">
+            {loading ? "Importing..." : "Import Nodes"}
+          </Button>
+        </form>
 
-      {result && (
-        <Alert className="mt-4" variant={result.error ? "destructive" : "default"}>
-          <AlertDescription>
-            {result.error || `Successfully imported ${result.count} nodes`}
-          </AlertDescription>
-        </Alert>
-      )}
+        {result && (
+          <Alert className="mt-4" variant={result.error ? "destructive" : "default"}>
+            <AlertDescription>
+              {result.error || `Successfully imported ${result.count} nodes`}
+            </AlertDescription>
+          </Alert>
+        )}
+      </div>
     </div>
   )
 }

@@ -1,353 +1,318 @@
 'use client'
 
 import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Trophy, Clock, TrendingUp, CheckCircle2, XCircle, Award, ArrowLeft, RotateCcw, Eye } from "lucide-react"
+import {
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Trophy,
+  ExternalLink,
+  Trash2,
+  ArrowLeft,
+  ChevronDown,
+  ChevronUp
+} from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
 
 export default function QuizHistoryClient({ results, roadmaps, userId }) {
   const router = useRouter()
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [filterRoadmap, setFilterRoadmap] = useState("all")
+  const { toast } = useToast()
+  const [expandedAttempts, setExpandedAttempts] = useState({})
 
-  // Safely create roadmap lookup map
-  const roadmapMap = {}
-  if (Array.isArray(roadmaps)) {
-    roadmaps.forEach(r => {
-      if (r && r.slug) {
-        roadmapMap[r.slug] = r
-      }
-    })
+  const toggleExpand = (attemptId) => {
+    setExpandedAttempts(prev => ({
+      ...prev,
+      [attemptId]: !prev[attemptId]
+    }))
   }
 
-  // Safely enrich results with roadmap data
-  const enrichedResults = Array.isArray(results) ? results.map(result => ({
-    ...result,
-    roadmapTitle: roadmapMap[result.roadmapId]?.title || result.roadmapId?.replace(/-/g, ' ') || 'Unknown Roadmap',
-    roadmapIcon: roadmapMap[result.roadmapId]?.icon || "📚"
-  })) : []
-
-  // Filter results
-  const filteredResults = enrichedResults.filter(result => {
-    if (filterStatus === "passed" && !result.passed) return false
-    if (filterStatus === "failed" && result.passed) return false
-    if (filterRoadmap !== "all" && result.roadmapId !== filterRoadmap) return false
-    return true
-  })
-
-  // Group by roadmap
-  const groupedByRoadmap = {}
-  filteredResults.forEach(result => {
-    if (!groupedByRoadmap[result.roadmapId]) {
-      groupedByRoadmap[result.roadmapId] = []
+  const getRoadmapInfo = (roadmapId) => {
+    return roadmaps.find(r => r.slug === roadmapId) || {
+      title: roadmapId,
+      icon: '📚'
     }
-    groupedByRoadmap[result.roadmapId].push(result)
-  })
-
-  // Sort attempts within each roadmap (newest first)
-  Object.keys(groupedByRoadmap).forEach(roadmapId => {
-    groupedByRoadmap[roadmapId].sort((a, b) =>
-      new Date(b.completedAt) - new Date(a.completedAt)
-    )
-  })
-
-  // Calculate statistics
-  const stats = {
-    total: enrichedResults.length,
-    passed: enrichedResults.filter(r => r.passed).length,
-    failed: enrichedResults.filter(r => !r.passed).length,
-    avgScore: enrichedResults.length > 0
-      ? Math.round(enrichedResults.reduce((sum, r) => sum + (r.percentage || 0), 0) / enrichedResults.length)
-      : 0
   }
 
-  const formatDate = (dateString) => {
+  const handleDelete = async (attemptId) => {
     try {
-      const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      const res = await fetch(`/api/quiz/attempts/${attemptId}`, {
+        method: 'DELETE'
       })
-    } catch {
-      return 'Invalid date'
+
+      if (res.ok) {
+        toast({
+          title: "Success",
+          description: "Quiz attempt deleted successfully"
+        })
+        router.refresh()
+      } else {
+        throw new Error('Failed to delete')
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete quiz attempt",
+        variant: "destructive"
+      })
     }
   }
 
-  const formatTime = (seconds) => {
-    if (!seconds || seconds < 0) return "0m 0s"
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.round(seconds % 60)
-    return `${mins}m ${secs}s`
+  const getStatusColor = (passed) => {
+    return passed
+      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+      : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
   }
 
-  const handleViewResult = (roadmapId, attemptId) => {
-    router.push(`/roadmaps/${roadmapId}/quiz/result/${attemptId}`)
+  const getResourceIcon = (type) => {
+    switch (type) {
+      case 'youtube':
+        return '🎥'
+      case 'article':
+        return '📄'
+      case 'practice':
+        return '💻'
+      default:
+        return '🔗'
+    }
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Quiz History</h1>
-            <p className="text-muted-foreground">Track your quiz attempts and progress over time</p>
-          </div>
-          <Link href="/dashboard">
-            <Button variant="outline" size="lg">
+  if (!results || results.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Link href="/profile/activities">
+            <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
+              Back to Activities
             </Button>
           </Link>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Attempts</p>
-                <p className="text-3xl font-bold">{stats.total}</p>
-              </div>
-              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <Trophy className="h-8 w-8 text-blue-600" />
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Passed</p>
-                <p className="text-3xl font-bold text-green-600">{stats.passed}</p>
-              </div>
-              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                <CheckCircle2 className="h-8 w-8 text-green-600" />
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Failed</p>
-                <p className="text-3xl font-bold text-red-600">{stats.failed}</p>
-              </div>
-              <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                <XCircle className="h-8 w-8 text-red-600" />
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Avg Score</p>
-                <p className="text-3xl font-bold text-purple-600">{stats.avgScore}%</p>
-              </div>
-              <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                <TrendingUp className="h-8 w-8 text-purple-600" />
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Filters */}
-        <Card className="p-6 mb-8">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Filter by Status</label>
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Attempts</SelectItem>
-                  <SelectItem value="passed">✅ Passed Only</SelectItem>
-                  <SelectItem value="failed">❌ Failed Only</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Filter by Roadmap</label>
-              <Select value={filterRoadmap} onValueChange={setFilterRoadmap}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by roadmap" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roadmaps</SelectItem>
-                  {roadmaps.map(roadmap => (
-                    <SelectItem key={roadmap.slug} value={roadmap.slug}>
-                      {roadmap.icon} {roadmap.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+        <Card className="p-12 text-center">
+          <Trophy className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-xl font-semibold mb-2">No Quiz History Yet</h3>
+          <p className="text-muted-foreground mb-6">
+            Complete roadmaps and take quizzes to see your history here
+          </p>
+          <Link href="/roadmaps">
+            <Button>Browse Roadmaps</Button>
+          </Link>
         </Card>
+      </div>
+    )
+  }
 
-        {/* Results */}
-        {filteredResults.length === 0 ? (
-          <Card className="p-16 text-center border-dashed">
-            <Trophy className="h-20 w-20 text-muted-foreground mx-auto mb-6 opacity-50" />
-            <h3 className="text-2xl font-bold mb-3">
-              {stats.total === 0 ? "No Quiz Attempts Yet" : "No Results Found"}
-            </h3>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              {stats.total === 0
-                ? "Complete roadmaps to unlock quizzes and start tracking your progress"
-                : "Try adjusting your filters to see more results"
-              }
-            </p>
-            <Link href="/roadmaps">
-              <Button size="lg">
-                Browse Roadmaps
-              </Button>
-            </Link>
-          </Card>
-        ) : (
-          <div className="space-y-6">
-            {Object.entries(groupedByRoadmap).map(([roadmapId, attempts]) => {
-              const roadmap = roadmapMap[roadmapId]
-              const bestScore = Math.max(...attempts.map(a => a.percentage || 0))
-              const latestAttempt = attempts[0]
-              const canRetake = !latestAttempt.passed
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <Link href="/profile/activities">
+          <Button variant="ghost" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Activities
+          </Button>
+        </Link>
+        <Badge variant="outline">{results.length} Total Attempts</Badge>
+      </div>
 
-              return (
-                <Card key={roadmapId} className="p-8 hover:shadow-xl transition-shadow">
-                  {/* Roadmap Header */}
-                  <div className="flex items-start justify-between mb-6 pb-6 border-b">
-                    <div className="flex items-center gap-4">
-                      <div className="text-5xl">{roadmap?.icon || "📚"}</div>
-                      <div>
-                        <h3 className="text-2xl font-bold mb-1">
-                          {roadmap?.title || roadmapId?.replace(/-/g, ' ') || 'Unknown Roadmap'}
-                        </h3>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Trophy className="h-4 w-4" />
-                            {attempts.length} attempt{attempts.length !== 1 ? 's' : ''}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <TrendingUp className="h-4 w-4" />
-                            Best: {bestScore}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+      <div className="space-y-4">
+        {results.map((result) => {
+          const roadmap = getRoadmapInfo(result.roadmapId)
+          const isExpanded = expandedAttempts[result._id]
 
-                    <div className="flex gap-2">
-                      {canRetake && (
-                        <Link href={`/roadmaps/${roadmapId}/quiz`}>
-                          <Button size="sm" variant="outline" className="gap-2">
-                            <RotateCcw className="h-4 w-4" />
-                            Retake Quiz
-                          </Button>
-                        </Link>
-                      )}
-                      {latestAttempt.passed && (
-                        <Link href={`/roadmaps/${roadmapId}/certificate`}>
-                          <Button size="sm" className="gap-2">
-                            <Award className="h-4 w-4" />
-                            View Certificate
-                          </Button>
-                        </Link>
+          return (
+            <Card key={result._id} className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start gap-3 flex-1">
+                  <div className="text-3xl">{roadmap.icon}</div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg mb-1">{roadmap.title}</h3>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {new Date(result.completedAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </span>
+                      <span>Attempt #{result.attemptNumber}</span>
+                      {result.timeTaken && (
+                        <span>{Math.round(result.timeTaken)} min</span>
                       )}
                     </div>
                   </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleDelete(result._id)}
+                >
+                  <Trash2 className="h-4 w-4 text-red-600" />
+                </Button>
+              </div>
 
-                  {/* Attempts List */}
-                  <div className="space-y-3">
-                    {attempts.map((attempt, idx) => (
-                      <Card
-                        key={attempt._id}
-                        className={`p-5 transition-all hover:shadow-md border-2 ${
-                          attempt.passed
-                            ? 'border-green-200 hover:border-green-400 bg-green-50/50 dark:bg-green-900/10'
-                            : 'border-red-200 hover:border-red-400 bg-red-50/50 dark:bg-red-900/10'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          {/* Score Display */}
-                          <div className="flex items-center gap-6">
-                            <div className="text-center">
-                              <div className={`text-3xl font-bold ${
-                                attempt.passed ? 'text-green-600' : 'text-red-600'
-                              }`}>
-                                {attempt.percentage || 0}%
-                              </div>
-                              <div className="text-xs text-muted-foreground mt-1">
-                                {attempt.score || 0}/{attempt.totalQuestions || 10} correct
-                              </div>
-                            </div>
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="text-center p-3 bg-muted rounded-lg">
+                  <div className="text-2xl font-bold">{result.score}/{result.totalQuestions}</div>
+                  <div className="text-xs text-muted-foreground">Score</div>
+                </div>
+                <div className="text-center p-3 bg-muted rounded-lg">
+                  <div className="text-2xl font-bold">{result.percentage}%</div>
+                  <div className="text-xs text-muted-foreground">Percentage</div>
+                </div>
+                <div
+                  className="text-center p-3 rounded-lg"
+                  style={{
+                    backgroundColor: result.passed
+                      ? 'rgb(34 197 94 / 0.1)'
+                      : 'rgb(239 68 68 / 0.1)'
+                  }}
+                >
+                  <Badge className={getStatusColor(result.passed)}>
+                    {result.passed ? (
+                      <>
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Passed
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="h-3 w-3 mr-1" />
+                        Failed
+                      </>
+                    )}
+                  </Badge>
+                  <div className="text-xs text-muted-foreground mt-1">Status</div>
+                </div>
+              </div>
 
-                            {/* Attempt Details */}
+              {result.answers && result.answers.length > 0 && (
+                <div className="border-t pt-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleExpand(result._id)}
+                    className="mb-3"
+                  >
+                    {isExpanded ? (
+                      <>
+                        <ChevronUp className="h-4 w-4 mr-2" />
+                        Hide Details
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4 mr-2" />
+                        View Detailed Answers
+                      </>
+                    )}
+                  </Button>
+
+                  {isExpanded && (
+                    <div className="space-y-3">
+                      {result.answers.map((answer, idx) => (
+                        <Card
+                          key={idx}
+                          className={`p-4 ${
+                            answer.isCorrect
+                              ? 'bg-green-50 dark:bg-green-900/10 border-green-200'
+                              : 'bg-red-50 dark:bg-red-900/10 border-red-200'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-3">
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                <Badge variant={attempt.passed ? "default" : "destructive"}>
-                                  Attempt {attempt.attemptNumber || idx + 1}
+                              <div className="flex items-center gap-2 mb-2">
+                                <Badge variant="outline" className="text-xs">
+                                  Q{idx + 1}
                                 </Badge>
-                                {idx === 0 && (
-                                  <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900">
-                                    Latest
+                                {answer.topic && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    {answer.topic}
                                   </Badge>
                                 )}
-                                {attempt.percentage === bestScore && attempts.length > 1 && (
-                                  <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900">
-                                    🏆 Best Score
+                                {answer.difficulty && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {answer.difficulty}
                                   </Badge>
                                 )}
                               </div>
-                              <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
-                                <span className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  {formatDate(attempt.completedAt)}
-                                </span>
-                                {attempt.timeTaken && (
-                                  <span className="flex items-center gap-1">
-                                    <Clock className="h-3 w-3" />
-                                    {formatTime(attempt.timeTaken)}
+
+                              <p className="font-medium mb-3">{answer.question}</p>
+
+                              <div className="space-y-2 mb-3">
+                                <div className="text-sm">
+                                  <span className="font-medium">Your Answer: </span>
+                                  <span
+                                    className={
+                                      answer.isCorrect
+                                        ? 'text-green-700 dark:text-green-400'
+                                        : 'text-red-700 dark:text-red-400'
+                                    }
+                                  >
+                                    {answer.userAnswer}
                                   </span>
+                                </div>
+                                {!answer.isCorrect && (
+                                  <div className="text-sm">
+                                    <span className="font-medium">Correct Answer: </span>
+                                    <span className="text-green-700 dark:text-green-400">
+                                      {answer.correctAnswer || answer.correctAnswers?.join(', ')}
+                                    </span>
+                                  </div>
                                 )}
                               </div>
+
+                              {answer.explanation && (
+                                <div className="text-sm text-muted-foreground mb-3 p-3 bg-muted/50 rounded">
+                                  <span className="font-medium">Explanation: </span>
+                                  {answer.explanation}
+                                </div>
+                              )}
+
+                              {answer.resources && answer.resources.length > 0 && (
+                                <div>
+                                  <div className="text-sm font-medium mb-2">Learning Resources:</div>
+                                  <div className="flex flex-wrap gap-2">
+                                    {answer.resources.map((resource, rIdx) => (
+                                      <a
+                                        key={rIdx}
+                                        href={resource.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-xs bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full border hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <span>{getResourceIcon(resource.type)}</span>
+                                        <span>{resource.title}</span>
+                                        <ExternalLink className="h-3 w-3" />
+                                      </a>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="ml-4">
+                              {answer.isCorrect ? (
+                                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                              ) : (
+                                <XCircle className="h-5 w-5 text-red-600" />
+                              )}
                             </div>
                           </div>
-
-                          {/* Status Icon & Action */}
-                          <div className="flex items-center gap-3">
-                            {attempt.passed ? (
-                              <CheckCircle2 className="h-8 w-8 text-green-600" />
-                            ) : (
-                              <XCircle className="h-8 w-8 text-red-600" />
-                            )}
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleViewResult(attempt.roadmapId, attempt._id)}
-                              className="gap-2"
-                            >
-                              <Eye className="h-4 w-4" />
-                              View Details
-                            </Button>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </Card>
-              )
-            })}
-          </div>
-        )}
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Card>
+          )
+        })}
       </div>
     </div>
   )

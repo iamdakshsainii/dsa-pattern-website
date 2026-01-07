@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
-import { getRoadmap, isQuizUnlocked, getQuizResult } from "@/lib/db"
+import { getRoadmap, isQuizUnlocked, getUserQuizAttempts, getRandomAvailableQuiz } from "@/lib/db"
 import QuizClient from "./quiz-client"
 
 export default async function QuizPage({ params }) {
@@ -28,13 +28,27 @@ export default async function QuizPage({ params }) {
     redirect(`/roadmaps/${slug}`)
   }
 
-  const quizResult = await getQuizResult(user.id, roadmap.slug)
+  const attempts = await getUserQuizAttempts(user.id, roadmap.slug)
+  const attemptLimit = roadmap.quizAttemptLimit || 3
+  const attemptsUsed = attempts?.attemptsUsed || 0
+
+  if (attemptsUsed >= attemptLimit) {
+    redirect(`/roadmaps/${slug}?error=no-attempts`)
+  }
+
+  const quiz = await getRandomAvailableQuiz(user.id, roadmap.slug)
+
+  if (!quiz || !quiz.questions || quiz.questions.length === 0) {
+    redirect(`/roadmaps/${slug}?error=no-quiz`)
+  }
 
   return (
     <QuizClient
-      roadmap={roadmap}
-      currentUser={user}
-      previousResult={quizResult}
+      roadmapId={roadmap.slug}
+      questions={quiz.questions}
+      settings={quiz.settings}
+      attemptsRemaining={attemptLimit - attemptsUsed}
+      quizId={quiz.quizId}
     />
   )
 }

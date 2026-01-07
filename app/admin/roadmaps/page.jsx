@@ -3,7 +3,8 @@ import { getAllRoadmapsAdmin } from "@/lib/db"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Trash2, Eye } from "lucide-react"
+import { Plus, Edit, Trash2, Eye, FileText, HelpCircle, Brain } from "lucide-react"
+import PublishToggle from "@/components/admin/publish-toggle"
 
 export default async function AdminRoadmapsPage() {
   const roadmaps = await getAllRoadmapsAdmin()
@@ -65,25 +66,47 @@ export default async function AdminRoadmapsPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <Link href={`/roadmaps/${roadmap.slug}`} target="_blank">
-                    <Button variant="ghost" size="sm">
-                      <Eye className="h-4 w-4" />
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <PublishToggle
+                      slug={roadmap.slug}
+                      initialPublished={roadmap.published}
+                    />
+                    <Link href={`/roadmaps/${roadmap.slug}`} target="_blank">
+                      <Button variant="ghost" size="sm">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Link href={`/admin/roadmaps/${roadmap.slug}/edit`}>
+                      <Button variant="outline" size="sm">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Button variant="ghost" size="sm" className="text-destructive">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                  </Link>
-                  <Link href={`/admin/roadmaps/${roadmap.slug}/nodes`}>
-                    <Button variant="outline" size="sm">
-                      Manage Nodes
-                    </Button>
-                  </Link>
-                  <Link href={`/admin/roadmaps/${roadmap.slug}/edit`}>
-                    <Button variant="outline" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Button variant="ghost" size="sm" className="text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  </div>
+
+                  <div className="flex gap-2 mt-2 pt-2 border-t">
+                    <Link href={`/admin/roadmaps/${roadmap.slug}/nodes`}>
+                      <Button variant="outline" size="sm">
+                        <FileText className="h-4 w-4 mr-1" />
+                        Nodes
+                      </Button>
+                    </Link>
+                    <Link href={`/admin/roadmaps/${roadmap.slug}/quiz-bank`}>
+                      <Button variant="outline" size="sm">
+                        <HelpCircle className="h-4 w-4 mr-1" />
+                        Quizzes
+                      </Button>
+                    </Link>
+                    <Link href={`/admin/roadmaps/${roadmap.slug}/weak-topics`}>
+                      <Button variant="outline" size="sm">
+                        <Brain className="h-4 w-4 mr-1" />
+                        Topics
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </Card>

@@ -10,16 +10,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Clock, ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from "lucide-react"
 
-export default function QuizClient({ roadmapId, questions: initialQuestions }) {
+export default function QuizClient({ roadmapId, questions: initialQuestions, settings, attemptsRemaining, quizId }) {
   const router = useRouter()
   const [questions, setQuestions] = useState(initialQuestions || [])
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [userAnswers, setUserAnswers] = useState({})
-  const [timeLeft, setTimeLeft] = useState(20 * 60) // 20 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState((settings?.timeLimit || 20) * 60)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
-  // Timer effect
   useEffect(() => {
     if (timeLeft <= 0) {
       handleSubmit()
@@ -39,7 +38,6 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
     return () => clearInterval(timer)
   }, [timeLeft])
 
-  // Save progress to sessionStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const progress = {
@@ -53,25 +51,23 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
     }
   }, [roadmapId, currentQuestion, userAnswers, timeLeft])
 
-  // Load progress on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem(`quiz_progress_${roadmapId}`)
       if (saved) {
         try {
           const progress = JSON.parse(saved)
-          // Only restore if less than 30 minutes old
           if (Date.now() - progress.timestamp < 30 * 60 * 1000) {
             setCurrentQuestion(progress.currentQuestion || 0)
             setUserAnswers(progress.userAnswers || {})
-            setTimeLeft(progress.timeLeft || 20 * 60)
+            setTimeLeft(progress.timeLeft || (settings?.timeLimit || 20) * 60)
           }
         } catch (err) {
           console.error('Failed to restore quiz progress:', err)
         }
       }
     }
-  }, [roadmapId])
+  }, [roadmapId, settings])
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
@@ -105,53 +101,34 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
     setError(null)
 
     try {
-      const startTime = 20 * 60 // 20 minutes
-      const timeTaken = Math.round((startTime - timeLeft) / 60) // Convert to minutes
+      const startTime = (settings?.timeLimit || 20) * 60
+      const timeTaken = Math.round((startTime - timeLeft) / 60)
 
-      // ✅ CRITICAL FIX: Build complete answer objects with ALL required fields
       const completeAnswers = questions.map((question, index) => {
         const userAnswer = userAnswers[question.id] || userAnswers[index] || ''
 
-        // Determine correct answer (handle both formats)
         const correctAnswer = question.correct || question.correctAnswer ||
                             (Array.isArray(question.correctAnswers) ? question.correctAnswers[0] : '')
 
         const isCorrect = userAnswer === correctAnswer
 
         return {
-          // Question identification
           questionId: question.id || `q_${index}`,
-
-          // Question content
           question: question.question || question.text || '',
           options: question.options || [],
-
-          // User's answer
           userAnswer: userAnswer,
-
-          // Correct answer
           correctAnswer: correctAnswer,
           correctAnswers: question.correctAnswers || [correctAnswer],
-
-          // Correctness
           isCorrect: isCorrect,
-
-          // ✅ CRITICAL: Topic for weak topics analysis
           topic: question.topic || question.category || 'General',
-
-          // Difficulty
           difficulty: question.difficulty || 'medium',
-
-          // Learning resources
           explanation: question.explanation || '',
           resources: question.resources || []
         }
       })
 
-      // Calculate score
       const score = completeAnswers.filter(a => a.isCorrect).length
 
-      // Submit to API
       const response = await fetch('/api/roadmaps/quiz', {
         method: 'POST',
         headers: {
@@ -161,8 +138,9 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
         body: JSON.stringify({
           roadmapId,
           score,
-          answers: completeAnswers, // ✅ Send complete answer objects
-          timeTaken
+          answers: completeAnswers,
+          timeTaken,
+          quizId
         })
       })
 
@@ -173,12 +151,10 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
 
       const result = await response.json()
 
-      // Clear saved progress
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem(`quiz_progress_${roadmapId}`)
       }
 
-      // Redirect to results
       if (result.insertedId || result.attemptId) {
         router.push(`/roadmaps/${roadmapId}/quiz/result/${result.insertedId || result.attemptId}`)
       } else {
@@ -189,9 +165,8 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
       setError(err.message)
       setSubmitting(false)
     }
-  }, [questions, userAnswers, timeLeft, roadmapId, router, submitting])
+  }, [questions, userAnswers, timeLeft, roadmapId, router, submitting, settings, quizId])
 
-  // Auto-submit when time runs out
   useEffect(() => {
     if (timeLeft === 0 && !submitting) {
       handleSubmit()
@@ -222,7 +197,6 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header with Timer */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <Button
@@ -234,15 +208,21 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
               Exit Quiz
             </Button>
 
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-              timeLeft < 300 ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600'
-            }`}>
-              <Clock className="h-5 w-5" />
-              <span className="text-xl font-bold font-mono">{formatTime(timeLeft)}</span>
+            <div className="flex items-center gap-4">
+              {attemptsRemaining !== undefined && (
+                <Badge variant="outline" className="text-base px-3 py-1">
+                  {attemptsRemaining} attempt{attemptsRemaining !== 1 ? 's' : ''} left
+                </Badge>
+              )}
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                timeLeft < 300 ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600'
+              }`}>
+                <Clock className="h-5 w-5" />
+                <span className="text-xl font-bold font-mono">{formatTime(timeLeft)}</span>
+              </div>
             </div>
           </div>
 
-          {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Progress: {answeredCount}/{questions.length} answered</span>
@@ -252,7 +232,6 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
           </div>
         </div>
 
-        {/* Question Card */}
         <Card className="p-8 mb-6 border-2">
           <div className="flex items-center gap-3 mb-6">
             <Badge variant="outline" className="text-base px-3 py-1">
@@ -280,7 +259,6 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
             {currentQ?.question || currentQ?.text}
           </h2>
 
-          {/* Options */}
           <RadioGroup
             value={userAnswers[currentQ?.id] || userAnswers[currentQuestion] || ''}
             onValueChange={(value) => handleAnswerSelect(currentQ?.id || currentQuestion, value)}
@@ -318,7 +296,6 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
           </RadioGroup>
         </Card>
 
-        {/* Error Display */}
         {error && (
           <Card className="p-4 mb-6 border-red-200 bg-red-50 dark:bg-red-900/20">
             <div className="flex items-center gap-3">
@@ -338,7 +315,6 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
           </Card>
         )}
 
-        {/* Navigation */}
         <div className="flex items-center justify-between">
           <Button
             variant="outline"
@@ -400,7 +376,6 @@ export default function QuizClient({ roadmapId, questions: initialQuestions }) {
           )}
         </div>
 
-        {/* Submit Warning */}
         {answeredCount < questions.length && (
           <Card className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200">
             <div className="flex items-start gap-3">

@@ -8,7 +8,20 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Clock, Target, TrendingDown, Award, Trash2, ExternalLink, AlertCircle } from "lucide-react"
+import {
+  Clock,
+  Target,
+  TrendingDown,
+  Award,
+  Trash2,
+  ExternalLink,
+  AlertCircle,
+  Youtube,
+  FileText,
+  Code,
+  BookOpen,
+  Lightbulb
+} from "lucide-react"
 
 export default function ActivitiesClient() {
   const router = useRouter()
@@ -36,11 +49,9 @@ export default function ActivitiesClient() {
 
       const result = await res.json()
 
-      // Handle both response formats for backward compatibility
       if (result.success && result.data) {
         setData(result.data)
       } else if (result.dashboard) {
-        // Legacy format
         setData(result)
       } else {
         throw new Error("Invalid response format")
@@ -68,7 +79,6 @@ export default function ActivitiesClient() {
         throw new Error("Failed to delete")
       }
 
-      // Refresh data after deletion
       await fetchData()
     } catch (error) {
       console.error("Error deleting attempt:", error)
@@ -85,6 +95,36 @@ export default function ActivitiesClient() {
 
   function handleAttemptClick(roadmapId, attemptId) {
     router.push(`/roadmaps/${roadmapId}/quiz/result/${attemptId}`)
+  }
+
+  function getResourceIcon(type) {
+    switch(type?.toLowerCase()) {
+      case 'youtube':
+      case 'video':
+        return <Youtube className="h-4 w-4 text-red-600" />
+      case 'practice':
+      case 'leetcode':
+        return <Code className="h-4 w-4 text-green-600" />
+      case 'article':
+      case 'blog':
+      default:
+        return <FileText className="h-4 w-4 text-blue-600" />
+    }
+  }
+
+  function getResourceTypeLabel(type) {
+    switch(type?.toLowerCase()) {
+      case 'youtube':
+      case 'video':
+        return 'Video'
+      case 'practice':
+      case 'leetcode':
+        return 'Practice'
+      case 'article':
+      case 'blog':
+      default:
+        return 'Article'
+    }
   }
 
   if (loading) {
@@ -117,7 +157,6 @@ export default function ActivitiesClient() {
     )
   }
 
-  // Safely extract data with fallbacks
   const quizAnalytics = data?.quizAnalytics || {}
   const weakTopics = data?.weakTopics || []
   const recentAttempts = quizAnalytics.recentQuizzes || []
@@ -131,7 +170,6 @@ export default function ActivitiesClient() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-2">Activity Dashboard</h1>
@@ -148,9 +186,7 @@ export default function ActivitiesClient() {
             <TabsTrigger value="weak" className="text-base">Weak Topics</TabsTrigger>
           </TabsList>
 
-          {/* RECENT ACTIVITY TAB */}
           <TabsContent value="recent" className="space-y-6">
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-center gap-3 mb-2">
@@ -186,7 +222,6 @@ export default function ActivitiesClient() {
               </Card>
             </div>
 
-            {/* Recent Quiz Attempts */}
             <div>
               <h2 className="text-2xl font-bold mb-4">Recent Quiz Attempts</h2>
 
@@ -272,7 +307,6 @@ export default function ActivitiesClient() {
             </div>
           </TabsContent>
 
-          {/* WEAK TOPICS TAB */}
           <TabsContent value="weak" className="space-y-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold">Topics Needing Improvement</h2>
@@ -319,11 +353,11 @@ export default function ActivitiesClient() {
                       />
                     </div>
 
-                    {topic.resources && topic.resources.length > 0 && (
-                      <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                        <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
-                          <ExternalLink className="h-4 w-4" />
-                          Recommended Resources:
+                    {topic.resources && topic.resources.length > 0 ? (
+                      <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <h4 className="font-semibold text-sm mb-3 flex items-center gap-2 text-blue-900 dark:text-blue-300">
+                          <Lightbulb className="h-4 w-4" />
+                          Recommended Learning Resources:
                         </h4>
                         <div className="space-y-2">
                           {topic.resources.map((resource, idx) => (
@@ -332,13 +366,59 @@ export default function ActivitiesClient() {
                               href={resource.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 hover:underline"
+                              className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition-all group border border-gray-200 dark:border-gray-700"
                             >
-                              <ExternalLink className="h-3 w-3 flex-shrink-0" />
-                              <span className="truncate">{resource.title}</span>
+                              <div className="flex-shrink-0">
+                                {getResourceIcon(resource.type)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                  {resource.title}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {getResourceTypeLabel(resource.type)}
+                                </p>
+                              </div>
+                              <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex-shrink-0" />
                             </a>
                           ))}
                         </div>
+                      </div>
+                    ) : topic.roadmapId ? (
+                      <div className="space-y-3">
+                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <p className="text-sm text-blue-800 dark:text-blue-300 flex items-center gap-2 mb-3">
+                            <BookOpen className="h-4 w-4 flex-shrink-0" />
+                            Study the roadmap to strengthen this topic
+                          </p>
+                          <Link href={`/roadmaps/${topic.roadmapId}`}>
+                            <Button variant="outline" size="sm" className="w-full">
+                              <BookOpen className="h-4 w-4 mr-2" />
+                              Go to Roadmap
+                            </Button>
+                          </Link>
+                        </div>
+                        {topic.relatedTopics && topic.relatedTopics.length > 0 && (
+                          <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                            <p className="text-sm font-semibold mb-2 text-purple-900 dark:text-purple-300">
+                              Related Topics to Study:
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {topic.relatedTopics.map((relTopic, idx) => (
+                                <Badge key={idx} variant="secondary" className="text-xs">
+                                  {relTopic}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                        <p className="text-sm text-yellow-800 dark:text-yellow-300 flex items-center gap-2">
+                          <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                          No specific resources available yet. Continue practicing to improve!
+                        </p>
                       </div>
                     )}
                   </Card>

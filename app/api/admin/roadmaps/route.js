@@ -3,7 +3,6 @@ import { getCurrentUser } from "@/lib/auth"
 import { isAdmin } from "@/lib/admin"
 import { connectToDatabase } from "@/lib/db"
 
-// GET all roadmaps (admin view)
 export async function GET(request) {
   try {
     const user = await getCurrentUser()
@@ -26,7 +25,6 @@ export async function GET(request) {
   }
 }
 
-// POST create new roadmap
 export async function POST(request) {
   try {
     const user = await getCurrentUser()
@@ -38,7 +36,6 @@ export async function POST(request) {
 
     const { db } = await connectToDatabase()
 
-    // Check if slug already exists
     const existing = await db.collection("roadmaps").findOne({ slug: body.slug })
     if (existing) {
       return NextResponse.json({ error: "Slug already exists" }, { status: 400 })
@@ -47,8 +44,12 @@ export async function POST(request) {
     const roadmap = {
       ...body,
       stats: { totalNodes: 0, totalResources: 0, followers: 0, avgRating: 0 },
-      published: true,
+      published: body.published !== undefined ? body.published : false,
       order: body.order || 999,
+      quizBankStatus: body.quizBankStatus || 'incomplete',
+      weakTopicResourcesStatus: body.weakTopicResourcesStatus || 'incomplete',
+      quizBankIds: body.quizBankIds || [],
+      quizAttemptLimit: body.quizAttemptLimit || 3,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -57,7 +58,8 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      roadmapId: result.insertedId.toString()
+      roadmapId: result.insertedId.toString(),
+      slug: body.slug
     })
   } catch (error) {
     console.error("Error creating roadmap:", error)

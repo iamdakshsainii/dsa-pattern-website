@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { X, Plus } from "lucide-react"
+import { X, Plus, ExternalLink } from "lucide-react"
+import { Card } from "@/components/ui/card"
 
 export default function QuestionEditor({ question, onSave, onCancel }) {
   const [formData, setFormData] = useState({
@@ -50,9 +50,30 @@ export default function QuestionEditor({ question, onSave, onCancel }) {
     }
   }
 
+  const addResource = () => {
+    setFormData({
+      ...formData,
+      resources: [...formData.resources, { type: 'article', title: '', url: '' }]
+    })
+  }
+
+  const updateResource = (index, field, value) => {
+    const newResources = [...formData.resources]
+    newResources[index][field] = value
+    setFormData({ ...formData, resources: newResources })
+  }
+
+  const removeResource = (index) => {
+    setFormData({
+      ...formData,
+      resources: formData.resources.filter((_, i) => i !== index)
+    })
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    onSave(formData)
+    const validResources = formData.resources.filter(r => r.url.trim() && r.title.trim())
+    onSave({ ...formData, resources: validResources })
   }
 
   return (
@@ -98,12 +119,16 @@ export default function QuestionEditor({ question, onSave, onCancel }) {
       </div>
 
       <div>
-        <Label>Topic</Label>
+        <Label>Topic *</Label>
         <Input
           value={formData.topic}
           onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-          placeholder="e.g., Arrays, Strings, etc."
+          placeholder="e.g., Arrays, Strings, Data Structures"
+          required
         />
+        <p className="text-xs text-muted-foreground mt-1">
+          Used to identify weak topics for students
+        </p>
       </div>
 
       <div>
@@ -145,6 +170,81 @@ export default function QuestionEditor({ question, onSave, onCancel }) {
           rows={3}
         />
       </div>
+
+      <Card className="p-4 bg-blue-50 dark:bg-blue-900/20 border-blue-200">
+        <div className="flex items-start justify-between mb-3">
+          <div>
+            <Label className="text-base">Learning Resources (For Weak Topics)</Label>
+            <p className="text-xs text-muted-foreground mt-1">
+              Add resources to help students who struggle with this topic
+            </p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={addResource}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Resource
+          </Button>
+        </div>
+
+        {formData.resources.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            No resources added yet. Resources will be shown to students who get this question wrong.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {formData.resources.map((resource, index) => (
+              <Card key={index} className="p-3 bg-white dark:bg-gray-800">
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Select
+                      value={resource.type}
+                      onValueChange={(value) => updateResource(index, 'type', value)}
+                    >
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="youtube">🎥 YouTube</SelectItem>
+                        <SelectItem value="article">📄 Article</SelectItem>
+                        <SelectItem value="practice">💻 Practice</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      placeholder="Resource title"
+                      value={resource.title}
+                      onChange={(e) => updateResource(index, 'title', e.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeResource(index)}
+                    >
+                      <X className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="https://..."
+                      value={resource.url}
+                      onChange={(e) => updateResource(index, 'url', e.target.value)}
+                    />
+                    {resource.url && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => window.open(resource.url, '_blank')}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </Card>
 
       <div>
         <Label>Image URL (Optional)</Label>
