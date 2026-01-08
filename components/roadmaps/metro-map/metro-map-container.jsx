@@ -9,7 +9,8 @@ export default function MetroMapContainer({
   userProgress,
   roadmap,
   currentUser,
-  onMarkComplete
+  onMarkComplete,
+  quizStatus
 }) {
   const [expandedNodeId, setExpandedNodeId] = useState(null)
   const containerRef = useRef(null)
@@ -25,9 +26,7 @@ export default function MetroMapContainer({
 
   const isWeekUnlocked = (weekNum) => {
     const week = parseInt(weekNum)
-
     if (week === 1) return true
-
     if (!currentUser) return false
 
     const previousWeek = week - 1
@@ -44,9 +43,7 @@ export default function MetroMapContainer({
       completedSubtopics += nodeProgress?.completedSubtopics?.length || 0
     })
 
-    const isComplete = totalSubtopics > 0 && completedSubtopics === totalSubtopics
-
-    return isComplete
+    return totalSubtopics > 0 && completedSubtopics === totalSubtopics
   }
 
   useEffect(() => {
@@ -80,29 +77,12 @@ export default function MetroMapContainer({
     setExpandedNodeId(expandedNodeId === nodeId ? null : nodeId)
   }
 
-  const overallProgress = userProgress?.overallProgress || 0
+  const overallProgress = Math.min(100, userProgress?.overallProgress || 0)
   const currentNodeId = userProgress?.currentNodeId
 
   return (
-    <div className={`grid grid-cols-1 ${currentUser ? 'lg:grid-cols-4' : ''} gap-8`}>
-      <div className={currentUser ? 'lg:col-span-3' : ''}>
-        <div className="mb-6">
-          {currentUser && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Overall Progress</span>
-                <span className="text-sm font-medium">{Math.round(overallProgress)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div
-                  className="bg-primary h-full rounded-full transition-all duration-500"
-                  style={{ width: `${overallProgress}%` }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2">
         <div
           ref={containerRef}
           className="relative bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-gray-900/50 dark:to-gray-800/50 rounded-xl p-8 min-h-screen"
@@ -135,12 +115,13 @@ export default function MetroMapContainer({
       </div>
 
       {currentUser && (
-        <div className="lg:col-span-1 hidden lg:block">
+        <div className="lg:col-span-1">
           <ProgressSidebar
             roadmap={roadmap}
             nodes={nodes}
             userProgress={userProgress}
             overallProgress={overallProgress}
+            quizStatus={quizStatus}
           />
         </div>
       )}

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
-import { getRoadmap, getRoadmapNodes, getUser, getUserRoadmapProgress } from "@/lib/db"
+import { getRoadmap, getRoadmapNodes, getUser, getUserRoadmapProgress, getQuizStatusForUser } from "@/lib/db"
 import RoadmapDetailClient from "./roadmap-detail-client"
 import AuthCTABanner from "@/components/roadmaps/auth-cta-banner"
 
@@ -19,12 +19,16 @@ export default async function RoadmapDetailPage({ params }) {
 
   let currentUser = null
   let userProgress = null
+  let quizStatus = null
 
   if (authToken) {
     const payload = verifyToken(authToken.value)
     if (payload) {
       currentUser = await getUser(payload.email)
-      userProgress = await getUserRoadmapProgress(payload.id, slug)
+      if (currentUser) {
+        userProgress = await getUserRoadmapProgress(currentUser._id.toString(), slug)
+        quizStatus = await getQuizStatusForUser(currentUser._id.toString(), slug)
+      }
     }
   }
 
@@ -36,6 +40,7 @@ export default async function RoadmapDetailPage({ params }) {
         nodes={nodes}
         userProgress={userProgress}
         currentUser={currentUser}
+        quizStatus={quizStatus}
       />
     </>
   )

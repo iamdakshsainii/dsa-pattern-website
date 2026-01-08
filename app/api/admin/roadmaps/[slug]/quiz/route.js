@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
-import { getRandomAvailableQuiz, getUserQuizAttempts, getRoadmap } from "@/lib/db"
+import { getNextQuizForUser, getQuizStatusForUser, getRoadmap } from "@/lib/db"
 
 export async function GET(request, { params }) {
   try {
@@ -23,22 +23,38 @@ export async function GET(request, { params }) {
       )
     }
 
-    const userAttempts = await getUserQuizAttempts(user.id, slug)
-    const attemptLimit = roadmap.quizAttemptLimit || 3
-    const attemptsUsed = userAttempts?.attemptsUsed || 0
+    const quizStatus = await getQuizStatusForUser(user.id, slug)
 
-    if (attemptsUsed >= attemptLimit) {
+    if (!quizStatus) {
+      return NextResponse.json(
+        { error: "Quiz status not found" },
+        { status: 404 }
+      )
+    }
+
+    if (quizStatus.status === "mastered") {
       return NextResponse.json(
         {
-          error: "No attempts remaining",
-          attemptsUsed,
-          attemptLimit
+          error: "Quiz mastered",
+          message: "Congratulations! You've mastered this roadmap. No need for more quizzes - start applying for jobs!",
+          status: "mastered"
         },
         { status: 403 }
       )
     }
 
-    const quiz = await getRandomAvailableQuiz(user.id, slug)
+    if (!quizStatus.canTakeQuiz) {
+      return NextResponse.json(
+        {
+          error: "No attempts remaining",
+          attemptsUsed: quizStatus.attemptsUsed,
+          attemptsUnlocked: quizStatus.attemptsUnlocked
+        },
+        { status: 403 }
+      )
+    }
+
+    const quiz = await getNextQuizForUser(user.id, slug)
 
     if (!quiz) {
       return NextResponse.json(
@@ -53,7 +69,8 @@ export async function GET(request, { params }) {
         settings: quiz.settings
       },
       quizId: quiz.quizId,
-      attemptsRemaining: attemptLimit - attemptsUsed
+      attemptsRemaining: quizStatus.attemptsRemaining,
+      status: quizStatus.status
     })
   } catch (error) {
     console.error("Error fetching quiz:", error)

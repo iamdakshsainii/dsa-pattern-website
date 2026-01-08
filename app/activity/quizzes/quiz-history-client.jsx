@@ -178,7 +178,8 @@ export default function QuizHistoryClient({ results, roadmaps, userId }) {
               const roadmap = roadmapMap[roadmapId]
               const bestScore = Math.max(...attempts.map(a => a.percentage))
               const latestAttempt = attempts[0]
-              const canRetake = !latestAttempt.passed
+              const passedCount = attempts.filter(a => a.passed).length
+              const isMastered = passedCount >= 3
 
               return (
                 <Card key={roadmapId} className="p-6">
@@ -194,11 +195,22 @@ export default function QuizHistoryClient({ results, roadmaps, userId }) {
                     </div>
 
                     <div className="flex gap-2">
-                      {canRetake && (
+                      {isMastered ? (
+                        <Badge variant="default" className="bg-green-600 text-white px-4 py-2 text-sm">
+                          ✅ Mastered
+                        </Badge>
+                      ) : !latestAttempt.passed ? (
                         <Link href={`/roadmaps/${roadmapId}/quiz`}>
                           <Button size="sm" variant="outline">
                             <RotateCcw className="h-4 w-4 mr-2" />
                             Retake Quiz
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link href={`/roadmaps/${roadmapId}/quiz`}>
+                          <Button size="sm" variant="outline">
+                            <RotateCcw className="h-4 w-4 mr-2" />
+                            Practice Again
                           </Button>
                         </Link>
                       )}

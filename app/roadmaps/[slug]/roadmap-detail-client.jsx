@@ -1,149 +1,195 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import {
   ArrowLeft,
   Clock,
   BookOpen,
-  Target,
-  Briefcase,
   Download,
   Lock,
-  Award
-} from "lucide-react"
+  Award,
+  Map,
+  List,
+  Target,
+  Briefcase,
+  CheckCircle2,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import MetroMapContainer from "@/components/roadmaps/metro-map/metro-map-container"
-import QuizUnlockBanner from "@/components/roadmaps/quiz/quiz-unlock-banner"
+} from "@/components/ui/dialog";
+import MetroMapContainer from "@/components/roadmaps/metro-map/metro-map-container";
+import RoadmapListView from "@/components/roadmaps/roadmap-list-view";
+import QuizUnlockBanner from "@/components/roadmaps/quiz/quiz-unlock-banner";
 
 export default function RoadmapDetailClient({
   roadmap,
   nodes,
   userProgress: initialUserProgress,
-  currentUser
+  currentUser,
+  quizStatus: initialQuizStatus,
 }) {
-  const [userProgress, setUserProgress] = useState(initialUserProgress)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [showLoginDialog, setShowLoginDialog] = useState(false)
-  const [quizPassed, setQuizPassed] = useState(false)
-  const router = useRouter()
+  const [userProgress, setUserProgress] = useState(initialUserProgress);
+  const [quizStatus, setQuizStatus] = useState(initialQuizStatus);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+ const [viewMode, setViewMode] = useState('metro')
+
+useEffect(() => {
+  const saved = sessionStorage.getItem('roadmap-view-mode')
+  if (saved && (saved === 'metro' || saved === 'list')) {
+    setViewMode(saved)
+  }
+}, []);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("roadmap-view-mode", viewMode);
+    }
+  }, [viewMode]);
 
   const refreshProgress = async () => {
-    if (!currentUser) return
+    if (!currentUser) return;
 
-    setIsRefreshing(true)
+    setIsRefreshing(true);
     try {
       const response = await fetch(
         `/api/roadmaps/progress?roadmapId=${roadmap.slug}`
-      )
+      );
       if (response.ok) {
-        const data = await response.json()
-        setUserProgress(data.progress)
+        const data = await response.json();
+        setUserProgress(data.progress);
       }
     } catch (error) {
-      console.error('Error refreshing progress:', error)
+      console.error("Error refreshing progress:", error);
     } finally {
-      setIsRefreshing(false)
+      setIsRefreshing(false);
     }
-  }
+  };
+
+  const refreshQuizStatus = async () => {
+    if (!currentUser) return;
+
+    try {
+      const res = await fetch(`/api/roadmaps/${roadmap.slug}/quiz/status`, {
+        credentials: "include",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setQuizStatus(data);
+      }
+    } catch (error) {
+      console.error("Error refreshing quiz status:", error);
+    }
+  };
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && currentUser) {
-        refreshProgress()
+      if (document.visibilityState === "visible" && currentUser) {
+        refreshProgress();
+        refreshQuizStatus();
       }
-    }
+    };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [currentUser, roadmap.slug])
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [currentUser, roadmap.slug]);
 
-  const overallProgress = userProgress?.overallProgress || 0
-
-  useEffect(() => {
-    if (currentUser && overallProgress === 100) {
-      fetchQuizStatus()
-    }
-  }, [currentUser, overallProgress])
-
-  const fetchQuizStatus = async () => {
-    try {
-      const res = await fetch(`/api/roadmaps/quiz?roadmapId=${roadmap.slug}`)
-      if (res.ok) {
-        const data = await res.json()
-        setQuizPassed(data.passed)
-      }
-    } catch (error) {
-      console.error('Error fetching quiz status:', error)
-    }
-  }
+  const overallProgress = Math.min(100, userProgress?.overallProgress || 0);
 
   const totalSubtopics = nodes.reduce(
     (sum, node) => sum + (node.subtopics?.length || 0),
     0
-  )
+  );
+  const completedSubtopics =
+    userProgress?.nodesProgress?.reduce(
+      (sum, nodeProgress) =>
+        sum + (nodeProgress.completedSubtopics?.length || 0),
+      0
+    ) || 0;
 
-  const completedSubtopics = userProgress?.nodesProgress?.reduce(
-    (sum, nodeProgress) => sum + (nodeProgress.completedSubtopics?.length || 0),
-    0
-  ) || 0
+  // ADD THESE LOGS HERE:
+  console.log("🔍 ROADMAP DEBUG:");
+  console.log("Total nodes:", nodes.length);
+  console.log("Total subtopics:", totalSubtopics);
+  console.log("Completed subtopics:", completedSubtopics);
+  console.log("User progress nodes:", userProgress?.nodesProgress?.length);
+  console.log("Overall progress from DB:", userProgress?.overallProgress);
+  console.log("Capped progress:", overallProgress);
+  console.log(
+    "Nodes data:",
+    nodes.map((n) => ({
+      week: n.weekNumber,
+      nodeId: n.nodeId,
+      title: n.title,
+      subtopics: n.subtopics?.length,
+    }))
+  );
+  console.log(
+    "User progress data:",
+    userProgress?.nodesProgress?.map((np) => ({
+      nodeId: np.nodeId,
+      completedSubtopics: np.completedSubtopics?.length,
+      totalSubtopics: np.totalSubtopics,
+    }))
+  );
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "Beginner":
-        return "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20"
+        return "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20";
       case "Intermediate":
-        return "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20"
+        return "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20";
       case "Advanced":
-        return "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20"
+        return "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20";
       default:
-        return "bg-gray-500/10 text-gray-700 dark:text-gray-400"
+        return "bg-gray-500/10 text-gray-700 dark:text-gray-400";
     }
-  }
+  };
 
   const handleMarkComplete = async (nodeId) => {
     if (!currentUser) {
-      alert("Please login to track progress")
-      return
+      alert("Please login to track progress");
+      return;
     }
 
     try {
-      const response = await fetch('/api/roadmaps/progress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/roadmaps/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           roadmapId: roadmap.slug,
           nodeId,
           status: "completed",
-          completedSubtopics: []
-        })
-      })
+          completedSubtopics: [],
+        }),
+      });
 
       if (response.ok) {
-        await refreshProgress()
+        await refreshProgress();
       }
     } catch (error) {
-      console.error("Failed to update progress:", error)
+      console.error("Failed to update progress:", error);
     }
-  }
+  };
 
   const handleProtectedDownload = (e) => {
     if (!currentUser) {
-      e.preventDefault()
-      setShowLoginDialog(true)
+      e.preventDefault();
+      setShowLoginDialog(true);
     }
-  }
+  };
 
   return (
     <>
@@ -178,6 +224,27 @@ export default function RoadmapDetailClient({
                   </div>
                 </div>
               </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={viewMode === "metro" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("metro")}
+                  className="gap-2"
+                >
+                  <Map className="h-4 w-4" />
+                  Metro
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="gap-2"
+                >
+                  <List className="h-4 w-4" />
+                  List
+                </Button>
+              </div>
             </div>
 
             {currentUser && (
@@ -185,7 +252,8 @@ export default function RoadmapDetailClient({
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Your Progress</span>
                   <span className="text-sm font-medium">
-                    {completedSubtopics}/{totalSubtopics} subtopics • {Math.round(overallProgress)}%
+                    {completedSubtopics}/{totalSubtopics} subtopics •{" "}
+                    {Math.round(overallProgress)}%
                   </span>
                 </div>
                 <Progress value={overallProgress} className="h-2" />
@@ -202,10 +270,12 @@ export default function RoadmapDetailClient({
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
                     Study Materials Available
-                    <Badge variant="secondary">{roadmap.notesAttachments.length} files</Badge>
+                    <Badge variant="secondary">
+                      {roadmap.notesAttachments.length} files
+                    </Badge>
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {roadmap.notesAttachments.map((attachment, idx) => (
+                    {roadmap.notesAttachments.map((attachment, idx) =>
                       currentUser ? (
                         <Button
                           key={idx}
@@ -241,110 +311,112 @@ export default function RoadmapDetailClient({
                           </span>
                         </Button>
                       )
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
             </Card>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <aside className="lg:col-span-1">
-              <Card className="p-6 sticky top-24">
-                <h3 className="font-semibold mb-4">About This Roadmap</h3>
-                <p className="text-sm text-muted-foreground mb-6">
-                  {roadmap.description}
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                  <Target className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Prerequisites</p>
+                  <p className="font-semibold">
+                    {roadmap.prerequisites?.length || 0} items
+                  </p>
+                </div>
+              </div>
+            </Card>
 
-                {roadmap.prerequisites && roadmap.prerequisites.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
-                      <Target className="h-4 w-4" />
-                      Prerequisites
-                    </h4>
-                    <ul className="text-sm text-muted-foreground space-y-1">
-                      {roadmap.prerequisites.map((prereq, idx) => (
-                        <li key={idx}>• {prereq}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Outcomes</p>
+                  <p className="font-semibold">
+                    {roadmap.outcomes?.length || 0} skills
+                  </p>
+                </div>
+              </div>
+            </Card>
 
-                {roadmap.outcomes && roadmap.outcomes.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold mb-2">What You'll Learn</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {roadmap.outcomes.map((outcome, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs">
-                          {outcome}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {roadmap.targetRoles && roadmap.targetRoles.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
-                      <Briefcase className="h-4 w-4" />
-                      Target Roles
-                    </h4>
-                    <div className="flex flex-wrap gap-1">
-                      {roadmap.targetRoles.map((role, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {role}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </Card>
-            </aside>
-
-            <div className="lg:col-span-3">
-              <MetroMapContainer
-                nodes={nodes}
-                userProgress={userProgress}
-                roadmap={roadmap}
-                currentUser={currentUser}
-                onMarkComplete={handleMarkComplete}
-                onProgressUpdate={refreshProgress}
-              />
-
-              {currentUser && overallProgress === 100 && (
-                <QuizUnlockBanner
-                  roadmapSlug={roadmap.slug}
-                  roadmapTitle={roadmap.title}
-                  overallProgress={overallProgress}
-                  isUnlocked={true}
-                />
-              )}
-
-              {currentUser && quizPassed && (
-                <Card className="mt-6 p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 border-yellow-200 dark:border-yellow-800">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center">
-                        <Award className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold mb-1">🎉 Certificate Ready!</h3>
-                        <p className="text-sm text-muted-foreground">
-                          You've completed this roadmap and passed the quiz. Download your certificate now!
-                        </p>
-                      </div>
-                    </div>
-                    <Link href={`/roadmaps/${roadmap.slug}/certificate`}>
-                      <Button size="lg" className="gap-2">
-                        <Award className="h-5 w-5" />
-                        View Certificate
-                      </Button>
-                    </Link>
-                  </div>
-                </Card>
-              )}
-            </div>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                  <Briefcase className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Target Roles</p>
+                  <p className="font-semibold">
+                    {roadmap.targetRoles?.length || 0} roles
+                  </p>
+                </div>
+              </div>
+            </Card>
           </div>
+
+          {viewMode === "metro" ? (
+            <MetroMapContainer
+              nodes={nodes}
+              userProgress={userProgress}
+              roadmap={roadmap}
+              currentUser={currentUser}
+              onMarkComplete={handleMarkComplete}
+              onProgressUpdate={refreshProgress}
+              quizStatus={quizStatus}
+            />
+          ) : (
+            <RoadmapListView
+              nodes={nodes}
+              userProgress={userProgress}
+              roadmap={roadmap}
+              currentUser={currentUser}
+              quizStatus={quizStatus}
+            />
+          )}
+
+          {currentUser && overallProgress >= 90 && !quizStatus?.status && (
+            <QuizUnlockBanner
+              roadmapSlug={roadmap.slug}
+              roadmapTitle={roadmap.title}
+              overallProgress={overallProgress}
+              isUnlocked={overallProgress >= 90}
+            />
+          )}
+
+          {currentUser && quizStatus?.status === "mastered" && (
+            <Card className="mt-6 p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 border-yellow-200 dark:border-yellow-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center">
+                    <Award className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold mb-1">
+                      🎉 Certificate Ready!
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      You've completed this roadmap and passed the quiz.
+                      Download your certificate now!
+                    </p>
+                  </div>
+                </div>
+                <Link href={`/roadmaps/${roadmap.slug}/certificate`}>
+                  <Button size="lg" className="gap-2">
+                    <Award className="h-5 w-5" />
+                    View Certificate
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          )}
         </main>
       </div>
 
@@ -353,21 +425,21 @@ export default function RoadmapDetailClient({
           <DialogHeader>
             <DialogTitle>Login Required</DialogTitle>
             <DialogDescription>
-              You need to be logged in to download study materials.
-              Create a free account to access all learning resources!
+              You need to be logged in to download study materials. Create a
+              free account to access all learning resources!
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3 mt-4">
             <Button
               className="flex-1"
-              onClick={() => router.push('/auth/signup')}
+              onClick={() => router.push("/auth/signup")}
             >
               Sign Up Free
             </Button>
             <Button
               variant="outline"
               className="flex-1"
-              onClick={() => router.push('/auth/login')}
+              onClick={() => router.push("/auth/login")}
             >
               Login
             </Button>
@@ -375,5 +447,5 @@ export default function RoadmapDetailClient({
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

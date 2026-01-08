@@ -1,64 +1,55 @@
 import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
-import { verifyToken } from "@/lib/auth"
-import { getUser, saveQuizResult, incrementQuizAttempt } from "@/lib/db"
+import { getCurrentUser } from "@/lib/auth"
+import { saveQuizResult, incrementQuizAttempt, getUserQuizBadgeStats } from "@/lib/db"
 
 export async function POST(request) {
   try {
-    const cookieStore = await cookies()
-    const authToken = cookieStore.get("auth-token") || cookieStore.get("authToken")
+    const user = await getCurrentUser()
 
-    if (!authToken) {
+    if (!user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       )
     }
 
-    const payload = verifyToken(authToken.value)
-    if (!payload) {
-      return NextResponse.json(
-        { error: "Invalid token" },
-        { status: 401 }
-      )
-    }
-
-    const currentUser = await getUser(payload.email)
-    if (!currentUser) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      )
-    }
-
-    const { roadmapId, answers, score, timeTaken, quizId } = await request.json()
-
-    if (!roadmapId || !answers) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      )
-    }
-
-    await incrementQuizAttempt(currentUser._id.toString(), roadmapId, quizId)
+    const { roadmapId, quizId, answers, score, timeTaken } = await request.json()
 
     const result = await saveQuizResult(
-      currentUser._id.toString(),
+      user.id,
       roadmapId,
       score,
       answers,
-      timeTaken
+      timeTaken,
+      quizId
     )
 
-    return NextResponse.json(result)
+    await incrementQuizAttempt(user.id, roadmapId, quizId)
 
+    const badgeStats = await getUserQuizBadgeStats(user.id)
+
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/achievements/check`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          stats: badgeStats
+        })
+      })
+    } catch (badgeError) {
+      console.error('Badge check failed:', badgeError)
+    }
+
+    return NextResponse.json({
+      ...result,
+      badgeStats
+    })
   } catch (error) {
     console.error("Error submitting quiz:", error)
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Failed to submit quiz" },
       { status: 500 }
     )
   }
 }
-
-
