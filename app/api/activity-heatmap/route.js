@@ -1,6 +1,7 @@
+
 import { NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
-import clientPromise from "@/lib/mongodb"
+import { connectToDatabase } from "@/lib/db"
 
 export async function GET(request) {
   try {
@@ -12,41 +13,60 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url)
     const year = parseInt(searchParams.get('year') || new Date().getFullYear())
 
-    const client = await clientPromise
-    const db = client.db("dsa_patterns")
-    const progressCollection = db.collection("progress")
+    const { db } = await connectToDatabase()
 
-    // Get all completions for the user in the specified year
+    // Date range for the year
     const startDate = new Date(year, 0, 1)
     const endDate = new Date(year, 11, 31, 23, 59, 59)
 
-    const completions = await progressCollection
+    // Get completions from user_progress (correct collection!)
+    const completions = await db
+      .collection("user_progress")
       .find({
-        userId: user.id,
-        completed: true,
-        completedDate: {
+        user_id: user.id,
+        status: "completed",
+        updated_at: {
           $gte: startDate,
           $lte: endDate
         }
       })
       .toArray()
 
-    // Create heatmap data (371 days = 53 weeks * 7 days)
-    const heatmap = []
-    const today = new Date()
-    const startOfYear = new Date(year, 0, 1)
+    // Also get quiz completions
+    const quizCompletions = await db
+      .collection("quiz_results")
+      .find({
+        userId: user.id,
+        completedAt: {
+          $gte: startDate,
+          $lte: endDate
+        }
+      })
+      .toArray()
 
-    // Count completions by date
-    const completionsByDate = {}
+    // Count by date
+    const countsByDate = {}
+
+    // Add problem completions
     completions.forEach(c => {
-      if (c.completedDate) {
-        const date = new Date(c.completedDate)
-        const dateStr = date.toISOString().split('T')[0]
-        completionsByDate[dateStr] = (completionsByDate[dateStr] || 0) + 1
+      if (c.updated_at) {
+        const dateStr = new Date(c.updated_at).toISOString().split('T')[0]
+        countsByDate[dateStr] = (countsByDate[dateStr] || 0) + 1
       }
     })
 
-    // Generate 371 days of data (53 weeks)
+    // Add quiz completions
+    quizCompletions.forEach(q => {
+      if (q.completedAt) {
+        const dateStr = new Date(q.completedAt).toISOString().split('T')[0]
+        countsByDate[dateStr] = (countsByDate[dateStr] || 0) + 1
+      }
+    })
+
+    // Generate 371 days (53 weeks × 7 days)
+    const heatmap = []
+    const startOfYear = new Date(year, 0, 1)
+
     for (let i = 0; i < 371; i++) {
       const date = new Date(startOfYear)
       date.setDate(date.getDate() + i)
@@ -54,19 +74,21 @@ export async function GET(request) {
 
       heatmap.push({
         date: dateStr,
-        count: completionsByDate[dateStr] || 0
+        count: countsByDate[dateStr] || 0
       })
     }
 
     return NextResponse.json({
       success: true,
       heatmap,
-      year
+      year,
+      totalSubmissions: Object.values(countsByDate).reduce((sum, count) => sum + count, 0)
     })
+
   } catch (error) {
     console.error("Activity heatmap error:", error)
     return NextResponse.json(
-      { error: "Failed to fetch activity heatmap", details: error.message },
+      { error: "Failed to fetch heatmap", details: error.message },
       { status: 500 }
     )
   }

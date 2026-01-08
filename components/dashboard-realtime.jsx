@@ -25,91 +25,10 @@ import SkillsChart from './dashboard/skills-chart'
 import PatternProgressGrid from './dashboard/pattern-progress-grid'
 import QuizSummaryWidget from './dashboard/quiz-summary-widget'
 import { BadgeToastManager } from './achievements/badge-unlock-toast'
+import SmartRoadmapWidget from './dashboard/smart-roadmap-widget'
 
 import CommunityBanner from './community/community-banner'
 import WhatsAppWidget from './community/whatsapp-widget'
-
-function YourRoadmapsWidget({ userId }) {
-  const [activeRoadmaps, setActiveRoadmaps] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchActiveRoadmaps()
-  }, [])
-
-  const fetchActiveRoadmaps = async () => {
-    try {
-      const response = await fetch('/api/roadmaps/user/active', {
-        credentials: 'include'
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setActiveRoadmaps(data.activeRoadmaps || [])
-      }
-    } catch (error) {
-      console.error('Failed to fetch roadmaps:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) return null
-
-  if (activeRoadmaps.length === 0) {
-    return (
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Your Roadmaps</h3>
-        <div className="text-center py-8">
-          <MapPin className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground mb-4">
-            Start a learning roadmap to track your progress
-          </p>
-          <Link href="/roadmaps">
-            <Button size="sm">Explore Roadmaps</Button>
-          </Link>
-        </div>
-      </Card>
-    )
-  }
-
-  return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Your Roadmaps</h3>
-        <Link href="/roadmaps">
-          <Button variant="ghost" size="sm">View All</Button>
-        </Link>
-      </div>
-      <div className="space-y-3">
-        {activeRoadmaps.slice(0, 3).map((progress) => (
-          <Link
-            key={progress.roadmapId}
-            href={`/roadmaps/${progress.roadmapId}`}
-            className="block p-3 rounded-lg hover:bg-accent transition-colors border"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">{progress.roadmap?.icon}</span>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">
-                  {progress.roadmap?.title}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {Math.round(progress.overallProgress)}% complete
-                </p>
-              </div>
-            </div>
-            <Progress value={progress.overallProgress} className="h-1.5" />
-          </Link>
-        ))}
-      </div>
-      <Link href="/roadmaps">
-        <Button variant="outline" className="w-full mt-3" size="sm">
-          Explore All Roadmaps
-        </Button>
-      </Link>
-    </Card>
-  )
-}
 
 export default function DashboardRealTime({ userId, userName, userEmail }) {
   const [stats, setStats] = useState(null)
@@ -124,13 +43,27 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
     fetchAllData()
     fetchAllPatterns()
 
+    const statsInterval = setInterval(() => {
+      fetchAllData()
+    }, 30000)
+
+    const heatmapInterval = setInterval(() => {
+      fetchHeatmapData()
+    }, 60000)
+
     const handleRefresh = () => {
       fetchAllData()
       fetchHeatmapData()
+      fetchAllPatterns()
     }
 
     window.addEventListener('dashboard-refresh', handleRefresh)
-    return () => window.removeEventListener('dashboard-refresh', handleRefresh)
+
+    return () => {
+      clearInterval(statsInterval)
+      clearInterval(heatmapInterval)
+      window.removeEventListener('dashboard-refresh', handleRefresh)
+    }
   }, [])
 
   useEffect(() => {
@@ -151,17 +84,26 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
   const fetchAllData = async () => {
     try {
       setRefreshing(true)
-      const response = await fetch('/api/stats', {
+
+      const response = await fetch('/api/dashboard/stats', {
         cache: 'no-store',
         credentials: 'include'
       })
 
-      if (response.ok) {
-        const data = await response.json()
+      if (!response.ok) {
+        throw new Error(`API returned ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      if (data.success && data.stats) {
         setStats(data.stats)
+      } else {
+        console.error('Invalid response format:', data)
       }
     } catch (error) {
-      console.error('Error fetching stats:', error)
+      console.error('Error fetching dashboard stats:', error)
+      setStats(null)
     } finally {
       setLoading(false)
       setRefreshing(false)
@@ -207,6 +149,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
   const handleRefreshClick = () => {
     fetchAllData()
     fetchHeatmapData()
+    fetchAllPatterns()
   }
 
   const handleYearChange = (year) => {
@@ -451,7 +394,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
           <div className="space-y-6">
             <DailyChallengeCard userProgress={{ completed: stats.recentActivity?.map(a => a.problemId) || [] }} />
 
-            <YourRoadmapsWidget userId={userId} />
+            <SmartRoadmapWidget userId={userId} />
 
             <QuizSummaryWidget />
 

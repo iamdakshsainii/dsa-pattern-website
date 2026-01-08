@@ -1,19 +1,18 @@
-import { redirect } from "next/navigation"
 import { getCurrentUser } from "@/lib/auth"
 import { isAdmin } from "@/lib/admin"
-import AdminDashboard from "./admin-dashboard"
+import { redirect } from "next/navigation"
+import AdminDashboard from "@/components/admin/admin-dashboard"
 
 export const metadata = {
-  title: "Admin Panel | DSA Patterns",
-  description: "Admin dashboard for managing roadmaps and platform content"
+  title: "Admin Dashboard"
 }
 
 export default async function AdminPage() {
   const user = await getCurrentUser()
 
-  if (!user || !isAdmin(user)) { 
-    redirect('/dashboard')
+  if (!user || !isAdmin(user)) {
+    redirect("/admin/login")
   }
 
-  return <AdminDashboard currentUser={user} />
+  return <AdminDashboard />
 }

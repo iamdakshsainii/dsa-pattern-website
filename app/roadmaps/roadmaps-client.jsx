@@ -41,23 +41,23 @@ export default function RoadmapsClient({ initialRoadmaps, userActiveRoadmaps, cu
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl">
 
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <MapPin className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold">Learning Roadmaps</h1>
+            <MapPin className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Learning Roadmaps</h1>
           </div>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
             Choose your path to mastery. Structured learning for every goal.
           </p>
         </div>
 
         {currentUser && userActiveRoadmaps.length > 0 && (
-          <Card className="p-6 mb-8 bg-gradient-to-r from-primary/5 to-purple-500/5 border-primary/20">
+          <Card className="p-4 sm:p-6 mb-6 sm:mb-8 bg-gradient-to-r from-primary/5 to-purple-500/5 border-primary/20">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">Continue Learning</h2>
+              <h2 className="text-lg sm:text-xl font-semibold">Continue Learning</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {userActiveRoadmaps.slice(0, 3).map((progress) => (
@@ -71,10 +71,10 @@ export default function RoadmapsClient({ initialRoadmaps, userActiveRoadmaps, cu
           </Card>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
           <aside className="lg:col-span-1">
-            <Card className="p-6 sticky top-4">
-              <h2 className="text-lg font-semibold mb-4">Filters</h2>
+            <Card className="p-4 sm:p-6 lg:sticky lg:top-4">
+              <h2 className="text-base sm:text-lg font-semibold mb-4">Filters</h2>
               <RoadmapFilters
                 onFilterChange={handleFilterChange}
                 initialFilters={filters}
@@ -90,11 +90,11 @@ export default function RoadmapsClient({ initialRoadmaps, userActiveRoadmaps, cu
             </div>
 
             {roadmaps.length === 0 ? (
-              <Card className="p-12 text-center">
-                <p className="text-muted-foreground mb-4">No roadmaps found matching your filters</p>
+              <Card className="p-8 sm:p-12 text-center">
+                <p className="text-sm sm:text-base text-muted-foreground mb-4">No roadmaps found matching your filters</p>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {roadmaps.map((roadmap) => (
                   <RoadmapCard
                     key={roadmap._id}

@@ -14,12 +14,16 @@ export default function ProfileCompletionWidget() {
 
   useEffect(() => {
     fetchProfile()
+
+    const interval = setInterval(fetchProfile, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const fetchProfile = async () => {
     try {
       const response = await fetch('/api/profile', {
-        credentials: 'include'
+        credentials: 'include',
+        cache: 'no-store'
       })
 
       if (response.ok) {
@@ -79,21 +83,7 @@ export default function ProfileCompletionWidget() {
   }
 
   if (completion === 100) {
-    return (
-      <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border-green-200 dark:border-green-800">
-        <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-            <Check className="h-6 w-6 text-white" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg mb-1">Profile Complete! 🎉</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Your profile is fully set up and ready to showcase.
-            </p>
-          </div>
-        </div>
-      </Card>
-    )
+    return null
   }
 
   return (
@@ -112,7 +102,6 @@ export default function ProfileCompletionWidget() {
             Add more details to make your profile stand out to recruiters and peers.
           </p>
 
-          {/* Completion Checklist */}
           <div className="space-y-2 mb-4">
             {getCompletionItems().slice(0, 4).map((item, index) => (
               <div key={index} className="flex items-center gap-2 text-sm">

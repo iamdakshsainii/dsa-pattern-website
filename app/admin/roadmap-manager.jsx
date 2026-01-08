@@ -181,12 +181,12 @@ export default function RoadmapManager() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Roadmap Manager</h2>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h2 className="text-xl sm:text-2xl font-bold">Roadmap Manager</h2>
         <Dialog open={isCreating} onOpenChange={setIsCreating}>
           <DialogTrigger asChild>
-            <Button onClick={() => { resetForm(); setIsCreating(true); }}>
+            <Button onClick={() => { resetForm(); setIsCreating(true); }} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               Create Roadmap
             </Button>
@@ -198,7 +198,7 @@ export default function RoadmapManager() {
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label>Slug (URL-friendly)</Label>
                   <Input
@@ -241,7 +241,7 @@ export default function RoadmapManager() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <Label>Category</Label>
                   <Select
@@ -287,7 +287,7 @@ export default function RoadmapManager() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label>Color (Hex)</Label>
                   <Input
@@ -334,7 +334,7 @@ export default function RoadmapManager() {
                 />
               </div>
 
-              <div className="flex gap-2 pt-4">
+              <div className="flex flex-col sm:flex-row gap-2 pt-4">
                 <Button type="submit" className="flex-1">
                   {editingRoadmap ? "Update Roadmap" : "Create Roadmap"}
                 </Button>
@@ -342,6 +342,7 @@ export default function RoadmapManager() {
                   type="button"
                   variant="outline"
                   onClick={() => { resetForm(); setIsCreating(false); }}
+                  className="flex-1 sm:flex-initial"
                 >
                   Cancel
                 </Button>
@@ -356,15 +357,13 @@ export default function RoadmapManager() {
           <p className="text-muted-foreground">No roadmaps created yet</p>
         </Card>
       ) : (
-        // 🆕 CHANGED: grid-cols-4 instead of grid-cols-3
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {roadmaps.map((roadmap) => (
-            // 🆕 CHANGED: Smaller padding (p-3 instead of p-4)
             <Card key={roadmap._id} className="p-3">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">{roadmap.icon}</span>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="font-semibold text-sm line-clamp-1">{roadmap.title}</h3>
                     <div className="flex gap-1 mt-1">
                       <Badge variant="outline" className="text-xs">
@@ -380,7 +379,7 @@ export default function RoadmapManager() {
               </p>
 
               <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                <BookOpen className="h-3 w-3" />
+                <BookOpen className="h-3 w-3 flex-shrink-0" />
                 <span>{roadmap.stats?.totalNodes || 0} topics</span>
                 <span>•</span>
                 <span>{roadmap.estimatedWeeks}w</span>
