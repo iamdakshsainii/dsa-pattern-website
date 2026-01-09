@@ -19,18 +19,18 @@ export default function MapNodeCircle({
     switch (status) {
       case "completed":
         return {
-          bg: "bg-green-500",
+          bg: "bg-gradient-to-br from-green-500 to-emerald-600",
           border: "border-green-500",
           icon: <CheckCircle2 className="h-6 w-6 text-white" />,
           text: "text-white"
         }
       case "in-progress":
         return {
-          bg: "bg-blue-500",
+          bg: "bg-gradient-to-br from-blue-500 to-purple-600",
           border: "border-blue-500",
           icon: <Circle className="h-6 w-6 text-white" />,
           text: "text-white",
-          animate: "animate-pulse-glow"
+          animate: "animate-pulse"
         }
       default:
         if (!isUnlocked) {
@@ -68,7 +68,7 @@ export default function MapNodeCircle({
           flex items-center justify-center
           border-4 ${style.border} ${style.bg}
           transition-all duration-300
-          ${isUnlocked ? 'group-hover:scale-110' : ''}
+          ${isUnlocked ? 'group-hover:scale-110 group-hover:shadow-lg' : ''}
           ${style.animate || ''}
           ${style.opacity || ''}
           ${isActive ? 'ring-4 ring-blue-400 ring-offset-2' : ''}
@@ -96,13 +96,13 @@ export default function MapNodeCircle({
             {node.estimatedHours}h
           </div>
           {node.subtopics && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs border-slate-300 dark:border-slate-700">
               {node.subtopics.length} subtopics
             </Badge>
           )}
           {status === "completed" && (
-            <Badge className="text-xs bg-green-500/10 text-green-700 dark:text-green-400">
-              Completed
+            <Badge className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800">
+              ✓ Done
             </Badge>
           )}
         </div>
@@ -125,13 +125,12 @@ export default function MapNodeCircle({
         nodeContent
       )}
 
-      {/* Tooltip */}
-      {showTooltip && isUnlocked && (
-        <div className="absolute left-20 top-0 z-10 bg-black/90 text-white text-sm rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
-          {status === "completed" ? "✅ Completed" : "Click to expand"}
+      {/* Tooltip - ONLY show for unlocked non-completed nodes */}
+      {showTooltip && isUnlocked && status !== "completed" && (
+        <div className="absolute left-20 top-0 z-10 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-sm text-white text-sm rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-slate-700">
+          Click to view details
         </div>
       )}
     </div>
   )
 }
-

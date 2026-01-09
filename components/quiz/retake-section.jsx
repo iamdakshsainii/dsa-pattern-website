@@ -257,7 +257,7 @@ export function RetakeBonusSection({
         <div className="inline-block p-4 bg-purple-500/10 backdrop-blur-sm rounded-full mb-3 animate-bounce">
           <Sparkles className="h-12 w-12 text-purple-600" />
         </div>
-        <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-foreground">
           🎉 Bonus Attempts Unlocked!
         </h2>
         <p className="text-lg text-muted-foreground mb-3">

@@ -1,29 +1,35 @@
-import { redirect } from "next/navigation"
-import { cookies } from "next/headers"
-import { verifyToken } from "@/lib/auth"
-import DashboardRealTime from "@/components/dashboard-realtime"
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/auth";
+import DashboardRealTime from "@/components/dashboard-realtime";
 
 export default async function DashboardPage() {
-  const cookieStore = await cookies()
-  const authToken = cookieStore.get("auth-token")
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get("auth-token");
 
   if (!authToken) {
-    redirect("/auth/login")
+    redirect("/auth/login");
   }
 
-  let userId, userName, userEmail
+  let userId, userName, userEmail;
   try {
-    const payload = verifyToken(authToken.value)
+    const payload = verifyToken(authToken.value);
     if (!payload) {
-      redirect("/auth/login")
+      redirect("/auth/login");
     }
-    userId = payload.id
-    userName = payload.name
-    userEmail = payload.email
+    userId = payload.id;
+    userName = payload.name;
+    userEmail = payload.email;
   } catch (error) {
-    console.error("Auth token parse error:", error)
-    redirect("/auth/login")
+    console.error("Auth token parse error:", error);
+    redirect("/auth/login");
   }
 
-  return <DashboardRealTime userId={userId} userName={userName} userEmail={userEmail} />
+  return (
+    <DashboardRealTime
+      userId={userId}
+      userName={userName}
+      userEmail={userEmail}
+    />
+  );
 }

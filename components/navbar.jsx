@@ -31,6 +31,7 @@ import {
   MapPin,
   Shield,
   BarChart3,
+  UserCircle,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import ProfileAvatar from "./profile/profile-avatar"
@@ -237,6 +238,15 @@ export default function Navbar({ currentUser }) {
                     </Link>
                   </DropdownMenuItem>
 
+                  {profileData?.profile?.username && (
+                    <DropdownMenuItem asChild>
+                      <Link href={`/u/${profileData.profile.username}`} className="cursor-pointer flex items-center">
+                        <UserCircle className="h-4 w-4 mr-2" />
+                        Public Profile
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+
                   <DropdownMenuItem asChild>
                     <Link href="/profile/edit" className="cursor-pointer flex items-center">
                       <Edit className="h-4 w-4 mr-2" />
@@ -360,6 +370,20 @@ export default function Navbar({ currentUser }) {
                   <User className="h-5 w-5" />
                   Profile
                 </Link>
+
+                {profileData?.profile?.username && (
+                  <Link
+                    href={`/u/${profileData.profile.username}`}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      pathname === `/u/${profileData.profile.username}`
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-accent"
+                    }`}
+                  >
+                    <UserCircle className="h-5 w-5" />
+                    Public Profile
+                  </Link>
+                )}
 
                 <Link
                   href="/profile/activities"

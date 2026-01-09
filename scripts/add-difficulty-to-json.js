@@ -85,11 +85,11 @@ async function processPattern(patternSlug, dryRun = true) {
       }
 
       results.added++;
-      console.log(`  ${dryRun ? '[DRY RUN]' : '[UPDATED]'} ${file} -> ${difficulty}`);
+    //   console.log(`  ${dryRun ? '[DRY RUN]' : '[UPDATED]'} ${file} -> ${difficulty}`);
 
     } catch (error) {
       results.errors.push({ file, error: error.message });
-      console.error(`  [ERROR] ${file}: ${error.message}`);
+    //   console.error(`  [ERROR] ${file}: ${error.message}`);
     }
   }
 
@@ -101,16 +101,16 @@ async function main() {
   const dryRun = !args.includes('--apply');
   const specificPattern = args.find(arg => !arg.startsWith('--'));
 
-  console.log('\n===========================================');
-  console.log('  ADD DIFFICULTY TO JSON FILES');
-  console.log('===========================================\n');
+//   console.log('\n===========================================');
+//   console.log('  ADD DIFFICULTY TO JSON FILES');
+//   console.log('===========================================\n');
 
-  if (dryRun) {
-    console.log('MODE: DRY RUN (no changes will be made)');
-    console.log('Use --apply flag to actually update files\n');
-  } else {
-    console.log('MODE: APPLY (files will be updated with backups)\n');
-  }
+//   if (dryRun) {
+//     console.log('MODE: DRY RUN (no changes will be made)');
+//     console.log('Use --apply flag to actually update files\n');
+//   } else {
+//     console.log('MODE: APPLY (files will be updated with backups)\n');
+//   }
 
   const patterns = specificPattern
     ? [specificPattern]
@@ -124,8 +124,8 @@ async function main() {
   };
 
   for (const pattern of patterns) {
-    console.log(`\nProcessing: ${pattern}`);
-    console.log('-------------------------------------------');
+    // console.log(`\nProcessing: ${pattern}`);
+    // console.log('-------------------------------------------');
 
     try {
       const results = await processPattern(pattern, dryRun);
@@ -135,34 +135,34 @@ async function main() {
       summary.added += results.added;
       summary.errors.push(...results.errors.map(e => ({ pattern, ...e })));
 
-      console.log(`  Total: ${results.total} | Already has: ${results.alreadyHas} | Added: ${results.added}`);
+    //   console.log(`  Total: ${results.total} | Already has: ${results.alreadyHas} | Added: ${results.added}`);
 
     } catch (error) {
-      console.error(`  [ERROR] Failed to process pattern: ${error.message}`);
+    //   console.error(`  [ERROR] Failed to process pattern: ${error.message}`);
     }
   }
 
-  console.log('\n===========================================');
-  console.log('  SUMMARY');
-  console.log('===========================================');
-  console.log(`Total files scanned: ${summary.totalFiles}`);
-  console.log(`Already have difficulty: ${summary.alreadyHas}`);
-  console.log(`${dryRun ? 'Would add' : 'Added'} difficulty: ${summary.added}`);
-  console.log(`Errors: ${summary.errors.length}`);
+//   console.log('\n===========================================');
+//   console.log('  SUMMARY');
+//   console.log('===========================================');
+//   console.log(`Total files scanned: ${summary.totalFiles}`);
+//   console.log(`Already have difficulty: ${summary.alreadyHas}`);
+//   console.log(`${dryRun ? 'Would add' : 'Added'} difficulty: ${summary.added}`);
+//   console.log(`Errors: ${summary.errors.length}`);
 
   if (summary.errors.length > 0) {
-    console.log('\nErrors encountered:');
+    // console.log('\nErrors encountered:');
     summary.errors.forEach(({ pattern, file, error }) => {
-      console.log(`  ${pattern}/${file}: ${error}`);
+    //   console.log(`  ${pattern}/${file}: ${error}`);
     });
   }
 
-  if (dryRun && summary.added > 0) {
-    console.log('\nTo apply these changes, run:');
-    console.log('  node scripts/add-difficulty-to-json.js --apply');
-  }
+//   if (dryRun && summary.added > 0) {
+//     console.log('\nTo apply these changes, run:');
+//     console.log('  node scripts/add-difficulty-to-json.js --apply');
+//   }
 
-  console.log('\n');
+//   console.log('\n');
 }
 
 main().catch(console.error);

@@ -1,10 +1,23 @@
+'use client'
+
+import { useState, useRef } from 'react'
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, ExternalLink, BookMarked } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
+import HeroSection from '@/components/sheets/hero-section'
+import SheetQuizModal from '@/components/sheets/sheet-quiz-modal'
+import FeaturedSection from '@/components/sheets/featured-section'
+import FilterBar from '@/components/sheets/filter-bar'
+import BattleCard from '@/components/sheets/battle-card'
+import ComparisonTable from '@/components/sheets/comparison-table'
 
 export default function SheetsPage() {
+  const [quizOpen, setQuizOpen] = useState(false)
+  const [filters, setFilters] = useState({ timeline: 'all', goal: 'all', level: 'all' })
+
+  const comparisonRef = useRef(null)
+  const filterRef = useRef(null)
+
   const sheets = [
     {
       name: "Blind 75",
@@ -64,9 +77,41 @@ export default function SheetsPage() {
     },
   ]
 
+  const filterSheets = (sheets) => {
+    return sheets.filter(sheet => {
+      if (filters.timeline !== 'all') {
+        if (filters.timeline === 'short' && sheet.count >= 100) return false
+        if (filters.timeline === 'medium' && (sheet.count < 100 || sheet.count > 200)) return false
+        if (filters.timeline === 'long' && sheet.count < 200) return false
+      }
+
+      if (filters.goal !== 'all') {
+        if (filters.goal === 'interview' && sheet.count > 200) return false
+        if (filters.goal === 'learning' && sheet.count < 200) return false
+      }
+
+      if (filters.level !== 'all') {
+        if (filters.level === 'beginner' && sheet.count > 150) return false
+        if (filters.level === 'advanced' && sheet.count < 150) return false
+      }
+
+      return true
+    })
+  }
+
+  const filteredSheets = filterSheets(sheets)
+
+  const scrollToComparison = () => {
+    comparisonRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const scrollToFilter = () => {
+    filterRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <header className="border-b bg-background/95 backdrop-blur sticky top-0 z-10">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <header className="border-b bg-white/95 backdrop-blur sticky top-0 z-10">
         <div className="container flex h-16 items-center gap-4 px-4 max-w-7xl mx-auto">
           <Link href="/">
             <Button variant="ghost" size="sm" className="gap-2">
@@ -74,54 +119,58 @@ export default function SheetsPage() {
               Home
             </Button>
           </Link>
-          <div className="flex items-center gap-2">
-            <BookMarked className="h-5 w-5 text-primary" />
-            <h1 className="text-2xl font-bold">Curated Problem Sheets</h1>
-          </div>
+          <h1 className="text-xl font-bold">Curated DSA Sheets</h1>
         </div>
       </header>
 
       <main className="container px-4 py-8 max-w-7xl mx-auto">
-        {/* Hero Section */}
-        <div className="mb-12 text-center space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Popular Problem Collections
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Explore {sheets.length} carefully curated sheets from top engineers and educators
-          </p>
+        <HeroSection
+          onQuizClick={() => setQuizOpen(true)}
+          onCompareClick={scrollToComparison}
+          onFilterClick={scrollToFilter}
+        />
+
+        <FeaturedSection sheets={sheets} />
+
+        <div ref={filterRef}>
+          <FilterBar
+            onFilterChange={setFilters}
+            matchCount={filteredSheets.length}
+            totalCount={sheets.length}
+          />
         </div>
 
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {sheets.map((sheet, index) => (
-            <Card key={index} className="group p-6 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 h-full">
-              <div className="flex items-start justify-between mb-4">
-                <div className={`w-1 h-16 ${sheet.color} rounded-full`}></div>
-                <Badge variant="secondary" className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                  {sheet.count} problems
-                </Badge>
-              </div>
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-6">All Sheets</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredSheets.map(sheet => (
+              <BattleCard key={sheet.name} sheet={sheet} />
+            ))}
+          </div>
 
-              <h3 className="font-semibold text-xl mb-2 group-hover:text-primary transition-colors">
-                {sheet.name}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-4 line-clamp-2 min-h-[2.5rem]">
-                {sheet.description}
-              </p>
+          {filteredSheets.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-600 mb-4">No sheets match your filters</p>
+              <button
+                onClick={() => setFilters({ timeline: 'all', goal: 'all', level: 'all' })}
+                className="text-purple-600 font-medium hover:underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+        </div>
 
-              <div className="flex items-center justify-between pt-4 border-t">
-                <Badge variant="outline">{sheet.difficulty}</Badge>
-                <a href={sheet.url} target="_blank" rel="noopener noreferrer">
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    View Sheet
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
-                </a>
-              </div>
-            </Card>
-          ))}
+        <div ref={comparisonRef}>
+          <ComparisonTable sheets={sheets} />
         </div>
       </main>
+
+      <SheetQuizModal
+        isOpen={quizOpen}
+        onClose={() => setQuizOpen(false)}
+        sheets={sheets}
+      />
     </div>
   )
 }

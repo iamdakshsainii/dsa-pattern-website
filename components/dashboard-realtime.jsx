@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
+import StreakPopup from './dashboard/streak-popup'
 import ProfileCompletionWidget from './dashboard/profile-completion-widget'
 import AchievementShowcase from './dashboard/achievement-showcase'
 import DailyChallengeCard from './dashboard/daily-challenge-card'
@@ -26,7 +26,6 @@ import PatternProgressGrid from './dashboard/pattern-progress-grid'
 import QuizSummaryWidget from './dashboard/quiz-summary-widget'
 import { BadgeToastManager } from './achievements/badge-unlock-toast'
 import SmartRoadmapWidget from './dashboard/smart-roadmap-widget'
-
 import CommunityBanner from './community/community-banner'
 import WhatsAppWidget from './community/whatsapp-widget'
 
@@ -37,9 +36,38 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [showStreakPopup, setShowStreakPopup] = useState(false)
+  const [streakInfo, setStreakInfo] = useState(null)
 
+  // Record visit on mount - ONLY ONCE
   useEffect(() => {
+    const recordVisit = async () => {
+      try {
+        const response = await fetch('/api/record-visit', {
+          method: 'POST',
+          credentials: 'include'
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.showPopup && data.streak > 0) {
+            setStreakInfo({
+              streak: data.streak,
+              longestStreak: data.longestStreak
+            })
+            setShowStreakPopup(true)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to record visit:', error)
+      }
+    }
+
     recordVisit()
+  }, []) // Empty dependency array - runs ONCE on mount
+
+  // Fetch initial data and setup intervals
+  useEffect(() => {
     fetchAllData()
     fetchAllPatterns()
 
@@ -66,20 +94,10 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
     }
   }, [])
 
+  // Fetch heatmap when year changes
   useEffect(() => {
     fetchHeatmapData()
   }, [selectedYear])
-
-  const recordVisit = async () => {
-    try {
-      await fetch('/api/record-visit', {
-        method: 'POST',
-        credentials: 'include'
-      })
-    } catch (error) {
-      console.error('Failed to record visit:', error)
-    }
-  }
 
   const fetchAllData = async () => {
     try {
@@ -156,6 +174,10 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
     setSelectedYear(year)
   }
 
+  const handleCloseStreakPopup = () => {
+    setShowStreakPopup(false)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -197,8 +219,16 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <BadgeToastManager />
+      {/* Streak Popup - Shows on first visit of the day */}
+      {showStreakPopup && streakInfo && (
+        <StreakPopup
+          streak={streakInfo.streak}
+          longestStreak={streakInfo.longestStreak}
+          onClose={handleCloseStreakPopup}
+        />
+      )}
 
+      <BadgeToastManager />
       <CommunityBanner />
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -230,6 +260,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
           </Button>
         </div>
 
+        {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0">
             <div className="flex items-center justify-between">
@@ -279,6 +310,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
             <ProfileCompletionWidget />
             <AchievementShowcase stats={stats} />
 
+            {/* Activity Heatmap */}
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -352,6 +384,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
               </div>
             </Card>
 
+            {/* Solved Problems Progress */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Solved Problems</h3>
               <div className="space-y-4">
@@ -391,15 +424,14 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
             <PatternProgressGrid patterns={allPatterns} />
           </div>
 
+          {/* Right Sidebar */}
           <div className="space-y-6">
             <DailyChallengeCard userProgress={{ completed: stats.recentActivity?.map(a => a.problemId) || [] }} />
-
             <SmartRoadmapWidget userId={userId} />
-
             <QuizSummaryWidget />
-
             <WhatsAppWidget />
 
+            {/* Recent Submissions */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Recent Submissions</h3>
               <div className="space-y-2 max-h-[600px] overflow-y-auto">
@@ -456,6 +488,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
               </div>
             </Card>
 
+            {/* Quick Links */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <div className="space-y-2">

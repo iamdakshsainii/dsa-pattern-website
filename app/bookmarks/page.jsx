@@ -1,31 +1,15 @@
 import { redirect } from "next/navigation"
-import { cookies } from "next/headers"
-import { verifyToken } from "@/lib/auth"
+import { getCurrentUser } from "@/lib/auth"
 import BookmarksClient from "@/components/bookmarks-client"
 import clientPromise from "@/lib/mongodb"
-import { ObjectId } from "mongodb"
 
 export default async function BookmarksPage() {
-  const cookieStore = await cookies()
-  const authToken = cookieStore.get("auth-token")
+  const user = await getCurrentUser()
 
-  if (!authToken) {
+  if (!user) {
     redirect("/auth/login")
   }
 
-  let userId
-  try {
-    const payload = verifyToken(authToken.value)
-    if (!payload) {
-      redirect("/auth/login")
-    }
-    userId = payload.id
-  } catch (error) {
-    console.error("Auth token parse error:", error)
-    redirect("/auth/login")
-  }
-
-  //Fetch bookmarks with proper error handling
   let questions = []
   let userProgress = {
     completed: [],
@@ -36,41 +20,43 @@ export default async function BookmarksPage() {
   try {
     const client = await clientPromise
     const db = client.db("dsa_patterns")
-    const progressCollection = db.collection("progress")
-    const questionsCollection = db.collection("questions")
 
-    // Get all bookmarked items
-    const bookmarks = await progressCollection
-      .find({ userId: userId, bookmarked: true })
+    // Get bookmarks from NEW bookmarks collection
+    const bookmarks = await db
+      .collection("bookmarks")
+      .find({ user_id: user.id })
       .toArray()
 
-    const bookmarkIds = bookmarks.map(b => b.questionId || b.problemId)
+    const bookmarkIds = bookmarks.map(b => b.question_id)
 
-    // Get all progress for completed/in-progress status
-    const allProgress = await progressCollection
-      .find({ userId: userId })
+    // Get user progress
+    const allProgress = await db
+      .collection("user_progress")
+      .find({ user_id: user.id })
       .toArray()
 
     const completed = allProgress
-      .filter(p => p.completed)
-      .map(p => p.questionId || p.problemId)
+      .filter(p => p.status === "completed")
+      .map(p => p.question_id)
 
     const inProgress = allProgress
-      .filter(p => !p.completed && p.attempts > 0)
-      .map(p => p.questionId || p.problemId)
+      .filter(p => p.status === "in_progress")
+      .map(p => p.question_id)
 
-    // Fetch full question details
+    // Fetch question details
     if (bookmarkIds.length > 0) {
+      const { ObjectId } = await import("mongodb")
+
       const objectIds = bookmarkIds
         .filter(id => ObjectId.isValid(id))
         .map(id => new ObjectId(id))
 
       if (objectIds.length > 0) {
-        const foundQuestions = await questionsCollection
+        const foundQuestions = await db
+          .collection("questions")
           .find({ _id: { $in: objectIds } })
           .toArray()
 
-        // Serialize questions
         questions = foundQuestions.map(q => ({
           ...q,
           _id: q._id.toString(),
@@ -85,17 +71,15 @@ export default async function BookmarksPage() {
       inProgress,
       bookmarks: bookmarkIds
     }
-
   } catch (error) {
     console.error("Error fetching bookmarks:", error)
-    // Continue with empty data instead of crashing
   }
 
   return (
     <BookmarksClient
       questions={questions}
       userProgress={userProgress}
-      userId={userId}
+      userId={user.id}
     />
   )
 }

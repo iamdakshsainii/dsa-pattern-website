@@ -12,43 +12,47 @@ export async function GET(request) {
 
     const client = await clientPromise
     const db = client.db("dsa_patterns")
-    const progressCollection = db.collection("progress")
+    const progressCollection = db.collection("user_progress")
 
     const userProgress = await progressCollection
-      .find({ userId: user.id })
+      .find({ user_id: user.id })
       .toArray()
 
     const completed = userProgress
-      .filter(p => p.completed)
-      .map(p => p.questionId || p.problemId)
+      .filter(p => p.status === "completed")
+      .map(p => p.question_id)
 
     return NextResponse.json({
       success: true,
       progress: userProgress,
       completed
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache'
+      }
     })
   } catch (error) {
-    console.error("Get progress error:", error)
+    // console.error("Get progress error:", error)
     return NextResponse.json(
       { error: "Failed to fetch progress", details: error.message },
       { status: 500 }
     )
   }
 }
-
 export async function POST(request) {
-  console.log("POST /api/progress called")
+//   console.log("POST /api/progress called")
 
   try {
     const user = await getCurrentUser()
-    console.log("User:", user)
+    // console.log("User:", user)
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const body = await request.json()
-    console.log("Request body:", body)
+    // console.log("Request body:", body)
 
     const { questionId, status, difficulty, pattern, problemName } = body
 
@@ -61,7 +65,7 @@ export async function POST(request) {
 
     const client = await clientPromise
     const db = client.db("dsa_patterns")
-    const progressCollection = db.collection("progress")
+    const progressCollection = db.collection("user_progress")
     const questionsCollection = db.collection("questions")
 
     // Try multiple methods to find the question
@@ -73,7 +77,7 @@ export async function POST(request) {
         questionData = await questionsCollection.findOne({
           _id: new ObjectId(questionId)
         })
-        console.log("Found question by ObjectId:", questionData?._id)
+        // console.log("Found question by ObjectId:", questionData?._id)
       } catch (err) {
         console.log("ObjectId search failed:", err.message)
       }
@@ -85,7 +89,7 @@ export async function POST(request) {
         questionData = await questionsCollection.findOne({
           _id: questionId
         })
-        console.log("Found question by string _id:", questionData?._id)
+        // console.log("Found question by string _id:", questionData?._id)
       } catch (err) {
         console.log("String _id search failed:", err.message)
       }
@@ -97,68 +101,61 @@ export async function POST(request) {
         questionData = await questionsCollection.findOne({
           id: questionId
         })
-        console.log("Found question by id field:", questionData?._id)
+        // console.log("Found question by id field:", questionData?._id)
       } catch (err) {
         console.log("id field search failed:", err.message)
       }
     }
 
-    console.log("Question data found:", questionData ? {
-      _id: questionData._id,
-      title: questionData.title,
-      difficulty: questionData.difficulty,
-      pattern: questionData.pattern
-    } : "null")
+    // console.log("Question data found:", questionData ? {
+    //   _id: questionData._id,
+    //   title: questionData.title,
+    //   difficulty: questionData.difficulty,
+    //   pattern: questionData.pattern_id
+    // } : "null")
 
     // Use provided data OR fallback to DB data OR defaults
     const finalDifficulty = difficulty || questionData?.difficulty || "Medium"
-    const finalPattern = pattern || questionData?.pattern || "unknown"
+    const finalPattern = pattern || questionData?.pattern_id || "unknown"
     const finalProblemName = problemName || questionData?.title || `Question ${questionId.slice(-8)}`
 
     const completed = status === "completed"
 
+
     const updateData = {
-      userId: user.id,
-      questionId,
-      problemId: questionId,
-      completed,
+      user_id: user.id,
+      question_id: questionId,
+      status: completed ? "completed" : "not_started",
       difficulty: finalDifficulty,
       pattern: finalPattern,
       problemName: finalProblemName,
-      lastAttemptDate: new Date(),
-      updatedAt: new Date()
-    }
-
-    if (completed) {
-      updateData.completedDate = new Date()
-    } else {
-      updateData.completedDate = null
+      updated_at: new Date()
     }
 
     const result = await progressCollection.findOneAndUpdate(
-      { userId: user.id, questionId },
+      { user_id: user.id, question_id: questionId },
       {
         $set: updateData,
-        $inc: { attempts: 1 },
-        $setOnInsert: { createdAt: new Date() }
+        $setOnInsert: { created_at: new Date() }
       },
       { upsert: true, returnDocument: 'after' }
     )
 
-    console.log("Progress updated successfully:", {
-      questionId,
-      pattern: finalPattern,
-      difficulty: finalDifficulty,
-      problemName: finalProblemName,
-      questionFound: !!questionData
-    })
+    // console.log("Progress updated successfully:", {
+    //   questionId,
+    //   pattern: finalPattern,
+    //   difficulty: finalDifficulty,
+    //   problemName: finalProblemName,
+    //   status: updateData.status,
+    //   questionFound: !!questionData
+    // })
 
     return NextResponse.json({
       success: true,
       progress: result
     })
   } catch (error) {
-    console.error("Update progress error:", error)
+    // console.error("Update progress error:", error)
     return NextResponse.json(
       { error: "Failed to update progress", details: error.message },
       { status: 500 }

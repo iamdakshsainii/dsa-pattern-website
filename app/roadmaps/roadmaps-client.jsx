@@ -40,67 +40,116 @@ export default function RoadmapsClient({ initialRoadmaps, userActiveRoadmaps, cu
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 relative overflow-hidden">
 
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <MapPin className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Learning Roadmaps</h1>
+      <div className="absolute inset-0 bg-grid-slate-200/50 dark:bg-grid-slate-800/20 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] pointer-events-none"></div>
+
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 dark:bg-purple-500/5 rounded-full blur-3xl"></div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-7xl relative z-10">
+
+        <div className="mb-8 sm:mb-12 relative">
+          <div className="flex items-center gap-4 mb-3">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse"></div>
+              <div className="relative p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg transform group-hover:scale-110 transition duration-300">
+                <MapPin className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+              </div>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-foreground animate-in fade-in slide-in-from-bottom-3 duration-700">
+              Learning Roadmaps
+            </h1>
           </div>
-          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 ml-16 sm:ml-20 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
             Choose your path to mastery. Structured learning for every goal.
           </p>
         </div>
 
         {currentUser && userActiveRoadmaps.length > 0 && (
-          <Card className="p-4 sm:p-6 mb-6 sm:mb-8 bg-gradient-to-r from-primary/5 to-purple-500/5 border-primary/20">
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <h2 className="text-lg sm:text-xl font-semibold">Continue Learning</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {userActiveRoadmaps.slice(0, 3).map((progress) => (
-                <RoadmapCard
-                  key={progress.roadmapId}
-                  roadmap={progress.roadmap}
-                  userProgress={progress}
-                />
-              ))}
-            </div>
-          </Card>
+          <div className="relative mb-8 sm:mb-12 group animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500 animate-gradient-x"></div>
+            <Card className="relative p-6 sm:p-8 border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
+
+              <div className="relative flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-lg animate-pulse">
+                  <Sparkles className="h-5 w-5 text-white" />
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-foreground">
+                  Continue Learning
+                </h2>
+              </div>
+              <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {userActiveRoadmaps.slice(0, 3).map((progress, idx) => (
+                  <div
+                    key={progress.roadmapId}
+                    className="animate-in fade-in slide-in-from-bottom-6 duration-500"
+                    style={{ animationDelay: `${idx * 100}ms` }}
+                  >
+                    <RoadmapCard
+                      roadmap={progress.roadmap}
+                      userProgress={progress}
+                    />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
-          <aside className="lg:col-span-1">
-            <Card className="p-4 sm:p-6 lg:sticky lg:top-4">
-              <h2 className="text-base sm:text-lg font-semibold mb-4">Filters</h2>
-              <RoadmapFilters
-                onFilterChange={handleFilterChange}
-                initialFilters={filters}
-              />
-            </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <aside className="lg:col-span-1 animate-in fade-in slide-in-from-left-5 duration-700 delay-300">
+            <div className="lg:sticky lg:top-6 transition-all duration-300">
+              <Card className="p-6 border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <h2 className="relative text-lg font-bold mb-5 text-slate-900 dark:text-slate-50">
+                  Filters
+                </h2>
+                <div className="relative">
+                  <RoadmapFilters
+                    onFilterChange={handleFilterChange}
+                    initialFilters={filters}
+                  />
+                </div>
+              </Card>
+            </div>
           </aside>
 
-          <main className="lg:col-span-3">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {roadmaps.length} roadmap{roadmaps.length !== 1 ? 's' : ''}
-              </p>
+          <main className="lg:col-span-3 animate-in fade-in slide-in-from-right-5 duration-700 delay-300">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-full border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-pulse"></div>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Showing {roadmaps.length} roadmap{roadmaps.length !== 1 ? 's' : ''}
+                </p>
+              </div>
             </div>
 
             {roadmaps.length === 0 ? (
-              <Card className="p-8 sm:p-12 text-center">
-                <p className="text-sm sm:text-base text-muted-foreground mb-4">No roadmaps found matching your filters</p>
+              <Card className="p-12 sm:p-16 text-center border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-xl">
+                <div className="max-w-md mx-auto">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-700 rounded-full flex items-center justify-center">
+                    <MapPin className="h-8 w-8 text-slate-400 dark:text-slate-500" />
+                  </div>
+                  <p className="text-base text-slate-600 dark:text-slate-400">
+                    No roadmaps found matching your filters
+                  </p>
+                </div>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {roadmaps.map((roadmap) => (
-                  <RoadmapCard
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                {roadmaps.map((roadmap, idx) => (
+                  <div
                     key={roadmap._id}
-                    roadmap={roadmap}
-                    userProgress={getUserProgress(roadmap.slug)}
-                  />
+                    className="animate-in fade-in slide-in-from-bottom-6 duration-500 hover:scale-[1.02] transition-transform"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                  >
+                    <RoadmapCard
+                      roadmap={roadmap}
+                      userProgress={getUserProgress(roadmap.slug)}
+                    />
+                  </div>
                 ))}
               </div>
             )}

@@ -1,5 +1,3 @@
-
-
 import { getPattern, getQuestionsByPattern } from "@/lib/db"
 import { getCurrentUser } from "@/lib/auth"
 import clientPromise from "@/lib/mongodb"
@@ -9,18 +7,14 @@ export default async function PatternPage({ params }) {
   const { slug: patternSlug } = await params
   const slug = patternSlug
 
-  // ⚡ OPTIMIZATION 1: Fetch user first (needed for progress query)
   const currentUser = await getCurrentUser()
 
-  // ⚡ OPTIMIZATION 2: Parallel fetch - Run ALL queries at once
   const [pattern, questions, userProgressData] = await Promise.all([
     getPattern(slug),
-    getQuestionsByPattern(slug), // Already includes companies/tags from JSON
+    getQuestionsByPattern(slug),
     currentUser ? getUserProgressForPattern(currentUser.id, slug) : null
   ])
 
-  // ⚡ OPTIMIZATION 3: Questions already have all data - no need for getSolution()
-  // Build solutions object from questions (they already have the data)
   const solutions = {}
   questions.forEach(question => {
     solutions[question._id] = {
@@ -34,7 +28,6 @@ export default async function PatternPage({ params }) {
     }
   })
 
-  // Build userProgress
   let userProgress = null
   if (currentUser && userProgressData) {
     const patternQuestionIds = questions.map(q => q._id)
@@ -58,31 +51,30 @@ export default async function PatternPage({ params }) {
   )
 }
 
-// ⚡ HELPER: Optimized progress fetch
 async function getUserProgressForPattern(userId, patternSlug) {
   const client = await clientPromise
   const db = client.db("dsa_patterns")
-  const progressCollection = db.collection("progress")
+  const progressCollection = db.collection("user_progress")
 
   const allProgress = await progressCollection
-    .find({ userId: userId })
+    .find({ user_id: userId })
     .toArray()
 
   const completed = allProgress
-    .filter(p => p.completed)
-    .map(p => p.questionId || p.problemId)
+    .filter(p => p.status === "completed")
+    .map(p => p.question_id)
 
-  const bookmarks = allProgress
-    .filter(p => p.bookmarked)
-    .map(p => p.questionId || p.problemId)
+  const bookmarks = await db.collection("bookmarks")
+    .find({ user_id: userId })
+    .toArray()
 
   const inProgress = allProgress
-    .filter(p => !p.completed && p.attempts > 0)
-    .map(p => p.questionId || p.problemId)
+    .filter(p => p.status === "in_progress")
+    .map(p => p.question_id)
 
   return {
     completed,
-    bookmarks,
+    bookmarks: bookmarks.map(b => b.question_id),
     inProgress
   }
 }

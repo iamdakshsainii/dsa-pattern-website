@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ProgressRing from "./progress-ring";
 import NextNodeCard from "./next-node-card";
-import { Flame, Target, Trophy, Award, Lock } from "lucide-react";
+import { Flame, Target, Trophy, Award, Lock, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -90,13 +90,13 @@ export default function ProgressSidebar({
 
   return (
     <div className="sticky top-24 space-y-4">
-      <Card className="p-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-purple-900/20 dark:to-pink-900/20 border-2 border-blue-200 dark:border-blue-800">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
+      <Card className="p-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-purple-900/20 dark:to-pink-900/20 border-2 border-blue-200 dark:border-blue-800 shadow-lg">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold flex items-center gap-2 text-foreground">
+            <Target className="h-5 w-5 text-primary animate-pulse" />
             Roadmap Progress
           </h3>
-          <Badge variant="secondary" className="text-lg font-bold px-3 py-1">
+          <Badge variant="secondary" className="text-lg font-bold px-3 py-1 shadow-sm">
             {Math.round(cappedProgress)}%
           </Badge>
         </div>
@@ -105,26 +105,32 @@ export default function ProgressSidebar({
           <ProgressRing percentage={cappedProgress} />
         </div>
 
-        <div className="space-y-3 mb-4">
+        <div className="space-y-3 mb-6">
           {phaseBreakdown.map((phase, idx) => (
             <div
               key={idx}
-              className="bg-white/50 dark:bg-gray-900/50 rounded-lg p-3 backdrop-blur"
+              className="bg-white/80 dark:bg-gray-900/50 rounded-lg p-4 backdrop-blur-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] group"
             >
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="font-semibold">{phase.week}</span>
+                <span className="font-semibold text-foreground flex items-center gap-2">
+                  {phase.percentage === 100 && (
+                    <CheckCircle2 className="h-4 w-4 text-green-600 group-hover:scale-110 transition-transform" />
+                  )}
+                  {phase.week}
+                </span>
                 <Badge
                   variant={phase.percentage === 100 ? "default" : "outline"}
+                  className={phase.percentage === 100 ? "bg-green-600" : ""}
                 >
                   {Math.round(phase.percentage)}%
                 </Badge>
               </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
                 <div
                   className={`h-full transition-all duration-500 ${
                     phase.percentage === 100
-                      ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                      : "bg-gradient-to-r from-blue-500 to-purple-500"
+                      ? "bg-green-600"
+                      : "bg-primary"
                   }`}
                   style={{ width: `${phase.percentage}%` }}
                 />
@@ -136,57 +142,57 @@ export default function ProgressSidebar({
           ))}
         </div>
 
-        <div className="grid grid-cols-2 gap-3 pt-4 border-t">
-          <div className="bg-white/50 dark:bg-gray-900/50 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-primary">
+        <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <div className="bg-white/80 dark:bg-gray-900/50 rounded-lg p-4 text-center backdrop-blur-sm transition-all duration-300 hover:shadow-md hover:scale-105">
+            <div className="text-3xl font-bold text-primary mb-1">
               {completedNodes}
             </div>
-            <div className="text-xs text-muted-foreground">Nodes Done</div>
+            <div className="text-xs text-muted-foreground font-medium">Nodes Done</div>
           </div>
-          <div className="bg-white/50 dark:bg-gray-900/50 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-purple-600">
+          <div className="bg-white/80 dark:bg-gray-900/50 rounded-lg p-4 text-center backdrop-blur-sm transition-all duration-300 hover:shadow-md hover:scale-105">
+            <div className="text-3xl font-bold text-purple-600 mb-1">
               {completedSubtopics}
             </div>
-            <div className="text-xs text-muted-foreground">Topics Done</div>
+            <div className="text-xs text-muted-foreground font-medium">Topics Done</div>
           </div>
         </div>
       </Card>
 
       {!isQuizUnlocked ? (
-        <Card className="p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 border-2 border-yellow-200 dark:border-yellow-800">
+        <Card className="p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 border-2 border-yellow-200 dark:border-yellow-800 shadow-lg">
           <div className="flex items-start gap-3 mb-4">
             <div className="p-2 bg-yellow-100 dark:bg-yellow-900/50 rounded-lg">
-              <Trophy className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+              <Trophy className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
             </div>
             <div className="flex-1">
-              <h4 className="font-bold text-sm mb-1">Quiz Locked</h4>
+              <h4 className="font-bold text-base mb-1 text-foreground">Quiz Locked</h4>
               <p className="text-xs text-muted-foreground">
                 Complete all topics to unlock the final quiz
               </p>
             </div>
           </div>
 
-          <div className="mb-3">
+          <div className="mb-4">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span className="font-medium">Progress to Quiz</span>
+              <span className="font-medium text-foreground">Progress to Quiz</span>
               <span className="text-yellow-600 dark:text-yellow-400 font-bold">
                 {remainingSubtopics} topics left
               </span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
               <div
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 h-full transition-all duration-500"
+                className="bg-yellow-600 h-full transition-all duration-500"
                 style={{ width: `${cappedProgress}%` }}
               />
             </div>
           </div>
 
-          <div className="bg-white/50 dark:bg-gray-900/50 rounded-lg p-3 text-xs">
-            <div className="flex items-center gap-2 text-muted-foreground mb-1">
-              <Trophy className="h-4 w-4" />
+          <div className="bg-white/80 dark:bg-gray-900/50 rounded-lg p-4 text-xs backdrop-blur-sm">
+            <div className="flex items-center gap-2 text-foreground mb-2">
+              <Trophy className="h-4 w-4 text-yellow-600" />
               <span className="font-semibold">After 100% completion:</span>
             </div>
-            <ul className="ml-6 space-y-1 text-muted-foreground">
+            <ul className="ml-6 space-y-1.5 text-muted-foreground">
               <li>• Take a 10-question quiz</li>
               <li>• Pass with 70% to earn certificate</li>
               <li>• Download & share your achievement</li>
@@ -195,13 +201,13 @@ export default function ProgressSidebar({
         </Card>
       ) : isMastered ? (
         <Link href={`/roadmaps/${roadmap.slug}/certificate`}>
-          <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-2 border-purple-500 hover:shadow-lg transition-all cursor-pointer">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-3 bg-purple-500 rounded-full">
-                <Award className="h-6 w-6 text-white" />
+          <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-2 border-purple-500 hover:shadow-xl transition-all cursor-pointer hover:scale-[1.02]">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-purple-500 rounded-full shadow-lg">
+                <Award className="h-6 w-6 text-foreground" />
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-lg">Certificate Earned! 🏆</h4>
+                <h4 className="font-bold text-lg text-foreground">Certificate Earned! 🏆</h4>
                 <p className="text-sm text-muted-foreground">
                   Congratulations on mastering this!
                 </p>
@@ -214,23 +220,23 @@ export default function ProgressSidebar({
           </Card>
         </Link>
       ) : (
-        <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-2 border-green-500">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-green-500 rounded-full">
-              <Trophy className="h-6 w-6 text-white" />
+        <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-2 border-green-500 shadow-lg">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-green-500 rounded-full shadow-lg">
+              <Trophy className="h-6 w-6 text-foreground" />
             </div>
             <div className="flex-1">
-              <h4 className="font-bold text-lg">Quiz Unlocked! 🎉</h4>
+              <h4 className="font-bold text-lg text-foreground">Quiz Unlocked! 🎉</h4>
               <p className="text-sm text-muted-foreground">
                 You've completed all topics
               </p>
             </div>
           </div>
           {quizStatus && (
-            <div className="mb-4 p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg space-y-2 text-sm">
+            <div className="mb-4 p-4 bg-white/80 dark:bg-gray-900/50 rounded-lg space-y-2 text-sm backdrop-blur-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Attempts Used:</span>
-                <span className="font-medium">
+                <span className="font-medium text-foreground">
                   {quizStatus.attemptsUsed}/{quizStatus.attemptsUnlocked}
                 </span>
               </div>
@@ -275,13 +281,13 @@ export default function ProgressSidebar({
       )}
 
       {currentStreak > 0 && (
-        <Card className="p-5 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 border-2 border-orange-300 dark:border-orange-700">
+        <Card className="p-5 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 border-2 border-orange-300 dark:border-orange-700 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
           <div className="flex items-center gap-3 mb-3">
-            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
-              <Flame className="h-7 w-7 text-white" />
+            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center shadow-lg">
+              <Flame className="h-7 w-7 text-foreground animate-pulse" />
             </div>
             <div className="flex-1">
-              <p className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              <p className="text-3xl font-bold text-orange-600">
                 {currentStreak} days
               </p>
               <p className="text-sm font-semibold text-muted-foreground">
@@ -289,30 +295,30 @@ export default function ProgressSidebar({
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-between text-xs bg-white/50 dark:bg-gray-900/50 rounded-lg p-2">
+          <div className="flex items-center justify-between text-xs bg-white/80 dark:bg-gray-900/50 rounded-lg p-3 backdrop-blur-sm">
             <span className="text-muted-foreground">Best Streak:</span>
-            <span className="font-bold">{longestStreak} days 🏆</span>
+            <span className="font-bold text-foreground">{longestStreak} days 🏆</span>
           </div>
         </Card>
       )}
 
       {nextNode && <NextNodeCard node={nextNode} roadmapSlug={roadmap.slug} />}
 
-      <Card className="p-5">
-        <h4 className="text-sm font-bold mb-4 flex items-center gap-2">
-          <Target className="h-4 w-4" />
+      <Card className="p-5 shadow-lg hover:shadow-xl transition-all">
+        <h4 className="text-sm font-bold mb-4 flex items-center gap-2 text-foreground">
+          <Target className="h-4 w-4 text-primary" />
           Quick Stats
         </h4>
         <div className="space-y-3 text-sm">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
             <span className="text-muted-foreground">Total Nodes</span>
             <Badge variant="outline">{totalNodes}</Badge>
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
             <span className="text-muted-foreground">Completed</span>
-            <Badge className="bg-green-500">{completedNodes}</Badge>
+            <Badge className="bg-green-600">{completedNodes}</Badge>
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
             <span className="text-muted-foreground">In Progress</span>
             <Badge variant="secondary">
               {userProgress?.nodesProgress?.filter(
@@ -320,15 +326,15 @@ export default function ProgressSidebar({
               ).length || 0}
             </Badge>
           </div>
-          <div className="flex justify-between items-center pt-2 border-t">
+          <div className="flex justify-between items-center pt-3 border-t border-slate-200 dark:border-slate-700 p-2">
             <span className="text-muted-foreground">Estimated Time</span>
-            <span className="font-bold">{roadmap.estimatedWeeks} weeks</span>
+            <span className="font-bold text-foreground">{roadmap.estimatedWeeks} weeks</span>
           </div>
         </div>
       </Card>
 
       <Link href="/roadmaps">
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
           ← Back to All Roadmaps
         </Button>
       </Link>

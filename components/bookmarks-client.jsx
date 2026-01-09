@@ -45,7 +45,7 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
 
       if (response.ok) {
         const data = await response.json()
-        console.log('Bookmarks data:', data)
+        // console.log('Bookmarks data:', data)
 
         // ✅ FIX: Use questions from API, keep existing progress
         setQuestions(data.questions || [])

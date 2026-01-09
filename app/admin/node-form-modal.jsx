@@ -116,7 +116,7 @@ export default function NodeFormModal({ isOpen, onClose, node, roadmapId, onSucc
         wasPublished: node?.published
       }
 
-      console.log('Submitting to:', url, 'Method:', method)
+    //   console.log('Submitting to:', url, 'Method:', method)
 
       const res = await fetch(url, {
         method,
@@ -135,7 +135,7 @@ export default function NodeFormModal({ isOpen, onClose, node, roadmapId, onSucc
         throw new Error(error.error || 'Failed to save node')
       }
     } catch (error) {
-      console.error('Save error:', error)
+    //   console.error('Save error:', error)
       toast({
         title: "Error",
         description: error.message || "Failed to save node",

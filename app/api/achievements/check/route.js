@@ -26,14 +26,14 @@ export async function POST(request) {
     const { db } = await connectToDatabase()
 
     const userBadges = await db
-      .collection("user_badges")
+      .collection("user_achievements")
       .find({ userId: user.id })
       .toArray()
 
     const newBadges = getNewlyUnlockedBadges(stats, userBadges)
 
     for (const badge of newBadges) {
-      await db.collection("user_badges").insertOne({
+      await db.collection("user_achievements").insertOne({
         userId: user.id,
         badgeId: badge.id,
         unlockedAt: new Date(),

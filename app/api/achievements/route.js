@@ -1,19 +1,24 @@
 import { NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
-import clientPromise from "@/lib/mongodb"
+import { connectToDatabase } from "@/lib/db"
+import { getNewlyUnlockedBadges } from "@/lib/achievements/badge-definitions"
 
-// GET - Get user's unlocked badges
+// GET - Fetch user's unlocked badges
 export async function GET(request) {
   try {
     const user = await getCurrentUser()
+
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
     }
 
-    const client = await clientPromise
-    const db = client.db("dsa_patterns")
+    const { db } = await connectToDatabase()
 
-    const badges = await db.collection("user_achievements")
+    const badges = await db
+      .collection("user_achievements")
       .find({ userId: user.id })
       .sort({ unlockedAt: -1 })
       .toArray()
@@ -21,12 +26,14 @@ export async function GET(request) {
     return NextResponse.json({
       success: true,
       badges: badges.map(b => ({
+        _id: b._id.toString(),
         badgeId: b.badgeId,
-        unlockedAt: b.unlockedAt
+        unlockedAt: b.unlockedAt,
+        createdAt: b.createdAt
       }))
     })
   } catch (error) {
-    console.error("Get achievements error:", error)
+    console.error("Error fetching achievements:", error)
     return NextResponse.json(
       { error: "Failed to fetch achievements" },
       { status: 500 }
@@ -34,54 +41,58 @@ export async function GET(request) {
   }
 }
 
-// POST - Unlock a new badge
+// POST - Check and unlock new badges
 export async function POST(request) {
   try {
     const user = await getCurrentUser()
+
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
     }
 
-    const { badgeId } = await request.json()
+    const { stats } = await request.json()
 
-    if (!badgeId) {
+    if (!stats) {
       return NextResponse.json(
-        { error: "Badge ID required" },
+        { error: "Stats required" },
         { status: 400 }
       )
     }
 
-    const client = await clientPromise
-    const db = client.db("dsa_patterns")
+    const { db } = await connectToDatabase()
 
-    // Check if already unlocked
-    const existing = await db.collection("user_achievements").findOne({
-      userId: user.id,
-      badgeId
-    })
+    const userBadges = await db
+      .collection("user_achievements")
+      .find({ userId: user.id })
+      .toArray()
 
-    if (existing) {
-      return NextResponse.json({
-        success: true,
-        message: "Badge already unlocked"
+    const newBadges = getNewlyUnlockedBadges(stats, userBadges)
+
+    for (const badge of newBadges) {
+      await db.collection("user_achievements").insertOne({
+        userId: user.id,
+        badgeId: badge.id,
+        unlockedAt: new Date(),
+        createdAt: new Date()
       })
     }
 
-    // Unlock badge
-    await db.collection("user_achievements").insertOne({
-      userId: user.id,
-      badgeId,
-      unlockedAt: new Date()
-    })
-
     return NextResponse.json({
       success: true,
-      message: "Badge unlocked!"
+      newBadges: newBadges.map(b => ({
+        id: b.id,
+        name: b.name,
+        description: b.description,
+        icon: b.icon
+      }))
     })
   } catch (error) {
-    console.error("Unlock achievement error:", error)
+    console.error("Error checking achievements:", error)
     return NextResponse.json(
-      { error: "Failed to unlock achievement" },
+      { error: "Failed to check achievements" },
       { status: 500 }
     )
   }

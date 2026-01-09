@@ -54,7 +54,7 @@ export default function AdminSidebar({ currentUser }) {
   return (
     <div className="w-64 bg-white dark:bg-gray-800 border-r flex flex-col">
       <div className="p-6 border-b">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-foreground">
           Admin Panel
         </h1>
         <p className="text-xs text-muted-foreground mt-1 truncate">

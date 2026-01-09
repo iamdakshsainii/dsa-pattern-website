@@ -12,6 +12,12 @@ export const metadata = {
   description: "Master DSA Through Pattern Recognition",
 }
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+}
+
 async function getCurrentUser() {
   try {
     const cookieStore = await cookies()

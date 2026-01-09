@@ -37,7 +37,7 @@ export async function GET(request, { params }) {
       }
     })
   } catch (error) {
-    console.error("Get node error:", error)
+    // console.error("Get node error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -54,7 +54,7 @@ export async function PUT(request, { params }) {
     const body = await request.json()
     const { db } = await connectToDatabase()
 
-    console.log('PUT request for nodeId:', nodeId)
+    // console.log('PUT request for nodeId:', nodeId)
 
     // Process subtopics with proper structure
     const subtopics = body.subtopics?.map((sub, idx) => ({
@@ -101,10 +101,10 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: "Node not found" }, { status: 404 })
     }
 
-    console.log('Update successful:', result)
+    // console.log('Update successful:', result)
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Update node error:", error)
+    // console.error("Update node error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -137,7 +137,7 @@ export async function DELETE(request, { params }) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Delete node error:", error)
+    // console.error("Delete node error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

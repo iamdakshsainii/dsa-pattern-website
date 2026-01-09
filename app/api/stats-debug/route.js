@@ -4,10 +4,10 @@ import clientPromise from "@/lib/mongodb"
 
 export async function GET(request) {
   try {
-    console.log("Stats API called")
+    // console.log("Stats API called")
 
     const user = await getCurrentUser()
-    console.log("User:", user)
+    // console.log("User:", user)
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -17,19 +17,19 @@ export async function GET(request) {
     const client = await clientPromise
     const db = client.db("dsa_patterns")
 
-    console.log("Connected to DB")
+    // console.log("Connected to DB")
 
     // Get all questions count
     const questionsCollection = db.collection("questions")
     const totalQuestions = await questionsCollection.countDocuments()
-    console.log("Total questions:", totalQuestions)
+    // console.log("Total questions:", totalQuestions)
 
     // Get user progress
     const progressCollection = db.collection("progress")
     const userProgress = await progressCollection
       .find({ userId })
       .toArray()
-    console.log("User progress count:", userProgress.length)
+    // console.log("User progress count:", userProgress.length)
 
     const response = {
       success: true,
@@ -50,10 +50,10 @@ export async function GET(request) {
       }
     }
 
-    console.log("Returning response:", response)
+    // console.log("Returning response:", response)
     return NextResponse.json(response)
   } catch (error) {
-    console.error("Stats API error:", error)
+    // console.error("Stats API error:", error)
     return NextResponse.json(
       { error: "Failed to fetch statistics", details: error.message, stack: error.stack },
       { status: 500 }

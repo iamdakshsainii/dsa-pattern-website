@@ -12,6 +12,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export default function ResourceActionButtons({
   resourceLinks,
@@ -23,23 +29,13 @@ export default function ResourceActionButtons({
   const [showLoginDialog, setShowLoginDialog] = useState(false)
   const router = useRouter()
 
-  // Debug logging
-  console.log('🔍 ResourceActionButtons - currentUser:', currentUser)
-  console.log('🔍 ResourceActionButtons - currentUser?.email:', currentUser?.email)
-  console.log('🔍 ResourceActionButtons - currentUser?._id:', currentUser?._id)
-
   if (!resourceLinks) return null
 
-  // Better check for logged-in user - check for _id OR email
   const isLoggedIn = currentUser && (currentUser.email || currentUser._id)
 
-  console.log('🔍 ResourceActionButtons - isLoggedIn:', isLoggedIn)
-
   const handleProtectedClick = (e) => {
-    if (!isLoggedIn) {
-      e.preventDefault()
-      setShowLoginDialog(true)
-    }
+    e.preventDefault()
+    setShowLoginDialog(true)
   }
 
   const buttons = []
@@ -50,8 +46,7 @@ export default function ResourceActionButtons({
       href: `/roadmaps/${roadmapSlug}/${nodeId}/${subtopicId}?type=youtube`,
       icon: Youtube,
       label: 'Watch',
-      variant: 'default',
-      protected: true
+      variant: 'default'
     })
   }
 
@@ -61,8 +56,7 @@ export default function ResourceActionButtons({
       href: `/roadmaps/${roadmapSlug}/${nodeId}/${subtopicId}?type=article`,
       icon: FileText,
       label: 'Read',
-      variant: 'outline',
-      protected: true
+      variant: 'outline'
     })
   }
 
@@ -72,8 +66,7 @@ export default function ResourceActionButtons({
       href: `/roadmaps/${roadmapSlug}/${nodeId}/${subtopicId}?type=practice`,
       icon: Code,
       label: 'Practice',
-      variant: 'outline',
-      protected: true
+      variant: 'outline'
     })
   }
 
@@ -84,8 +77,7 @@ export default function ResourceActionButtons({
       icon: Download,
       label: 'Download',
       variant: 'outline',
-      external: true,
-      protected: true
+      external: true
     })
   }
 
@@ -93,9 +85,10 @@ export default function ResourceActionButtons({
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 mt-3">
+      <div className="flex flex-wrap gap-2">
         {buttons.map((button) => {
-          // If user is logged in, show normal buttons
+          const ButtonIcon = button.icon
+
           if (isLoggedIn) {
             return button.external ? (
               <Button
@@ -109,7 +102,7 @@ export default function ResourceActionButtons({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button.icon className="h-4 w-4 mr-2" />
+                  <ButtonIcon className="h-4 w-4 mr-2" />
                   {button.label}
                 </a>
               </Button>
@@ -121,30 +114,39 @@ export default function ResourceActionButtons({
                 asChild
               >
                 <Link href={button.href}>
-                  <button.icon className="h-4 w-4 mr-2" />
+                  <ButtonIcon className="h-4 w-4 mr-2" />
                   {button.label}
                 </Link>
               </Button>
             )
           }
 
-          // If user is NOT logged in, show locked buttons
           return (
-            <Button
-              key={button.key}
-              variant={button.variant}
-              size="sm"
-              onClick={handleProtectedClick}
-              className="relative"
-            >
-              <Lock className="h-4 w-4 mr-2" />
-              {button.label}
-            </Button>
+            <TooltipProvider key={button.key}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleProtectedClick}
+                    className="opacity-60"
+                  >
+                    <Lock className="h-4 w-4 mr-2" />
+                    {button.label}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-sm font-medium">🔒 Login Required</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Sign in to access learning resources
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )
         })}
       </div>
 
-      {/* Login Dialog */}
       <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
         <DialogContent>
           <DialogHeader>

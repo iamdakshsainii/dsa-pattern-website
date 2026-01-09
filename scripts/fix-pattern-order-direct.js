@@ -52,20 +52,20 @@ async function updatePatternOrder() {
   const client = new MongoClient(MONGODB_URI);
 
   try {
-    console.log('🔌 Connecting to MongoDB...');
+    // console.log('🔌 Connecting to MongoDB...');
     await client.connect();
-    console.log('✅ Connected to MongoDB\n');
+    // console.log('✅ Connected to MongoDB\n');
 
     const db = client.db('dsa_patterns');
     const patternsCollection = db.collection('patterns');
 
     // Get all patterns
     const allPatterns = await patternsCollection.find({}).toArray();
-    console.log(`📊 Found ${allPatterns.length} patterns in database\n`);
+    // console.log(`📊 Found ${allPatterns.length} patterns in database\n`);
 
     if (allPatterns.length === 0) {
-      console.log('⚠️  No patterns found in database.');
-      console.log('   Make sure you have data in the patterns collection.');
+    //   console.log('⚠️  No patterns found in database.');
+    //   console.log('   Make sure you have data in the patterns collection.');
       return;
     }
 
@@ -74,7 +74,7 @@ async function updatePatternOrder() {
     let notFoundCount = 0;
     const notFoundPatterns = [];
 
-    console.log('🔄 Updating pattern order...\n');
+    // console.log('🔄 Updating pattern order...\n');
 
     for (const pattern of allPatterns) {
       const newOrder = patternOrder[pattern.slug];
@@ -84,27 +84,27 @@ async function updatePatternOrder() {
           { _id: pattern._id },
           { $set: { order: newOrder } }
         );
-        console.log(`   ✅ ${String(newOrder).padStart(2, ' ')}. ${pattern.name.padEnd(35)} (${pattern.slug})`);
+        // console.log(`   ✅ ${String(newOrder).padStart(2, ' ')}. ${pattern.name.padEnd(35)} (${pattern.slug})`);
         updatedCount++;
       } else {
-        console.log(`   ⚠️  Pattern "${pattern.name}" (${pattern.slug}) not in order list`);
+        // console.log(`   ⚠️  Pattern "${pattern.name}" (${pattern.slug}) not in order list`);
         notFoundPatterns.push(pattern);
         notFoundCount++;
       }
     }
 
-    console.log('\n' + '═'.repeat(70));
-    console.log('📈 Summary:');
-    console.log('═'.repeat(70));
-    console.log(`   ✅ Updated: ${updatedCount} patterns`);
-    console.log(`   ⚠️  Not found in order list: ${notFoundCount} patterns`);
+    // console.log('\n' + '═'.repeat(70));
+    // console.log('📈 Summary:');
+    // console.log('═'.repeat(70));
+    // console.log(`   ✅ Updated: ${updatedCount} patterns`);
+    // console.log(`   ⚠️  Not found in order list: ${notFoundCount} patterns`);
 
-    if (notFoundPatterns.length > 0) {
-      console.log('\n⚠️  Patterns not in order list (these need to be added):');
-      notFoundPatterns.forEach(p => {
-        console.log(`   - ${p.name} (${p.slug})`);
-      });
-    }
+    // if (notFoundPatterns.length > 0) {
+    // //   console.log('\n⚠️  Patterns not in order list (these need to be added):');
+    //   notFoundPatterns.forEach(p => {
+    //     // console.log(`   - ${p.name} (${p.slug})`);
+    //   });
+    // }
 
     // Show final order
     console.log('\n' + '═'.repeat(70));

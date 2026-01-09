@@ -8,8 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { User, Check, X, ArrowRight } from 'lucide-react'
 
 export default function ProfileCompletionWidget() {
-  const [profile, setProfile] = useState(null)
-  const [completion, setCompletion] = useState(0)
+  const [completionData, setCompletionData] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -28,8 +27,10 @@ export default function ProfileCompletionWidget() {
 
       if (response.ok) {
         const data = await response.json()
-        setProfile(data.profile)
-        setCompletion(calculateCompletion(data.profile))
+        setCompletionData({
+          profile: data.profile,
+          completion: data.completionPercentage || 0
+        })
       }
     } catch (error) {
       console.error('Error fetching profile:', error)
@@ -38,36 +39,19 @@ export default function ProfileCompletionWidget() {
     }
   }
 
-  const calculateCompletion = (profile) => {
-    if (!profile) return 0
-
-    const fields = [
-      profile?.avatar,
-      profile?.bio,
-      profile?.college,
-      profile?.graduationYear,
-      profile?.location,
-      profile?.skills?.length > 0,
-      profile?.socialLinks?.linkedin,
-      profile?.socialLinks?.github,
-      profile?.socialLinks?.leetcode,
-      profile?.resumeUrl
-    ]
-
-    const completed = fields.filter(Boolean).length
-    return Math.round((completed / fields.length) * 100)
-  }
-
   const getCompletionItems = () => {
-    if (!profile) return []
+    if (!completionData?.profile) return []
+
+    const profile = completionData.profile
 
     return [
-      { label: 'Profile Picture', completed: !!profile?.avatar },
-      { label: 'Bio', completed: !!profile?.bio },
-      { label: 'College', completed: !!profile?.college },
-      { label: 'Skills', completed: profile?.skills?.length > 0 },
-      { label: 'Social Links', completed: !!profile?.socialLinks?.linkedin || !!profile?.socialLinks?.github },
-      { label: 'Resume', completed: !!profile?.resumeUrl }
+      { label: 'Profile Picture', completed: !!profile.avatar },
+      { label: 'Bio', completed: !!profile.bio },
+      { label: 'College', completed: !!profile.college },
+      { label: 'Skills', completed: profile.skills?.length > 0 },
+      { label: 'Location', completed: !!profile.location },
+      { label: 'GitHub', completed: !!profile.github },
+      { label: 'LinkedIn', completed: !!profile.linkedin }
     ]
   }
 
@@ -81,6 +65,8 @@ export default function ProfileCompletionWidget() {
       </Card>
     )
   }
+
+  const completion = completionData?.completion || 0
 
   if (completion === 100) {
     return null

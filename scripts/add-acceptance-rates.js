@@ -79,14 +79,14 @@ async function addAcceptanceRates() {
 
   try {
     await client.connect();
-    console.log('Connected to MongoDB');
+    // console.log('Connected to MongoDB');
 
     const db = client.db('dsa_patterns');
     const questionsCollection = db.collection('questions');
 
     // Get all questions
     const questions = await questionsCollection.find({}).toArray();
-    console.log(`Found ${questions.length} questions`);
+    // console.log(`Found ${questions.length} questions`);
 
     let updated = 0;
     for (const question of questions) {
@@ -103,13 +103,13 @@ async function addAcceptanceRates() {
       );
 
       updated++;
-      console.log(`Updated: ${question.title} -> ${acceptanceRate}%`);
+    //   console.log(`Updated: ${question.title} -> ${acceptanceRate}%`);
     }
 
-    console.log(`\n✅ Successfully updated ${updated} questions with acceptance rates`);
+    // console.log(`\n✅ Successfully updated ${updated} questions with acceptance rates`);
 
   } catch (error) {
-    console.error('Error:', error);
+    // console.error('Error:', error);
   } finally {
     await client.close();
   }

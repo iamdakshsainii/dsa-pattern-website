@@ -1,34 +1,36 @@
-import { redirect } from "next/navigation"
-import { getCurrentUser } from "@/lib/auth"
-import { getFullUserProfile, calculateProfileCompletion } from "@/lib/db"
-import ProfileView from "@/components/profile/profile-view"
-import Link from "next/link"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
+import { getFullUserProfile, calculateProfileCompletion, getUserById } from "@/lib/db";
+import ProfileView from "@/components/profile/profile-view";
+import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default async function ProfilePage() {
-  const user = await getCurrentUser()
+  const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/auth/login")
+    redirect("/auth/login");
   }
 
-  const fullProfile = await getFullUserProfile(user.id)
+  const dbUser = await getUserById(user.id);
+  const fullProfile = await getFullUserProfile(user.id);
 
   if (!fullProfile) {
-    redirect("/auth/login")
+    redirect("/auth/login");
   }
 
-  const completion = calculateProfileCompletion(fullProfile?.profile)
+  const completion = calculateProfileCompletion(fullProfile?.profile);
 
   return (
     <>
       <ProfileView
         user={{
-          id: fullProfile._id,
+          id: fullProfile.id,
           name: fullProfile.name,
           email: fullProfile.email,
-          createdAt: user.createdAt || new Date()
+          username: dbUser.username || null,
+          createdAt: fullProfile.createdAt || new Date(),
         }}
         profile={fullProfile.profile}
         completionPercentage={completion}
@@ -48,13 +50,11 @@ export default async function ProfilePage() {
                   </p>
                 </div>
               </div>
-              <Button variant="ghost">
-                View All →
-              </Button>
+              <Button variant="ghost">View All →</Button>
             </div>
           </Card>
         </Link>
       </div>
     </>
-  )
+  );
 }

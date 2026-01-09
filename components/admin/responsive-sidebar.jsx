@@ -42,6 +42,7 @@ export default function ResponsiveSidebar({ user, notifications = [] }) {
   { icon: MessageSquare, label: 'Mentorship', href: '/admin/mentorship' },
   { icon: Map, label: 'Roadmaps', href: '/admin/roadmaps' },
   { icon: GraduationCap, label: 'Quizzes', href: '/admin/quiz-manager' },
+  { icon: FileText, label: 'Questions', href: '/admin/questions' },
   {
     icon: BarChart3,
     label: 'Analytics',
@@ -57,6 +58,7 @@ export default function ResponsiveSidebar({ user, notifications = [] }) {
   { icon: Zap, label: 'Auto-Actions', href: '/admin/auto-actions' },
   { icon: Bell, label: 'Notifications', href: '/admin/notifications' },
   { icon: Settings, label: 'Settings', href: '/admin/settings' },
+  { icon: Map, label: 'Patterns', href: '/admin/patterns' },
 ];
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -178,7 +180,7 @@ export default function ResponsiveSidebar({ user, notifications = [] }) {
         <div className="flex flex-col h-full">
           <div className="p-4 border-b flex items-center justify-between min-h-[57px]">
             {!collapsed && (
-              <div className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <div className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-foreground">
                 Admin Panel
               </div>
             )}

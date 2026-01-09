@@ -1,45 +1,45 @@
-export const dynamic = 'force-dynamic'
-import Link from "next/link"
-import { getPatterns } from "@/lib/db"
-import { getCurrentUser } from "@/lib/auth"
-import clientPromise from "@/lib/mongodb"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, BookOpen } from "lucide-react"
-import PatternsClientPage from "@/components/patterns-client-page"
+export const dynamic = "force-dynamic";
+import Link from "next/link";
+import { getPatterns } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
+import clientPromise from "@/lib/mongodb";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, BookOpen } from "lucide-react";
+import PatternsClientPage from "@/components/patterns-client-page";
 
 export default async function PatternsPage() {
-  const patterns = await getPatterns()
+  const patterns = await getPatterns();
 
-  // Get current user and their progress
-  const currentUser = await getCurrentUser()
-  let userProgress = null
+  const currentUser = await getCurrentUser();
+  let userProgress = null;
 
   if (currentUser) {
-    const client = await clientPromise
-    const db = client.db("dsa_patterns")
-    const progressCollection = db.collection("progress")
+    const client = await clientPromise;
+    const db = client.db("dsa_patterns");
 
-    const allProgress = await progressCollection
-      .find({ userId: currentUser.id })
-      .toArray()
+    const allProgress = await db
+      .collection("user_progress")
+      .find({ user_id: currentUser.id })
+      .toArray();
 
     const completed = allProgress
-      .filter(p => p.completed)
-      .map(p => p.questionId || p.problemId)
+      .filter((p) => p.status === "completed")
+      .map((p) => p.question_id);
 
-    const bookmarks = allProgress
-      .filter(p => p.bookmarked)
-      .map(p => p.questionId || p.problemId)
+    const bookmarks = await db
+      .collection("bookmarks")
+      .find({ user_id: currentUser.id })
+      .toArray();
 
     userProgress = {
       completed,
-      bookmarks,
+      bookmarks: bookmarks.map((b) => b.question_id),
       inProgress: allProgress
-        .filter(p => !p.completed && p.attempts > 0)
-        .map(p => p.questionId || p.problemId)
-    }
+        .filter((p) => p.status === "in_progress")
+        .map((p) => p.question_id),
+    };
   }
 
   return (
@@ -65,5 +65,5 @@ export default async function PatternsPage() {
         currentUser={currentUser}
       />
     </div>
-  )
+  );
 }

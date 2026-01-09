@@ -52,19 +52,19 @@ async function updatePatternOrder() {
   const client = new MongoClient(MONGODB_URI);
 
   try {
-    console.log('🔌 Connecting to MongoDB...');
+    // console.log('🔌 Connecting to MongoDB...');
     await client.connect();
-    console.log('✅ Connected to MongoDB');
+    // console.log('✅ Connected to MongoDB');
 
     const db = client.db('dsa_patterns');
     const patternsCollection = db.collection('patterns');
 
     // Get all patterns
     const allPatterns = await patternsCollection.find({}).toArray();
-    console.log(`\n📊 Found ${allPatterns.length} patterns in database`);
+    // console.log(`\n📊 Found ${allPatterns.length} patterns in database`);
 
     if (allPatterns.length === 0) {
-      console.log('⚠️  No patterns found in database. Make sure you have data in the patterns collection.');
+    //   console.log('⚠️  No patterns found in database. Make sure you have data in the patterns collection.');
       return;
     }
 
@@ -72,7 +72,7 @@ async function updatePatternOrder() {
     let updatedCount = 0;
     let notFoundCount = 0;
 
-    console.log('\n🔄 Updating pattern order...\n');
+    // console.log('\n🔄 Updating pattern order...\n');
 
     for (const pattern of allPatterns) {
       const newOrder = patternOrder[pattern.slug];
@@ -82,20 +82,20 @@ async function updatePatternOrder() {
           { _id: pattern._id },
           { $set: { order: newOrder } }
         );
-        console.log(`   ✅ Updated "${pattern.name}" (${pattern.slug}) → order: ${newOrder}`);
+        // console.log(`   ✅ Updated "${pattern.name}" (${pattern.slug}) → order: ${newOrder}`);
         updatedCount++;
       } else {
-        console.log(`   ⚠️  Pattern "${pattern.name}" (${pattern.slug}) not in order list`);
+        // console.log(`   ⚠️  Pattern "${pattern.name}" (${pattern.slug}) not in order list`);
         notFoundCount++;
       }
     }
 
-    console.log('\n📈 Summary:');
-    console.log(`   ✅ Updated: ${updatedCount} patterns`);
-    console.log(`   ⚠️  Not found in order list: ${notFoundCount} patterns`);
+    // console.log('\n📈 Summary:');
+    // console.log(`   ✅ Updated: ${updatedCount} patterns`);
+    // console.log(`   ⚠️  Not found in order list: ${notFoundCount} patterns`);
 
     // Show final order
-    console.log('\n🎯 Final Pattern Order:');
+    // console.log('\n🎯 Final Pattern Order:');
     const updatedPatterns = await patternsCollection
       .find({})
       .sort({ order: 1 })
@@ -103,17 +103,17 @@ async function updatePatternOrder() {
 
     updatedPatterns.forEach((p, index) => {
       const orderDisplay = p.order || 'N/A';
-      console.log(`   ${String(index + 1).padStart(2)}. ${p.name.padEnd(30)} (order: ${orderDisplay})`);
+    //   console.log(`   ${String(index + 1).padStart(2)}. ${p.name.padEnd(30)} (order: ${orderDisplay})`);
     });
 
-    console.log('\n✨ Pattern order update complete!');
+    // console.log('\n✨ Pattern order update complete!');
 
   } catch (error) {
     console.error('\n❌ Error:', error.message);
-    console.error('\nFull error:', error);
+    // console.error('\nFull error:', error);
   } finally {
     await client.close();
-    console.log('\n🔌 Disconnected from MongoDB');
+    // console.log('\n🔌 Disconnected from MongoDB');
   }
 }
 

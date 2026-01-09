@@ -41,7 +41,7 @@ export default async function HomePage() {
                 From
                 <span className="text-red-500"> "Why didn't I see that?" </span>
                 to
-                <span className="block text-primary mt-2 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                <span className="block text-primary mt-2 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-foreground">
                   "I know this pattern!"
                 </span>
               </h1>
