@@ -1,0 +1,121 @@
+export const COMPANY_DATA = [
+  {
+    id: 'google',
+    name: 'Google',
+    emoji: '🔍',
+    difficulty: 'Hard',
+    rounds: '4-5',
+    avgDuration: '6-8 weeks',
+    focus: ['System Design', 'Algorithms', 'Data Structures'],
+    culture: 'Googleyness & Leadership',
+    tips: 'Loves scalability and optimization questions. Strong focus on coding fundamentals.',
+    glassdoor: 'https://www.glassdoor.com/Interview/Google-Interview-Questions-E9079.htm',
+    levelsFyi: 'https://www.levels.fyi/companies/google/salaries/software-engineer',
+    color: 'from-blue-500 to-green-500'
+  },
+  {
+    id: 'meta',
+    name: 'Meta',
+    emoji: '👥',
+    difficulty: 'Hard',
+    rounds: '4-5',
+    avgDuration: '5-7 weeks',
+    focus: ['System Design', 'Behavioral', 'Coding'],
+    culture: 'Move Fast, Be Bold',
+    tips: 'Heavy focus on product thinking and behavioral. Expects quick problem-solving.',
+    glassdoor: 'https://www.glassdoor.com/Interview/Meta-Interview-Questions-E40772.htm',
+    levelsFyi: 'https://www.levels.fyi/companies/facebook/salaries/software-engineer',
+    color: 'from-blue-600 to-purple-600'
+  },
+  {
+    id: 'amazon',
+    name: 'Amazon',
+    emoji: '📦',
+    difficulty: 'Medium-Hard',
+    rounds: '4-6',
+    avgDuration: '4-6 weeks',
+    focus: ['Leadership Principles', 'System Design', 'Coding'],
+    culture: '14 Leadership Principles',
+    tips: 'Master STAR method. Every answer should relate to leadership principles.',
+    glassdoor: 'https://www.glassdoor.com/Interview/Amazon-Interview-Questions-E6036.htm',
+    levelsFyi: 'https://www.levels.fyi/companies/amazon/salaries/software-engineer',
+    color: 'from-orange-500 to-yellow-500'
+  },
+  {
+    id: 'microsoft',
+    name: 'Microsoft',
+    emoji: '🪟',
+    difficulty: 'Medium',
+    rounds: '4-5',
+    avgDuration: '4-6 weeks',
+    focus: ['Coding', 'System Design', 'Collaboration'],
+    culture: 'Growth Mindset',
+    tips: 'Friendly interviews. Focus on clean code and communication.',
+    glassdoor: 'https://www.glassdoor.com/Interview/Microsoft-Interview-Questions-E1651.htm',
+    levelsFyi: 'https://www.levels.fyi/companies/microsoft/salaries/software-engineer',
+    color: 'from-blue-500 to-cyan-500'
+  },
+  {
+    id: 'apple',
+    name: 'Apple',
+    emoji: '🍎',
+    difficulty: 'Hard',
+    rounds: '4-6',
+    avgDuration: '6-8 weeks',
+    focus: ['Product Design', 'Algorithms', 'System Knowledge'],
+    culture: 'Think Different',
+    tips: 'Deep technical knowledge expected. Questions about OS, memory, and low-level systems.',
+    glassdoor: 'https://www.glassdoor.com/Interview/Apple-Interview-Questions-E1138.htm',
+    levelsFyi: 'https://www.levels.fyi/companies/apple/salaries/software-engineer',
+    color: 'from-gray-700 to-gray-900'
+  },
+  {
+    id: 'netflix',
+    name: 'Netflix',
+    emoji: '🎬',
+    difficulty: 'Very Hard',
+    rounds: '4-5',
+    avgDuration: '6-10 weeks',
+    focus: ['System Design', 'Culture Fit', 'Senior-level Coding'],
+    culture: 'Freedom & Responsibility',
+    tips: 'Highest bar. Expects senior-level thinking even for mid-level roles.',
+    glassdoor: 'https://www.glassdoor.com/Interview/Netflix-Interview-Questions-E11891.htm',
+    levelsFyi: 'https://www.levels.fyi/companies/netflix/salaries/software-engineer',
+    color: 'from-red-600 to-red-800'
+  },
+  {
+    id: 'uber',
+    name: 'Uber',
+    emoji: '🚗',
+    difficulty: 'Medium-Hard',
+    rounds: '4-5',
+    avgDuration: '4-6 weeks',
+    focus: ['System Design', 'Algorithms', 'Behavioral'],
+    culture: 'Move Fast, Customer Obsession',
+    tips: 'Real-world system design questions. Focus on scalability.',
+    glassdoor: 'https://www.glassdoor.com/Interview/Uber-Interview-Questions-E575263.htm',
+    levelsFyi: 'https://www.levels.fyi/companies/uber/salaries/software-engineer',
+    color: 'from-black to-gray-800'
+  },
+  {
+    id: 'linkedin',
+    name: 'LinkedIn',
+    emoji: '💼',
+    difficulty: 'Medium',
+    rounds: '4-5',
+    avgDuration: '4-6 weeks',
+    focus: ['Coding', 'System Design', 'Team Collaboration'],
+    culture: 'Members First',
+    tips: 'Balanced interviews. Good for those starting FAANG journey.',
+    glassdoor: 'https://www.glassdoor.com/Interview/LinkedIn-Interview-Questions-E34865.htm',
+    levelsFyi: 'https://www.levels.fyi/companies/linkedin/salaries/software-engineer',
+    color: 'from-blue-700 to-blue-900'
+  }
+];
+
+export const DIFFICULTY_COLORS = {
+  'Medium': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+  'Medium-Hard': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+  'Hard': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  'Very Hard': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+};
