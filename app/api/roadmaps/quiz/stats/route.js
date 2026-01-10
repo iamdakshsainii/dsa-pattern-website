@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
-import { getUser, getQuizStats } from "@/lib/db"
+import { getUser, getUserQuizStats } from "@/lib/db"
 
 export async function GET(request) {
   try {
@@ -32,7 +32,7 @@ export async function GET(request) {
     }
 
     const userId = currentUser._id.toString()
-    const stats = await getQuizStats(userId)
+    const stats = await getUserQuizStats(userId)
 
     return NextResponse.json({
       success: true,

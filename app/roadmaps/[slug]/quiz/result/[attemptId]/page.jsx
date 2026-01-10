@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { ObjectId } from "mongodb";
-import QuizReportClient from "@/components/quiz-report-client";
+import QuizResultClient from "@/app/roadmaps/[slug]/quiz/result/[attemptId]/quiz-result-client";
 
 export default async function QuizResultPage({ params }) {
   const { slug, attemptId } = await params;
@@ -52,8 +52,8 @@ export default async function QuizResultPage({ params }) {
   const isMastered = passed >= 3;
 
   return (
-    <QuizReportClient
-      attempt={{
+    <QuizResultClient
+      result={{
         ...result,
         _id: result._id.toString(),
         roadmapId: slug,
@@ -64,10 +64,12 @@ export default async function QuizResultPage({ params }) {
         passed: result.passed,
         timeTaken: result.timeTaken,
         answers: result.answers,
+        attemptNumber: result.attemptNumber || 1,
       }}
       roadmap={{
         ...roadmap,
         _id: roadmap._id.toString(),
+        slug: roadmap.slug,
         title: roadmap.title,
         icon: roadmap.icon,
       }}
