@@ -6,11 +6,14 @@ export async function GET(request, { params }) {
     const { slug } = await params
     const questions = await getQuestionsByPattern(slug)
 
-    return NextResponse.json(questions)
+    return NextResponse.json({
+      success: true,
+      questions
+    })
   } catch (error) {
-    console.error('Error fetching questions:', error)
+    console.error("Error fetching questions:", error)
     return NextResponse.json(
-      { error: 'Failed to fetch questions' },
+      { error: "Failed to fetch questions" },
       { status: 500 }
     )
   }

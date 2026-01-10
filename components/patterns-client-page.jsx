@@ -46,8 +46,8 @@ export default function PatternsClientPage({
     search: searchParams.get("search") || "",
   });
 
-  const [viewMode, setViewMode] = useState("card"); // 'card' or 'list'
-  const [searchMode, setSearchMode] = useState("pattern"); // 'pattern' or 'question'
+  const [viewMode, setViewMode] = useState("card");
+  const [searchMode, setSearchMode] = useState("pattern");
 
   const [allQuestions, setAllQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,13 +56,11 @@ export default function PatternsClientPage({
     async function fetchAllQuestions() {
       setLoading(true);
       try {
-        // Single API call instead of 22
         const response = await fetch("/api/questions/all");
 
         if (response.ok) {
           const allQuestions = await response.json();
 
-          // Map pattern names to questions
           const questionsWithPattern = allQuestions.map((q) => {
             const pattern = patterns.find((p) => p.slug === q.pattern_id);
             return {
@@ -142,7 +140,6 @@ export default function PatternsClientPage({
     };
   }, [allQuestions]);
 
-  // ✨ CHANGED: Use sortedPatterns instead of patterns
   const filteredPatterns = useMemo(() => {
     if (
       !filters.difficulty &&
@@ -213,49 +210,42 @@ export default function PatternsClientPage({
   }, [allQuestions, filters]);
 
   const stats = useMemo(() => {
-  const totalQuestions = allQuestions.length;
-  const completedQuestions = userProgress?.completed?.length || 0;
+    const totalQuestions = allQuestions.length;
+    const completedQuestions = userProgress?.completed?.length || 0;
 
-  const byDifficulty = {
-    Easy: allQuestions.filter((q) => q.difficulty === "Easy").length,
-    Medium: allQuestions.filter((q) => q.difficulty === "Medium").length,
-    Hard: allQuestions.filter((q) => q.difficulty === "Hard").length,
-  };
+    const byDifficulty = {
+      Easy: allQuestions.filter((q) => q.difficulty === "Easy").length,
+      Medium: allQuestions.filter((q) => q.difficulty === "Medium").length,
+      Hard: allQuestions.filter((q) => q.difficulty === "Hard").length,
+    };
 
-  const completedByDifficulty = {
-    Easy: allQuestions.filter(
-      (q) => q.difficulty === "Easy" && userProgress?.completed?.includes(q._id)
-    ).length,
-    Medium: allQuestions.filter(
-      (q) => q.difficulty === "Medium" && userProgress?.completed?.includes(q._id)
-    ).length,
-    Hard: allQuestions.filter(
-      (q) => q.difficulty === "Hard" && userProgress?.completed?.includes(q._id)
-    ).length,
-  };
+    const completedByDifficulty = {
+      Easy: allQuestions.filter(
+        (q) =>
+          q.difficulty === "Easy" && userProgress?.completed?.includes(q._id)
+      ).length,
+      Medium: allQuestions.filter(
+        (q) =>
+          q.difficulty === "Medium" && userProgress?.completed?.includes(q._id)
+      ).length,
+      Hard: allQuestions.filter(
+        (q) =>
+          q.difficulty === "Hard" && userProgress?.completed?.includes(q._id)
+      ).length,
+    };
 
-
-  const totalByDifficulty = byDifficulty.Easy + byDifficulty.Medium + byDifficulty.Hard;
-
-//   console.log('Stats Debug:', {
-//     totalQuestions,
-//     totalByDifficulty,
-//     mismatch: totalQuestions !== totalByDifficulty,
-//     missingCount: totalQuestions - totalByDifficulty
-//   });
-
-  return {
-    total: totalQuestions,
-    completed: completedQuestions,
-    remaining: totalQuestions - completedQuestions,
-    percentage:
-      totalQuestions > 0
-        ? Math.round((completedQuestions / totalQuestions) * 100)
-        : 0,
-    byDifficulty,
-    completedByDifficulty,
-  };
-}, [allQuestions, userProgress]);
+    return {
+      total: totalQuestions,
+      completed: completedQuestions,
+      remaining: totalQuestions - completedQuestions,
+      percentage:
+        totalQuestions > 0
+          ? Math.round((completedQuestions / totalQuestions) * 100)
+          : 0,
+      byDifficulty,
+      completedByDifficulty,
+    };
+  }, [allQuestions, userProgress]);
 
   const getDifficultyColor = (difficulty) => {
     const colors = {
@@ -269,7 +259,6 @@ export default function PatternsClientPage({
 
   return (
     <main className="container px-4 py-8 max-w-7xl mx-auto">
-      {/* Progress Section */}
       <div className="mb-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
         <Card className="lg:col-span-1 p-6 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
           <div className="flex items-center gap-2 mb-4">
@@ -337,7 +326,6 @@ export default function PatternsClientPage({
         </Card>
       </div>
 
-      {/* Hero */}
       <div className="mb-8 text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
           <span className="relative flex h-2 w-2">
@@ -355,9 +343,7 @@ export default function PatternsClientPage({
         </p>
       </div>
 
-      {/* Filter Bar */}
       <Card className="p-6 space-y-4 mb-8 max-w-6xl mx-auto">
-        {/* Top Row: Search + Mode Toggles */}
         <div className="flex gap-3 items-center">
           <div className="flex-1">
             <SearchFilter
@@ -371,7 +357,6 @@ export default function PatternsClientPage({
             />
           </div>
 
-          {/* Search Mode Toggle */}
           <Select value={searchMode} onValueChange={setSearchMode}>
             <SelectTrigger className="w-[180px] shrink-0">
               <Search className="h-4 w-4 mr-2" />
@@ -393,7 +378,6 @@ export default function PatternsClientPage({
             </SelectContent>
           </Select>
 
-          {/* View Mode Toggle */}
           <Select value={viewMode} onValueChange={setViewMode}>
             <SelectTrigger className="w-[150px] shrink-0">
               <SelectValue />
@@ -415,7 +399,6 @@ export default function PatternsClientPage({
           </Select>
         </div>
 
-        {/* Filters Row */}
         <div className="flex flex-wrap gap-3 justify-center">
           <DifficultyFilter
             selected={filters.difficulty}
@@ -423,7 +406,6 @@ export default function PatternsClientPage({
           />
         </div>
 
-        {/* Dropdowns Row */}
         {(companies.length > 0 || tags.length > 0) && (
           <div className="flex flex-wrap gap-3 items-center justify-center">
             {companies.length > 0 && (
@@ -451,7 +433,6 @@ export default function PatternsClientPage({
         />
       </Card>
 
-      {/* Results Info */}
       <div className="mb-4 text-sm text-muted-foreground text-center">
         {searchMode === "pattern" ? (
           <>
@@ -464,7 +445,6 @@ export default function PatternsClientPage({
         )}
       </div>
 
-      {/* Loading State */}
       {loading ? (
         <div className="text-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
@@ -472,10 +452,8 @@ export default function PatternsClientPage({
         </div>
       ) : (
         <>
-          {/* PATTERN MODE - Show Patterns */}
           {searchMode === "pattern" && (
             <>
-              {/* CARD VIEW */}
               {viewMode === "card" && filteredPatterns.length > 0 && (
                 <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                   {filteredPatterns.map((pattern) => {
@@ -496,21 +474,24 @@ export default function PatternsClientPage({
                         key={pattern._id}
                         href={`/patterns/${pattern.slug}`}
                       >
-                        <Card className="group relative p-5 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full bg-card/50 backdrop-blur border-muted hover:border-primary/50">
-                          {/* ✨ NEW: Order Badge */}
-                          <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-md z-10">
+                        <Card className="group relative p-5 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full bg-white dark:bg-slate-900 border-2 hover:border-primary/50">
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-lg" />
+
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-purple-50/0 to-pink-50/0 group-hover:from-blue-50/30 group-hover:via-purple-50/30 group-hover:to-pink-50/30 dark:from-blue-950/0 dark:via-purple-950/0 dark:to-pink-950/0 dark:group-hover:from-blue-950/10 dark:group-hover:via-purple-950/10 dark:group-hover:to-pink-950/10 transition-all duration-500 rounded-lg pointer-events-none" />
+
+                          <div className="absolute top-3 left-3 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-lg z-10 group-hover:scale-110 transition-transform duration-300">
                             {pattern.order || "?"}
                           </div>
 
-                          {/* ✨ CHANGED: Added pl-10 to make space for badge */}
-                          <div className="pl-10">
+                          <div className="relative pl-12">
                             <div className="flex items-start justify-between mb-3">
-                              <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">
+                              <h3 className="font-semibold text-lg group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300 line-clamp-2">
                                 {pattern.name}
                               </h3>
+
                               <Badge
                                 variant="secondary"
-                                className="shrink-0 ml-2 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                                className="shrink-0 ml-2 bg-primary/10 text-primary border border-primary/20 font-semibold group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:text-white transition-all duration-300"
                               >
                                 {totalCount}
                               </Badge>
@@ -518,17 +499,23 @@ export default function PatternsClientPage({
 
                             {currentUser && (
                               <div className="mb-3">
-                                <div className="flex justify-between text-xs mb-1">
-                                  <span className="text-muted-foreground">
+                                <div className="flex justify-between text-xs mb-1.5">
+                                  <span className="text-muted-foreground font-medium">
                                     Progress
                                   </span>
-                                  <span className="font-medium">
+                                  <span
+                                    className={`font-bold ${
+                                      progressPercent === 100
+                                        ? "text-green-600 dark:text-green-400"
+                                        : "text-blue-600 dark:text-blue-400"
+                                    }`}
+                                  >
                                     {completedCount}/{totalCount}
                                   </span>
                                 </div>
-                                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                <div className="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
                                   <div
-                                    className="h-full bg-gradient-to-r from-green-500 to-blue-500 transition-all duration-300"
+                                    className="h-full bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 transition-all duration-500 shadow-sm"
                                     style={{ width: `${progressPercent}%` }}
                                   />
                                 </div>
@@ -543,13 +530,13 @@ export default function PatternsClientPage({
                               <div className="pt-3 border-t border-muted flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-1.5">
                                   <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                                  <code className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono">
+                                  <code className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-foreground font-mono font-semibold">
                                     {pattern.complexity.time}
                                   </code>
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                   <Database className="h-3.5 w-3.5 text-muted-foreground" />
-                                  <code className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono">
+                                  <code className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-foreground font-mono font-semibold">
                                     {pattern.complexity.space}
                                   </code>
                                 </div>
@@ -563,9 +550,8 @@ export default function PatternsClientPage({
                 </div>
               )}
 
-              {/* LIST VIEW */}
               {viewMode === "list" && filteredPatterns.length > 0 && (
-                <div className="space-y-3 max-w-6xl mx-auto">
+                <div className="space-y-4 max-w-6xl mx-auto">
                   {filteredPatterns.map((pattern) => {
                     const patternQuestions = allQuestions.filter(
                       (q) => q.patternSlug === pattern.slug
@@ -584,38 +570,41 @@ export default function PatternsClientPage({
                         key={pattern._id}
                         href={`/patterns/${pattern.slug}`}
                       >
-                        <Card className="group relative p-5 hover:shadow-lg transition-all duration-200 cursor-pointer border-muted hover:border-primary/50">
-                          {/* ✨ NEW: Order Badge for List View */}
-                          <div className="absolute top-5 left-5 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-base shadow-md z-10">
+                        <Card className="group relative p-6 hover:shadow-xl hover:border-primary/50 transition-all duration-300 cursor-pointer bg-white dark:bg-slate-900 border-2">
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-purple-50/0 to-pink-50/0 group-hover:from-blue-50/30 group-hover:via-purple-50/30 group-hover:to-pink-50/30 dark:from-blue-950/0 dark:via-purple-950/0 dark:to-pink-950/0 dark:group-hover:from-blue-950/10 dark:group-hover:via-purple-950/10 dark:group-hover:to-pink-950/10 transition-all duration-500 rounded-lg" />
+
+                          <div className="absolute top-6 left-6 w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-lg z-10 group-hover:scale-110 transition-transform duration-300">
                             {pattern.order || "?"}
                           </div>
 
-                          {/* ✨ CHANGED: Added pl-16 to make space for badge */}
-                          <div className="flex items-center gap-6 pl-16">
-                            {/* Left: Pattern Info */}
+                          <div className="relative flex items-center gap-6 pl-20">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-lg font-semibold group-hover:text-primary transition-colors truncate">
+                                <h3 className="text-xl font-bold group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300">
                                   {pattern.name}
                                 </h3>
-                                <Badge variant="secondary" className="shrink-0">
+                                <Badge className="shrink-0 bg-primary/10 text-primary border border-primary/20 font-semibold">
                                   {totalCount} problems
                                 </Badge>
                               </div>
-                              <p className="text-sm text-muted-foreground line-clamp-1 mb-2">
+                              <p className="text-sm text-muted-foreground line-clamp-1 mb-3">
                                 {pattern.description}
                               </p>
                               {pattern.complexity && (
-                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                  <span className="flex items-center gap-1">
-                                    <Clock className="h-3.5 w-3.5" />
-                                    <code className="px-1.5 py-0.5 rounded bg-muted">
+                                <div className="flex items-center gap-6 text-xs text-muted-foreground">
+                                  <span className="flex items-center gap-2">
+                                    <Clock className="h-4 w-4" />
+                                    <span className="font-medium">Time:</span>
+                                    <code className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-mono font-semibold">
                                       {pattern.complexity.time}
                                     </code>
                                   </span>
-                                  <span className="flex items-center gap-1">
-                                    <Database className="h-3.5 w-3.5" />
-                                    <code className="px-1.5 py-0.5 rounded bg-muted">
+                                  <span className="flex items-center gap-2">
+                                    <Database className="h-4 w-4" />
+                                    <span className="font-medium">Space:</span>
+                                    <code className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-mono font-semibold">
                                       {pattern.complexity.space}
                                     </code>
                                   </span>
@@ -623,20 +612,25 @@ export default function PatternsClientPage({
                               )}
                             </div>
 
-                            {/* Right: Progress */}
                             {currentUser && (
-                              <div className="w-40 shrink-0">
-                                <div className="text-center mb-1.5">
-                                  <div className="text-2xl font-bold">
+                              <div className="w-48 shrink-0">
+                                <div className="text-center mb-2">
+                                  <div
+                                    className={`text-3xl font-bold ${
+                                      progressPercent === 100
+                                        ? "text-green-600 dark:text-green-400"
+                                        : "text-blue-600 dark:text-blue-400"
+                                    }`}
+                                  >
                                     {progressPercent}%
                                   </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {completedCount}/{totalCount} done
+                                  <div className="text-xs text-muted-foreground font-medium">
+                                    {completedCount}/{totalCount} completed
                                   </div>
                                 </div>
-                                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
                                   <div
-                                    className="h-full bg-gradient-to-r from-green-500 to-blue-500"
+                                    className="h-full bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 transition-all duration-500 shadow-sm"
                                     style={{ width: `${progressPercent}%` }}
                                   />
                                 </div>
@@ -652,12 +646,10 @@ export default function PatternsClientPage({
             </>
           )}
 
-          {/* QUESTION MODE - Show Questions */}
           {searchMode === "question" && filteredQuestions.length > 0 && (
             <>
-              {/* CARD VIEW for Questions */}
               {viewMode === "card" && (
-                <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto">
+                <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto">
                   {filteredQuestions.map((question) => {
                     const isCompleted = userProgress?.completed?.includes(
                       question._id
@@ -666,42 +658,57 @@ export default function PatternsClientPage({
                     return (
                       <Card
                         key={question._id}
-                        className={`p-5 hover:shadow-lg transition-all duration-200 ${
+                        className={`group relative p-5 hover:shadow-xl transition-all duration-300 border-2 ${
                           isCompleted
-                            ? "bg-green-50/50 dark:bg-green-950/20 border-green-300 dark:border-green-800"
-                            : "hover:border-primary/50"
+                            ? "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-400 dark:border-green-700"
+                            : "bg-white dark:bg-slate-900 hover:border-primary/50"
                         }`}
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 mt-0.5">
+                        {!isCompleted && (
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        )}
+
+                        {isCompleted && (
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
+                        )}
+
+                        <div className="relative flex items-start gap-4">
+                          <div className="flex-shrink-0 mt-1">
                             {isCompleted ? (
-                              <CheckCircle2 className="w-5 h-5 text-green-600" />
+                              <div className="relative">
+                                <div className="absolute inset-0 bg-green-500/20 rounded-full blur-md animate-pulse"></div>
+                                <CheckCircle2 className="relative w-6 h-6 text-green-600 dark:text-green-400" />
+                              </div>
                             ) : (
-                              <Circle className="w-5 h-5 text-gray-400" />
+                              <Circle className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" />
                             )}
                           </div>
 
                           <div className="flex-1 min-w-0">
                             <Link href={`/questions/${question._id}`}>
-                              <h3 className="text-base font-semibold hover:text-primary transition-colors mb-2 line-clamp-1">
+                              <h3 className="text-base font-bold hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 hover:bg-clip-text transition-all duration-300 mb-2 line-clamp-2">
                                 {question.title}
                               </h3>
                             </Link>
+
                             <div className="flex items-center gap-2 flex-wrap mb-3">
                               <Badge
-                                className={getDifficultyColor(
+                                className={`${getDifficultyColor(
                                   question.difficulty
-                                )}
+                                )} font-semibold`}
                               >
                                 {question.difficulty}
                               </Badge>
-                              <Badge variant="outline" className="text-xs">
+                              <Badge
+                                variant="outline"
+                                className="text-xs border-slate-300 dark:border-slate-700"
+                              >
                                 {question.patternName}
                               </Badge>
                             </div>
 
                             {question.tags && question.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-1.5 mb-3">
+                              <div className="flex flex-wrap gap-1.5 mb-4">
                                 {question.tags.slice(0, 3).map((tag) => (
                                   <Badge
                                     key={tag}
@@ -714,7 +721,7 @@ export default function PatternsClientPage({
                                 {question.tags.length > 3 && (
                                   <Badge
                                     variant="secondary"
-                                    className="text-xs"
+                                    className="text-xs font-semibold"
                                   >
                                     +{question.tags.length - 3}
                                   </Badge>
@@ -724,8 +731,11 @@ export default function PatternsClientPage({
 
                             <div className="flex gap-2">
                               <Link href={`/questions/${question._id}`}>
-                                <Button size="sm" className="h-8">
-                                  <Code className="w-3.5 h-3.5 mr-1" />
+                                <Button
+                                  size="sm"
+                                  className="h-9 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all"
+                                >
+                                  <Code className="w-4 h-4 mr-1.5" />
                                   Solve
                                 </Button>
                               </Link>
@@ -733,9 +743,9 @@ export default function PatternsClientPage({
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="h-8"
+                                  className="h-9 border-2 hover:bg-accent transition-all"
                                 >
-                                  <BookOpen className="w-3.5 h-3.5 mr-1" />
+                                  <BookOpen className="w-4 h-4 mr-1.5" />
                                   Pattern
                                 </Button>
                               </Link>
@@ -748,7 +758,6 @@ export default function PatternsClientPage({
                 </div>
               )}
 
-              {/* LIST VIEW for Questions */}
               {viewMode === "list" && (
                 <div className="space-y-3 max-w-6xl mx-auto">
                   {filteredQuestions.map((question) => {
@@ -759,38 +768,49 @@ export default function PatternsClientPage({
                     return (
                       <Card
                         key={question._id}
-                        className={`p-4 hover:shadow-lg transition-all duration-200 ${
+                        className={`group relative p-5 hover:shadow-xl transition-all duration-300 border-2 ${
                           isCompleted
-                            ? "bg-green-50/50 dark:bg-green-950/20 border-green-300 dark:border-green-800"
-                            : "hover:border-primary/50"
+                            ? "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-400 dark:border-green-700"
+                            : "bg-white dark:bg-slate-900 hover:border-primary/50"
                         }`}
                       >
-                        <div className="flex items-center gap-4">
+                        {!isCompleted && (
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        )}
+
+                        {isCompleted && (
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
+                        )}
+
+                        <div className="relative flex items-center gap-5">
                           <div className="flex-shrink-0">
                             {isCompleted ? (
-                              <CheckCircle2 className="w-5 h-5 text-green-600" />
+                              <div className="relative">
+                                <div className="absolute inset-0 bg-green-500/20 rounded-full blur-md animate-pulse"></div>
+                                <CheckCircle2 className="relative w-6 h-6 text-green-600 dark:text-green-400" />
+                              </div>
                             ) : (
-                              <Circle className="w-5 h-5 text-gray-400" />
+                              <Circle className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" />
                             )}
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-1">
+                            <div className="flex items-center gap-3 mb-2">
                               <Link href={`/questions/${question._id}`}>
-                                <h3 className="text-base font-semibold hover:text-primary transition-colors truncate">
+                                <h3 className="text-lg font-bold hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 hover:bg-clip-text transition-all duration-300">
                                   {question.title}
                                 </h3>
                               </Link>
                               <Badge
-                                className={getDifficultyColor(
+                                className={`${getDifficultyColor(
                                   question.difficulty
-                                )}
+                                )} font-semibold shrink-0`}
                               >
                                 {question.difficulty}
                               </Badge>
                               <Badge
                                 variant="outline"
-                                className="text-xs shrink-0"
+                                className="text-xs shrink-0 border-slate-300 dark:border-slate-700"
                               >
                                 {question.patternName}
                               </Badge>
@@ -798,7 +818,7 @@ export default function PatternsClientPage({
 
                             {question.tags && question.tags.length > 0 && (
                               <div className="flex flex-wrap gap-1.5">
-                                {question.tags.slice(0, 4).map((tag) => (
+                                {question.tags.slice(0, 5).map((tag) => (
                                   <Badge
                                     key={tag}
                                     variant="secondary"
@@ -807,22 +827,25 @@ export default function PatternsClientPage({
                                     {tag}
                                   </Badge>
                                 ))}
-                                {question.tags.length > 4 && (
+                                {question.tags.length > 5 && (
                                   <Badge
                                     variant="secondary"
-                                    className="text-xs"
+                                    className="text-xs font-semibold"
                                   >
-                                    +{question.tags.length - 4}
+                                    +{question.tags.length - 5}
                                   </Badge>
                                 )}
                               </div>
                             )}
                           </div>
 
-                          <div className="flex gap-2 shrink-0">
+                          <div className="flex gap-3 shrink-0">
                             <Link href={`/questions/${question._id}`}>
-                              <Button size="sm" className="h-8">
-                                <Code className="w-3.5 h-3.5 mr-1" />
+                              <Button
+                                size="sm"
+                                className="h-9 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all"
+                              >
+                                <Code className="w-4 h-4 mr-1.5" />
                                 Solve
                               </Button>
                             </Link>
@@ -830,9 +853,9 @@ export default function PatternsClientPage({
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-8"
+                                className="h-9 border-2 hover:bg-accent transition-all"
                               >
-                                <BookOpen className="w-3.5 h-3.5 mr-1" />
+                                <BookOpen className="w-4 h-4 mr-1.5" />
                                 Pattern
                               </Button>
                             </Link>
@@ -846,7 +869,6 @@ export default function PatternsClientPage({
             </>
           )}
 
-          {/* Empty States */}
           {((searchMode === "pattern" && filteredPatterns.length === 0) ||
             (searchMode === "question" && filteredQuestions.length === 0)) && (
             <Card className="p-12">

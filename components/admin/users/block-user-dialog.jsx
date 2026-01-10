@@ -50,7 +50,9 @@ export default function BlockUserDialog({ open, onOpenChange, user, currentAdmin
           description: user.isBlocked ? 'User unblocked successfully' : 'User blocked successfully'
         });
         onOpenChange(false);
-        router.refresh();
+
+        // Force full page reload to get fresh data
+        window.location.reload();
       } else {
         throw new Error('Failed');
       }
@@ -60,7 +62,6 @@ export default function BlockUserDialog({ open, onOpenChange, user, currentAdmin
         description: 'Failed to update user status',
         variant: 'destructive'
       });
-    } finally {
       setLoading(false);
     }
   };

@@ -30,6 +30,15 @@ export default function EditAttemptsDialog({ open, onOpenChange, user }) {
     }
   }, [open, user]);
 
+  useEffect(() => {
+    if (!open) {
+      setSelectedRoadmap('');
+      setAttempts('10');
+      setLoading(false);
+      setRoadmaps([]);
+    }
+  }, [open]);
+
   const fetchUserRoadmaps = async () => {
     try {
       const res = await fetch(`/api/admin/users/${user._id}/roadmaps`);
@@ -85,8 +94,16 @@ export default function EditAttemptsDialog({ open, onOpenChange, user }) {
     }
   };
 
+  const handleOpenChange = (newOpen) => {
+    if (!loading) {
+      onOpenChange(newOpen);
+    }
+  };
+
+  if (!user) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog key={`attempts-${user._id}-${open}`} open={open} onOpenChange={handleOpenChange} modal={true}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Quiz Attempts</DialogTitle>
@@ -137,7 +154,7 @@ export default function EditAttemptsDialog({ open, onOpenChange, user }) {
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={loading}>
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={loading}>

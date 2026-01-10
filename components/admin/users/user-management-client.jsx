@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import UserStatsCards from './user-stats-cards';
 import UserFilters from './user-filters';
@@ -43,7 +43,7 @@ export default function UserManagementClient({ initialData, currentAdmin, filter
         </Button>
       </div>
 
-      <UserStatsCards stats={initialData.pagination} />
+      <UserStatsCards stats={initialData.pagination} users={initialData.users} />
 
       <Card className="p-6 mb-6">
         <UserFilters initialFilters={filters} />

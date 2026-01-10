@@ -7,9 +7,8 @@ export const metadata = {
   title: "Question Management - Admin"
 }
 
-export default async function AdminQuestionsPage() {
+export default async function QuestionManagementPage() {
   const user = await getCurrentUser()
-
   if (!user || !isAdmin(user)) {
     redirect("/admin/login")
   }

@@ -22,11 +22,11 @@ export async function GET() {
 
     const userId = user.id
     const { db } = await connectToDatabase()
+    const { ObjectId } = await import("mongodb")
 
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    // Fetch all data in parallel
     const [userStats, bookmarksCount, patternBreakdown, currentVisit] = await Promise.all([
       getUserStats(userId),
       getBookmarksCountFixed(userId),
@@ -34,7 +34,6 @@ export async function GET() {
       db.collection("visits").findOne({ userId, date: today })
     ])
 
-    // Get recent activity
     const recentProgress = await db
       .collection("user_progress")
       .find({ user_id: userId, status: "completed" })
@@ -42,17 +41,15 @@ export async function GET() {
       .limit(10)
       .toArray()
 
-    // Get all completed for difficulty stats
     const allProgress = await db
       .collection("user_progress")
       .find({ user_id: userId, status: "completed" })
       .toArray()
 
-    // Build recent activity with MongoDB question data
     const recentActivity = await Promise.all(
       recentProgress.map(async (progress) => {
         const question = await db.collection("questions").findOne({
-          _id: progress.question_id
+          _id: new ObjectId(progress.question_id)
         })
 
         if (!question) {
@@ -67,7 +64,7 @@ export async function GET() {
         }
 
         return {
-          problemId: progress.question_id,
+          problemId: question._id.toString(),
           problemName: question.title || "Unknown Problem",
           difficulty: question.difficulty || "Medium",
           pattern: question.pattern_id || "unknown",
@@ -77,7 +74,6 @@ export async function GET() {
       })
     )
 
-    // Calculate difficulty stats from MongoDB
     const difficultyStats = {
       Easy: { total: 0, solved: 0 },
       Medium: { total: 0, solved: 0 },
@@ -97,7 +93,6 @@ export async function GET() {
       }
     })
 
-    // Get streak from visits
     const currentStreak = currentVisit?.currentStreak || 0
     const longestStreak = currentVisit?.longestStreak || 0
 

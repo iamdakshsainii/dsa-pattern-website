@@ -1,69 +1,79 @@
-import { notFound, redirect } from "next/navigation"
-import { cookies } from "next/headers"
-import { verifyToken } from "@/lib/auth"
-import { connectToDatabase } from "@/lib/db"
-import { ObjectId } from "mongodb"
-import QuizResultClient from "./quiz-result-client"
+import { notFound, redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/auth";
+import { connectToDatabase } from "@/lib/db";
+import { ObjectId } from "mongodb";
+import QuizReportClient from "@/components/quiz-report-client";
 
 export default async function QuizResultPage({ params }) {
-  const { slug, attemptId } = await params
-  const cookieStore = await cookies()
-  const token = cookieStore.get("auth-token")
+  const { slug, attemptId } = await params;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth-token");
 
   if (!token) {
-    redirect("/auth/login")
+    redirect("/auth/login");
   }
 
-  const user = await verifyToken(token.value)
+  const user = await verifyToken(token.value);
   if (!user) {
-    redirect("/auth/login")
+    redirect("/auth/login");
   }
 
-  const { db } = await connectToDatabase()
+  const { db } = await connectToDatabase();
 
-  let result
+  let result;
   try {
     result = await db.collection("quiz_results").findOne({
       _id: new ObjectId(attemptId),
-      userId: user.id
-    })
+      userId: user.id,
+    });
   } catch (error) {
-    notFound()
+    notFound();
   }
 
   if (!result) {
-    notFound()
+    notFound();
   }
 
-  const roadmap = await db.collection("roadmaps").findOne({ slug })
+  const roadmap = await db.collection("roadmaps").findOne({ slug });
 
   if (!roadmap) {
-    notFound()
+    notFound();
   }
 
   const allResults = await db
     .collection("quiz_results")
     .find({ userId: user.id, roadmapId: slug })
     .sort({ completedAt: -1 })
-    .toArray()
+    .toArray();
 
-  const evaluation = result.evaluation || null
-  const passed = allResults.filter(r => r.passed).length
-  const isMastered = passed >= 3
+  const evaluation = result.evaluation || null;
+  const passed = allResults.filter((r) => r.passed).length;
+  const isMastered = passed >= 3;
 
   return (
-    <QuizResultClient
-      result={{
+    <QuizReportClient
+      attempt={{
         ...result,
-        _id: result._id.toString()
+        _id: result._id.toString(),
+        roadmapId: slug,
+        completedAt: result.completedAt,
+        score: result.score,
+        totalQuestions: result.totalQuestions,
+        percentage: result.percentage,
+        passed: result.passed,
+        timeTaken: result.timeTaken,
+        answers: result.answers,
       }}
       roadmap={{
         ...roadmap,
-        _id: roadmap._id.toString()
+        _id: roadmap._id.toString(),
+        title: roadmap.title,
+        icon: roadmap.icon,
       }}
       evaluation={evaluation}
       isMastered={isMastered}
       totalPasses={passed}
     />
-  )
+  );
 }

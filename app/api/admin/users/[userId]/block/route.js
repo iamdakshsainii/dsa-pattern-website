@@ -10,7 +10,7 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
     const body = await request.json();
     const { action, reason, blockedBy } = body;
 

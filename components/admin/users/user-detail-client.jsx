@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Mail, Calendar, Shield, Ban, Trash2 } from 'lucide-react';
+import { ArrowLeft, Mail, Calendar, Shield, Ban, Trash2, CheckCircle, XCircle, Clock } from 'lucide-react';
 import AdminNotesSection from './admin-notes-section';
 import ActivityTimeline from './activity-timeline';
 import BlockUserDialog from './block-user-dialog';
@@ -15,7 +15,47 @@ import DeleteUserDialog from './delete-user-dialog';
 export default function UserDetailClient({ userInfo, timeline, currentAdmin }) {
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [appeals, setAppeals] = useState([]);
+  const [loadingAppeals, setLoadingAppeals] = useState(false);
   const { user, profile, roadmaps, quizResults, stats } = userInfo;
+
+  useEffect(() => {
+    fetchUserAppeals();
+  }, [user._id]);
+
+  const fetchUserAppeals = async () => {
+    setLoadingAppeals(true);
+    try {
+      const res = await fetch(`/api/admin/appeals?userId=${user._id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setAppeals(data.appeals || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch appeals:', error);
+    } finally {
+      setLoadingAppeals(false);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const styles = {
+      pending: { variant: 'secondary', icon: Clock, label: 'Pending' },
+      in_review: { variant: 'default', icon: Clock, label: 'In Review' },
+      approved: { variant: 'success', icon: CheckCircle, label: 'Approved', className: 'bg-green-100 text-green-800' },
+      rejected: { variant: 'destructive', icon: XCircle, label: 'Rejected' }
+    };
+
+    const config = styles[status] || styles.pending;
+    const Icon = config.icon;
+
+    return (
+      <Badge variant={config.variant} className={config.className}>
+        <Icon className="h-3 w-3 mr-1" />
+        {config.label}
+      </Badge>
+    );
+  };
 
   return (
     <div className="container mx-auto px-6 py-8 max-w-7xl">
@@ -100,6 +140,7 @@ export default function UserDetailClient({ userInfo, timeline, currentAdmin }) {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="roadmaps">Roadmaps ({roadmaps.length})</TabsTrigger>
           <TabsTrigger value="quizzes">Quizzes ({quizResults.length})</TabsTrigger>
+          <TabsTrigger value="appeals">Appeals ({appeals.length})</TabsTrigger>
           <TabsTrigger value="timeline">Activity Timeline</TabsTrigger>
           <TabsTrigger value="notes">Admin Notes</TabsTrigger>
         </TabsList>
@@ -236,6 +277,75 @@ export default function UserDetailClient({ userInfo, timeline, currentAdmin }) {
                 </tbody>
               </table>
             </div>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="appeals">
+          <Card>
+            {loadingAppeals ? (
+              <div className="p-8 text-center">
+                <p className="text-muted-foreground">Loading appeals...</p>
+              </div>
+            ) : appeals.length === 0 ? (
+              <div className="p-8 text-center">
+                <Shield className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">No appeals submitted</p>
+              </div>
+            ) : (
+              <div className="divide-y">
+                {appeals.map((appeal) => (
+                  <div key={appeal._id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="font-semibold">Appeal #{appeal._id.slice(-6)}</h4>
+                          {getStatusBadge(appeal.status)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Submitted {new Date(appeal.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                      <Link href={`/admin/appeals/${appeal._id}`}>
+                        <Button size="sm" variant="outline">
+                          View Details
+                        </Button>
+                      </Link>
+                    </div>
+
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded p-4 mb-3">
+                      <p className="text-sm font-medium mb-1">Block Reason:</p>
+                      <p className="text-sm text-muted-foreground">{appeal.blockReason || 'N/A'}</p>
+                    </div>
+
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded p-4">
+                      <p className="text-sm font-medium mb-1">User's Appeal:</p>
+                      <p className="text-sm">{appeal.message}</p>
+                    </div>
+
+                    {appeal.adminResponse && (
+                      <div className="mt-3 bg-green-50 dark:bg-green-900/20 rounded p-4">
+                        <p className="text-sm font-medium mb-1">Admin Response:</p>
+                        <p className="text-sm">{appeal.adminResponse}</p>
+                      </div>
+                    )}
+
+                    {appeal.messages && appeal.messages.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-xs text-muted-foreground mb-2">
+                          {appeal.messages.length} message(s) in conversation
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </TabsContent>
 

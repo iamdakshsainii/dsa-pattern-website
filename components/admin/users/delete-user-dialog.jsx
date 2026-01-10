@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Dialog,
@@ -12,15 +12,25 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { AlertTriangle } from 'lucide-react';
 
 export default function DeleteUserDialog({ open, onOpenChange, user }) {
   const [confirmText, setConfirmText] = useState('');
+  const [deleteReason, setDeleteReason] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!open) {
+      setConfirmText('');
+      setDeleteReason('');
+      setLoading(false);
+    }
+  }, [open]);
 
   const handleDelete = async () => {
     if (confirmText !== 'DELETE') {
@@ -32,11 +42,22 @@ export default function DeleteUserDialog({ open, onOpenChange, user }) {
       return;
     }
 
+    if (!deleteReason.trim()) {
+      toast({
+        title: 'Reason required',
+        description: 'Please provide a reason for deletion',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       const res = await fetch(`/api/admin/users/${user._id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: deleteReason })
       });
 
       if (res.ok) {
@@ -60,9 +81,17 @@ export default function DeleteUserDialog({ open, onOpenChange, user }) {
     }
   };
 
+  const handleOpenChange = (newOpen) => {
+    if (!loading) {
+      onOpenChange(newOpen);
+    }
+  };
+
+  if (!user) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog key={`delete-${user._id}-${open}`} open={open} onOpenChange={handleOpenChange} modal={true}>
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="h-5 w-5" />
@@ -84,23 +113,36 @@ export default function DeleteUserDialog({ open, onOpenChange, user }) {
           </ul>
         </div>
 
-        <div className="space-y-2">
-          <Label>Type <span className="font-bold">DELETE</span> to confirm</Label>
-          <Input
-            placeholder="DELETE"
-            value={confirmText}
-            onChange={(e) => setConfirmText(e.target.value)}
-          />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Reason for deletion *</Label>
+            <Textarea
+              placeholder="Enter reason for deleting this user (for audit log)..."
+              value={deleteReason}
+              onChange={(e) => setDeleteReason(e.target.value)}
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Type <span className="font-bold">DELETE</span> to confirm</Label>
+            <Input
+              placeholder="DELETE"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+            />
+          </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={loading}>
             Cancel
           </Button>
           <Button
             variant="destructive"
             onClick={handleDelete}
-            disabled={loading || confirmText !== 'DELETE'}
+            disabled={loading || confirmText !== 'DELETE' || !deleteReason.trim()}
           >
             {loading ? 'Deleting...' : 'Delete User'}
           </Button>

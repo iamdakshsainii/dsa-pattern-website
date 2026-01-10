@@ -10,7 +10,7 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
     const { db } = await connectToDatabase();
 
     const [roadmapProgress, quizAttempts] = await Promise.all([

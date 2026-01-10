@@ -5,7 +5,7 @@ import UserDetailClient from '@/components/admin/users/user-detail-client';
 
 export default async function UserDetailPage({ params }) {
   const currentUser = await getCurrentUser();
-  const { userId } = params;
+  const { userId } = await params;
 
   const [userInfo, timeline] = await Promise.all([
     getUserDetailedInfo(userId),

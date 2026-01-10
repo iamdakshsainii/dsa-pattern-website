@@ -1,4 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
+import { isAdmin } from '@/lib/admin';
+import { redirect } from 'next/navigation';
 import { getAllUsersWithStats } from '@/lib/db';
 import UserManagementClient from '@/components/admin/users/user-management-client';
 
@@ -9,6 +11,11 @@ export const metadata = {
 
 export default async function UsersPage({ searchParams }) {
   const currentUser = await getCurrentUser();
+
+  if (!currentUser || !isAdmin(currentUser)) {
+    redirect('/dashboard');
+  }
+
   const params = await searchParams;
 
   const filters = {

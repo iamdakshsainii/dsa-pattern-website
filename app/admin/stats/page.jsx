@@ -1,19 +1,19 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { isAdmin } from '@/lib/admin';
-import MentorshipAnalyticsClient from './mentorship-client';
+import StatsPageClient from '@/components/admin/analytics/overview-client';
 
 export const metadata = {
-  title: 'Mentorship Analytics | Admin',
-  description: 'Mentorship request insights and performance'
+  title: 'Analytics Overview | Admin',
+  description: 'Platform analytics and insights'
 };
 
-export default async function MentorshipAnalyticsPage() {
+export default async function StatsPage() {
   const user = await getCurrentUser();
 
   if (!user || !isAdmin(user)) {
     redirect('/dashboard');
   }
 
-  return <MentorshipAnalyticsClient />;
+  return <StatsPageClient />;
 }

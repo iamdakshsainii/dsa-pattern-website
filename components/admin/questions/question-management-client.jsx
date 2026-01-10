@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Search, Plus, Edit, Trash2, FileJson, RefreshCw } from "lucide-react";
+import { Search, Plus, Edit, Trash2, FileJson, RefreshCw, Lightbulb } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function QuestionManagementClient() {
@@ -62,10 +62,8 @@ export default function QuestionManagementClient() {
     if (!confirm("Are you sure you want to delete this question?")) return;
 
     try {
-      const res = await fetch("/api/admin/questions", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questionId }),
+      const res = await fetch(`/api/admin/questions?id=${questionId}`, {
+        method: "DELETE"
       });
 
       if (!res.ok) throw new Error("Delete failed");
@@ -108,9 +106,8 @@ export default function QuestionManagementClient() {
   });
 
   return (
-    <div className="min-h-screen pb-8">
+    <div className="p-6 lg:p-8 space-y-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-blue-600">
@@ -125,6 +122,12 @@ export default function QuestionManagementClient() {
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
             </Button>
+            <Link href="/admin/questions/solutions">
+              <Button variant="outline">
+                <Lightbulb className="w-4 h-4 mr-2" />
+                Manage Solutions
+              </Button>
+            </Link>
             <Link href="/admin/questions/create">
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
@@ -134,7 +137,6 @@ export default function QuestionManagementClient() {
           </div>
         </div>
 
-        {/* Filters */}
         <Card className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
@@ -176,12 +178,10 @@ export default function QuestionManagementClient() {
           </div>
         </Card>
 
-        {/* Results */}
         <div className="text-sm text-muted-foreground">
           Showing {filteredQuestions.length} of {questions.length} questions
         </div>
 
-        {/* Questions List */}
         {loading ? (
           <Card className="p-12">
             <div className="text-center">
@@ -233,6 +233,11 @@ export default function QuestionManagementClient() {
                         </span>
                       )}
                       {question.order && <span>Order: {question.order}</span>}
+                      {question.approaches?.length > 0 && (
+                        <span className="text-green-600 font-medium">
+                          ✓ Has {question.approaches.length} solutions
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="flex gap-2">

@@ -9,13 +9,15 @@ import { Button } from "@/components/ui/button"
 import {
   ArrowLeft,
   Lightbulb,
-  TrendingUp,
   CheckCircle2,
   Clock,
   Target,
   ArrowUpDown,
   LogIn,
-  Sparkles
+  Sparkles,
+  ExternalLink,
+  Code,
+  Circle
 } from "lucide-react"
 import QuestionList from "@/components/question-list"
 import QuestionTable from "@/components/tables/question-table"
@@ -57,11 +59,8 @@ export default function PatternDetailPage({
 
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'Default')
   const [viewMode, setViewMode] = useState(searchParams.get('view') || 'card')
-
-  // FIXED: Initialize with prop but update independently
   const [localProgress, setLocalProgress] = useState(userProgress?.completed || [])
 
-  // FIXED: Load fresh progress on mount and listen for updates
   useEffect(() => {
     if (currentUser) {
       loadProgress()
@@ -82,7 +81,6 @@ export default function PatternDetailPage({
     }
   }, [currentUser])
 
-  // FIXED: Function to load fresh progress from API
   const loadProgress = async () => {
     try {
       const response = await fetch('/api/progress', {
@@ -155,9 +153,7 @@ export default function PatternDetailPage({
     window.history.replaceState(null, '', newUrl)
   }
 
-  // FIXED: Update local progress when callback is triggered
   const handleProgressUpdate = (newProgress) => {
-    // Reload from server to ensure accuracy
     loadProgress()
   }
 
@@ -181,7 +177,6 @@ export default function PatternDetailPage({
     return Array.from(allTags).sort()
   }, [questions])
 
-  // FIXED: Use localProgress instead of userProgress?.completed
   const progressData = useMemo(() => ({
     completed: localProgress,
     inProgress: userProgress?.inProgress || [],
@@ -200,6 +195,15 @@ export default function PatternDetailPage({
   const totalStats = useMemo(() => {
     return getFilterStats(questions, progressData)
   }, [questions, progressData])
+
+  const getDifficultyColor = (difficulty) => {
+    const colors = {
+      Easy: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+      Medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+      Hard: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+    }
+    return colors[difficulty] || "bg-gray-100 text-gray-800"
+  }
 
   if (!pattern) {
     return (
@@ -223,7 +227,7 @@ export default function PatternDetailPage({
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <header className="border-b bg-background/95 backdrop-blur sticky top-0 z-10">
-        <div className="container mx-auto max-w-7xl px-4 py-4">
+        <div className="container mx-auto max-w-7xl px-6 py-4">
           <div className="flex items-center gap-4 mb-2">
             <Link href="/patterns">
               <Button variant="ghost" size="sm">
@@ -246,10 +250,9 @@ export default function PatternDetailPage({
         </div>
       </header>
 
-      <main className="container mx-auto max-w-7xl px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <main className="container mx-auto max-w-7xl px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
           <div className="lg:col-span-1 space-y-6">
-            {/* Progress Card - FIXED: Now syncs in real-time */}
             {currentUser ? (
               <Card className="p-6 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
                 <div className="flex items-center gap-2 mb-4">
@@ -348,16 +351,14 @@ export default function PatternDetailPage({
             )}
           </div>
 
-          <div className="lg:col-span-3 space-y-6">
-            {/* FIXED: Pass localProgress instead of initialProgress */}
+          <div className="lg:col-span-3 space-y-4">
             <PatternProgress
               questions={questions}
               patternSlug={patternSlug}
               initialProgress={localProgress}
-              currentUser={currentUser} 
+              currentUser={currentUser}
             />
 
-            {/* Stats Grid */}
             {currentUser ? (
               <div className="grid grid-cols-3 gap-4">
                 <Card className="p-4">
@@ -415,72 +416,195 @@ export default function PatternDetailPage({
             />
 
             <StatsPanel stats={stats} totalQuestions={totalQuestions} />
+          </div>
+        </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">Practice Problems</h2>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <ViewToggle view={viewMode} onViewChange={updateViewMode} />
-
-                <div className="flex items-center gap-2">
-                  <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-                  <Select value={sortBy} onValueChange={updateSort}>
-                    <SelectTrigger className="w-[160px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Default">Default Order</SelectItem>
-                      <SelectItem value="Difficulty">Difficulty</SelectItem>
-                      <SelectItem value="Title">Title (A-Z)</SelectItem>
-                      <SelectItem value="Status">Status</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-2xl font-bold">Practice Problems</h2>
+            <div className="flex items-center gap-4">
+              <ViewToggle view={viewMode} onViewChange={updateViewMode} />
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                <Select value={sortBy} onValueChange={updateSort}>
+                  <SelectTrigger className="w-[160px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Default">Default Order</SelectItem>
+                    <SelectItem value="Difficulty">Difficulty</SelectItem>
+                    <SelectItem value="Title">Title (A-Z)</SelectItem>
+                    <SelectItem value="Status">Status</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-
-            {filteredQuestions.length > 0 ? (
-              viewMode === 'card' ? (
-                <QuestionList
-                  questions={filteredQuestions}
-                  patternSlug={patternSlug}
-                  solutions={solutions}
-                  userProgress={progressData}
-                  currentUser={currentUser}
-                  onProgressUpdate={handleProgressUpdate}
-                />
-              ) : (
-                <QuestionTable
-                  questions={filteredQuestions}
-                  patternSlug={patternSlug}
-                  solutions={solutions}
-                  userProgress={progressData}
-                  currentUser={currentUser}
-                  onProgressUpdate={handleProgressUpdate}
-                />
-              )
-            ) : (
-              <Card className="p-12">
-                <div className="text-center">
-                  <p className="text-muted-foreground mb-4">No problems match your filters.</p>
-                  <Button
-                    variant="outline"
-                    onClick={() => updateFilters({
-                      difficulty: 'All',
-                      status: 'All',
-                      company: 'All',
-                      tag: 'All',
-                      search: ''
-                    })}
-                  >
-                    Clear Filters
-                  </Button>
-                </div>
-              </Card>
-            )}
           </div>
+
+          {filteredQuestions.length > 0 ? (
+            viewMode === 'card' ? (
+              <QuestionList
+                questions={filteredQuestions}
+                patternSlug={patternSlug}
+                solutions={solutions}
+                userProgress={progressData}
+                currentUser={currentUser}
+                onProgressUpdate={handleProgressUpdate}
+              />
+            ) : (
+              <div className="bg-white dark:bg-slate-900 rounded-lg border-2 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 border-b-2">
+                      <tr>
+                        <th className="px-6 py-4 text-center text-sm font-bold">Status</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold">Title</th>
+                        <th className="px-6 py-4 text-center text-sm font-bold">Difficulty</th>
+                        <th className="px-6 py-4 text-center text-sm font-bold">Tags</th>
+                        <th className="px-6 py-4 text-center text-sm font-bold">Companies</th>
+                        <th className="px-6 py-4 text-center text-sm font-bold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredQuestions.map((question) => {
+                        const isCompleted = progressData.completed.includes(question._id)
+
+                        const handleToggleComplete = async (e) => {
+                          e.preventDefault()
+                          if (!currentUser) return
+
+                          try {
+                            const response = await fetch('/api/progress', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                questionId: question._id,
+                                status: isCompleted ? 'not_started' : 'completed'
+                              })
+                            })
+
+                            if (response.ok) {
+                              loadProgress()
+                              window.dispatchEvent(new Event('pattern-progress-update'))
+                            }
+                          } catch (error) {
+                            console.error('Error updating progress:', error)
+                          }
+                        }
+
+                        return (
+                          <tr
+                            key={question._id}
+                            className={`border-b hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-950/20 dark:hover:to-purple-950/20 transition-all ${
+                              isCompleted ? 'bg-green-50/30 dark:bg-green-950/10' : ''
+                            }`}
+                          >
+                            <td className="px-6 py-5 text-center">
+                              {currentUser ? (
+                                <button onClick={handleToggleComplete} className="mx-auto">
+                                  {isCompleted ? (
+                                    <CheckCircle2 className="h-6 w-6 text-green-600 hover:scale-110 transition-transform cursor-pointer" />
+                                  ) : (
+                                    <Circle className="h-6 w-6 text-gray-300 hover:text-gray-400 hover:scale-110 transition-all cursor-pointer" />
+                                  )}
+                                </button>
+                              ) : (
+                                isCompleted ? (
+                                  <CheckCircle2 className="h-6 w-6 text-green-600 mx-auto" />
+                                ) : (
+                                  <Circle className="h-6 w-6 text-gray-300 mx-auto" />
+                                )
+                              )}
+                            </td>
+
+                            <td className="px-6 py-5">
+                              <Link href={`/questions/${question._id}`}>
+                                <span className="font-semibold text-base hover:text-primary transition-colors">
+                                  {question.title}
+                                </span>
+                              </Link>
+                            </td>
+
+                            <td className="px-6 py-5 text-center">
+                              <Badge className={`${getDifficultyColor(question.difficulty)} font-semibold px-3 py-1`}>
+                                {question.difficulty}
+                              </Badge>
+                            </td>
+
+                            <td className="px-6 py-5">
+                              <div className="flex flex-wrap gap-1.5 justify-center">
+                                {question.tags && question.tags.slice(0, 3).map((tag) => (
+                                  <Badge key={tag} variant="secondary" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                                {question.tags && question.tags.length > 3 && (
+                                  <Badge variant="secondary" className="text-xs font-semibold">
+                                    +{question.tags.length - 3}
+                                  </Badge>
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-5">
+                              <div className="flex flex-wrap gap-1.5 justify-center">
+                                {question.companies && question.companies.slice(0, 2).map((company) => (
+                                  <Badge key={company} variant="outline" className="text-xs">
+                                    {company}
+                                  </Badge>
+                                ))}
+                                {question.companies && question.companies.length > 2 && (
+                                  <Badge variant="outline" className="text-xs font-semibold">
+                                    +{question.companies.length - 2}
+                                  </Badge>
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-5">
+                              <div className="flex gap-2 justify-center">
+                                <Link href={`/questions/${question._id}`}>
+                                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                                    <Code className="h-3.5 w-3.5 mr-1" />
+                                    Solve
+                                  </Button>
+                                </Link>
+                                {question.links?.leetcode && (
+                                  <a href={question.links.leetcode} target="_blank" rel="noopener noreferrer">
+                                    <Button size="sm" variant="outline">
+                                      <ExternalLink className="h-3.5 w-3.5" />
+                                    </Button>
+                                  </a>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )
+          ) : (
+            <Card className="p-12">
+              <div className="text-center">
+                <p className="text-muted-foreground mb-4">No problems match your filters.</p>
+                <Button
+                  variant="outline"
+                  onClick={() => updateFilters({
+                    difficulty: 'All',
+                    status: 'All',
+                    company: 'All',
+                    tag: 'All',
+                    search: ''
+                  })}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            </Card>
+          )}
         </div>
       </main>
     </div>

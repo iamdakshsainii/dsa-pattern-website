@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { isAdmin } from '@/lib/admin';
-import { getUserDetailedInfo, deleteUser } from '@/lib/db';
+import { getUserDetailedInfo, deleteUser, moveUserToDeletedLog } from '@/lib/db';
 import { logActivity } from '@/lib/logger';
 import { createNotification } from '@/lib/notifications';
 
@@ -12,7 +12,7 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
     const userInfo = await getUserDetailedInfo(userId);
 
     if (!userInfo) {
@@ -33,9 +33,24 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
+    const body = await request.json();
+    const { reason } = body;
+
     const userToDelete = await getUserDetailedInfo(userId);
 
+    if (!userToDelete) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Move to deleted_users log BEFORE deletion
+    await moveUserToDeletedLog(
+      userId,
+      reason || 'No reason provided',
+      user.email
+    );
+
+    // Now delete from all collections
     await deleteUser(userId);
 
     await logActivity({
@@ -51,10 +66,11 @@ export async function DELETE(request, { params }) {
     await createNotification(
       'user_deleted',
       'User Deleted',
-      `User ${userToDelete?.name || 'Unknown'} (${userToDelete?.email || 'N/A'}) was deleted by admin`,
+      `User ${userToDelete?.user?.name || 'Unknown'} (${userToDelete?.user?.email || 'N/A'}) was deleted by admin`,
       {
         userId,
-        deletedBy: user.email
+        deletedBy: user.email,
+        reason
       }
     );
 

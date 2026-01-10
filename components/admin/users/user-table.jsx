@@ -26,6 +26,7 @@ export default function UserTable({ users, pagination, selectedUsers, onSelectUs
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [attemptsDialogOpen, setAttemptsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(null);
   const router = useRouter();
 
   const toggleUser = (userId) => {
@@ -46,16 +47,19 @@ export default function UserTable({ users, pagination, selectedUsers, onSelectUs
 
   const openBlockDialog = (user) => {
     setSelectedUser(user);
+    setDropdownOpen(null);
     setBlockDialogOpen(true);
   };
 
   const openDeleteDialog = (user) => {
     setSelectedUser(user);
+    setDropdownOpen(null);
     setDeleteDialogOpen(true);
   };
 
   const openAttemptsDialog = (user) => {
     setSelectedUser(user);
+    setDropdownOpen(null);
     setAttemptsDialogOpen(true);
   };
 
@@ -119,7 +123,11 @@ export default function UserTable({ users, pagination, selectedUsers, onSelectUs
                     )}
                   </td>
                   <td className="p-4">
-                    <DropdownMenu>
+                    <DropdownMenu
+                      open={dropdownOpen === user._id}
+                      onOpenChange={(open) => setDropdownOpen(open ? user._id : null)}
+                      modal={false}
+                    >
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
                           <MoreVertical className="h-4 w-4" />
@@ -189,17 +197,20 @@ export default function UserTable({ users, pagination, selectedUsers, onSelectUs
       {selectedUser && (
         <>
           <BlockUserDialog
+            key={`block-${selectedUser._id}-${blockDialogOpen}`}
             open={blockDialogOpen}
             onOpenChange={setBlockDialogOpen}
             user={selectedUser}
             currentAdmin={currentAdmin}
           />
           <DeleteUserDialog
+            key={`delete-${selectedUser._id}-${deleteDialogOpen}`}
             open={deleteDialogOpen}
             onOpenChange={setDeleteDialogOpen}
             user={selectedUser}
           />
           <EditAttemptsDialog
+            key={`attempts-${selectedUser._id}-${attemptsDialogOpen}`}
             open={attemptsDialogOpen}
             onOpenChange={setAttemptsDialogOpen}
             user={selectedUser}
