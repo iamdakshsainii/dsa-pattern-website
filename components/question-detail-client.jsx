@@ -1,5 +1,5 @@
 'use client'
-
+import NotesManager from "@/components/notes-manager"
 import { useRouter } from 'next/navigation'
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -241,10 +241,11 @@ export default function QuestionDetailClient({
         )}
 
         {currentUser && (
-          <NotesSection
-            questionId={question._id.toString()}
-            userId={currentUser.id}
-          />
+         <NotesManager
+  questionId={question._id.toString()}
+  userId={currentUser.id}
+  questionTitle={question.title}
+/>
         )}
       </main>
     </div>

@@ -1,7 +1,7 @@
-// app/layout.js
 import { Inter } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/navbar"
+import { Toaster } from "@/components/ui/toaster"
 import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
 
@@ -40,6 +40,7 @@ export default async function RootLayout({ children }) {
       <body className={inter.className}>
         <Navbar currentUser={currentUser} />
         {children}
+        <Toaster />
       </body>
     </html>
   )

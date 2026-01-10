@@ -1,85 +1,165 @@
-import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
-import { verifyToken } from "@/lib/auth"
-import { getUserNotes, saveUserNote } from "@/lib/db"
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/auth";
+import {
+  getUserNotesForQuestion,
+  createNote,
+  updateNote,
+  deleteNote,
+  getNote,
+} from "@/lib/db";
 
-// GET - Fetch user's notes for a question
 export async function GET(request) {
   try {
-    const cookieStore = await cookies()
-    const authToken = cookieStore.get("auth-token")
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth-token");
 
     if (!authToken) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = await verifyToken(authToken.value)
+    const payload = await verifyToken(authToken.value);
     if (!payload) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 })
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url)
-    const questionId = searchParams.get("questionId")
+    const { searchParams } = new URL(request.url);
+    const questionId = searchParams.get("questionId");
+    const noteId = searchParams.get("noteId");
+
+    if (noteId) {
+      const note = await getNote(noteId, payload.id);
+      if (!note) {
+        return NextResponse.json({ error: "Note not found" }, { status: 404 });
+      }
+      return NextResponse.json({ success: true, note });
+    }
 
     if (!questionId) {
       return NextResponse.json(
         { error: "Question ID is required" },
         { status: 400 }
-      )
+      );
     }
 
-    // Use payload.id instead of payload.userId
-    const note = await getUserNotes(payload.id, questionId)
-
-    return NextResponse.json({
-      success: true,
-      note: note?.content || ""
-    })
+    const notes = await getUserNotesForQuestion(payload.id, questionId);
+    return NextResponse.json({ success: true, notes });
   } catch (error) {
-    console.error("Fetch note error:", error)
+    console.error("Fetch notes error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch note" },
+      { error: "Failed to fetch notes" },
       { status: 500 }
-    )
+    );
   }
 }
 
-// POST - Save user's notes for a question
 export async function POST(request) {
   try {
-    const cookieStore = await cookies()
-    const authToken = cookieStore.get("auth-token")
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth-token");
 
     if (!authToken) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = await verifyToken(authToken.value)
+    const payload = await verifyToken(authToken.value);
     if (!payload) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 })
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const { questionId, content } = await request.json()
+    const { questionId, title, content } = await request.json();
 
     if (!questionId) {
       return NextResponse.json(
         { error: "Question ID is required" },
         { status: 400 }
-      )
+      );
     }
 
-    // Use payload.id instead of payload.userId
-    await saveUserNote(payload.id, questionId, content || "")
-
-    return NextResponse.json({
-      success: true,
-      message: "Note saved successfully"
-    })
+    const result = await createNote(payload.id, questionId, title, content);
+    return NextResponse.json({ success: true, noteId: result._id });
   } catch (error) {
-    console.error("Save note error:", error)
+    console.error("Create note error:", error);
     return NextResponse.json(
-      { error: "Failed to save note" },
+      { error: "Failed to create note" },
       { status: 500 }
-    )
+    );
+  }
+}
+
+export async function PUT(request) {
+  try {
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth-token");
+
+    if (!authToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const payload = await verifyToken(authToken.value);
+    if (!payload) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    const { noteId, title, content } = await request.json();
+
+    if (!noteId) {
+      return NextResponse.json(
+        { error: "Note ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const result = await updateNote(noteId, payload.id, title, content);
+    if (!result.success) {
+      return NextResponse.json({ error: "Note not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Update note error:", error);
+    return NextResponse.json(
+      { error: "Failed to update note" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth-token");
+
+    if (!authToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const payload = await verifyToken(authToken.value);
+    if (!payload) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const noteId = searchParams.get("noteId");
+
+    if (!noteId) {
+      return NextResponse.json(
+        { error: "Note ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteNote(noteId, payload.id);
+    if (!result.success) {
+      return NextResponse.json({ error: "Note not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Delete note error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete note" },
+      { status: 500 }
+    );
   }
 }
