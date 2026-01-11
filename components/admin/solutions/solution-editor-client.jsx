@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/components/ui/use-toast'
-import { ArrowLeft, Save, Upload, Eye, RefreshCw, FileJson, CheckCircle, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Save, Upload, Eye, RefreshCw, FileJson, CheckCircle, AlertCircle, Code2, Plus, Trash2, List } from 'lucide-react'
 
 export default function SolutionEditorClient({ questionId }) {
   const router = useRouter()
@@ -34,6 +34,9 @@ export default function SolutionEditorClient({ questionId }) {
     complexity: null
   })
 
+  const [codeEditors, setCodeEditors] = useState({})
+  const [stepEditors, setStepEditors] = useState({})
+
   useEffect(() => {
     fetchQuestion()
   }, [questionId])
@@ -51,7 +54,46 @@ export default function SolutionEditorClient({ questionId }) {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [question, solutionData, jsonData, tab])
+  }, [question, solutionData, jsonData, tab, codeEditors, stepEditors])
+
+  const parseStepsWithIndentation = (stepsArray) => {
+    if (!stepsArray || !Array.isArray(stepsArray)) return []
+
+    const result = []
+    let currentMain = null
+
+    stepsArray.forEach(step => {
+      const trimmed = step.trim()
+      const hasLeadingSpace = step.startsWith('  ') || step.startsWith('\t') || step.startsWith(' ')
+      const hasBullet = trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*')
+      const isIndented = hasLeadingSpace || hasBullet
+
+      if (isIndented) {
+        const cleanStep = trimmed.replace(/^[•\-\*]\s*/, '').trim()
+        if (currentMain !== null && cleanStep) {
+          result[currentMain].sub.push(cleanStep)
+        }
+      } else {
+        if (trimmed) {
+          result.push({ text: trimmed, sub: [] })
+          currentMain = result.length - 1
+        }
+      }
+    })
+
+    return result
+  }
+
+  const convertStepsToFlatArray = (hierarchicalSteps) => {
+    const result = []
+    hierarchicalSteps.forEach(step => {
+      result.push(step.text)
+      step.sub.forEach(subStep => {
+        result.push(`  • ${subStep}`)
+      })
+    })
+    return result
+  }
 
   const fetchQuestion = async () => {
     try {
@@ -77,6 +119,20 @@ export default function SolutionEditorClient({ questionId }) {
 
         setSolutionData(existing)
         setJsonData(JSON.stringify(existing, null, 2))
+
+        const editorsState = {}
+        const stepsState = {}
+        existing.approaches.forEach((approach, index) => {
+          editorsState[index] = {
+            python: approach.code?.python || '',
+            java: approach.code?.java || '',
+            cpp: approach.code?.cpp || '',
+            javascript: approach.code?.javascript || ''
+          }
+          stepsState[index] = parseStepsWithIndentation(approach.steps || [])
+        })
+        setCodeEditors(editorsState)
+        setStepEditors(stepsState)
       }
     } catch (error) {
       toast({
@@ -113,7 +169,6 @@ export default function SolutionEditorClient({ questionId }) {
     reader.readAsText(file)
   }
 
-  // ✅ FIXED PREVIEW FUNCTION
   const handlePreview = () => {
     if (!question || !question.pattern_id || !question.slug) {
       toast({
@@ -123,7 +178,6 @@ export default function SolutionEditorClient({ questionId }) {
       })
       return
     }
-    // ✅ CORRECT URL: /patterns/{pattern_id}/questions/{slug}
     const url = `/patterns/${question.pattern_id}/questions/${question.slug}`
     window.open(url, '_blank')
   }
@@ -132,7 +186,7 @@ export default function SolutionEditorClient({ questionId }) {
     setSaving(true)
 
     try {
-      let dataToSubmit = solutionData
+      let dataToSubmit = { ...solutionData }
 
       if (tab === 'import' || tab === 'code') {
         try {
@@ -146,6 +200,28 @@ export default function SolutionEditorClient({ questionId }) {
           setSaving(false)
           return
         }
+      }
+
+      if (tab === 'code-editor') {
+        const updatedApproaches = dataToSubmit.approaches.map((approach, index) => {
+          const updates = {}
+          if (codeEditors[index]) {
+            updates.code = {
+              python: codeEditors[index].python,
+              java: codeEditors[index].java,
+              cpp: codeEditors[index].cpp,
+              javascript: codeEditors[index].javascript
+            }
+          }
+          if (stepEditors[index]) {
+            updates.steps = convertStepsToFlatArray(stepEditors[index])
+          }
+          return {
+            ...approach,
+            ...updates
+          }
+        })
+        dataToSubmit.approaches = updatedApproaches
       }
 
       const oldStatus = getSolutionStatus()
@@ -166,7 +242,6 @@ export default function SolutionEditorClient({ questionId }) {
         throw new Error(error.error || 'Failed to save')
       }
 
-      // ✅ REFRESH AFTER SAVE
       await fetchQuestion()
 
       const newStatus = getSolutionStatus()
@@ -204,6 +279,85 @@ export default function SolutionEditorClient({ questionId }) {
     const total = 4
 
     return { completed, total, percentage: Math.round((completed / total) * 100) }
+  }
+
+  const updateCodeEditor = (approachIndex, language, value) => {
+    setCodeEditors(prev => ({
+      ...prev,
+      [approachIndex]: {
+        ...prev[approachIndex],
+        [language]: value
+      }
+    }))
+  }
+
+  const updateMainStep = (approachIndex, stepIndex, value) => {
+    setStepEditors(prev => {
+      const steps = [...(prev[approachIndex] || [])]
+      steps[stepIndex] = { ...steps[stepIndex], text: value }
+      return {
+        ...prev,
+        [approachIndex]: steps
+      }
+    })
+  }
+
+  const updateSubStep = (approachIndex, stepIndex, subIndex, value) => {
+    setStepEditors(prev => {
+      const steps = [...(prev[approachIndex] || [])]
+      const subSteps = [...steps[stepIndex].sub]
+      subSteps[subIndex] = value
+      steps[stepIndex] = { ...steps[stepIndex], sub: subSteps }
+      return {
+        ...prev,
+        [approachIndex]: steps
+      }
+    })
+  }
+
+  const addMainStep = (approachIndex) => {
+    setStepEditors(prev => ({
+      ...prev,
+      [approachIndex]: [...(prev[approachIndex] || []), { text: '', sub: [] }]
+    }))
+  }
+
+  const addSubStep = (approachIndex, stepIndex) => {
+    setStepEditors(prev => {
+      const steps = [...(prev[approachIndex] || [])]
+      steps[stepIndex] = {
+        ...steps[stepIndex],
+        sub: [...steps[stepIndex].sub, '']
+      }
+      return {
+        ...prev,
+        [approachIndex]: steps
+      }
+    })
+  }
+
+  const removeMainStep = (approachIndex, stepIndex) => {
+    setStepEditors(prev => {
+      const steps = [...(prev[approachIndex] || [])]
+      steps.splice(stepIndex, 1)
+      return {
+        ...prev,
+        [approachIndex]: steps
+      }
+    })
+  }
+
+  const removeSubStep = (approachIndex, stepIndex, subIndex) => {
+    setStepEditors(prev => {
+      const steps = [...(prev[approachIndex] || [])]
+      const subSteps = [...steps[stepIndex].sub]
+      subSteps.splice(subIndex, 1)
+      steps[stepIndex] = { ...steps[stepIndex], sub: subSteps }
+      return {
+        ...prev,
+        [approachIndex]: steps
+      }
+    })
   }
 
   if (loading) {
@@ -324,10 +478,14 @@ export default function SolutionEditorClient({ questionId }) {
 
         <div>
           <Tabs value={tab} onValueChange={setTab}>
-            <TabsList className="grid w-full grid-cols-3 max-w-md">
+            <TabsList className="grid w-full grid-cols-4 max-w-2xl">
               <TabsTrigger value="form">Manual Form</TabsTrigger>
               <TabsTrigger value="import">Import JSON</TabsTrigger>
               <TabsTrigger value="code">Write JSON</TabsTrigger>
+              <TabsTrigger value="code-editor">
+                <Code2 className="w-4 h-4 mr-2" />
+                Code Editor
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="form" className="space-y-6 mt-6">
@@ -436,16 +594,212 @@ export default function SolutionEditorClient({ questionId }) {
                 />
               </Card>
             </TabsContent>
+
+            <TabsContent value="code-editor" className="space-y-6 mt-6">
+              {solutionData.approaches?.length === 0 ? (
+                <Card className="p-12">
+                  <div className="text-center text-muted-foreground">
+                    <Code2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p className="text-lg font-medium mb-2">No approaches added yet</p>
+                    <p className="text-sm">Add approaches using JSON tabs first, then edit code here</p>
+                  </div>
+                </Card>
+              ) : (
+                <div className="space-y-6">
+                  {solutionData.approaches.map((approach, approachIndex) => (
+                    <Card key={approachIndex} className="p-6 border-2 border-blue-200 dark:border-blue-800">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-blue-600 mb-1">
+                          📘 Approach {approachIndex + 1}: {approach.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Edit algorithm steps and code implementation
+                        </p>
+                      </div>
+
+                      <Tabs defaultValue="steps" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 mb-6">
+                          <TabsTrigger value="steps">
+                            <List className="w-4 h-4 mr-2" />
+                            Algorithm Steps
+                          </TabsTrigger>
+                          <TabsTrigger value="code">
+                            <Code2 className="w-4 h-4 mr-2" />
+                            Code Implementation
+                          </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="steps" className="space-y-4">
+                          <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
+                            <p className="text-sm text-blue-900 dark:text-blue-100">
+                              <strong>Algorithm Steps:</strong> Define the step-by-step approach. Add sub-steps for nested logic.
+                            </p>
+                          </div>
+
+                          <div className="space-y-4">
+                            {(stepEditors[approachIndex] || []).map((step, stepIndex) => (
+                              <div key={stepIndex} className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
+                                <div className="flex items-start gap-3 mb-3">
+                                  <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm mt-1">
+                                    {stepIndex + 1}
+                                  </div>
+                                  <Textarea
+                                    value={step.text}
+                                    onChange={(e) => updateMainStep(approachIndex, stepIndex, e.target.value)}
+                                    placeholder={`Main step ${stepIndex + 1}...`}
+                                    rows={2}
+                                    className="flex-1"
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => removeMainStep(approachIndex, stepIndex)}
+                                    className="mt-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+
+                                {step.sub.length > 0 && (
+                                  <div className="ml-11 space-y-2 mb-2">
+                                    {step.sub.map((subStep, subIndex) => (
+                                      <div key={subIndex} className="flex items-start gap-2">
+                                        <span className="text-blue-600 mt-2">•</span>
+                                        <Textarea
+                                          value={subStep}
+                                          onChange={(e) => updateSubStep(approachIndex, stepIndex, subIndex, e.target.value)}
+                                          placeholder={`Sub-step ${subIndex + 1}...`}
+                                          rows={1}
+                                          className="flex-1 text-sm"
+                                        />
+                                        <Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => removeSubStep(approachIndex, stepIndex, subIndex)}
+                                          className="mt-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                <div className="ml-11">
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => addSubStep(approachIndex, stepIndex)}
+                                    className="text-xs border-dashed"
+                                  >
+                                    <Plus className="w-3 h-3 mr-1" />
+                                    Add Sub-step
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => addMainStep(approachIndex)}
+                            className="w-full mt-4 border-dashed border-2"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Main Step
+                          </Button>
+
+                          {(stepEditors[approachIndex]?.length || 0) === 0 && (
+                            <div className="text-center py-8 text-muted-foreground">
+                              <p className="text-sm">No steps added yet. Click "Add Main Step" to begin.</p>
+                            </div>
+                          )}
+                        </TabsContent>
+
+                        <TabsContent value="code" className="mt-4">
+                          <div className="bg-slate-900 p-4 rounded-lg border border-slate-700 mb-4">
+                            <p className="text-sm text-slate-300">
+                              <strong className="text-green-400">Code Implementation:</strong> Write the actual code for each programming language.
+                            </p>
+                          </div>
+
+                          <Tabs defaultValue="python" className="w-full">
+                            <TabsList className="grid w-full grid-cols-4 mb-4">
+                              <TabsTrigger value="python">Python</TabsTrigger>
+                              <TabsTrigger value="java">Java</TabsTrigger>
+                              <TabsTrigger value="cpp">C++</TabsTrigger>
+                              <TabsTrigger value="javascript">JavaScript</TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="python">
+                              <Label className="mb-2 block text-base font-semibold">Python Implementation</Label>
+                              <Textarea
+                                value={codeEditors[approachIndex]?.python || ''}
+                                onChange={(e) => updateCodeEditor(approachIndex, 'python', e.target.value)}
+                                rows={22}
+                                className="font-mono text-sm bg-slate-950 text-green-400 border-slate-700"
+                                placeholder="# Write Python code here..."
+                              />
+                            </TabsContent>
+
+                            <TabsContent value="java">
+                              <Label className="mb-2 block text-base font-semibold">Java Implementation</Label>
+                              <Textarea
+                                value={codeEditors[approachIndex]?.java || ''}
+                                onChange={(e) => updateCodeEditor(approachIndex, 'java', e.target.value)}
+                                rows={22}
+                                className="font-mono text-sm bg-slate-950 text-green-400 border-slate-700"
+                                placeholder="// Write Java code here..."
+                              />
+                            </TabsContent>
+
+                            <TabsContent value="cpp">
+                              <Label className="mb-2 block text-base font-semibold">C++ Implementation</Label>
+                              <Textarea
+                                value={codeEditors[approachIndex]?.cpp || ''}
+                                onChange={(e) => updateCodeEditor(approachIndex, 'cpp', e.target.value)}
+                                rows={22}
+                                className="font-mono text-sm bg-slate-950 text-green-400 border-slate-700"
+                                placeholder="// Write C++ code here..."
+                              />
+                            </TabsContent>
+
+                            <TabsContent value="javascript">
+                              <Label className="mb-2 block text-base font-semibold">JavaScript Implementation</Label>
+                              <Textarea
+                                value={codeEditors[approachIndex]?.javascript || ''}
+                                onChange={(e) => updateCodeEditor(approachIndex, 'javascript', e.target.value)}
+                                rows={22}
+                                className="font-mono text-sm bg-slate-950 text-green-400 border-slate-700"
+                                placeholder="// Write JavaScript code here..."
+                              />
+                            </TabsContent>
+                          </Tabs>
+                        </TabsContent>
+                      </Tabs>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
           </Tabs>
 
           <Card className="p-6 mt-6">
             <div className="flex justify-between items-center">
               <div className="text-sm text-muted-foreground">
-                <kbd className="px-2 py-1 bg-gray-100 rounded">Ctrl+S</kbd> to save •
+                <kbd className="px-2 py-1 bg-gray-100 rounded">Ctrl+S</kbd> to save •{' '}
                 <kbd className="px-2 py-1 bg-gray-100 rounded ml-2">Ctrl+P</kbd> to preview
               </div>
               <div className="flex gap-3">
-                <Button type="button" variant="outline" onClick={() => router.push('/admin/questions/solutions')}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push('/admin/questions/solutions')}
+                >
                   Cancel
                 </Button>
                 <Button onClick={handleSubmit} disabled={saving}>

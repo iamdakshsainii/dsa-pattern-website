@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/components/ui/use-toast'
 import { ArrowLeft, Save, Upload, Eye, RefreshCw, FileJson, CheckCircle, AlertCircle } from 'lucide-react'
+import Link from 'next/link'
 
 export default function SolutionEditorClient({ questionId }) {
   const router = useRouter()
@@ -37,21 +38,6 @@ export default function SolutionEditorClient({ questionId }) {
   useEffect(() => {
     fetchQuestion()
   }, [questionId])
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault()
-        handleSubmit()
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-        e.preventDefault()
-        handlePreview()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [question, solutionData, jsonData, tab])
 
   const fetchQuestion = async () => {
     try {
@@ -113,22 +99,8 @@ export default function SolutionEditorClient({ questionId }) {
     reader.readAsText(file)
   }
 
-  // ✅ FIXED PREVIEW FUNCTION
-  const handlePreview = () => {
-    if (!question || !question.pattern_id || !question.slug) {
-      toast({
-        title: "Cannot preview",
-        description: "Missing pattern or question slug",
-        variant: "destructive"
-      })
-      return
-    }
-    // ✅ CORRECT URL: /patterns/{pattern_id}/questions/{slug}
-    const url = `/patterns/${question.pattern_id}/questions/${question.slug}`
-    window.open(url, '_blank')
-  }
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     setSaving(true)
 
     try {
@@ -148,8 +120,6 @@ export default function SolutionEditorClient({ questionId }) {
         }
       }
 
-      const oldStatus = getSolutionStatus()
-
       const res = await fetch('/api/admin/questions', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -166,23 +136,12 @@ export default function SolutionEditorClient({ questionId }) {
         throw new Error(error.error || 'Failed to save')
       }
 
-      // ✅ REFRESH AFTER SAVE
-      await fetchQuestion()
+      toast({
+        title: "Success",
+        description: "Solution data saved successfully"
+      })
 
-      const newStatus = getSolutionStatus()
-
-      if (oldStatus.completed < newStatus.completed) {
-        toast({
-          title: "🎉 Progress!",
-          description: `Solution is now ${newStatus.percentage}% complete`,
-        })
-      } else {
-        toast({
-          title: "Success",
-          description: "Solution data saved successfully"
-        })
-      }
-
+      fetchQuestion()
     } catch (error) {
       toast({
         title: "Error",
@@ -208,7 +167,7 @@ export default function SolutionEditorClient({ questionId }) {
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-8 space-y-6 flex items-center justify-center min-h-screen">
+      <div className="p-6 lg:p-8 space-y-6 flex items-center justify-center">
         <RefreshCw className="w-8 h-8 animate-spin text-primary" />
       </div>
     )
@@ -216,12 +175,12 @@ export default function SolutionEditorClient({ questionId }) {
 
   if (!question) {
     return (
-      <div className="p-6 lg:p-8 space-y-6 flex items-center justify-center min-h-screen">
+      <div className="p-6 lg:p-8 space-y-6 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Question not found</h2>
-          <Button onClick={() => router.push('/admin/questions/solutions')}>
-            Back to Solutions
-          </Button>
+          <Link href="/admin/questions/solutions">
+            <Button>Back to Solutions</Button>
+          </Link>
         </div>
       </div>
     )
@@ -234,20 +193,24 @@ export default function SolutionEditorClient({ questionId }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => router.push('/admin/questions/solutions')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
+            <Link href="/admin/questions/solutions">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+            </Link>
             <div>
               <h1 className="text-3xl font-bold text-blue-600">Edit Solution</h1>
               <p className="text-muted-foreground mt-1">{question.title}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={handlePreview}>
-              <Eye className="w-4 h-4 mr-2" />
-              View Question Page
-            </Button>
+            <Link href={`/patterns/${question.pattern_id}/questions/${questionId}`} target="_blank">
+              <Button variant="outline" size="sm">
+                <Eye className="w-4 h-4 mr-2" />
+                Preview
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -322,7 +285,7 @@ export default function SolutionEditorClient({ questionId }) {
           </div>
         </Card>
 
-        <div>
+        <form onSubmit={handleSubmit}>
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList className="grid w-full grid-cols-3 max-w-md">
               <TabsTrigger value="form">Manual Form</TabsTrigger>
@@ -439,32 +402,28 @@ export default function SolutionEditorClient({ questionId }) {
           </Tabs>
 
           <Card className="p-6 mt-6">
-            <div className="flex justify-between items-center">
-              <div className="text-sm text-muted-foreground">
-                <kbd className="px-2 py-1 bg-gray-100 rounded">Ctrl+S</kbd> to save •
-                <kbd className="px-2 py-1 bg-gray-100 rounded ml-2">Ctrl+P</kbd> to preview
-              </div>
-              <div className="flex gap-3">
-                <Button type="button" variant="outline" onClick={() => router.push('/admin/questions/solutions')}>
+            <div className="flex justify-end gap-3">
+              <Link href="/admin/questions/solutions">
+                <Button type="button" variant="outline">
                   Cancel
                 </Button>
-                <Button onClick={handleSubmit} disabled={saving}>
-                  {saving ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4 mr-2" />
-                      Save Solution
-                    </>
-                  )}
-                </Button>
-              </div>
+              </Link>
+              <Button type="submit" disabled={saving}>
+                {saving ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Solution
+                  </>
+                )}
+              </Button>
             </div>
           </Card>
-        </div>
+        </form>
       </div>
     </div>
   )

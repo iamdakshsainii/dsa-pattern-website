@@ -17,6 +17,36 @@ export default function ApproachCard({ approach, number, total }) {
     return "Better"
   }
 
+  const parseStepsHierarchy = (steps) => {
+    if (!steps || !Array.isArray(steps)) return []
+
+    const result = []
+    let currentMain = null
+
+    steps.forEach(step => {
+      const trimmed = step.trim()
+      const hasLeadingSpace = step.startsWith('  ') || step.startsWith('\t') || step.startsWith(' ')
+      const hasBullet = trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*')
+      const isIndented = hasLeadingSpace || hasBullet
+
+      if (isIndented) {
+        const cleanStep = trimmed.replace(/^[•\-\*]\s*/, '').trim()
+        if (currentMain !== null && cleanStep) {
+          result[currentMain].sub.push(cleanStep)
+        }
+      } else {
+        if (trimmed) {
+          result.push({ text: trimmed, sub: [] })
+          currentMain = result.length - 1
+        }
+      }
+    })
+
+    return result
+  }
+
+  const hierarchicalSteps = parseStepsHierarchy(approach.steps)
+
   return (
     <Card className="border-2 border-blue-100 dark:border-blue-900">
       <div className="p-6 space-y-6">
@@ -70,8 +100,8 @@ export default function ApproachCard({ approach, number, total }) {
           </div>
         )}
 
-        {/* Steps */}
-        {approach.steps && approach.steps.length > 0 && (
+        {/* Steps with Hierarchy */}
+        {hierarchicalSteps && hierarchicalSteps.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <ListOrdered className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -79,16 +109,27 @@ export default function ApproachCard({ approach, number, total }) {
                 Algorithm Steps
               </h4>
             </div>
-            <ol className="space-y-2 pl-7">
-              {approach.steps.map((step, index) => (
-                <li
-                  key={index}
-                  className="text-gray-700 dark:text-gray-300 leading-relaxed"
-                >
-                  <span className="font-semibold text-blue-600 dark:text-blue-400">
-                    {index + 1}.
-                  </span>{" "}
-                  {step}
+            <ol className="space-y-3 pl-7">
+              {hierarchicalSteps.map((step, index) => (
+                <li key={index} className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <div className="flex items-start gap-2">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 flex-shrink-0">
+                      {index + 1}.
+                    </span>
+                    <div className="flex-1">
+                      <span>{step.text}</span>
+                      {step.sub.length > 0 && (
+                        <ul className="mt-2 space-y-1.5 ml-4">
+                          {step.sub.map((subStep, subIndex) => (
+                            <li key={subIndex} className="flex items-start gap-2 text-gray-600 dark:text-gray-400">
+                              <span className="text-blue-500 flex-shrink-0">•</span>
+                              <span>{subStep}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
                 </li>
               ))}
             </ol>
