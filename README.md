@@ -1,107 +1,207 @@
-# 🚀 DSA Patterns - Master Data Structures & Algorithms
+# 🎯 DSA Patterns - Interactive Learning Platform
 
-<div align="center">
+> A comprehensive full-stack platform for mastering Data Structures & Algorithms through pattern-based learning, curated roadmaps, and interactive challenges.
 
-![DSA Patterns Platform](https://img.shields.io/badge/DSA-Patterns-blue?style=for-the-badge)
-![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)
-![MongoDB](https://img.shields.io/badge/MongoDB-6.0-green?style=for-the-badge&logo=mongodb)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
-
-**A comprehensive platform for mastering Data Structures & Algorithms through pattern-based learning**
-
-[Live Demo](#) • [Features](#-features) • [Get Started](#-getting-started)
-
-</div>
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-18-blue?style=flat-square&logo=react)](https://reactjs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 
 ---
 
-## 📖 About
+## 🌟 Features Overview
 
-DSA Patterns is a modern learning platform designed to help students and developers master Data Structures & Algorithms through a **pattern-based approach**. Learn by understanding core patterns that appear repeatedly in coding interviews instead of solving problems randomly.
+### 📊 **Core Learning System**
+- **22 DSA Patterns** - Master problem-solving through proven patterns
+- **153+ Practice Questions** - Categorized by difficulty (Easy/Medium/Hard)
+- **Pattern-Based Approach** - Learn the underlying patterns, not just solutions
+- **Progress Tracking** - Real-time stats on completion rates and streaks
 
-### 🎯 Why Use DSA Patterns?
+### 🗺️ **Interactive Roadmaps**
+- **Metro Map Visualization** - Beautiful visual learning paths with node-based progression
+- **Multiple Domains** - Data Analyst, Web Dev, Cybersecurity, DSA Mastery
+- **Hybrid Content** - Internal lessons + curated external resources
+- **Progress Sync** - Auto-save with subtopic-level tracking
+- **Quiz System** - Unlock quizzes at 90% completion
+- **Certificates** - Earn certificates on roadmap completion
 
-- 80% of coding problems follow recognizable patterns
-- Learn one pattern, solve dozens of problems
-- Structured learning path from basics to advanced
-- Perfect for FAANG interview preparation
-- Track your progress with detailed analytics
+### 📝 **Rich Note-Taking**
+- **Markdown Editor** - Full-featured editor with live preview
+- **Code Snippets** - Syntax-highlighted code blocks
+- **Image Support** - Embed images and diagrams
+- **PDF Export** - Download notes as formatted PDFs
+- **Problem Linking** - Notes attached to specific questions
+- **Search** - Find notes across all problems
 
----
+### 📋 **Curated Sheets**
+- **7 Industry Sheets** - Blind 75, NeetCode 150, Striver A2Z, Grind 169, etc.
+- **Smart Filtering** - By timeline, goal, and difficulty level
+- **Comparison Tool** - Side-by-side sheet analysis
+- **Quiz Helper** - Find the perfect sheet for your goals
 
-## ✨ Key Features
+### 🎯 **Interview Preparation**
+- **Company-Specific Prep** - FAANG-focused question banks
+- **Mock Interview Timer** - Simulate real interview conditions
+- **Emergency Prep** - Last-minute study guides
+- **Interview Checklist** - Track your readiness
 
-### 📚 Learning & Practice
-- **22+ DSA Patterns** with 150+ curated problems
-- Multiple solution approaches (Brute Force, Optimal)
-- Time & space complexity analysis for every solution
-- Pattern sheets (Blind 75, NeetCode 150, Striver SDE)
-- Step-by-step explanations with examples
+### 👤 **User Experience**
+- **Profile System** - Customizable avatars with Cloudinary integration
+- **Achievement System** - Unlock badges and milestones
+- **Activity Feed** - Track your learning journey
+- **Bookmarks** - Save problems for later
+- **Streak Tracking** - Maintain daily learning habits
+- **Dark Mode** - Eye-friendly dark theme
 
-### 📊 Progress Tracking
-- Real-time dashboard with statistics
-- GitHub-style activity heatmap
-- Daily streak counter
-- Pattern mastery tracking
-- Difficulty-wise problem breakdown
-
-### 🏆 Achievements & Gamification
-- 10+ unlockable achievement badges
-- Real-time toast notifications for milestones
-- Profile completion tracker
-- Weekly challenges and contests
-
-### 👤 Profile Management
-- Professional profile with avatar upload
-- Education and work experience
-- Social links (GitHub, LinkedIn, LeetCode, Codeforces)
-- Skills showcase
-- Resume upload and management
-
-### 💼 Career Tools
-- **Resume Manager** - Upload, view, and share your resume
-- **Interview Prep Checklist** - 6-step preparation guide
-- **Company Tracker** - Track problems by target companies
-- **Daily Challenges** - Personalized problem recommendations
-
-### 💬 Community
-- Active WhatsApp community with 500+ members
-- Study groups and mock interviews
-- Job referrals and placement support
-- Success stories from FAANG employees
-
-### 🔖 Organization
-- Bookmark important problems
-- Take notes for each problem
-- Advanced search and filtering
-- Recent activity tracking
+### 🏆 **Admin Panel**
+- **Content Management** - Create/edit patterns, questions, roadmaps
+- **User Analytics** - View platform statistics
+- **Quiz Manager** - Design and deploy quizzes
+- **Roadmap Builder** - Visual roadmap creation tools
+- **Bug Reports** - Track and resolve user issues
+- **Mentorship Requests** - Manage student requests
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend:** Next.js 16, React 19, Tailwind CSS, shadcn/ui
-**Backend:** Next.js API Routes, MongoDB
-**Storage:** Cloudinary (Images & Files)
-**Auth:** JWT Authentication
-**Charts:** Recharts
-**Deployment:** Vercel/Railway ready
+### **Frontend**
+- **Framework:** Next.js 14 (App Router)
+- **UI Library:** React 18
+- **Styling:** Tailwind CSS + shadcn/ui components
+- **Icons:** Lucide React
+- **State:** React Hooks (useState, useEffect)
+- **Forms:** Native HTML5 validation
+- **Rich Text:** Custom markdown editor
+- **PDF Generation:** Client-side PDF export
+
+### **Backend**
+- **Runtime:** Node.js (Next.js API Routes)
+- **Database:** MongoDB Atlas
+- **Authentication:** JWT + httpOnly cookies
+- **File Upload:** Cloudinary API
+- **Authorization:** Role-based access control (Admin/User)
+
+### **DevOps & Tools**
+- **Hosting:** Vercel
+- **Version Control:** Git
+- **Package Manager:** npm
+- **Code Editor:** VS Code
+- **Database GUI:** MongoDB Compass
+
+---
+
+## 📁 Project Structure
+
+```
+DSA-PATTERN-WEBSITE/
+│
+├── app/                                # Next.js 14 App Router
+│   ├── achievements/                   # Achievement system
+│   ├── activity/                       # User activity tracking
+│   ├── admin/                          # Admin dashboard & tools
+│   │   ├── analytics/                  # Platform analytics
+│   │   ├── bug-reports/                # Bug tracking
+│   │   ├── quiz-manager/               # Quiz creation
+│   │   └── roadmap-manager/            # Roadmap builder
+│   ├── api/                            # API routes
+│   │   ├── auth/                       # Authentication endpoints
+│   │   ├── patterns/                   # Pattern CRUD
+│   │   ├── questions/                  # Question CRUD
+│   │   ├── roadmaps/                   # Roadmap API
+│   │   ├── profile/                    # User profile
+│   │   └── notes/                      # Notes system
+│   ├── auth/                           # Login/Signup pages
+│   ├── bookmarks/                      # Saved problems
+│   ├── community/                      # Community features
+│   ├── dashboard/                      # User dashboard
+│   ├── interview-prep/                 # Interview prep tools
+│   ├── notes/                          # Notes manager
+│   ├── patterns/                       # Pattern browser
+│   │   └── [slug]/                     # Pattern detail
+│   ├── profile/                        # User profile pages
+│   │   ├── activities/                 # Activity feed
+│   │   └── edit/                       # Profile editor
+│   ├── questions/                      # Question browser
+│   │   └── [id]/                       # Question detail
+│   ├── quiz/                           # Quiz system
+│   ├── resume/                         # Resume builder
+│   ├── roadmaps/                       # Roadmap feature
+│   │   ├── page.jsx                    # Browse roadmaps
+│   │   └── [slug]/                     # Roadmap detail
+│   │       ├── page.jsx                # Metro map view
+│   │       ├── [nodeId]/               # Node detail
+│   │       ├── certificate/            # Certificate page
+│   │       └── quiz/                   # Roadmap quiz
+│   ├── sheets/                         # Curated sheets
+│   ├── stats/                          # User statistics
+│   └── layout.jsx                      # Root layout
+│
+├── components/                         # React Components
+│   ├── achievements/                   # Achievement UI
+│   ├── admin/                          # Admin components
+│   ├── dashboard/                      # Dashboard widgets
+│   ├── filters/                        # Filter components
+│   ├── interview-prep/                 # Interview prep UI
+│   ├── patterns/                       # Pattern components
+│   ├── profile/                        # Profile components
+│   ├── questions/                      # Question components
+│   ├── quiz-manager/                   # Quiz builder UI
+│   ├── roadmaps/                       # Roadmap components
+│   │   ├── metro-map/                  # Metro map visualization
+│   │   ├── content/                    # Content renderers
+│   │   ├── progress/                   # Progress tracking
+│   │   └── quiz/                       # Roadmap quiz UI
+│   ├── sheets/                         # Sheet components
+│   ├── solutions/                      # Solution display
+│   ├── ui/                             # shadcn/ui components
+│   ├── navbar.jsx                      # Main navigation
+│   └── theme-provider.jsx              # Dark mode provider
+│
+├── lib/                                # Utility libraries
+│   ├── achievements/                   # Achievement logic
+│   ├── admin/                          # Admin utilities
+│   ├── models/                         # Data models
+│   ├── roadmaps/                       # Roadmap logic
+│   ├── validators/                     # Input validation
+│   ├── db.js                           # MongoDB connection
+│   ├── auth.js                         # JWT utilities
+│   ├── cloudinary.js                   # Image upload
+│   ├── mongodb.js                      # DB client
+│   └── utils.js                        # Helper functions
+│
+├── data/                               # Static data
+│   ├── company-interview-data.js       # Company questions
+│   └── emergency-prep-data.js          # Quick prep guides
+│
+├── public/                             # Static assets
+│   └── images/                         # Image files
+│
+├── hooks/                              # Custom React hooks
+│   └── use-toast.ts                    # Toast notifications
+│
+├── .env.local                          # Environment variables
+├── next.config.js                      # Next.js configuration
+├── tailwind.config.js                  # Tailwind configuration
+├── package.json                        # Dependencies
+└── README.md                           # This file
+```
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18 or higher
-- MongoDB (local or MongoDB Atlas)
-- Cloudinary account (for file uploads)
+- Node.js 18+ and npm
+- MongoDB Atlas account
+- Cloudinary account (for image uploads)
 
 ### Installation
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/dsa-patterns-platform.git
-cd dsa-patterns-platform
+git clone https://github.com/yourusername/dsa-patterns.git
+cd dsa-patterns
 ```
 
 2. **Install dependencies**
@@ -114,25 +214,25 @@ npm install
 Create a `.env.local` file in the root directory:
 
 ```env
-# MongoDB Connection
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dsa_patterns
+# MongoDB
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/dsa_patterns
 
-# JWT Secret (generate a random string)
-JWT_SECRET=your_super_secret_jwt_key_here
+# JWT Secret (generate a random 32+ character string)
+JWT_SECRET=your-super-secret-jwt-key-min-32-chars
 
-# Cloudinary Configuration
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+# Cloudinary (for image uploads)
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+# Admin Email (for admin access)
+ADMIN_EMAIL=admin@example.com
 ```
 
-4. **Seed the database**
+4. **Seed the database (optional)**
 ```bash
-# Seed patterns and questions
+# Import sample patterns and questions
 npm run seed
-
-# Seed collections for achievements, resumes, etc.
-npm run seed-db
 ```
 
 5. **Run the development server**
@@ -140,127 +240,275 @@ npm run seed-db
 npm run dev
 ```
 
-6. **Open your browser**
+6. **Open in browser**
 ```
 http://localhost:3000
 ```
 
 ---
 
-## 💻 For Contributors & Developers
+## 🗄️ Database Schema
 
-### Using VS Code
+### Collections Overview
 
-**Recommended VS Code Extensions:**
+#### **users**
+- User authentication and profile data
+- Fields: `email`, `name`, `password`, `avatar`, `bio`, `role`
 
-1. **ES7+ React/Redux/React-Native snippets** - `dsznajder.es7-react-js-snippets`
-2. **Tailwind CSS IntelliSense** - `bradlc.vscode-tailwindcss`
-3. **ESLint** - `dbaeumer.vscode-eslint`
-4. **Prettier** - `esbenp.prettier-vscode`
-5. **Auto Rename Tag** - `formulahendry.auto-rename-tag`
-6. **Path Intellisense** - `christian-kohler.path-intellisense`
+#### **patterns**
+- DSA pattern definitions
+- Fields: `slug`, `title`, `description`, `difficulty`, `companies`
 
-**VS Code Settings (`.vscode/settings.json`):**
+#### **questions**
+- Practice problems linked to patterns
+- Fields: `title`, `difficulty`, `pattern`, `leetcodeUrl`, `solution`
 
-```json
+#### **roadmaps**
+- Learning roadmap metadata
+- Fields: `slug`, `title`, `category`, `difficulty`, `estimatedWeeks`, `icon`, `color`
+
+#### **roadmap_nodes**
+- Topics/milestones within roadmaps
+- Fields: `nodeId`, `roadmapId`, `title`, `subtopics[]`, `weekNumber`, `order`
+
+#### **roadmap_progress**
+- User progress through roadmaps
+- Fields: `userId`, `roadmapId`, `overallProgress`, `nodesProgress[]`, `completedSubtopics[]`
+
+#### **notes**
+- User-created notes
+- Fields: `userId`, `questionId`, `title`, `content`, `tags`, `createdAt`
+
+#### **bookmarks**
+- Saved problems
+- Fields: `userId`, `questionId`, `createdAt`
+
+#### **achievements**
+- User achievements and badges
+- Fields: `userId`, `achievementId`, `unlockedAt`
+
+---
+
+## 🎨 Key Features Deep Dive
+
+### 🗺️ Roadmap System Architecture
+
+#### **Metro Map Visualization**
+- SVG-based interactive map
+- Week-based grouping with visual connection paths
+- Node states: `locked`, `unlocked`, `in-progress`, `completed`
+- Smooth animations and hover effects
+- Mobile-responsive with list view fallback
+
+#### **Node Structure**
+```javascript
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  nodeId: "da-node-1",
+  title: "Introduction to Databases",
+  weekNumber: 1,
+  subtopics: [
+    {
+      subtopicId: "da-1-1",
+      title: "What is a Database?",
+      estimatedMinutes: 15,
+      resourceLinks: {
+        youtube: "https://...",
+        article: "https://...",
+        practice: "https://..."
+      }
+    }
   ]
 }
 ```
 
-**Keyboard Shortcuts (VS Code):**
-- `Ctrl + P` - Quick file navigation
-- `Ctrl + Shift + P` - Command palette
-- `Ctrl + ~` - Open integrated terminal
-- `Ctrl + B` - Toggle sidebar
-- `Alt + Click` - Multi-cursor editing
+#### **Progress Tracking**
+- Auto-save every 2 seconds (debounced)
+- Subtopic-level completion tracking
+- Overall percentage calculation
+- Milestone markers at 25%, 50%, 75%, 90%
+- Quiz unlocks at 90% completion
+
+### 📝 Notes System
+
+#### **Features**
+- Rich markdown editor with live preview
+- Syntax-highlighted code blocks
+- Image upload via Cloudinary
+- Linked to specific problems
+- Export to PDF with formatting
+- Full-text search across all notes
+
+#### **Storage**
+- Notes stored in MongoDB with full content
+- Images hosted on Cloudinary
+- PDF generation client-side (no server processing)
+
+### 🎯 Pattern-Based Learning
+
+#### **Why Patterns?**
+Instead of memorizing 500+ individual solutions, master 22 core patterns that solve 90% of DSA problems.
+
+#### **Pattern Examples**
+- Two Pointers
+- Sliding Window
+- Fast & Slow Pointers
+- Merge Intervals
+- Cyclic Sort
+- Binary Search Variations
+- Tree BFS/DFS
+- Dynamic Programming
 
 ---
 
-## 📚 Usage Guide
+## 🔐 Authentication & Security
 
-### For Students
+### **Authentication Flow**
+1. User signs up with email/password
+2. Password hashed with bcrypt (10 rounds)
+3. JWT token generated and stored in httpOnly cookie
+4. Token verified on each protected route
+5. Auto-logout on token expiry
 
-1. **Sign up** for a free account
-2. **Complete your profile** to unlock all features
-3. **Choose a learning pattern** (start with Two Pointers or Sliding Window)
-4. **Solve problems** with detailed explanations
-5. **Track your progress** on the dashboard
-6. **Earn achievements** as you improve
-7. **Join the community** for support and motivation
-
-### For Recruiters
-
-1. Browse student profiles with detailed stats
-2. View uploaded resumes and projects
-3. Check problem-solving metrics
-4. See social profiles and portfolios
-5. Connect with top performers
+### **Security Measures**
+- ✅ Passwords hashed (never stored plain text)
+- ✅ JWT stored in httpOnly cookies (not localStorage)
+- ✅ CSRF protection via SameSite cookies
+- ✅ Input validation on all forms
+- ✅ SQL injection prevention (NoSQL)
+- ✅ XSS protection via React's built-in escaping
 
 ---
 
-## 🔐 Environment Variables
+## 🎨 UI/UX Design Principles
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `MONGODB_URI` | MongoDB connection string | Yes |
-| `JWT_SECRET` | Secret key for JWT tokens | Yes |
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Yes |
-| `CLOUDINARY_API_KEY` | Cloudinary API key | Yes |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret | Yes |
+### **Design System**
+- **Colors:** Blue-Purple gradient theme
+- **Typography:** System fonts for speed
+- **Spacing:** 4px base unit (Tailwind defaults)
+- **Animations:** Subtle micro-interactions
+- **Dark Mode:** Full support with system detection
+
+### **Component Library**
+Built on **shadcn/ui** for consistency:
+- Button, Card, Badge, Dialog
+- Dropdown Menu, Progress Bar
+- Toast Notifications
+- Form Inputs
+
+### **Responsive Breakpoints**
+- `sm`: 640px (mobile)
+- `md`: 768px (tablet)
+- `lg`: 1024px (desktop)
+- `xl`: 1280px (wide desktop)
 
 ---
 
-## 📝 Available Scripts
+## 📊 Admin Features
 
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm start            # Start production server
-npm run lint         # Run ESLint
-npm run seed         # Seed patterns and questions
-npm run seed-db      # Seed database collections
-```
+### **Admin Panel Access**
+Only users with emails in the admin list can access `/admin`
+
+### **Admin Capabilities**
+1. **Pattern Management** - Add/edit/delete patterns
+2. **Question Management** - CRUD operations on problems
+3. **Roadmap Builder** - Visual roadmap creator
+4. **Quiz Manager** - Create quizzes with scoring
+5. **User Analytics** - View platform statistics
+6. **Bug Reports** - Track and resolve issues
+7. **Mentorship** - Manage mentor requests
+
+---
+
+## 🚢 Deployment
+
+### **Vercel Deployment (Recommended)**
+
+1. Push code to GitHub
+2. Connect repository to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy automatically on push to `main`
+
+### **Environment Variables in Production**
+Ensure all `.env.local` variables are set in Vercel:
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `CLOUDINARY_*` variables
+- `ADMIN_EMAIL`
+
+---
+
+## 📈 Future Enhancements
+
+### **Planned Features**
+- [ ] AI-powered hints for problems
+- [ ] Live coding playground
+- [ ] Peer-to-peer code reviews
+- [ ] Video solution explanations
+- [ ] Social features (follow users, study groups)
+- [ ] Mobile app (React Native)
+- [ ] Integration with LeetCode API
+- [ ] Spaced repetition system
+- [ ] AI chat assistant
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how you can help:
+We welcome contributions! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-**Please ensure:**
-- Code follows ESLint rules
-- All tests pass
-- Documentation is updated
-- Commit messages are clear
+### **Code Style**
+- Use Prettier for formatting
+- Follow ESLint rules
+- Write meaningful commit messages
+- Add comments for complex logic
 
 ---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Author
+
+**Your Name**
+- GitHub: [@yourusername](https://github.com/yourusername)
+- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
+- Portfolio: [yourwebsite.com](https://yourwebsite.com)
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Problem collection inspired by NeetCode, Blind 75, and Striver's SDE Sheet
-- UI components from [shadcn/ui](https://ui.shadcn.com/)
-- Icons from [Lucide Icons](https://lucide.dev/)
-- Community support from 500+ active learners
+- [Next.js](https://nextjs.org/) - The React framework
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
+- [shadcn/ui](https://ui.shadcn.com/) - Component library
+- [MongoDB](https://www.mongodb.com/) - Database
+- [Cloudinary](https://cloudinary.com/) - Image hosting
+- [Lucide](https://lucide.dev/) - Icon library
+- Community contributors and beta testers
 
 ---
 
-## 🌟 Show Your Support
+## 📞 Support
 
-If this project helped you, please give it a ⭐️ on GitHub!
+- **Bug Reports:** [Open an issue](https://github.com/yourusername/dsa-patterns/issues)
+- **Feature Requests:** [Start a discussion](https://github.com/yourusername/dsa-patterns/discussions)
+- **Email:** support@dsapatterns.com
+
+---
+
+<div align="center">
+
+### ⭐ Star this repo if you find it helpful!
+
+**Made with ❤️ for the programming community**
+
+</div>
