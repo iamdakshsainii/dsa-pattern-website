@@ -13,7 +13,6 @@ import {
   Sparkles,
   Terminal,
   GitBranch,
-  Youtube,
   Heart,
   Coffee,
   Clock,
@@ -28,6 +27,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Hero Section */}
       <section className="container px-4 py-20 lg:py-32">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -154,6 +154,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Journey Section */}
       <section className="container px-4 py-20 bg-muted/30">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
@@ -235,6 +236,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Pattern Mindset */}
       <section className="container px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -316,6 +318,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Features */}
       <section className="container px-4 py-16 bg-muted/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -391,6 +394,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Learning Journey */}
       <section className="container px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -458,40 +462,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* <section className="container px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          <Card className="p-8 border-2 bg-gradient-to-br from-card to-primary/5">
-            <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-xl">
-                  <Youtube className="h-12 w-12 text-white" />
-                </div>
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                <h3 className="font-bold text-2xl mb-2 flex items-center gap-2 justify-center md:justify-start">
-                  <Heart className="h-6 w-6 text-red-500" />
-                  Built on Pratyush's Foundation
-                </h3>
-                <p className="text-muted-foreground mb-4 leading-relaxed">
-                  This platform uses the DSA pattern methodology by <span className="font-semibold">Pratyush Narain</span> (Padho with Pratyush).
-                  His structured approach helped thousands of students crack their interviews. We just made it easier to practice.
-                </p>
-                <Link
-                  href="https://www.youtube.com/@padho_with_pratyush"
-                  target="_blank"
-                  rel="noopener noreferrer">
-                  <Button variant="outline" className="gap-2 border-2">
-                    <Youtube className="h-4 w-4" />
-                    Check His YouTube Channel
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </section> */}
-
+      {/* CTA Section */}
       <section className="container px-4 py-20">
         <div className="max-w-4xl mx-auto">
           <Card className="p-12 border-2 text-center bg-gradient-to-br from-primary/10 via-card to-blue-500/10">
