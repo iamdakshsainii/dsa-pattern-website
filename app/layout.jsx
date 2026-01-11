@@ -5,6 +5,7 @@ import Footer from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
 import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
+import FeedbackButton from "@/components/feedback-button"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -54,7 +55,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <div className="flex flex-col min-h-screen">
           <Navbar currentUser={currentUser} />
           <main className="flex-1">
@@ -63,6 +64,7 @@ export default async function RootLayout({ children }) {
           <Footer />
         </div>
         <Toaster />
+        <FeedbackButton currentUser={currentUser} />
       </body>
     </html>
   )

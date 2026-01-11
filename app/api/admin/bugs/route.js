@@ -1,58 +1,103 @@
 import { NextResponse } from "next/server"
-import { getCurrentUser } from "@/lib/auth"
-import { isAdmin } from "@/lib/admin"
 import { connectToDatabase } from "@/lib/db"
+import { cookies } from "next/headers"
+import { verifyToken, isSuperAdmin } from "@/lib/auth"
 
-// GET all bug reports
-export async function GET(request) {
+async function verifyAdmin() {
   try {
-    const user = await getCurrentUser()
-    if (!user || !isAdmin(user)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const cookieStore = await cookies()
+    const token = cookieStore.get("auth-token")
+
+    if (!token) {
+      console.log("❌ No token found")
+      return null
     }
 
+    const user = await verifyToken(token.value)
+    console.log("🔍 Decoded user from token:", JSON.stringify(user, null, 2))
+
+    if (!user || !isSuperAdmin(user)) {
+      console.log("❌ Not admin. User email:", user?.email)
+      return null
+    }
+
+    console.log("✅ Admin verified:", user.email)
+    return user
+  } catch (error) {
+    console.log("❌ Error in verifyAdmin:", error)
+    return null
+  }
+}
+
+export async function GET() {
+  console.log("📥 GET /api/admin/bugs called")
+  const admin = await verifyAdmin()
+
+  if (!admin) {
+    console.log("❌ Admin verification failed, returning 401")
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  try {
     const { db } = await connectToDatabase()
     const bugs = await db.collection("bug_reports")
       .find({})
       .sort({ createdAt: -1 })
       .toArray()
 
-    return NextResponse.json({
-      bugs: bugs.map(b => ({...b, _id: b._id.toString()}))
-    })
+    const formatted = bugs.map(bug => ({
+      ...bug,
+      _id: bug._id.toString(),
+      userId: bug.userId?.toString()
+    }))
+
+    console.log(`✅ Returning ${formatted.length} bug reports`)
+    return NextResponse.json({ bugs: formatted })
   } catch (error) {
-    console.error("Error fetching bugs:", error)
-    return NextResponse.json({ error: "Failed to fetch bugs" }, { status: 500 })
+    console.log("❌ Error fetching bugs:", error)
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 })
   }
 }
 
-// POST create bug report (public endpoint)
 export async function POST(request) {
   try {
-    const user = await getCurrentUser()
-    const body = await request.json()
+    const cookieStore = await cookies()
+    const token = cookieStore.get("auth-token")
 
-    const { db } = await connectToDatabase()
-
-    const bug = {
-      title: body.title,
-      description: body.description,
-      page: body.page || null,
-      userEmail: user?.email || "anonymous",
-      userId: user?.id || null,
-      status: "pending",
-      createdAt: new Date(),
-      updatedAt: new Date()
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const result = await db.collection("bug_reports").insertOne(bug)
+    const user = await verifyToken(token.value)
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { type, title, description, page } = await request.json()
+
+    if (!title || !description) {
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 })
+    }
+
+    const { db } = await connectToDatabase()
+    const result = await db.collection("bug_reports").insertOne({
+      type: type || "bug",
+      title,
+      description,
+      page: page || "",
+      userEmail: user.email,
+      userId: user.id,
+      status: "pending",
+      replies: [],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    })
 
     return NextResponse.json({
       success: true,
-      bugId: result.insertedId.toString()
+      id: result.insertedId.toString()
     })
   } catch (error) {
-    console.error("Error creating bug report:", error)
-    return NextResponse.json({ error: "Failed to create bug report" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to submit" }, { status: 500 })
   }
 }

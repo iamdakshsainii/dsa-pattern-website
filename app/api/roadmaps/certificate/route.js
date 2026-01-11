@@ -8,6 +8,7 @@ import {
   getRoadmap,
   getUserCertificates
 } from "@/lib/db"
+import clientPromise from "@/lib/mongodb"
 
 // GET: Fetch certificate data
 export async function GET(request) {
@@ -31,7 +32,7 @@ export async function GET(request) {
 
     // Get current user
     const cookieStore = await cookies()
-    const authToken = cookieStore.get("auth-token") || cookieStore.get("auth-token") || cookieStore.get("authToken")
+    const authToken = cookieStore.get("auth-token") || cookieStore.get("authToken")
 
     if (!authToken) {
       return NextResponse.json(
@@ -56,16 +57,32 @@ export async function GET(request) {
       )
     }
 
-    // Check if quiz passed
-    const quizResult = await getQuizResult(currentUser._id.toString(), roadmapId)
+    // 🔥 FIX: Check if user has "mastered" status (passed 3 out of 5 quizzes)
+    const client = await clientPromise
+    const db = client.db("dsa_patterns")
 
-    if (!quizResult || !quizResult.passed) {
+    const quizStatus = await db.collection("user_quiz_attempts").findOne({
+      userId: currentUser._id.toString(),
+      roadmapId,
+    })
+
+    if (!quizStatus || quizStatus.status !== "mastered") {
       return NextResponse.json(
         {
           error: "Certificate not available",
-          message: "Pass the quiz with 70% or higher to earn certificate"
+          message: "Complete the roadmap 100% and pass 3 out of 5 quizzes to earn certificate"
         },
         { status: 403 }
+      )
+    }
+
+    // Get the best quiz result for display on certificate
+    const quizResult = await getQuizResult(currentUser._id.toString(), roadmapId)
+
+    if (!quizResult) {
+      return NextResponse.json(
+        { error: "Quiz result not found" },
+        { status: 404 }
       )
     }
 
@@ -134,13 +151,29 @@ export async function POST(request) {
       )
     }
 
-    // Verify quiz passed
+    // 🔥 FIX: Check if user has "mastered" status
+    const client = await clientPromise
+    const db = client.db("dsa_patterns")
+
+    const quizStatus = await db.collection("user_quiz_attempts").findOne({
+      userId: currentUser._id.toString(),
+      roadmapId,
+    })
+
+    if (!quizStatus || quizStatus.status !== "mastered") {
+      return NextResponse.json(
+        { error: "Certificate not available. Pass 3 out of 5 quizzes to qualify." },
+        { status: 403 }
+      )
+    }
+
+    // Get quiz result for certificate record
     const quizResult = await getQuizResult(currentUser._id.toString(), roadmapId)
 
-    if (!quizResult || !quizResult.passed) {
+    if (!quizResult) {
       return NextResponse.json(
-        { error: "Quiz not passed" },
-        { status: 403 }
+        { error: "Quiz result not found" },
+        { status: 404 }
       )
     }
 
@@ -148,7 +181,7 @@ export async function POST(request) {
     const certificate = await generateCertificateRecord(
       currentUser._id.toString(),
       roadmapId,
-      quizResult.score
+      quizResult.percentage
     )
 
     return NextResponse.json({

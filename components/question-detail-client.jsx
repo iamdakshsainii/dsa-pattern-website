@@ -24,6 +24,8 @@ import {
 import SolutionTabs from "@/components/solution-tabs"
 import NotesSection from "@/components/notes-section"
 import ResourcesSection from "@/components/resources-section"
+import EmptySolutionState from "@/components/empty-solution-state"
+import SolutionImprovementNotice from "@/components/solution-improvement-notice"
 
 export default function QuestionDetailClient({
   pattern,
@@ -83,6 +85,8 @@ export default function QuestionDetailClient({
       source: "Article"
     }] : [])
   } : null)
+
+  const hasSolution = question.approaches && question.approaches.length > 0
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20">
@@ -173,19 +177,29 @@ export default function QuestionDetailClient({
           </Card>
         )}
 
-        {question.approaches?.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500">
-                <Brain className="h-6 w-6 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Solutions & Approaches
-              </h2>
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500">
+              <Brain className="h-6 w-6 text-white" />
             </div>
-            <SolutionTabs approaches={question.approaches} />
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Solutions & Approaches
+            </h2>
           </div>
-        )}
+
+          {hasSolution && (
+            <SolutionImprovementNotice
+              updatedAt={question.updatedAt}
+              questionId={question._id?.toString()}
+            />
+          )}
+
+          {hasSolution ? (
+            <SolutionTabs approaches={question.approaches} />
+          ) : (
+            <EmptySolutionState />
+          )}
+        </div>
 
         {question.complexity && (
           <Card className="p-6 border-2 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -241,11 +255,11 @@ export default function QuestionDetailClient({
         )}
 
         {currentUser && (
-         <NotesManager
-  questionId={question._id.toString()}
-  userId={currentUser.id}
-  questionTitle={question.title}
-/>
+          <NotesManager
+            questionId={question._id.toString()}
+            userId={currentUser.id}
+            questionTitle={question.title}
+          />
         )}
       </main>
     </div>

@@ -8,8 +8,9 @@ import {
   getUser,
   getQuizResult,
   generateCertificateRecord,
-  getRoadmap,
+  getRoadmap
 } from "@/lib/db";
+import clientPromise from "@/lib/mongodb";
 
 export async function GET(request) {
   try {
@@ -41,20 +42,35 @@ export async function GET(request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Get roadmap and quiz data
+    // Get roadmap
     const roadmap = await getRoadmap(roadmapId);
     if (!roadmap) {
       return NextResponse.json({ error: "Roadmap not found" }, { status: 404 });
     }
+
+    // 🔥 FIX: Check if user has "mastered" status (passed 3 out of 5 quizzes)
+    const client = await clientPromise;
+    const db = client.db("dsa_patterns");
+
+    const quizStatus = await db.collection("user_quiz_attempts").findOne({
+      userId: user._id.toString(),
+      roadmapId,
+    });
+
+    if (!quizStatus || quizStatus.status !== "mastered") {
+      return NextResponse.json(
+        { error: "Certificate not available. Complete roadmap 100% and pass 3 out of 5 quizzes." },
+        { status: 403 }
+      );
+    }
+
+    // Get quiz result for display
     const quizResult = await getQuizResult(user._id.toString(), roadmapId);
 
-    // console.log("🔍 Quiz Result Debug:");
-    // console.log("Quiz Passed:", quizResult?.passed);
-
-    if (!quizResult || !quizResult.passed) {
+    if (!quizResult) {
       return NextResponse.json(
-        { error: "Quiz not passed. Minimum 70% required." },
-        { status: 403 }
+        { error: "Quiz result not found" },
+        { status: 404 }
       );
     }
 
@@ -329,7 +345,7 @@ export async function GET(request) {
       },
     });
   } catch (error) {
-    // console.error("Certificate generation error:", error);
+    console.error("Certificate generation error:", error);
     return NextResponse.json(
       { error: "Failed to generate certificate" },
       { status: 500 }

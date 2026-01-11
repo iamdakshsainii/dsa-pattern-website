@@ -23,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  MessageSquare,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -320,18 +321,30 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
               </p>
             </div>
           </div>
-          <Button
-            onClick={handleRefreshClick}
-            disabled={refreshing}
-            variant="outline"
-            size="sm"
-            className="shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
-          >
-            <RefreshCw
-              className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
-            />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link href="/dashboard/feedback">
+              <Button
+                variant="outline"
+                size="sm"
+                className="shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                My Feedback
+              </Button>
+            </Link>
+            <Button
+              onClick={handleRefreshClick}
+              disabled={refreshing}
+              variant="outline"
+              size="sm"
+              className="shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
+            >
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
+              />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -847,6 +860,15 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
                   >
                     <BookMarked className="h-4 w-4 mr-2" />
                     Bookmarks
+                  </Button>
+                </Link>
+                <Link href="/dashboard/feedback">
+                  <Button
+                    className="w-full justify-start shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
+                    variant="outline"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    My Feedback
                   </Button>
                 </Link>
                 <Link href="/resume">
