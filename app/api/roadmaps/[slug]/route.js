@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server"
 import { getRoadmap, getRoadmapStats } from "@/lib/db"
 
-// GET /api/roadmaps/[slug]
 export async function GET(request, { params }) {
   try {
-    const { slug } = params
+    const { slug } = await params
 
     const roadmap = await getRoadmap(slug)
 

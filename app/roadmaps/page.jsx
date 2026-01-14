@@ -1,3 +1,4 @@
+// app/roadmaps/page.jsx
 import { getCurrentUser } from "@/lib/auth"
 import { getRoadmaps, getUserActiveRoadmaps } from "@/lib/db"
 import RoadmapsClient from "./roadmaps-client"
@@ -12,6 +13,7 @@ export default async function RoadmapsPage() {
   const roadmaps = await getRoadmaps()
 
   let userActiveRoadmaps = []
+
   if (currentUser) {
     userActiveRoadmaps = await getUserActiveRoadmaps(currentUser.id)
   }

@@ -4,11 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "set NODE_OPTIONS=--max-old-space-size=4096 && next dev",
     "build": "next build",
-    "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
-    "seed-solutions": "node --experimental-json-modules seed-solutions.js"
+    "seed-solutions": "node --experimental-json-modules seed-solutions.js",
+    "setup-master": "node scripts/create-master-collections.js && node scripts/seed-4year-roadmap.js && node scripts/mark-tech-stack-roadmaps.js"
   },
   "dependencies": {
     "@aws-sdk/credential-providers": "latest",
@@ -91,6 +92,7 @@
     "@types/node": "25.0.3",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
     "postcss": "^8.5",

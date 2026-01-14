@@ -1,12 +1,20 @@
+// app/roadmaps/roadmaps-client.jsx
 'use client'
 
 import { useState } from "react"
+import Link from "next/link"
 import { Card } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
 import RoadmapCard from "@/components/roadmaps/roadmap-card"
 import RoadmapFilters from "@/components/roadmaps/roadmap-filters"
 import { MapPin, Sparkles } from "lucide-react"
 
-export default function RoadmapsClient({ initialRoadmaps, userActiveRoadmaps, currentUser }) {
+export default function RoadmapsClient({
+  initialRoadmaps,
+  userActiveRoadmaps,
+  currentUser
+}) {
   const [roadmaps, setRoadmaps] = useState(initialRoadmaps)
   const [filters, setFilters] = useState({ category: "All", difficulty: "All", search: "" })
 
@@ -36,7 +44,7 @@ export default function RoadmapsClient({ initialRoadmaps, userActiveRoadmaps, cu
   }
 
   const getUserProgress = (roadmapId) => {
-    return userActiveRoadmaps.find(r => r.roadmapId === roadmapId)
+    return userActiveRoadmaps?.find(r => r.roadmapId === roadmapId)
   }
 
   return (
@@ -66,33 +74,54 @@ export default function RoadmapsClient({ initialRoadmaps, userActiveRoadmaps, cu
           </p>
         </div>
 
-        {currentUser && userActiveRoadmaps.length > 0 && (
+        {currentUser && userActiveRoadmaps && userActiveRoadmaps.length > 0 && (
           <div className="relative mb-8 sm:mb-12 group animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500 animate-gradient-x"></div>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500 animate-gradient-x"></div>
             <Card className="relative p-6 sm:p-8 border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-pink-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
 
               <div className="relative flex items-center gap-3 mb-6">
-                <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-lg animate-pulse">
+                <div className="p-2 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg shadow-lg animate-pulse">
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-foreground">
+                <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-foreground">
                   Continue Learning
                 </h2>
               </div>
-              <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {userActiveRoadmaps.slice(0, 3).map((progress, idx) => (
-                  <div
-                    key={progress.roadmapId}
-                    className="animate-in fade-in slide-in-from-bottom-6 duration-500"
-                    style={{ animationDelay: `${idx * 100}ms` }}
-                  >
-                    <RoadmapCard
-                      roadmap={progress.roadmap}
-                      userProgress={progress}
-                    />
-                  </div>
-                ))}
+
+              <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {userActiveRoadmaps
+                  .filter(active => active.roadmap !== null)
+                  .map((active) => (
+                    <Card key={active.roadmapId} className="p-5 hover:shadow-lg transition-shadow bg-white dark:bg-slate-900">
+                      <Link href={`/roadmaps/${active.roadmap.slug}`}>
+                        <div className="flex items-start gap-4 mb-4">
+                          <div className="text-3xl">{active.roadmap.icon}</div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                              {active.roadmap.title}
+                            </h3>
+                            <Badge variant="secondary" className="text-xs">
+                              {active.roadmap.category}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-400">Progress</span>
+                            <span className="font-semibold text-pink-600">
+                              {active.overallProgress}%
+                            </span>
+                          </div>
+                          <Progress value={active.overallProgress} className="h-2" />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            {active.completedNodes} of {active.totalNodes} topics completed
+                          </p>
+                        </div>
+                      </Link>
+                    </Card>
+                  ))}
               </div>
             </Card>
           </div>

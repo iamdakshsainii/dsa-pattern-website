@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
-import { getRoadmaps, searchRoadmaps } from "@/lib/db"
+import { getRoadmaps, searchRoadmaps, getMasterRoadmaps } from "@/lib/db"
 
-// GET /api/roadmaps
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -10,6 +9,7 @@ export async function GET(request) {
     const search = searchParams.get('search')
 
     let roadmaps
+    let masterRoadmaps = []
 
     if (search) {
       roadmaps = await searchRoadmaps(search)
@@ -19,11 +19,13 @@ export async function GET(request) {
       if (difficulty) filters.difficulty = difficulty
 
       roadmaps = await getRoadmaps(filters)
+      masterRoadmaps = await getMasterRoadmaps()
     }
 
     return NextResponse.json({
+      masterRoadmaps,
       roadmaps,
-      count: roadmaps.length
+      count: roadmaps.length + masterRoadmaps.length
     })
   } catch (error) {
     console.error("Error fetching roadmaps:", error)
