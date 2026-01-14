@@ -1,76 +1,50 @@
-import { MongoClient } from 'mongodb';
-import dotenv from 'dotenv';
+import { MongoClient } from 'mongodb'
 
-dotenv.config({ path: '.env.local' });
+const uri = process.env.MONGODB_URI || "mongodb+srv://dakshsaini:%40Daksh2003@cluster0.rcxv8zy.mongodb.net/dsa_patterns?retryWrites=true&w=majority"
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI not found');
-  process.exit(1);
-}
-
-async function markTechStackRoadmaps() {
-  const client = new MongoClient(MONGODB_URI);
+async function markTechStacks() {
+  const client = new MongoClient(uri)
 
   try {
-    await client.connect();
-    const db = client.db('dsa_patterns');
+    await client.connect()
+    console.log('Connected to MongoDB')
 
-    const techStackMapping = {
-      'machine-learning': 'machine-learning',
-      'data-analyst': 'machine-learning',
-      'web-dev': 'web-development',
-      'full-stack': 'web-development',
-      'react': 'web-development',
-      'node': 'web-development',
-      'mobile': 'mobile-development',
-      'android': 'mobile-development',
-      'ios': 'mobile-development',
-      'devops': 'devops',
-      'docker': 'devops',
-      'kubernetes': 'devops',
-      'security': 'cybersecurity',
-      'cyber': 'cybersecurity'
-    };
+    const db = client.db()
 
-    const roadmaps = await db.collection('roadmaps').find({}).toArray();
+    const techStackSlugs = [
+      'web-development',
+      'machine-learning',
+      'mobile-development',
+      'devops',
+      'cybersecurity'
+    ]
 
-    console.log(`📋 Found ${roadmaps.length} roadmaps`);
-
-    let updated = 0;
-
-    for (const roadmap of roadmaps) {
-      const slug = roadmap.slug.toLowerCase();
-      const title = roadmap.title.toLowerCase();
-
-      let techStack = null;
-
-      for (const [keyword, category] of Object.entries(techStackMapping)) {
-        if (slug.includes(keyword) || title.includes(keyword)) {
-          techStack = category;
-          break;
+    const result = await db.collection('roadmaps').updateMany(
+      { slug: { $in: techStackSlugs } },
+      {
+        $set: {
+          techStackCategory: true,
+          yearNumber: 3
         }
       }
+    )
 
-      if (techStack) {
-        await db.collection('roadmaps').updateOne(
-          { _id: roadmap._id },
-          { $set: { techStackCategory: techStack } }
-        );
-        console.log(`✅ ${roadmap.title} → ${techStack}`);
-        updated++;
-      }
-    }
+    console.log(`✅ Marked ${result.modifiedCount} roadmaps as tech stacks`)
 
-    console.log(`\n🎉 Updated ${updated} roadmaps with tech stack categories`);
+    const techStacks = await db.collection('roadmaps')
+      .find({ techStackCategory: true })
+      .toArray()
+
+    console.log('\nTech Stack Roadmaps:')
+    techStacks.forEach(stack => {
+      console.log(`  - ${stack.icon} ${stack.title} (${stack.slug})`)
+    })
 
   } catch (error) {
-    console.error('❌ Error:', error);
-    process.exit(1);
+    console.error('Error:', error)
   } finally {
-    await client.close();
+    await client.close()
   }
 }
 
-markTechStackRoadmaps();
+markTechStacks()

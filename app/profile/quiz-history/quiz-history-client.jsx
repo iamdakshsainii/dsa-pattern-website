@@ -13,7 +13,8 @@ import {
   Trash2,
   ArrowLeft,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Zap
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -192,6 +193,32 @@ export default function QuizHistoryClient({ results, roadmaps, userId }) {
                 </div>
               </div>
 
+              {result.isCardTest && (
+                <div className="mb-4">
+                  <Badge
+                    variant="outline"
+                    className="bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+                  >
+                    <Zap className="h-3 w-3 mr-1" />
+                    Card Test
+                  </Badge>
+                </div>
+              )}
+
+              {result.cardProgressImpact && (
+                <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                  <div className="text-sm">
+                    <span className="font-medium">Progress Impact:</span>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Card: {result.cardProgressImpact.cardBefore}% → {result.cardProgressImpact.cardAfter}%
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Year: {result.cardProgressImpact.yearBefore}% → {result.cardProgressImpact.yearAfter}%
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {result.answers && result.answers.length > 0 && (
                 <div className="border-t pt-4">
                   <Button
@@ -296,13 +323,11 @@ export default function QuizHistoryClient({ results, roadmaps, userId }) {
                               )}
                             </div>
 
-                            <div className="ml-4">
-                              {answer.isCorrect ? (
-                                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                              ) : (
-                                <XCircle className="h-5 w-5 text-red-600" />
-                              )}
-                            </div>
+                            {answer.isCorrect ? (
+                              <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+                            ) : (
+                              <XCircle className="h-5 w-5 text-red-600 shrink-0" />
+                            )}
                           </div>
                         </Card>
                       ))}
@@ -310,6 +335,22 @@ export default function QuizHistoryClient({ results, roadmaps, userId }) {
                   )}
                 </div>
               )}
+
+              <div className="flex gap-2 mt-4">
+                <Link href={`/roadmaps/${result.roadmapId}`} className="flex-1">
+                  <Button variant="outline" className="w-full">
+                    View Roadmap
+                  </Button>
+                </Link>
+                {result.passed && (
+                  <Link href={`/roadmaps/${result.roadmapId}/certificate`} className="flex-1">
+                    <Button className="w-full">
+                      <Trophy className="h-4 w-4 mr-2" />
+                      View Certificate
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </Card>
           )
         })}

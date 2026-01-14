@@ -9,7 +9,6 @@ export async function GET(request) {
     const search = searchParams.get('search')
 
     let roadmaps
-    let masterRoadmaps = []
 
     if (search) {
       roadmaps = await searchRoadmaps(search)
@@ -19,8 +18,9 @@ export async function GET(request) {
       if (difficulty) filters.difficulty = difficulty
 
       roadmaps = await getRoadmaps(filters)
-      masterRoadmaps = await getMasterRoadmaps()
     }
+
+    const masterRoadmaps = await getMasterRoadmaps()
 
     return NextResponse.json({
       masterRoadmaps,

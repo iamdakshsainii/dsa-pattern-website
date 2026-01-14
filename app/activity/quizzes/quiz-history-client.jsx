@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from "react"
-import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Trophy, Clock, TrendingUp, CheckCircle2, XCircle, Award, ArrowLeft, RotateCcw } from "lucide-react"
+import { Trophy, Clock, TrendingUp, CheckCircle2, XCircle, Award, ArrowLeft, RotateCcw, Zap } from "lucide-react"
+import Link from "next/link"
 
 export default function QuizHistoryClient({ results, roadmaps, userId }) {
   const [filterStatus, setFilterStatus] = useState("all")
@@ -247,6 +247,15 @@ export default function QuizHistoryClient({ results, roadmaps, userId }) {
                                 <Badge variant={attempt.passed ? "default" : "destructive"}>
                                   Attempt {attempt.attemptNumber}
                                 </Badge>
+
+                                {/* ✅ NEW: Card Test Badge */}
+                                {attempt.isCardTest && (
+                                  <Badge variant="outline" className="bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800">
+                                    <Zap className="h-3 w-3 mr-1" />
+                                    Card Test
+                                  </Badge>
+                                )}
+
                                 {idx === 0 && (
                                   <Badge variant="outline">Latest</Badge>
                                 )}
@@ -256,6 +265,7 @@ export default function QuizHistoryClient({ results, roadmaps, userId }) {
                                   </Badge>
                                 )}
                               </div>
+
                               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                 <span>{formatDate(attempt.completedAt)}</span>
                                 {attempt.timeTaken && (
@@ -265,6 +275,13 @@ export default function QuizHistoryClient({ results, roadmaps, userId }) {
                                   </span>
                                 )}
                               </div>
+
+                              {/* ✅ NEW: Progress Impact */}
+                              {attempt.cardProgressImpact && (
+                                <div className="text-xs text-muted-foreground mt-2 p-2 bg-purple-50 dark:bg-purple-950/20 rounded">
+                                  <span className="font-medium">Progress Impact:</span> {attempt.cardProgressImpact.cardBefore}% → {attempt.cardProgressImpact.cardAfter}%
+                                </div>
+                              )}
                             </div>
                           </div>
 

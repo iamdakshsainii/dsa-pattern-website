@@ -23,7 +23,8 @@ import {
   ChevronRight,
   Shield,
   Trash2,
-  UserCheck
+  UserCheck,
+  BookOpen  
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -58,8 +59,11 @@ export default function ResponsiveSidebar({ user, notifications = [] }) {
     },
     { icon: MessageSquare, label: 'Mentorship', href: '/admin/mentorship' },
     { icon: Map, label: 'Roadmaps', href: '/admin/roadmaps' },
-    { icon: GraduationCap, label: 'Quizzes', href: '/admin/quiz-manager' },
+   { icon: BookOpen, label: 'Quizzes', href: '/admin/quiz-manager' },
+   { icon: GraduationCap, label: 'Academics', href: '/admin/academics' },
     { icon: FileText, label: 'Questions', href: '/admin/questions' },
+
+
     {
       icon: BarChart3,
       label: 'Analytics',

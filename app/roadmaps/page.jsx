@@ -1,6 +1,5 @@
-// app/roadmaps/page.jsx
 import { getCurrentUser } from "@/lib/auth"
-import { getRoadmaps, getUserActiveRoadmaps } from "@/lib/db"
+import { getRoadmaps, getUserActiveRoadmaps, getMasterRoadmaps, getUserMasterProgress } from "@/lib/db"
 import RoadmapsClient from "./roadmaps-client"
 
 export const metadata = {
@@ -11,16 +10,24 @@ export const metadata = {
 export default async function RoadmapsPage() {
   const currentUser = await getCurrentUser()
   const roadmaps = await getRoadmaps()
+  const masterRoadmaps = await getMasterRoadmaps()
 
   let userActiveRoadmaps = []
+  let userMasterProgress = []
 
   if (currentUser) {
     userActiveRoadmaps = await getUserActiveRoadmaps(currentUser.id)
+
+    userMasterProgress = await Promise.all(
+      masterRoadmaps.map(m => getUserMasterProgress(currentUser.id, m.masterId))
+    )
   }
 
   return (
     <RoadmapsClient
       initialRoadmaps={roadmaps}
+      masterRoadmaps={masterRoadmaps}
+      userMasterProgress={userMasterProgress}
       userActiveRoadmaps={userActiveRoadmaps}
       currentUser={currentUser}
     />

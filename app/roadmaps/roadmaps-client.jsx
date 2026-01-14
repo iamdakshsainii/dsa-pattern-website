@@ -1,4 +1,3 @@
-// app/roadmaps/roadmaps-client.jsx
 'use client'
 
 import { useState } from "react"
@@ -8,10 +7,13 @@ import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import RoadmapCard from "@/components/roadmaps/roadmap-card"
 import RoadmapFilters from "@/components/roadmaps/roadmap-filters"
-import { MapPin, Sparkles } from "lucide-react"
+import MasterRoadmapCard from "@/components/roadmaps/master-roadmap-card"
+import { MapPin, Sparkles, Crown } from "lucide-react"
 
 export default function RoadmapsClient({
   initialRoadmaps,
+  masterRoadmaps,
+  userMasterProgress,
   userActiveRoadmaps,
   currentUser
 }) {
@@ -56,6 +58,15 @@ export default function RoadmapsClient({
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 dark:bg-purple-500/5 rounded-full blur-3xl"></div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-7xl relative z-10">
+        <button
+  onClick={() => window.history.back()}
+  className="flex items-center gap-2 mb-6 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors group"
+>
+  <svg className="h-4 w-4 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+  </svg>
+  <span className="font-medium">Back</span>
+</button>
 
         <div className="mb-8 sm:mb-12 relative">
           <div className="flex items-center gap-4 mb-3">
@@ -74,6 +85,40 @@ export default function RoadmapsClient({
           </p>
         </div>
 
+        {masterRoadmaps && masterRoadmaps.length > 0 && (
+          <div className="relative mb-12 group animate-in fade-in slide-in-from-bottom-5 duration-700 delay-150">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500 animate-gradient-x"></div>
+            <Card className="relative p-6 sm:p-8 border-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl shadow-2xl overflow-hidden">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-full blur-3xl"></div>
+
+              <div className="relative flex items-center gap-3 mb-6">
+                <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg shadow-lg animate-pulse">
+                  <Crown className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">
+                    Complete Learning Journeys
+                  </h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Structured 4-year programs for comprehensive mastery
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative grid grid-cols-1 gap-6">
+                {masterRoadmaps.map((master, idx) => (
+                  <MasterRoadmapCard
+                    key={master.masterId}
+                    master={master}
+                    userProgress={userMasterProgress[idx]}
+                    currentUser={currentUser}
+                  />
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+
         {currentUser && userActiveRoadmaps && userActiveRoadmaps.length > 0 && (
           <div className="relative mb-8 sm:mb-12 group animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500 animate-gradient-x"></div>
@@ -84,7 +129,7 @@ export default function RoadmapsClient({
                 <div className="p-2 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg shadow-lg animate-pulse">
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-foreground">
+                <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent">
                   Continue Learning
                 </h2>
               </div>
