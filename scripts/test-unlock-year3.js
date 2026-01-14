@@ -50,7 +50,7 @@ async function unlockYear3(userEmail) {
       }
     ]
 
-    await db.collection('master_roadmap_progress').updateOne(
+    await db.collection('master_progress').updateOne(
       {
         userId: user._id.toString(),
         masterId: "4-year-cs-journey"

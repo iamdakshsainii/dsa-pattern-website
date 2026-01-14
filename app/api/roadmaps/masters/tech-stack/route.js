@@ -36,7 +36,7 @@ export async function POST(request) {
       )
     }
 
-    const result = await db.collection('master_roadmap_progress').updateOne(
+    const result = await db.collection('master_progress').updateOne(
       {
         userId: userId.toString(),
         masterId
@@ -83,7 +83,7 @@ export async function GET(request) {
 
     const { db } = await connectToDatabase()
 
-    const masterProgress = await db.collection('master_roadmap_progress').findOne({
+    const masterProgress = await db.collection('master_progress').findOne({
       userId: currentUser.id.toString(),
       masterId
     })

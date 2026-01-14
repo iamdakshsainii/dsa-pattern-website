@@ -29,16 +29,16 @@ async function createMasterCollections() {
       console.log('⚠️  master_roadmaps already exists');
     }
 
-    console.log('📦 Creating master_roadmap_progress collection...');
-    const progressExists = await db.listCollections({ name: 'master_roadmap_progress' }).hasNext();
+    console.log('📦 Creating master_progress collection...');
+    const progressExists = await db.listCollections({ name: 'master_progress' }).hasNext();
 
     if (!progressExists) {
-      await db.createCollection('master_roadmap_progress');
-      await db.collection('master_roadmap_progress').createIndex({ userId: 1, masterId: 1 }, { unique: true });
-      await db.collection('master_roadmap_progress').createIndex({ userId: 1 });
-      console.log('✅ master_roadmap_progress collection created');
+      await db.createCollection('master_progress');
+      await db.collection('master_progress').createIndex({ userId: 1, masterId: 1 }, { unique: true });
+      await db.collection('master_progress').createIndex({ userId: 1 });
+      console.log('✅ master_progress collection created');
     } else {
-      console.log('⚠️  master_roadmap_progress already exists');
+      console.log('⚠️  master_progress already exists');
     }
 
     console.log('📦 Adding indexes to roadmaps collection...');

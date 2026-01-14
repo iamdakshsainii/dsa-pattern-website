@@ -32,7 +32,7 @@ export default async function TechStackHubPage() {
     updatedAt: stack.updatedAt?.toISOString()
   }))
 
-  const masterProgress = await db.collection('master_roadmap_progress').findOne({
+  const masterProgress = await db.collection('master_progress').findOne({
     userId: currentUser.id.toString(),
     masterId: "4-year-cs-journey"
   })

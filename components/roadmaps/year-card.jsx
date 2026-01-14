@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import RoadmapCard from "@/components/roadmaps/roadmap-card"
-import CardTestButton from './card-test-button'
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import RoadmapCard from "@/components/roadmaps/roadmap-card";
+import CardTestButton from "./card-test-button";
 import {
   ChevronDown,
   ChevronRight,
@@ -16,80 +16,99 @@ import {
   Trophy,
   Zap,
   AlertCircle,
-  Target
-} from "lucide-react"
-import { useRouter } from 'next/navigation'
+  Target,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export default function YearCard({ year, status, yearProgress, isExpanded, onToggle, currentUser, masterId }) {
-  const router = useRouter()
-  const [roadmaps, setRoadmaps] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [showTooltip, setShowTooltip] = useState(false)
-  const [isShaking, setIsShaking] = useState(false)
+export default function YearCard({
+  year,
+  status,
+  yearProgress,
+  isExpanded,
+  onToggle,
+  currentUser,
+  masterId,
+  examModeActive = false,
+}) {
+  const router = useRouter();
+  const [roadmaps, setRoadmaps] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
 
-  const completionPercent = yearProgress?.completionPercent || 0
+  const completionPercent = yearProgress?.completionPercent || 0;
 
   const handleToggle = async () => {
-    if (status === 'locked') {
+    if (status === "locked") {
       if (!currentUser) {
-        router.push('/auth/login')
-        return
+        router.push("/auth/login");
+        return;
       }
 
-      setIsShaking(true)
-      setShowTooltip(true)
-      setTimeout(() => setIsShaking(false), 500)
-      setTimeout(() => setShowTooltip(false), 3000)
-      return
+      setIsShaking(true);
+      setShowTooltip(true);
+      setTimeout(() => setIsShaking(false), 500);
+      setTimeout(() => setShowTooltip(false), 3000);
+      return;
     }
 
     if (isExpanded || roadmaps.length > 0) {
-      onToggle()
-      return
+      onToggle();
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const roadmapSlugs = year.roadmaps.filter(r => r.roadmapSlug).map(r => r.roadmapSlug)
-      const promises = roadmapSlugs.map(slug =>
-        fetch(`/api/roadmaps/${slug}`).then(r => r.json())
-      )
-      const results = await Promise.all(promises)
+      const roadmapSlugs = year.roadmaps
+        .filter((r) => r.roadmapSlug)
+        .map((r) => r.roadmapSlug);
+      const promises = roadmapSlugs.map((slug) =>
+        fetch(`/api/roadmaps/${slug}`).then((r) => r.json())
+      );
+      const results = await Promise.all(promises);
 
       const extractedRoadmaps = results
-        .map(r => r.roadmap)
-        .filter(r => r && !r.error)
+        .map((r) => r.roadmap)
+        .filter((r) => r && !r.error);
+      const filteredRoadmaps = examModeActive
+        ? extractedRoadmaps.filter((r) => r.category !== "Project")
+        : extractedRoadmaps;
 
-      setRoadmaps(extractedRoadmaps)
-      onToggle()
+      setRoadmaps(extractedRoadmaps);
+      onToggle();
     } catch (error) {
-      console.error('Error loading roadmaps:', error)
+      console.error("Error loading roadmaps:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  if (status === 'available' || status === 'completed') {
+  if (status === "available" || status === "completed") {
     return (
-      <Card className={`relative overflow-hidden transition-all duration-500 ${
-        isExpanded
-          ? 'shadow-2xl scale-[1.01]'
-          : 'shadow-lg hover:shadow-xl hover:scale-[1.005]'
-      }`}>
-
-        <div className={`absolute inset-0 bg-gradient-to-r ${
-          status === 'completed'
-            ? 'from-green-500 via-emerald-500 to-green-500'
-            : 'from-blue-500 via-purple-500 to-pink-500'
-        } opacity-100`}>
+      <Card
+        className={`relative overflow-hidden transition-all duration-500 ${
+          isExpanded
+            ? "shadow-2xl scale-[1.01]"
+            : "shadow-lg hover:shadow-xl hover:scale-[1.005]"
+        }`}
+      >
+        <div
+          className={`absolute inset-0 bg-gradient-to-r ${
+            status === "completed"
+              ? "from-green-500 via-emerald-500 to-green-500"
+              : "from-blue-500 via-purple-500 to-pink-500"
+          } opacity-100`}
+        >
           <div className="absolute inset-[3px] bg-white dark:bg-slate-900 rounded-lg"></div>
         </div>
 
-        <div className={`absolute -inset-20 bg-gradient-to-r ${
-          status === 'completed'
-            ? 'from-green-500/20 to-emerald-500/20'
-            : 'from-blue-500/20 via-purple-500/20 to-pink-500/20'
-        } blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000`}></div>
+        <div
+          className={`absolute -inset-20 bg-gradient-to-r ${
+            status === "completed"
+              ? "from-green-500/20 to-emerald-500/20"
+              : "from-blue-500/20 via-purple-500/20 to-pink-500/20"
+          } blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000`}
+        ></div>
 
         <div className="relative">
           <div
@@ -107,18 +126,22 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                 </div>
 
                 <div className="relative">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${
-                    status === 'completed'
-                      ? 'from-green-500 to-emerald-500'
-                      : 'from-blue-500 to-purple-500'
-                  } rounded-xl blur-lg opacity-50 animate-pulse`}></div>
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${
+                      status === "completed"
+                        ? "from-green-500 to-emerald-500"
+                        : "from-blue-500 to-purple-500"
+                    } rounded-xl blur-lg opacity-50 animate-pulse`}
+                  ></div>
 
-                  <div className={`relative p-3 bg-gradient-to-br ${
-                    status === 'completed'
-                      ? 'from-green-500 to-emerald-500'
-                      : 'from-blue-500 to-purple-500'
-                  } rounded-xl shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
-                    {status === 'completed' ? (
+                  <div
+                    className={`relative p-3 bg-gradient-to-br ${
+                      status === "completed"
+                        ? "from-green-500 to-emerald-500"
+                        : "from-blue-500 to-purple-500"
+                    } rounded-xl shadow-lg transform group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    {status === "completed" ? (
                       <CheckCircle className="h-6 w-6 text-white" />
                     ) : (
                       <Clock className="h-6 w-6 text-white animate-pulse" />
@@ -158,8 +181,14 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                           strokeWidth="6"
                           fill="none"
                           strokeDasharray={`${2 * Math.PI * 28}`}
-                          strokeDashoffset={`${2 * Math.PI * 28 * (1 - completionPercent / 100)}`}
-                          className={status === 'completed' ? 'text-green-500' : 'text-purple-500'}
+                          strokeDashoffset={`${
+                            2 * Math.PI * 28 * (1 - completionPercent / 100)
+                          }`}
+                          className={
+                            status === "completed"
+                              ? "text-green-500"
+                              : "text-purple-500"
+                          }
                           strokeLinecap="round"
                         />
                       </svg>
@@ -171,12 +200,14 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                   </div>
                 )}
 
-                {year.testOutAvailable && status === 'available' && (
+                {year.testOutAvailable && status === "available" && (
                   <Button
                     size="sm"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      router.push(`/roadmaps/masters/${masterId}/test/${year.yearNumber}`)
+                      e.stopPropagation();
+                      router.push(
+                        `/roadmaps/masters/${masterId}/test/${year.yearNumber}`
+                      );
                     }}
                     className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                   >
@@ -185,7 +216,7 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                   </Button>
                 )}
 
-                {status === 'completed' && (
+                {status === "completed" && (
                   <Badge className="bg-green-500 text-white border-0 shadow-lg">
                     <CheckCircle className="h-4 w-4 mr-1" />
                     Completed
@@ -199,9 +230,9 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                 <Progress
                   value={completionPercent}
                   className={`h-2.5 ${
-                    status === 'completed'
-                      ? 'bg-green-100 dark:bg-green-950'
-                      : 'bg-purple-100 dark:bg-purple-950'
+                    status === "completed"
+                      ? "bg-green-100 dark:bg-green-950"
+                      : "bg-purple-100 dark:bg-purple-950"
                   }`}
                 />
               </div>
@@ -220,7 +251,9 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                 {loading && (
                   <div className="text-center py-12">
                     <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-purple-600 border-r-transparent"></div>
-                    <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">Loading roadmaps...</p>
+                    <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+                      Loading roadmaps...
+                    </p>
                   </div>
                 )}
 
@@ -232,10 +265,7 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                         className="relative animate-in slide-in-from-bottom-4 fade-in duration-500"
                         style={{ animationDelay: `${idx * 100}ms` }}
                       >
-                        <RoadmapCard
-                          roadmap={roadmap}
-                          compact={true}
-                        />
+                        <RoadmapCard roadmap={roadmap} compact={true} />
 
                         <div className="absolute top-2 right-2 z-10">
                           <CardTestButton
@@ -251,7 +281,7 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                   </div>
                 )}
 
-                {year.roadmaps.some(r => r.type === 'tech-stack-hub') && (
+                {year.roadmaps.some((r) => r.type === "tech-stack-hub") && (
                   <Card className="mt-6 p-6 border-2 border-purple-300 dark:border-purple-700 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-50 dark:from-purple-950/20 dark:via-pink-950/20 dark:to-purple-950/20 shadow-lg hover:shadow-xl transition-all duration-300">
                     <div className="flex items-center gap-4">
                       <div className="relative">
@@ -266,12 +296,13 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
                           Tech Stack Selection
                         </h4>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          Choose your specialization: Web Dev, ML, Mobile, DevOps, or Cybersecurity
+                          Choose your specialization: Web Dev, ML, Mobile,
+                          DevOps, or Cybersecurity
                         </p>
                       </div>
 
                       <Button
-                        onClick={() => router.push('/roadmaps/tech-stack-hub')}
+                        onClick={() => router.push("/roadmaps/tech-stack-hub")}
                         className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                       >
                         Choose Stack
@@ -284,12 +315,12 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
           )}
         </div>
       </Card>
-    )
+    );
   }
 
   return (
     <div
-      className={`relative ${isShaking ? 'animate-shake' : ''}`}
+      className={`relative ${isShaking ? "animate-shake" : ""}`}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
@@ -333,7 +364,10 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
               </div>
             </div>
 
-            <Badge variant="secondary" className="bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-0">
+            <Badge
+              variant="secondary"
+              className="bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-0"
+            >
               <Lock className="h-3 w-3 mr-1" />
               Locked
             </Badge>
@@ -384,14 +418,21 @@ export default function YearCard({ year, status, yearProgress, isExpanded, onTog
 
       <style jsx>{`
         @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-10px); }
-          75% { transform: translateX(10px); }
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          25% {
+            transform: translateX(-10px);
+          }
+          75% {
+            transform: translateX(10px);
+          }
         }
         .animate-shake {
           animation: shake 0.5s ease-in-out;
         }
       `}</style>
     </div>
-  )
+  );
 }

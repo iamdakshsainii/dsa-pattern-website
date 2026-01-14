@@ -151,7 +151,7 @@ export async function POST(request) {
           return yp;
         });
 
-        await db.collection('master_roadmap_progress').updateOne(
+        await db.collection('master_progress').updateOne(
           { userId, masterId },
           {
             $set: {

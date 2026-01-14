@@ -1,51 +1,86 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import YearCard from "@/components/roadmaps/year-card"
-import { GraduationCap, Calendar, BookOpen, Award, ArrowLeft } from "lucide-react"
-import { useRouter } from 'next/navigation'
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import YearCard from "@/components/roadmaps/year-card";
+import {
+  GraduationCap,
+  Calendar,
+  BookOpen,
+  Award,
+  ArrowLeft,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import ExamCalendarDialog from "@/components/exam-calendar-dialog";
 
 export default function MasterDetailClient({
   masterRoadmap,
   userProgress,
   unlockedYears,
-  currentUser
+  currentUser,
 }) {
-  const router = useRouter()
-  const [expandedYear, setExpandedYear] = useState(userProgress?.currentYear || 1)
+  const router = useRouter();
+  const [expandedYear, setExpandedYear] = useState(
+    userProgress?.currentYear || 1
+  );
 
- const calculateOverallProgress = (userProgress) => {
-  if (!userProgress?.yearProgress || !Array.isArray(userProgress.yearProgress)) {
-    return 0
-  }
+  const [examMode, setExamMode] = useState(false);
+  const [nearestExam, setNearestExam] = useState(null);
+  const [showExamDialog, setShowExamDialog] = useState(false);
 
-  const totalProgress = userProgress.yearProgress.reduce(
-    (sum, year) => sum + (year.completionPercent || 0),
-    0
-  )
-  return Math.round(totalProgress / userProgress.yearProgress.length)
-}
+  useEffect(() => {
+    async function checkExam() {
+      if (!currentUser) return;
+      try {
+        const res = await fetch(
+          `/api/roadmaps/masters/exam?userId=${currentUser.id}&masterId=${masterRoadmap.masterId}`
+        ); // CHANGE HERE
+        const data = await res.json();
+        setExamMode(data.active);
+        setNearestExam(data.nearestExam);
+      } catch (error) {
+        console.error("Exam check error:", error);
+      }
+    }
+    checkExam();
+  }, [currentUser, masterRoadmap.masterId]);
 
-const overallProgress = calculateOverallProgress(userProgress)
+  const calculateOverallProgress = (userProgress) => {
+    if (
+      !userProgress?.yearProgress ||
+      !Array.isArray(userProgress.yearProgress)
+    ) {
+      return 0;
+    }
+
+    const totalProgress = userProgress.yearProgress.reduce(
+      (sum, year) => sum + (year.completionPercent || 0),
+      0
+    );
+    return Math.round(totalProgress / userProgress.yearProgress.length);
+  };
+
+  const overallProgress = calculateOverallProgress(userProgress);
 
   const getYearStatus = (yearNumber) => {
-    if (!currentUser) return 'locked'
-    if (!userProgress) return yearNumber === 1 ? 'available' : 'locked'
+    if (!currentUser) return "locked";
+    if (!userProgress) return yearNumber === 1 ? "available" : "locked";
 
-    const yearProg = userProgress.yearProgress.find(yp => yp.year === yearNumber)
-    if (yearProg?.completionPercent === 100) return 'completed'
-    if (unlockedYears.includes(yearNumber)) return 'available'
-    return 'locked'
-  }
+    const yearProg = userProgress.yearProgress.find(
+      (yp) => yp.year === yearNumber
+    );
+    if (yearProg?.completionPercent === 100) return "completed";
+    if (unlockedYears.includes(yearNumber)) return "available";
+    return "locked";
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-6xl">
-
         {/* Back Button */}
         <button
           onClick={() => router.back()}
@@ -74,16 +109,29 @@ const overallProgress = calculateOverallProgress(userProgress)
               </p>
 
               <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                >
                   <BookOpen className="h-3 w-3 mr-1" />
                   {masterRoadmap.years.length} Years
                 </Badge>
-                <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                <Badge
+                  variant="secondary"
+                  className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400"
+                >
                   <Award className="h-3 w-3 mr-1" />
-                  {masterRoadmap.years.reduce((sum, y) => sum + y.roadmaps.length, 0)} Roadmaps
+                  {masterRoadmap.years.reduce(
+                    (sum, y) => sum + y.roadmaps.length,
+                    0
+                  )}{" "}
+                  Roadmaps
                 </Badge>
                 {currentUser && (
-                  <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                  <Badge
+                    variant="secondary"
+                    className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                  >
                     Year {userProgress?.currentYear || 1}
                   </Badge>
                 )}
@@ -102,16 +150,59 @@ const overallProgress = calculateOverallProgress(userProgress)
                   {overallProgress}%
                 </span>
               </div>
-              <Progress value={overallProgress} className="h-2.5 bg-purple-100 dark:bg-purple-950" />
+              <Progress
+                value={overallProgress}
+                className="h-2.5 bg-purple-100 dark:bg-purple-950"
+              />
             </div>
           )}
         </Card>
 
+        {examMode && nearestExam && (
+          <Card className="mb-8 p-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border-2 border-orange-200 dark:border-orange-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Calendar className="h-8 w-8 text-orange-500" />
+                <div>
+                  <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                    📚 Exam Mode Active
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {nearestExam.examName} in{" "}
+                    {Math.ceil(
+                      (new Date(nearestExam.examDate) - new Date()) /
+                        (1000 * 60 * 60 * 24)
+                    )}{" "}
+                    days
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={() => setShowExamDialog(true)}
+                variant="outline"
+                size="sm"
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Manage Exams
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        <ExamCalendarDialog
+          userId={currentUser?.id}
+          masterId={masterRoadmap.masterId}
+          isOpen={showExamDialog}
+          onClose={() => setShowExamDialog(false)}
+        />
+
         {/* Year Cards */}
         <div className="space-y-6">
           {masterRoadmap.years.map((year) => {
-            const status = getYearStatus(year.yearNumber)
-            const yearProg = userProgress?.yearProgress?.find(yp => yp.year === year.yearNumber)
+            const status = getYearStatus(year.yearNumber);
+            const yearProg = userProgress?.yearProgress?.find(
+              (yp) => yp.year === year.yearNumber
+            );
 
             return (
               <YearCard
@@ -120,11 +211,16 @@ const overallProgress = calculateOverallProgress(userProgress)
                 status={status}
                 yearProgress={yearProg}
                 isExpanded={expandedYear === year.yearNumber}
-                onToggle={() => setExpandedYear(expandedYear === year.yearNumber ? null : year.yearNumber)}
+                onToggle={() =>
+                  setExpandedYear(
+                    expandedYear === year.yearNumber ? null : year.yearNumber
+                  )
+                }
                 currentUser={currentUser}
                 masterId={masterRoadmap.masterId}
+                examModeActive={examMode}
               />
-            )
+            );
           })}
         </div>
 
@@ -133,12 +229,15 @@ const overallProgress = calculateOverallProgress(userProgress)
             <p className="text-slate-700 dark:text-slate-300 mb-4">
               Login to track your progress and unlock features
             </p>
-            <Button onClick={() => router.push('/auth/login')} className="bg-gradient-to-r from-blue-500 to-purple-500">
+            <Button
+              onClick={() => router.push("/auth/login")}
+              className="bg-gradient-to-r from-blue-500 to-purple-500"
+            >
               Login to Continue
             </Button>
           </Card>
         )}
       </div>
     </div>
-  )
+  );
 }
