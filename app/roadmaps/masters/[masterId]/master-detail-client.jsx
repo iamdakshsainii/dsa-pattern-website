@@ -158,37 +158,44 @@ export default function MasterDetailClient({
           )}
         </Card>
 
-        {examMode && nearestExam && (
-          <Card className="mb-8 p-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border-2 border-orange-200 dark:border-orange-800">
+        {currentUser && (
+          <Card className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Calendar className="h-8 w-8 text-orange-500" />
+                <Calendar className="h-8 w-8 text-blue-500" />
                 <div>
                   <h3 className="font-bold text-lg text-gray-900 dark:text-white">
-                    📚 Exam Mode Active
+                    📅 Exam Calendar
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {nearestExam.examName} in{" "}
-                    {Math.ceil(
-                      (new Date(nearestExam.examDate) - new Date()) /
-                        (1000 * 60 * 60 * 24)
-                    )}{" "}
-                    days
+                    {examMode && nearestExam
+                      ? `${nearestExam.examName} in ${Math.ceil((new Date(nearestExam.examDate) - new Date()) / (1000*60*60*24))} days`
+                      : 'No upcoming exams scheduled'
+                    }
                   </p>
                 </div>
               </div>
               <Button
                 onClick={() => setShowExamDialog(true)}
-                variant="outline"
+                variant={examMode ? "default" : "outline"}
                 size="sm"
+                className={examMode ? "bg-orange-500 hover:bg-orange-600" : ""}
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 Manage Exams
               </Button>
             </div>
+
+            {examMode && nearestExam && (
+              <div className="mt-4 p-3 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+                <p className="text-sm text-orange-700 dark:text-orange-300 font-semibold">
+                  🎯 Exam Mode Active - Projects are {nearestExam.hideProjects ? 'hidden' : 'visible'}
+                </p>
+              </div>
+            )}
           </Card>
         )}
-
+        
         <ExamCalendarDialog
           userId={currentUser?.id}
           masterId={masterRoadmap.masterId}

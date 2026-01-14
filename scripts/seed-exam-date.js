@@ -4,14 +4,22 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 async function seedExamDate() {
-  const client = new MongoClient(process.env.MONGODB_URI || 'mongodb+srv://dakshsaini:%40Daksh2003@cluster0.rcxv8zy.mongodb.net/dsa_patterns?retryWrites=true&w=majority');
+  const client = new MongoClient(process.env.MONGODB_URI);
 
   try {
     await client.connect();
     const db = client.db();
 
-    const userId = '694e7e801336f9894f786818'; // Your user ID
+    const userId = '694e7e801336f9894f786818'; // STRING, not ObjectId
     const masterId = '4-year-cs-journey';
+
+    // Check if document exists
+    const existing = await db.collection('master_progress').findOne({
+      userId: userId,  // Query as STRING
+      masterId: masterId
+    });
+
+    console.log('Existing document:', JSON.stringify(existing, null, 2));
 
     // Create exam date 5 days from now
     const examDate = new Date();
@@ -19,7 +27,7 @@ async function seedExamDate() {
 
     const result = await db.collection('master_progress').updateOne(
       {
-        userId: new ObjectId(userId),
+        userId: userId,  // Update as STRING
         masterId: masterId
       },
       {
@@ -36,9 +44,16 @@ async function seedExamDate() {
       { upsert: true }
     );
 
-    console.log('✅ Exam date added:', result);
+    console.log('✅ Update result:', result);
     console.log('📅 Exam Date:', examDate.toISOString());
-    console.log('🎯 Days remaining:', 5);
+    console.log('🎯 Days remaining: 5');
+
+    // Verify the update
+    const updated = await db.collection('master_progress').findOne({
+      userId: userId,
+      masterId: masterId
+    });
+    console.log('✅ Updated document:', JSON.stringify(updated, null, 2));
 
   } catch (error) {
     console.error('❌ Error:', error);

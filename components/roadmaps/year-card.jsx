@@ -74,7 +74,7 @@ export default function YearCard({
         ? extractedRoadmaps.filter((r) => r.category !== "Project")
         : extractedRoadmaps;
 
-      setRoadmaps(extractedRoadmaps);
+      setRoadmaps(filteredRoadmaps);
       onToggle();
     } catch (error) {
       console.error("Error loading roadmaps:", error);
