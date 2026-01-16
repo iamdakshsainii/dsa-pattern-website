@@ -201,7 +201,7 @@ export default function Footer() {
                 © {currentYear} DSA Patterns Platform. All rights reserved.
                 <span className="hidden md:inline mx-2">•</span>
                 <span className="block md:inline mt-1 md:mt-0">
-                  Built with <Heart className="h-3 w-3 text-red-500 fill-red-500 inline mx-0.5" /> by Daskh Saini
+                  Built with <Heart className="h-3 w-3 text-red-500 fill-red-500 inline mx-0.5" /> by Engineering freak
                 </span>
               </div>
 
