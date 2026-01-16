@@ -35,8 +35,8 @@ export default function BattleCard({ sheet, featured = false }) {
       }`}>
         <div className={`absolute inset-0 bg-gradient-to-br ${getDifficultyColor()} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity`}></div>
 
-        <div className={`relative bg-white rounded-2xl border-4 ${
-          featured ? 'border-yellow-400' : 'border-gray-200'
+        <div className={`relative bg-card rounded-2xl border-4 ${
+          featured ? 'border-yellow-400' : 'border-border'
         } group-hover:border-purple-400 transition-all shadow-lg overflow-hidden h-full`}>
 
           {featured && (
@@ -57,19 +57,19 @@ export default function BattleCard({ sheet, featured = false }) {
               <>
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-600">STATS</span>
+                    <span className="text-sm font-medium text-muted-foreground">STATS</span>
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Problems:</span>
+                      <span className="text-muted-foreground">Problems:</span>
                       <span className="font-semibold">{sheet.count}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Difficulty:</span>
+                      <span className="text-muted-foreground">Difficulty:</span>
                       <span className="font-semibold">{sheet.difficulty}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Est. Time:</span>
+                      <span className="text-muted-foreground">Est. Time:</span>
                       <span className="font-semibold">
                         {sheet.count < 100 ? '2-3 weeks' : sheet.count < 200 ? '1-3 months' : '6-8 months'}
                       </span>
@@ -77,46 +77,46 @@ export default function BattleCard({ sheet, featured = false }) {
                   </div>
                 </div>
 
-                <div className="mb-4 pt-4 border-t">
-                  <div className="text-sm font-medium text-gray-600 mb-2">DIFFICULTY SPLIT</div>
+                <div className="mb-4 pt-4 border-t border-border">
+                  <div className="text-sm font-medium text-muted-foreground mb-2">DIFFICULTY SPLIT</div>
                   <div className="space-y-2">
                     <div>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-600">🟢 Easy</span>
+                        <span className="text-muted-foreground">🟢 Easy</span>
                         <span className="font-medium">~33%</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-green-500 w-1/3"></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-600">🟡 Medium</span>
+                        <span className="text-muted-foreground">🟡 Medium</span>
                         <span className="font-medium">~50%</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-yellow-500 w-1/2"></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-600">🔴 Hard</span>
+                        <span className="text-muted-foreground">🔴 Hard</span>
                         <span className="font-medium">~17%</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-red-500" style={{ width: '17%' }}></div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-xs text-center text-gray-500 mb-4">
+                <p className="text-xs text-center text-muted-foreground mb-4">
                   Hover to see topics covered
                 </p>
               </>
             ) : (
               <div className="py-4">
-                <div className="text-sm font-medium text-gray-600 mb-3">TOPICS COVERED</div>
+                <div className="text-sm font-medium text-muted-foreground mb-3">TOPICS COVERED</div>
                 <div className="grid grid-cols-2 gap-2 mb-6">
                   {getTopics().map((topic, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm">
@@ -126,9 +126,9 @@ export default function BattleCard({ sheet, featured = false }) {
                   ))}
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                  <p className="text-sm text-blue-900 font-medium mb-1">✅ Best For:</p>
-                  <p className="text-xs text-blue-800">{sheet.description}</p>
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-4">
+                  <p className="text-sm font-medium mb-1">✅ Best For:</p>
+                  <p className="text-xs text-muted-foreground">{sheet.description}</p>
                 </div>
               </div>
             )}

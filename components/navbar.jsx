@@ -1,5 +1,6 @@
 "use client"
-
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "@/app/contexts/ThemeProvider"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -35,6 +36,25 @@ import {
 import { useState, useEffect } from "react"
 import ProfileAvatar from "./profile/profile-avatar"
 import { isAdmin } from "@/lib/admin"
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2.5 rounded-xl hover:bg-accent transition-all duration-200 group relative"
+      aria-label="Toggle theme"
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
+      {theme === 'dark' ? (
+        <Sun className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
+      ) : (
+        <Moon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
+      )}
+    </button>
+  )
+}
 
 export default function Navbar({ currentUser }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -196,7 +216,8 @@ export default function Navbar({ currentUser }) {
           )}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           {currentUser ? (
             <>
               <Link href="/dashboard">
@@ -351,6 +372,11 @@ export default function Navbar({ currentUser }) {
       {mobileMenuOpen && (
         <div className="md:hidden border-t bg-background/95 backdrop-blur">
           <div className="container px-4 py-6 space-y-2">
+            <div className="flex items-center justify-between mb-4 p-4 rounded-xl bg-accent/50">
+              <span className="text-sm font-medium">Theme</span>
+              <ThemeToggle />
+            </div>
+
             {currentUser && (
               <>
                 <div className="relative overflow-hidden flex items-center gap-3 p-4 rounded-xl mb-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border border-blue-200/50 dark:border-blue-800/50">

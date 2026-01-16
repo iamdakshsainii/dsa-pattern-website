@@ -16,7 +16,7 @@ export default function FeaturedSection({ sheets }) {
     <div className="mb-12">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">⭐ Top Picks</h2>
-        <p className="text-sm text-gray-600">Most chosen by students</p>
+        <p className="text-sm text-muted-foreground">Most chosen by students</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">

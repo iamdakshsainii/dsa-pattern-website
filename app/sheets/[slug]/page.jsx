@@ -5,7 +5,9 @@ import QuestionCard from "@/components/questions/question-card"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle2, FileSpreadsheet } from "lucide-react"
+
 export const dynamic = 'force-dynamic'
+
 export default async function SheetPage({ params }) {
   const { slug } = await params
 
@@ -29,7 +31,7 @@ export default async function SheetPage({ params }) {
   const progressPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-background">
       <div className="container px-4 py-8 space-y-8">
         <Card className="p-8 bg-gradient-to-br from-purple-500 to-purple-600 border-purple-400 text-white">
           <div className="space-y-4">

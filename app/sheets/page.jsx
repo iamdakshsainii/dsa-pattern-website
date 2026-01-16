@@ -110,8 +110,8 @@ export default function SheetsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <header className="border-b bg-white/95 backdrop-blur sticky top-0 z-10">
+    <div className="min-h-screen bg-background">
+      <header className="border-b bg-card/95 backdrop-blur sticky top-0 z-10">
         <div className="container flex h-16 items-center gap-4 px-4 max-w-7xl mx-auto">
           <Link href="/">
             <Button variant="ghost" size="sm" className="gap-2">
@@ -150,10 +150,10 @@ export default function SheetsPage() {
 
           {filteredSheets.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-600 mb-4">No sheets match your filters</p>
+              <p className="text-muted-foreground mb-4">No sheets match your filters</p>
               <button
                 onClick={() => setFilters({ timeline: 'all', goal: 'all', level: 'all' })}
-                className="text-purple-600 font-medium hover:underline"
+                className="text-purple-600 dark:text-purple-400 font-medium hover:underline"
               >
                 Clear all filters
               </button>

@@ -79,10 +79,10 @@ export default function SheetQuizModal({ isOpen, onClose, sheets }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+      <div className="bg-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="sticky top-0 bg-card border-b border-border px-6 py-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold">🎯 Find Your Perfect Sheet</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+          <button onClick={onClose} className="p-2 hover:bg-accent rounded-full">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -96,12 +96,12 @@ export default function SheetQuizModal({ isOpen, onClose, sheets }) {
                     <div
                       key={i}
                       className={`h-2 flex-1 rounded-full ${
-                        i <= step ? 'bg-purple-600' : 'bg-gray-200'
+                        i <= step ? 'bg-purple-600' : 'bg-muted'
                       }`}
                     />
                   ))}
                 </div>
-                <p className="text-sm text-gray-600">Question {step} of 3</p>
+                <p className="text-sm text-muted-foreground">Question {step} of 3</p>
               </div>
 
               <h3 className="text-xl font-semibold mb-6">
@@ -113,7 +113,7 @@ export default function SheetQuizModal({ isOpen, onClose, sheets }) {
                   <button
                     key={option.value}
                     onClick={() => handleAnswer(questions[step - 1].id, option)}
-                    className="w-full p-4 border-2 border-gray-200 rounded-xl hover:border-purple-600 hover:bg-purple-50 transition-all text-left font-medium"
+                    className="w-full p-4 border-2 border-border rounded-xl hover:border-purple-600 hover:bg-purple-500/10 transition-all text-left font-medium"
                   >
                     {option.label}
                   </button>
@@ -126,13 +126,13 @@ export default function SheetQuizModal({ isOpen, onClose, sheets }) {
               <h3 className="text-2xl font-bold mb-2">
                 {result.name} is your best fit!
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-muted-foreground mb-6">
                 Based on your answers, this sheet matches your goals and timeline.
               </p>
 
-              <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 mb-6 text-left">
+              <div className="bg-yellow-500/10 border-2 border-yellow-500/20 rounded-xl p-6 mb-6 text-left">
                 <p className="font-semibold mb-2">⚠️ Commitment Check:</p>
-                <ul className="space-y-1 text-sm text-gray-700">
+                <ul className="space-y-1 text-sm text-muted-foreground">
                   <li>✓ Complete all {result.count} problems</li>
                   <li>✓ Don't switch sheets mid-way</li>
                   <li>✓ Stick to your timeline</li>
@@ -150,7 +150,7 @@ export default function SheetQuizModal({ isOpen, onClose, sheets }) {
                 </a>
                 <button
                   onClick={reset}
-                  className="px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold hover:bg-gray-50"
+                  className="px-6 py-3 border-2 border-border rounded-xl font-semibold hover:bg-accent"
                 >
                   Retake Quiz
                 </button>

@@ -3,6 +3,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 :root {
   --background: oklch(0.99 0.002 247.858);
   --foreground: oklch(0.2 0.015 252.366);

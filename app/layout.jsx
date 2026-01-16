@@ -9,6 +9,7 @@ import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
 import FeedbackButton from "@/components/feedback-button"
 import ExamModeOverlay from '@/components/exam-mode-overlay'
+import { ThemeProvider } from "@/app/contexts/ThemeProvider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -53,28 +54,31 @@ async function getCurrentUser() {
   }
 }
 
+
 export default async function RootLayout({ children }) {
   const currentUser = await getCurrentUser()
 
-return (
-  <html lang="en" suppressHydrationWarning>
-    <body className={inter.className} suppressHydrationWarning>
-      {currentUser && (
-        <ExamModeOverlay
-          userId={currentUser.id}
-          masterId="4-year-cs-journey"
-        />
-      )}
-      <div className="flex flex-col min-h-screen">
-        <Navbar currentUser={currentUser} />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-      </div>
-      <Toaster />
-      <FeedbackButton currentUser={currentUser} />
-    </body>
-  </html>
-)
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
+        <ThemeProvider>
+          {currentUser && (
+            <ExamModeOverlay
+              userId={currentUser.id}
+              masterId="4-year-cs-journey"
+            />
+          )}
+          <div className="flex flex-col min-h-screen">
+            <Navbar currentUser={currentUser} />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+          <Toaster />
+          <FeedbackButton currentUser={currentUser} />
+        </ThemeProvider>
+      </body>
+    </html>
+  )
 }

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, ClipboardCheck, BookOpen, Users, Target } from 'lucide-react';
+import { ArrowLeft, ClipboardCheck, BookOpen, Target } from 'lucide-react';
 import InterviewChecklist from '@/components/interview-prep/interview-checklist';
 import InterviewCountdown from '@/components/interview-prep/interview-countdown';
 import MockInterviewSimulator from '@/components/interview-prep/mock-interview-simulator';
@@ -42,7 +42,6 @@ export default function InterviewPrepPage() {
           <div className="lg:col-span-2 space-y-6">
             <InterviewChecklist />
             <MockInterviewSimulator />
-            <CompanyPrepCards />
           </div>
 
           <div className="space-y-6">
@@ -129,6 +128,7 @@ export default function InterviewPrepPage() {
           </div>
         </div>
 
+        <CompanyPrepCards />
         <EmergencyPrepSection />
       </div>
     </div>

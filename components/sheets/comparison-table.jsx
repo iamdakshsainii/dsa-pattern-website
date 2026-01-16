@@ -52,7 +52,7 @@ export default function ComparisonTable({ sheets }) {
       <div className="text-center py-8">
         <button
           onClick={() => setIsExpanded(true)}
-          className="px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold hover:bg-gray-50 inline-flex items-center gap-2"
+          className="px-6 py-3 border-2 border-border rounded-xl font-semibold hover:bg-accent inline-flex items-center gap-2"
         >
           <ChevronDown className="h-5 w-5" />
           View Detailed Comparison Table
@@ -67,49 +67,49 @@ export default function ComparisonTable({ sheets }) {
         <h2 className="text-2xl font-bold">📊 Side-by-Side Comparison</h2>
         <button
           onClick={() => setIsExpanded(false)}
-          className="text-sm text-gray-600 hover:text-gray-900 inline-flex items-center gap-1"
+          className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
         >
           <ChevronUp className="h-4 w-4" />
           Collapse
         </button>
       </div>
 
-      <div className="overflow-x-auto bg-white border-2 border-gray-200 rounded-xl">
+      <div className="overflow-x-auto bg-card border-2 border-border rounded-xl">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b-2 border-gray-200">
+          <thead className="bg-muted border-b-2 border-border">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-6 py-4 text-left text-sm font-semibold">
                 Sheet Name
               </th>
               <th
-                className="px-6 py-4 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100"
+                className="px-6 py-4 text-left text-sm font-semibold cursor-pointer hover:bg-accent"
                 onClick={() => handleSort('time')}
               >
                 Time {sortBy === 'time' && (sortOrder === 'asc' ? '↑' : '↓')}
               </th>
               <th
-                className="px-6 py-4 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100"
+                className="px-6 py-4 text-left text-sm font-semibold cursor-pointer hover:bg-accent"
                 onClick={() => handleSort('problems')}
               >
                 Problems {sortBy === 'problems' && (sortOrder === 'asc' ? '↑' : '↓')}
               </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-6 py-4 text-left text-sm font-semibold">
                 Coverage
               </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-6 py-4 text-left text-sm font-semibold">
                 Best For
               </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-6 py-4 text-left text-sm font-semibold">
                 Action
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-border">
             {sortedSheets.map((sheet, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={index} className="hover:bg-accent">
                 <td className="px-6 py-4">
-                  <div className="font-semibold text-gray-900">{sheet.name}</div>
-                  <div className="text-xs text-gray-500">{sheet.difficulty}</div>
+                  <div className="font-semibold">{sheet.name}</div>
+                  <div className="text-xs text-muted-foreground">{sheet.difficulty}</div>
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-xl">{getTimeIndicator(sheet.count)}</span>
@@ -119,14 +119,14 @@ export default function ComparisonTable({ sheets }) {
                 </td>
                 <td className="px-6 py-4">
                   <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                    getCoverage(sheet.count) === 'Core' ? 'bg-blue-100 text-blue-800' :
-                    getCoverage(sheet.count) === 'Wide' ? 'bg-green-100 text-green-800' :
-                    'bg-purple-100 text-purple-800'
+                    getCoverage(sheet.count) === 'Core' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400' :
+                    getCoverage(sheet.count) === 'Wide' ? 'bg-green-500/10 text-green-600 dark:text-green-400' :
+                    'bg-purple-500/10 text-purple-600 dark:text-purple-400'
                   }`}>
                     {getCoverage(sheet.count)}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                <td className="px-6 py-4 text-sm text-muted-foreground max-w-xs">
                   {sheet.description.substring(0, 50)}...
                 </td>
                 <td className="px-6 py-4">
@@ -134,7 +134,7 @@ export default function ComparisonTable({ sheets }) {
                     href={sheet.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-purple-600 hover:text-purple-700 font-medium text-sm"
+                    className="inline-flex items-center gap-1 text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm"
                   >
                     View
                     <ExternalLink className="h-3 w-3" />
@@ -147,7 +147,7 @@ export default function ComparisonTable({ sheets }) {
       </div>
 
       <div className="mt-4 text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           💡 <strong>Tip:</strong> Pick ONE sheet based on your timeline and stick with it
         </p>
       </div>
