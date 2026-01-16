@@ -6,7 +6,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Remove experimental.appDir - it's no longer needed in Next.js 13.4+
+  logging: {
+    fetches: {
+      fullUrl: false
+    }
+  }
 }
 
 export default nextConfig
