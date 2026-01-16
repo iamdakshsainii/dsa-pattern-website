@@ -90,95 +90,49 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
   }, []);
 
   useEffect(() => {
-    fetchAllData();
-    fetchAllPatterns();
+    const fetchData = async () => {
+      try {
+        setRefreshing(true);
+        const [statsRes, heatmapRes, patternsRes] = await Promise.all([
+          fetch("/api/dashboard/stats", {
+            cache: "no-store",
+            credentials: "include",
+          }),
+          fetch(`/api/activity-heatmap?year=${selectedYear}`, {
+            credentials: "include",
+          }),
+          fetch("/api/all-patterns", { credentials: "include" }),
+        ]);
 
-    const statsInterval = setInterval(() => {
-      fetchAllData();
-    }, 30000);
-
-    const heatmapInterval = setInterval(() => {
-      fetchHeatmapData();
-    }, 60000);
-
-    const handleRefresh = () => {
-      fetchAllData();
-      fetchHeatmapData();
-      fetchAllPatterns();
+        if (statsRes.ok) {
+          const data = await statsRes.json();
+          if (data.success && data.stats) setStats(data.stats);
+        }
+        if (heatmapRes.ok) {
+          const data = await heatmapRes.json();
+          setHeatmapData(data.heatmap || []);
+        }
+        if (patternsRes.ok) {
+          const data = await patternsRes.json();
+          setAllPatterns(data.patterns || []);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
     };
 
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    const handleRefresh = () => fetchData();
     window.addEventListener("dashboard-refresh", handleRefresh);
-
     return () => {
-      clearInterval(statsInterval);
-      clearInterval(heatmapInterval);
+      clearInterval(interval);
       window.removeEventListener("dashboard-refresh", handleRefresh);
     };
-  }, []);
-
-  useEffect(() => {
-    fetchHeatmapData();
   }, [selectedYear]);
-
-  const fetchAllData = async () => {
-    try {
-      setRefreshing(true);
-
-      const response = await fetch("/api/dashboard/stats", {
-        cache: "no-store",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success && data.stats) {
-        setStats(data.stats);
-      } else {
-        console.error("Invalid response format:", data);
-      }
-    } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
-      setStats(null);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  const fetchHeatmapData = async () => {
-    try {
-      const response = await fetch(
-        `/api/activity-heatmap?year=${selectedYear}`,
-        {
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setHeatmapData(data.heatmap || []);
-      }
-    } catch (error) {
-      console.error("Error fetching heatmap:", error);
-    }
-  };
-
-  const fetchAllPatterns = async () => {
-    try {
-      const response = await fetch("/api/all-patterns", {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setAllPatterns(data.patterns || []);
-      }
-    } catch (error) {
-      console.error("Error fetching patterns:", error);
-    }
-  };
 
   const getHeatmapColor = (count) => {
     if (count === 0)
@@ -192,10 +146,31 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
     return "bg-green-800 dark:bg-green-400 border border-green-900 dark:border-green-300";
   };
 
-  const handleRefreshClick = () => {
-    fetchAllData();
-    fetchHeatmapData();
-    fetchAllPatterns();
+  const handleRefreshClick = async () => {
+    setRefreshing(true);
+    const [statsRes, heatmapRes, patternsRes] = await Promise.all([
+      fetch("/api/dashboard/stats", {
+        cache: "no-store",
+        credentials: "include",
+      }),
+      fetch(`/api/activity-heatmap?year=${selectedYear}`, {
+        credentials: "include",
+      }),
+      fetch("/api/all-patterns", { credentials: "include" }),
+    ]);
+    if (statsRes.ok) {
+      const data = await statsRes.json();
+      if (data.success && data.stats) setStats(data.stats);
+    }
+    if (heatmapRes.ok) {
+      const data = await heatmapRes.json();
+      setHeatmapData(data.heatmap || []);
+    }
+    if (patternsRes.ok) {
+      const data = await patternsRes.json();
+      setAllPatterns(data.patterns || []);
+    }
+    setRefreshing(false);
   };
 
   const handleYearChange = (year) => {
@@ -227,7 +202,7 @@ export default function DashboardRealTime({ userId, userName, userEmail }) {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
         <div className="text-center">
           <p className="text-red-600 mb-4">Failed to load dashboard</p>
-          <Button onClick={fetchAllData}>Try Again</Button>
+          <Button onClick={handleRefreshClick}>Try Again</Button>
         </div>
       </div>
     );

@@ -1,9 +1,9 @@
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Code2,
   Target,
@@ -18,15 +18,24 @@ import {
   Clock,
   Zap,
   BookOpen,
-  CheckCircle2
-} from "lucide-react"
-import { getCurrentUser } from "@/lib/auth"
+  CheckCircle2,
+} from "lucide-react";
+import { getCurrentUser } from "@/lib/auth";
+import ExamCountdownBadge from "@/components/exam-countdown-badge";
 
 export default async function HomePage() {
-  const currentUser = await getCurrentUser()
+  const currentUser = await getCurrentUser();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Exam Countdown Badge */}
+      {currentUser && (
+        <ExamCountdownBadge
+          userId={currentUser.id}
+          masterId="4-year-cs-journey"
+        />
+      )}
+
       {/* Hero Section */}
       <section className="container px-4 py-20 lg:py-32">
         <div className="max-w-6xl mx-auto">
@@ -47,29 +56,42 @@ export default async function HomePage() {
               </h1>
 
               <p className="text-xl text-muted-foreground leading-relaxed">
-                We know the struggle. Staring at LeetCode for hours. Feeling lost in interviews.
+                We know the struggle. Staring at LeetCode for hours. Feeling
+                lost in interviews.
                 <span className="block mt-2 font-semibold text-foreground">
-                  This platform teaches you to <span className="text-primary">think</span>, not memorize.
+                  This platform teaches you to{" "}
+                  <span className="text-primary">think</span>, not memorize.
                 </span>
               </p>
 
               <div className="flex flex-wrap gap-4 pt-4">
                 <Link href="/patterns">
-                  <Button size="lg" className="gap-2 text-lg px-8 shadow-lg hover:shadow-xl transition-all">
+                  <Button
+                    size="lg"
+                    className="gap-2 text-lg px-8 shadow-lg hover:shadow-xl transition-all"
+                  >
                     <Terminal className="h-5 w-5" />
                     Start Learning
                   </Button>
                 </Link>
                 {!currentUser ? (
                   <Link href="/auth/signup">
-                    <Button size="lg" variant="outline" className="gap-2 text-lg px-8 border-2">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="gap-2 text-lg px-8 border-2"
+                    >
                       Sign Up Free
                       <ArrowRight className="h-5 w-5" />
                     </Button>
                   </Link>
                 ) : (
                   <Link href="/dashboard">
-                    <Button size="lg" variant="outline" className="gap-2 text-lg px-8 border-2">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="gap-2 text-lg px-8 border-2"
+                    >
                       Continue Learning
                       <ArrowRight className="h-5 w-5" />
                     </Button>
@@ -80,15 +102,21 @@ export default async function HomePage() {
               <div className="flex flex-col gap-3 pt-6 border-t">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-                  <span className="text-sm">No fake promises. Just proven patterns.</span>
+                  <span className="text-sm">
+                    No fake promises. Just proven patterns.
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-                  <span className="text-sm">100% free. Forever. Built with ❤️</span>
+                  <span className="text-sm">
+                    100% free. Forever. Built with ❤️
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-                  <span className="text-sm">Learn once, solve hundreds of problems.</span>
+                  <span className="text-sm">
+                    Learn once, solve hundreds of problems.
+                  </span>
                 </div>
               </div>
             </div>
@@ -102,46 +130,64 @@ export default async function HomePage() {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <span className="text-xs text-muted-foreground ml-2">your-journey.js</span>
+                  <span className="text-xs text-muted-foreground ml-2">
+                    your-journey.js
+                  </span>
                 </div>
 
                 <div className="font-mono text-sm space-y-2">
                   <div className="flex gap-3">
                     <span className="text-muted-foreground select-none">1</span>
-                    <span className="text-muted-foreground">// Before: Random LeetCode grinding</span>
+                    <span className="text-muted-foreground">
+                      // Before: Random LeetCode grinding
+                    </span>
                   </div>
                   <div className="flex gap-3">
                     <span className="text-muted-foreground select-none">2</span>
-                    <span className="line-through text-red-500">solve(random_problem); // Lost</span>
+                    <span className="line-through text-red-500">
+                      solve(random_problem); // Lost
+                    </span>
                   </div>
                   <div className="flex gap-3 mt-4">
                     <span className="text-muted-foreground select-none">3</span>
                   </div>
                   <div className="flex gap-3">
                     <span className="text-muted-foreground select-none">4</span>
-                    <span className="text-muted-foreground">// After: Pattern recognition</span>
+                    <span className="text-muted-foreground">
+                      // After: Pattern recognition
+                    </span>
                   </div>
                   <div className="flex gap-3">
                     <span className="text-muted-foreground select-none">5</span>
-                    <span><span className="text-purple-500">if</span> (seeSortedArray) {'{'}</span>
+                    <span>
+                      <span className="text-purple-500">if</span>{" "}
+                      (seeSortedArray) {"{"}
+                    </span>
                   </div>
                   <div className="flex gap-3">
                     <span className="text-muted-foreground select-none">6</span>
-                    <span className="ml-4 text-green-500">// Think: Two Pointers!</span>
+                    <span className="ml-4 text-green-500">
+                      // Think: Two Pointers!
+                    </span>
                   </div>
                   <div className="flex gap-3">
                     <span className="text-muted-foreground select-none">7</span>
-                    <span className="ml-4"><span className="text-purple-500">return</span> solve(confidently);</span>
+                    <span className="ml-4">
+                      <span className="text-purple-500">return</span>{" "}
+                      solve(confidently);
+                    </span>
                   </div>
                   <div className="flex gap-3">
                     <span className="text-muted-foreground select-none">8</span>
-                    <span>{'}'}</span>
+                    <span>{"}"}</span>
                   </div>
                 </div>
 
                 <div className="mt-6 pt-4 border-t">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Pattern Recognition: Activated ✨</span>
+                    <span className="text-xs text-muted-foreground">
+                      Pattern Recognition: Activated ✨
+                    </span>
                     <Badge variant="outline" className="text-xs">
                       <Zap className="h-3 w-3 mr-1" />
                       Two Pointers
@@ -178,7 +224,8 @@ export default async function HomePage() {
                   <div className="text-4xl">😰</div>
                   <h3 className="text-xl font-bold">The Struggle</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Solved 200+ problems but still panic in interviews. Every new problem feels completely foreign.
+                    Solved 200+ problems but still panic in interviews. Every
+                    new problem feels completely foreign.
                   </p>
                   <div className="pt-2 text-sm text-red-600 font-medium">
                     "Why can't I solve this?"
@@ -198,7 +245,8 @@ export default async function HomePage() {
                   <div className="text-4xl">💡</div>
                   <h3 className="text-xl font-bold">The Aha Moment</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    This is just Two Pointers! I've seen this pattern before. It's not a new problem type.
+                    This is just Two Pointers! I've seen this pattern before.
+                    It's not a new problem type.
                   </p>
                   <div className="pt-2 text-sm text-yellow-700 dark:text-yellow-500 font-medium">
                     "Wait... I know this!"
@@ -218,7 +266,8 @@ export default async function HomePage() {
                   <div className="text-4xl">🚀</div>
                   <h3 className="text-xl font-bold">The Confidence</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Pattern identified in seconds. Clear approach. Multiple variations solved with same technique.
+                    Pattern identified in seconds. Clear approach. Multiple
+                    variations solved with same technique.
                   </p>
                   <div className="pt-2 text-sm text-green-700 dark:text-green-500 font-medium">
                     "I got this!"
@@ -230,7 +279,8 @@ export default async function HomePage() {
 
           <div className="mt-12 text-center">
             <p className="text-lg text-muted-foreground italic">
-              Pattern recognition changes everything. Let's get you from step 1 to step 3.
+              Pattern recognition changes everything. Let's get you from step 1
+              to step 3.
             </p>
           </div>
         </div>
@@ -248,7 +298,8 @@ export default async function HomePage() {
               Stop Grinding. Start Thinking.
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              There are only ~27 core patterns. Learn them once, solve thousands of problems.
+              There are only ~27 core patterns. Learn them once, solve thousands
+              of problems.
             </p>
           </div>
 
@@ -260,7 +311,9 @@ export default async function HomePage() {
                     <Coffee className="h-8 w-8 text-red-600" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-xl mb-2">The Old Way (Exhausting)</h3>
+                    <h3 className="font-bold text-xl mb-2">
+                      The Old Way (Exhausting)
+                    </h3>
                     <ul className="space-y-2 text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="text-red-500 mt-1">✗</span>
@@ -291,7 +344,9 @@ export default async function HomePage() {
                     <Zap className="h-8 w-8 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-xl mb-2">The Pattern Way (Smart)</h3>
+                    <h3 className="font-bold text-xl mb-2">
+                      The Pattern Way (Smart)
+                    </h3>
                     <ul className="space-y-2 text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="text-green-500 mt-1">✓</span>
@@ -335,12 +390,20 @@ export default async function HomePage() {
                 </div>
                 <h3 className="font-bold text-xl">27 Core Patterns</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  From Two Pointers to Dynamic Programming. Each pattern explained like your senior would - clear, practical, with real examples.
+                  From Two Pointers to Dynamic Programming. Each pattern
+                  explained like your senior would - clear, practical, with real
+                  examples.
                 </p>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  <Badge variant="secondary" className="text-xs">Sliding Window</Badge>
-                  <Badge variant="secondary" className="text-xs">Two Pointers</Badge>
-                  <Badge variant="secondary" className="text-xs">DP</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Sliding Window
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Two Pointers
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    DP
+                  </Badge>
                 </div>
               </div>
             </Card>
@@ -352,7 +415,9 @@ export default async function HomePage() {
                 </div>
                 <h3 className="font-bold text-xl">Curated Problems</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  No random grinding. Every problem teaches you something new about the pattern. Pattern triggers, common mistakes, multiple approaches.
+                  No random grinding. Every problem teaches you something new
+                  about the pattern. Pattern triggers, common mistakes, multiple
+                  approaches.
                 </p>
                 <div className="space-y-2 pt-2 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2">
@@ -378,11 +443,14 @@ export default async function HomePage() {
                 </div>
                 <h3 className="font-bold text-xl">Your Progress, Your Way</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Track what matters: streak, pattern mastery, problems solved. Take notes. Bookmark tough ones. Build your own study guide.
+                  Track what matters: streak, pattern mastery, problems solved.
+                  Take notes. Bookmark tough ones. Build your own study guide.
                 </p>
                 <div className="space-y-2 pt-2">
                   <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Your journey starts here</span>
+                    <span className="text-muted-foreground">
+                      Your journey starts here
+                    </span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div className="h-full w-0 bg-gradient-to-r from-primary to-blue-600 animate-pulse"></div>
@@ -419,7 +487,8 @@ export default async function HomePage() {
               </div>
               <h3 className="font-bold text-xl">Pick a Pattern</h3>
               <p className="text-muted-foreground">
-                Start with basics like Two Pointers or Sliding Window. Read the guide, understand when to use it.
+                Start with basics like Two Pointers or Sliding Window. Read the
+                guide, understand when to use it.
               </p>
               <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-muted-foreground">
                 <Clock className="h-4 w-4" />
@@ -435,7 +504,8 @@ export default async function HomePage() {
               </div>
               <h3 className="font-bold text-xl">Solve Problems</h3>
               <p className="text-muted-foreground">
-                Practice with curated problems. See hints if stuck. Learn multiple approaches. Take notes.
+                Practice with curated problems. See hints if stuck. Learn
+                multiple approaches. Take notes.
               </p>
               <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-muted-foreground">
                 <Target className="h-4 w-4" />
@@ -451,7 +521,8 @@ export default async function HomePage() {
               </div>
               <h3 className="font-bold text-xl">Master & Move On</h3>
               <p className="text-muted-foreground">
-                Feel confident? Move to the next pattern. Track your progress. Build your pattern recognition muscle.
+                Feel confident? Move to the next pattern. Track your progress.
+                Build your pattern recognition muscle.
               </p>
               <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-muted-foreground">
                 <Trophy className="h-4 w-4" />
@@ -477,21 +548,29 @@ export default async function HomePage() {
                 Let's Do This Together
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                No pressure. No fake urgency. Just start learning patterns at your own pace.
+                No pressure. No fake urgency. Just start learning patterns at
+                your own pace.
                 <span className="block mt-2 font-semibold text-foreground">
                   Future you will thank present you. 🚀
                 </span>
               </p>
               <div className="flex flex-wrap gap-4 justify-center pt-4">
                 <Link href="/patterns">
-                  <Button size="lg" className="gap-2 text-lg px-10 shadow-xl hover:shadow-2xl transition-all">
+                  <Button
+                    size="lg"
+                    className="gap-2 text-lg px-10 shadow-xl hover:shadow-2xl transition-all"
+                  >
                     <Code2 className="h-5 w-5" />
                     Start Learning Now
                   </Button>
                 </Link>
                 {!currentUser && (
                   <Link href="/auth/signup">
-                    <Button size="lg" variant="outline" className="gap-2 text-lg px-10 border-2">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="gap-2 text-lg px-10 border-2"
+                    >
                       Create Free Account
                     </Button>
                   </Link>
@@ -505,5 +584,5 @@ export default async function HomePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

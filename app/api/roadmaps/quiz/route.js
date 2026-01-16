@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
-import { saveQuizResult, incrementQuizAttempt, getUserQuizBadgeStats, recalculateRoadmapProgress } from "@/lib/db"
+import { saveQuizResult, incrementQuizAttempt, getUserQuizBadgeStats } from "@/lib/db"
 
 export async function POST(request) {
   try {
@@ -25,11 +25,6 @@ export async function POST(request) {
     )
 
     await incrementQuizAttempt(user.id, roadmapId, quizId)
-
-    // 🔥 ADD THIS - Recalculate progress after quiz submission
-    if (result.evaluation?.status === "mastered") {
-      await recalculateRoadmapProgress(user.id, roadmapId)
-    }
 
     const badgeStats = await getUserQuizBadgeStats(user.id)
 

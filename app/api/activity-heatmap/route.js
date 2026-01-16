@@ -3,7 +3,6 @@ import { getCurrentUser } from "@/lib/auth"
 import { connectToDatabase } from "@/lib/db"
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 export async function GET(request) {
   try {
@@ -14,57 +13,37 @@ export async function GET(request) {
 
     const { searchParams } = new URL(request.url)
     const year = parseInt(searchParams.get('year') || new Date().getFullYear())
-
     const { db } = await connectToDatabase()
 
     const startDate = new Date(year, 0, 1)
     const endDate = new Date(year, 11, 31, 23, 59, 59)
 
-    const completedQuestions = await db
-      .collection("user_progress")
-      .find({
-        user_id: user.id,
-        status: "completed",
-        updated_at: { $gte: startDate, $lte: endDate }
-      })
-      .toArray()
+    const completedQuestions = await db.collection("user_progress").find({
+      user_id: user.id,
+      status: "completed",
+      updated_at: { $gte: startDate, $lte: endDate }
+    }).toArray()
 
     const heatmapData = {}
-
     completedQuestions.forEach((question) => {
-      const date = new Date(question.updated_at)
-      const dateKey = date.toISOString().split('T')[0]
-
-      if (!heatmapData[dateKey]) {
-        heatmapData[dateKey] = 0
-      }
-      heatmapData[dateKey]++
+      const dateKey = new Date(question.updated_at).toISOString().split('T')[0]
+      heatmapData[dateKey] = (heatmapData[dateKey] || 0) + 1
     })
 
-    const daysInYear = 366
-    const heatmap = []
-
-    for (let i = 0; i < daysInYear; i++) {
+    const heatmap = Array.from({ length: 366 }, (_, i) => {
       const date = new Date(year, 0, 1)
       date.setDate(date.getDate() + i)
       const dateKey = date.toISOString().split('T')[0]
-
-      heatmap.push({
-        date: dateKey,
-        count: heatmapData[dateKey] || 0
-      })
-    }
-
-    return NextResponse.json({
-      success: true,
-      heatmap
+      return { date: dateKey, count: heatmapData[dateKey] || 0 }
     })
 
+    return NextResponse.json({ success: true, heatmap }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      }
+    })
   } catch (error) {
     console.error("Activity heatmap error:", error)
-    return NextResponse.json(
-      { error: "Failed to fetch heatmap data" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Failed to fetch heatmap data" }, { status: 500 })
   }
 }

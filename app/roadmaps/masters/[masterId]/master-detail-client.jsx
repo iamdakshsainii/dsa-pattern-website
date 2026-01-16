@@ -195,7 +195,7 @@ export default function MasterDetailClient({
             )}
           </Card>
         )}
-        
+
         <ExamCalendarDialog
           userId={currentUser?.id}
           masterId={masterRoadmap.masterId}
