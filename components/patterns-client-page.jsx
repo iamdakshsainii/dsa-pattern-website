@@ -18,6 +18,8 @@ import {
   CheckCircle2,
   Circle,
   Code,
+  FileText,    
+  ArrowRight,
 } from "lucide-react";
 import DifficultyFilter from "./filters/difficulty-filter";
 import SearchFilter from "./filters/search-filter";
@@ -259,6 +261,51 @@ export default function PatternsClientPage({
 
   return (
     <main className="container px-4 py-8 max-w-7xl mx-auto">
+
+         <Card className="mb-8 overflow-hidden border-2 border-blue-200 dark:border-blue-800">
+    <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-1">
+      <div className="bg-background p-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+              <BookOpen className="h-8 w-8" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                📚 New to DSA Patterns? Start Here!
+              </h3>
+              <p className="text-muted-foreground text-sm mb-2">
+                Check out our complete <strong>12-week study guide</strong> with 300 curated problems,
+                learning tips, and company-specific prep strategies.
+              </p>
+              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3 text-green-600" />
+                  30 Core Patterns
+                </span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3 text-green-600" />
+                  Study Schedule
+                </span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3 text-green-600" />
+                  FAANG Tips
+                </span>
+              </div>
+            </div>
+          </div>
+          <Link href="/syllabus">
+            <Button className="shrink-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 group">
+              <FileText className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+              View Complete Syllabus
+              <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  </Card>
+
       <div className="mb-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
         <Card className="lg:col-span-1 p-6 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
           <div className="flex items-center gap-2 mb-4">
