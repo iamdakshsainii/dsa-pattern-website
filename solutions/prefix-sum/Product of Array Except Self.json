@@ -1,0 +1,174 @@
+{
+  "questionId": "238",
+  "questionSlug": "product-of-array-except-self",
+  "title": "Product of Array Except Self",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/product-of-array-except-self/",
+    "videos": [
+      {
+        "title": "Product of Array Except Self - Prefix & Suffix",
+        "url": "https://www.youtube.com/watch?v=bNvIQI2wAjk",
+        "channel": "NeetCode",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Product of Array Without Division",
+        "url": "https://www.youtube.com/watch?v=tSRFtR3pv74",
+        "channel": "take U forward",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Array Product Explained",
+        "url": "https://www.youtube.com/watch?v=khTiTSZ5QZY",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Product of Array Except Self - LeetCode Official",
+        "url": "https://leetcode.com/problems/product-of-array-except-self/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Product of Array Except Self",
+        "url": "https://takeuforward.org/data-structure/product-of-array-except-self/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Product Array Puzzle - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/a-product-array-puzzle/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/product-of-array-except-self/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/product-array-puzzle/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Product except self WITHOUT division? Use prefix products (left) and suffix products (right). result[i] = left[i] * right[i].",
+  "approaches": [
+    {
+      "name": "Brute Force - Calculate Product for Each",
+      "order": 1,
+      "intuition": "For each position, multiply all other elements (skip current). Nested loops.",
+      "approach": "For each index, iterate through all other indices and calculate their product.",
+      "steps": [
+        "For each index i:",
+        "  product = 1",
+        "  For each index j:",
+        "    If j != i:",
+        "      product *= nums[j]",
+        "  result[i] = product",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1) excluding output",
+        "timeExplanation": "For each element, calculating product of n-1 elements",
+        "spaceExplanation": "Only output array"
+      },
+      "code": {
+        "cpp": "vector<int> productExceptSelf(vector<int>& nums) {\n    int n = nums.size();\n    vector<int> result(n);\n    \n    for (int i = 0; i < n; i++) {\n        int product = 1;\n        for (int j = 0; j < n; j++) {\n            if (i != j) {\n                product *= nums[j];\n            }\n        }\n        result[i] = product;\n    }\n    \n    return result;\n}",
+        "java": "public int[] productExceptSelf(int[] nums) {\n    int n = nums.length;\n    int[] result = new int[n];\n    \n    for (int i = 0; i < n; i++) {\n        int product = 1;\n        for (int j = 0; j < n; j++) {\n            if (i != j) {\n                product *= nums[j];\n            }\n        }\n        result[i] = product;\n    }\n    \n    return result;\n}",
+        "python": "def productExceptSelf(nums):\n    n = len(nums)\n    result = [0] * n\n    \n    for i in range(n):\n        product = 1\n        for j in range(n):\n            if i != j:\n                product *= nums[j]\n        result[i] = product\n    \n    return result",
+        "javascript": "function productExceptSelf(nums) {\n    const n = nums.length;\n    const result = new Array(n);\n    \n    for (let i = 0; i < n; i++) {\n        let product = 1;\n        for (let j = 0; j < n; j++) {\n            if (i !== j) {\n                product *= nums[j];\n            }\n        }\n        result[i] = product;\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Prefix and Suffix Products - O(n) Space",
+      "order": 2,
+      "intuition": "result[i] = (product of all elements before i) * (product of all elements after i). Precompute left and right products.",
+      "approach": "Build prefix product array and suffix product array. Multiply them for each position.",
+      "steps": [
+        "Create left array: left[i] = product of nums[0..i-1]",
+        "Create right array: right[i] = product of nums[i+1..n-1]",
+        "For each i:",
+        "  result[i] = left[i] * right[i]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Three O(n) passes",
+        "spaceExplanation": "Two extra arrays for prefix and suffix"
+      },
+      "code": {
+        "cpp": "vector<int> productExceptSelf(vector<int>& nums) {\n    int n = nums.size();\n    vector<int> left(n, 1);\n    vector<int> right(n, 1);\n    vector<int> result(n);\n    \n    // Build left products\n    for (int i = 1; i < n; i++) {\n        left[i] = left[i-1] * nums[i-1];\n    }\n    \n    // Build right products\n    for (int i = n - 2; i >= 0; i--) {\n        right[i] = right[i+1] * nums[i+1];\n    }\n    \n    // Combine\n    for (int i = 0; i < n; i++) {\n        result[i] = left[i] * right[i];\n    }\n    \n    return result;\n}",
+        "java": "public int[] productExceptSelf(int[] nums) {\n    int n = nums.length;\n    int[] left = new int[n];\n    int[] right = new int[n];\n    int[] result = new int[n];\n    \n    Arrays.fill(left, 1);\n    Arrays.fill(right, 1);\n    \n    for (int i = 1; i < n; i++) {\n        left[i] = left[i-1] * nums[i-1];\n    }\n    \n    for (int i = n - 2; i >= 0; i--) {\n        right[i] = right[i+1] * nums[i+1];\n    }\n    \n    for (int i = 0; i < n; i++) {\n        result[i] = left[i] * right[i];\n    }\n    \n    return result;\n}",
+        "python": "def productExceptSelf(nums):\n    n = len(nums)\n    left = [1] * n\n    right = [1] * n\n    result = [0] * n\n    \n    for i in range(1, n):\n        left[i] = left[i-1] * nums[i-1]\n    \n    for i in range(n - 2, -1, -1):\n        right[i] = right[i+1] * nums[i+1]\n    \n    for i in range(n):\n        result[i] = left[i] * right[i]\n    \n    return result",
+        "javascript": "function productExceptSelf(nums) {\n    const n = nums.length;\n    const left = new Array(n).fill(1);\n    const right = new Array(n).fill(1);\n    const result = new Array(n);\n    \n    for (let i = 1; i < n; i++) {\n        left[i] = left[i-1] * nums[i-1];\n    }\n    \n    for (let i = n - 2; i >= 0; i--) {\n        right[i] = right[i+1] * nums[i+1];\n    }\n    \n    for (let i = 0; i < n; i++) {\n        result[i] = left[i] * right[i];\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Space Optimized - O(1) Space - Optimal",
+      "order": 3,
+      "intuition": "Use result array to store left products first. Then traverse right and multiply on the fly with running right product.",
+      "approach": "First pass: store left products in result. Second pass: calculate right products on the fly and multiply into result.",
+      "steps": [
+        "result[0] = 1",
+        "For i from 1 to n-1:",
+        "  result[i] = result[i-1] * nums[i-1]",
+        "rightProduct = 1",
+        "For i from n-1 to 0:",
+        "  result[i] *= rightProduct",
+        "  rightProduct *= nums[i]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through array",
+        "spaceExplanation": "No extra space except output (output doesn't count)"
+      },
+      "code": {
+        "cpp": "vector<int> productExceptSelf(vector<int>& nums) {\n    int n = nums.size();\n    vector<int> result(n);\n    \n    // First pass: store left products in result\n    result[0] = 1;\n    for (int i = 1; i < n; i++) {\n        result[i] = result[i-1] * nums[i-1];\n    }\n    \n    // Second pass: multiply right products\n    int rightProduct = 1;\n    for (int i = n - 1; i >= 0; i--) {\n        result[i] *= rightProduct;\n        rightProduct *= nums[i];\n    }\n    \n    return result;\n}",
+        "java": "public int[] productExceptSelf(int[] nums) {\n    int n = nums.length;\n    int[] result = new int[n];\n    \n    result[0] = 1;\n    for (int i = 1; i < n; i++) {\n        result[i] = result[i-1] * nums[i-1];\n    }\n    \n    int rightProduct = 1;\n    for (int i = n - 1; i >= 0; i--) {\n        result[i] *= rightProduct;\n        rightProduct *= nums[i];\n    }\n    \n    return result;\n}",
+        "python": "def productExceptSelf(nums):\n    n = len(nums)\n    result = [0] * n\n    \n    result[0] = 1\n    for i in range(1, n):\n        result[i] = result[i-1] * nums[i-1]\n    \n    right_product = 1\n    for i in range(n - 1, -1, -1):\n        result[i] *= right_product\n        right_product *= nums[i]\n    \n    return result",
+        "javascript": "function productExceptSelf(nums) {\n    const n = nums.length;\n    const result = new Array(n);\n    \n    result[0] = 1;\n    for (let i = 1; i < n; i++) {\n        result[i] = result[i-1] * nums[i-1];\n    }\n    \n    let rightProduct = 1;\n    for (let i = n - 1; i >= 0; i--) {\n        result[i] *= rightProduct;\n        rightProduct *= nums[i];\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Trying to use division (problem explicitly says no division)",
+    "Not handling zeros properly when using division approach",
+    "Updating result before calculating right product in second pass",
+    "Off-by-one errors in prefix/suffix calculations",
+    "Forgetting to initialize result[0] = 1 in optimal approach"
+  ],
+  "hints": [
+    "result[i] = (product of all left) * (product of all right)",
+    "Can you build this without extra space by reusing result array?",
+    "First pass: store left products. Second pass: multiply right on the fly",
+    "No division needed - just multiply prefix and suffix products",
+    "Think about what result[i] needs: everything before * everything after"
+  ],
+  "followUp": [
+    "What if division was allowed and no zeros? (Total product / nums[i])",
+    "How to handle if array has zeros? (Count zeros, handle specially)",
+    "Can you do it in one pass? (No, need two directions)",
+    "What if we want product of K elements except self?",
+    "How to handle overflow for very large products?"
+  ],
+  "companies": ["Facebook", "Amazon", "Microsoft", "Google", "Apple"],
+  "tags": ["array", "prefix-sum"],
+  "relatedProblems": [
+    "Trapping Rain Water",
+    "Maximum Product Subarray",
+    "Paint House II",
+    "Best Time to Buy and Sell Stock with Transaction Fee",
+    "Maximum Product of the Length of Two Palindromic Subsequences"
+  ]
+}

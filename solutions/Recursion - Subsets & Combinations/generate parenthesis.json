@@ -1,0 +1,172 @@
+{
+  "questionId": "22",
+  "questionSlug": "generate-parentheses",
+  "title": "Generate Parentheses",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/generate-parentheses/",
+    "videos": [
+      {
+        "title": "Generate Parentheses - Backtracking",
+        "url": "https://www.youtube.com/watch?v=s9fokHqoPVQ",
+        "channel": "NeetCode",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Valid Parentheses Generation",
+        "url": "https://www.youtube.com/watch?v=n_OMv7d9K7g",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Generate Parentheses - LeetCode Official",
+        "url": "https://leetcode.com/problems/generate-parentheses/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Generate valid parentheses combinations",
+        "url": "https://www.geeksforgeeks.org/print-all-combinations-of-given-length/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/generate-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/parenthesis-checker/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all valid parentheses combinations? Track open/close counts. Add open if available, add close if it doesn't exceed opens.",
+  "approaches": [
+    {
+      "name": "Brute Force - Generate All Then Filter",
+      "order": 1,
+      "intuition": "Generate all 2^(2n) combinations of ( and ), then filter valid ones.",
+      "approach": "Generate all strings with n ( and n ), check validity of each.",
+      "steps": [
+        "Generate all 2^(2n) combinations",
+        "For each combination:",
+        "  Check if valid (balanced parentheses)",
+        "  If valid, add to result",
+        "Return result",
+        "",
+        "Validity check:",
+        "  Track open count",
+        "  For each char:",
+        "    If '(': increment open",
+        "    If ')': decrement open",
+        "    If open < 0: invalid",
+        "  Return open == 0"
+      ],
+      "complexity": {
+        "time": "O(2^(2n) × n)",
+        "space": "O(2^(2n))",
+        "timeExplanation": "Generate all 2^(2n) strings, validate each in O(n)",
+        "spaceExplanation": "Storing all generated combinations"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> generateParenthesis(int n) {\n        vector<string> result;\n        int total = 2 * n;\n        \n        for (int i = 0; i < (1 << total); i++) {\n            string s = \"\";\n            for (int j = 0; j < total; j++) {\n                s += (i & (1 << j)) ? '(' : ')';\n            }\n            \n            if (isValid(s)) {\n                result.push_back(s);\n            }\n        }\n        \n        return result;\n    }\n    \nprivate:\n    bool isValid(const string& s) {\n        int open = 0;\n        for (char c : s) {\n            if (c == '(') open++;\n            else open--;\n            if (open < 0) return false;\n        }\n        return open == 0;\n    }\n};",
+        "java": "class Solution {\n    public List<String> generateParenthesis(int n) {\n        List<String> result = new ArrayList<>();\n        int total = 2 * n;\n        \n        for (int i = 0; i < (1 << total); i++) {\n            StringBuilder s = new StringBuilder();\n            for (int j = 0; j < total; j++) {\n                s.append((i & (1 << j)) != 0 ? '(' : ')');\n            }\n            \n            if (isValid(s.toString())) {\n                result.add(s.toString());\n            }\n        }\n        \n        return result;\n    }\n    \n    private boolean isValid(String s) {\n        int open = 0;\n        for (char c : s.toCharArray()) {\n            if (c == '(') open++;\n            else open--;\n            if (open < 0) return false;\n        }\n        return open == 0;\n    }\n}",
+        "python": "def generateParenthesis(n):\n    def isValid(s):\n        open_count = 0\n        for c in s:\n            if c == '(':\n                open_count += 1\n            else:\n                open_count -= 1\n            if open_count < 0:\n                return False\n        return open_count == 0\n    \n    result = []\n    total = 2 * n\n    \n    for i in range(1 << total):\n        s = \"\"\n        for j in range(total):\n            s += '(' if (i & (1 << j)) else ')'\n        \n        if isValid(s):\n            result.append(s)\n    \n    return result",
+        "javascript": "function generateParenthesis(n) {\n    const isValid = (s) => {\n        let open = 0;\n        for (const c of s) {\n            if (c === '(') open++;\n            else open--;\n            if (open < 0) return false;\n        }\n        return open === 0;\n    };\n    \n    const result = [];\n    const total = 2 * n;\n    \n    for (let i = 0; i < (1 << total); i++) {\n        let s = '';\n        for (let j = 0; j < total; j++) {\n            s += (i & (1 << j)) ? '(' : ')';\n        }\n        \n        if (isValid(s)) {\n            result.push(s);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking - Only Generate Valid Combinations",
+      "order": 2,
+      "intuition": "Only add '(' if open count < n, only add ')' if close count < open count. This ensures only valid combinations.",
+      "approach": "Track open and close counts. At each step, decide what to add based on counts.",
+      "steps": [
+        "backtrack(open, close, current):",
+        "  If len(current) == 2n:",
+        "    Add to result, return",
+        "  If open < n:",
+        "    current += '('",
+        "    backtrack(open+1, close, current)",
+        "    current.pop()",
+        "  If close < open:",
+        "    current += ')'",
+        "    backtrack(open, close+1, current)",
+        "    current.pop()"
+      ],
+      "complexity": {
+        "time": "O(4^n / √n)",
+        "space": "O(n)",
+        "timeExplanation": "nth Catalan number (only valid combinations), each takes O(n) to build",
+        "spaceExplanation": "Recursion depth is O(n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> generateParenthesis(int n) {\n        vector<string> result;\n        string current = \"\";\n        backtrack(0, 0, n, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int open, int close, int n, string& current, vector<string>& result) {\n        if (current.length() == 2 * n) {\n            result.push_back(current);\n            return;\n        }\n        \n        if (open < n) {\n            current += '(';\n            backtrack(open + 1, close, n, current, result);\n            current.pop_back();\n        }\n        \n        if (close < open) {\n            current += ')';\n            backtrack(open, close + 1, n, current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<String> generateParenthesis(int n) {\n        List<String> result = new ArrayList<>();\n        backtrack(0, 0, n, new StringBuilder(), result);\n        return result;\n    }\n    \n    private void backtrack(int open, int close, int n, StringBuilder current, List<String> result) {\n        if (current.length() == 2 * n) {\n            result.add(current.toString());\n            return;\n        }\n        \n        if (open < n) {\n            current.append('(');\n            backtrack(open + 1, close, n, current, result);\n            current.deleteCharAt(current.length() - 1);\n        }\n        \n        if (close < open) {\n            current.append(')');\n            backtrack(open, close + 1, n, current, result);\n            current.deleteCharAt(current.length() - 1);\n        }\n    }\n}",
+        "python": "def generateParenthesis(n):\n    result = []\n    \n    def backtrack(open_count, close_count, current):\n        if len(current) == 2 * n:\n            result.append(current)\n            return\n        \n        if open_count < n:\n            backtrack(open_count + 1, close_count, current + '(')\n        \n        if close_count < open_count:\n            backtrack(open_count, close_count + 1, current + ')')\n    \n    backtrack(0, 0, '')\n    return result",
+        "javascript": "function generateParenthesis(n) {\n    const result = [];\n    \n    function backtrack(open, close, current) {\n        if (current.length === 2 * n) {\n            result.push(current);\n            return;\n        }\n        \n        if (open < n) {\n            backtrack(open + 1, close, current + '(');\n        }\n        \n        if (close < open) {\n            backtrack(open, close + 1, current + ')');\n        }\n    }\n    \n    backtrack(0, 0, '');\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Dynamic Programming - Build from Smaller Problems - Optimal",
+      "order": 3,
+      "intuition": "f(n) = '(' + f(0..n-1) + ')' + f(n-1..0). For n pairs, wrap valid (k) combos with valid (n-1-k) combos.",
+      "approach": "Use DP where dp[i] stores all valid combinations for i pairs of parentheses.",
+      "steps": [
+        "dp[0] = ['']",
+        "For i from 1 to n:",
+        "  dp[i] = []",
+        "  For j from 0 to i-1:",
+        "    For left in dp[j]:  // j pairs",
+        "      For right in dp[i-1-j]:  // i-1-j pairs",
+        "        dp[i].add('(' + left + ')' + right)"
+      ],
+      "complexity": {
+        "time": "O(4^n / √n)",
+        "space": "O(4^n / √n)",
+        "timeExplanation": "Catalan number of combinations",
+        "spaceExplanation": "Storing all combinations up to n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> generateParenthesis(int n) {\n        vector<vector<string>> dp(n + 1);\n        dp[0] = {\"\"};\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                for (const string& left : dp[j]) {\n                    for (const string& right : dp[i - 1 - j]) {\n                        dp[i].push_back(\"(\" + left + \")\" + right);\n                    }\n                }\n            }\n        }\n        \n        return dp[n];\n    }\n};",
+        "java": "class Solution {\n    public List<String> generateParenthesis(int n) {\n        List<List<String>> dp = new ArrayList<>();\n        for (int i = 0; i <= n; i++) {\n            dp.add(new ArrayList<>());\n        }\n        dp.get(0).add(\"\");\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                for (String left : dp.get(j)) {\n                    for (String right : dp.get(i - 1 - j)) {\n                        dp.get(i).add(\"(\" + left + \")\" + right);\n                    }\n                }\n            }\n        }\n        \n        return dp.get(n);\n    }\n}",
+        "python": "def generateParenthesis(n):\n    dp = [[] for _ in range(n + 1)]\n    dp[0] = ['']\n    \n    for i in range(1, n + 1):\n        for j in range(i):\n            for left in dp[j]:\n                for right in dp[i - 1 - j]:\n                    dp[i].append('(' + left + ')' + right)\n    \n    return dp[n]",
+        "javascript": "function generateParenthesis(n) {\n    const dp = Array.from({length: n + 1}, () => []);\n    dp[0] = [''];\n    \n    for (let i = 1; i <= n; i++) {\n        for (let j = 0; j < i; j++) {\n            for (const left of dp[j]) {\n                for (const right of dp[i - 1 - j]) {\n                    dp[i].push('(' + left + ')' + right);\n                }\n            }\n        }\n    }\n    \n    return dp[n];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not tracking both open and close counts separately",
+    "Closing parentheses before all opens are added",
+    "Adding ')' when close >= open",
+    "Not checking if open < n before adding '('",
+    "String concatenation inefficiency in some languages"
+  ],
+  "hints": [
+    "At each position, can add '(' if open < n",
+    "Can add ')' only if close < open",
+    "Backtracking: try both, recurse, backtrack",
+    "nth Catalan number = C(2n,n) / (n+1) valid combinations",
+    "Total 2^(2n) combinations, only Catalan number are valid"
+  ],
+  "followUp": [
+    "Count valid parentheses without generating? (Use Catalan formula)",
+    "Generate with k different types of brackets? (Extend logic)",
+    "Check if a string is valid parentheses? (Stack-based)",
+    "Minimum parentheses to add to make valid? (DP approach)",
+    "Longest valid parentheses substring? (DP + stack)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft", "Apple"],
+  "tags": ["string", "backtracking", "dynamic-programming"],
+  "relatedProblems": [
+    "Valid Parentheses",
+    "Longest Valid Parentheses",
+    "Remove Invalid Parentheses",
+    "Letter Combinations of Phone Number"
+  ]
+}

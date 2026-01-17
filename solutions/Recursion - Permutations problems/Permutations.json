@@ -1,0 +1,166 @@
+{
+  "questionId": "46",
+  "questionSlug": "permutations",
+  "title": "Permutations",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/permutations/",
+    "videos": [
+      {
+        "title": "Permutations - Backtracking",
+        "url": "https://www.youtube.com/watch?v=s7wTkMKwDPo",
+        "channel": "NeetCode",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Generate All Permutations",
+        "url": "https://www.youtube.com/watch?v=nYFd7VHKyWQ",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Permutations - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/permutations/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Generate all permutations of array",
+        "url": "https://www.geeksforgeeks.org/write-a-c-program-to-print-all-permutations-of-a-given-string/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/permutations/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/permutations-of-array/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all permutations of array? Use backtracking. Track used elements, build permutation by choosing unused elements.",
+  "approaches": [
+    {
+      "name": "Backtracking with Used Array",
+      "order": 1,
+      "intuition": "Build permutations by choosing unused elements at each position. Track which elements are used with boolean array.",
+      "approach": "Use backtracking with a used[] array to track which elements are in current permutation.",
+      "steps": [
+        "used = [False] * n",
+        "backtrack(current):",
+        "  If len(current) == n:",
+        "    Add current to result",
+        "    Return",
+        "  For i from 0 to n:",
+        "    If not used[i]:",
+        "      used[i] = True",
+        "      current.add(nums[i])",
+        "      backtrack(current)",
+        "      current.remove()",
+        "      used[i] = False"
+      ],
+      "complexity": {
+        "time": "O(n! × n)",
+        "space": "O(n)",
+        "timeExplanation": "n! permutations, each takes O(n) to build",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> permute(vector<int>& nums) {\n        vector<vector<int>> result;\n        vector<int> current;\n        vector<bool> used(nums.size(), false);\n        backtrack(nums, current, used, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(vector<int>& nums, vector<int>& current, vector<bool>& used, vector<vector<int>>& result) {\n        if (current.size() == nums.size()) {\n            result.push_back(current);\n            return;\n        }\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (!used[i]) {\n                used[i] = true;\n                current.push_back(nums[i]);\n                backtrack(nums, current, used, result);\n                current.pop_back();\n                used[i] = false;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> permute(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(nums, new ArrayList<>(), new boolean[nums.length], result);\n        return result;\n    }\n    \n    private void backtrack(int[] nums, List<Integer> current, boolean[] used, List<List<Integer>> result) {\n        if (current.size() == nums.length) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        for (int i = 0; i < nums.length; i++) {\n            if (!used[i]) {\n                used[i] = true;\n                current.add(nums[i]);\n                backtrack(nums, current, used, result);\n                current.remove(current.size() - 1);\n                used[i] = false;\n            }\n        }\n    }\n}",
+        "python": "def permute(nums):\n    result = []\n    used = [False] * len(nums)\n    \n    def backtrack(current):\n        if len(current) == len(nums):\n            result.append(current[:])\n            return\n        \n        for i in range(len(nums)):\n            if not used[i]:\n                used[i] = True\n                current.append(nums[i])\n                backtrack(current)\n                current.pop()\n                used[i] = False\n    \n    backtrack([])\n    return result",
+        "javascript": "function permute(nums) {\n    const result = [];\n    const used = Array(nums.length).fill(false);\n    \n    function backtrack(current) {\n        if (current.length === nums.length) {\n            result.push([...current]);\n            return;\n        }\n        \n        for (let i = 0; i < nums.length; i++) {\n            if (!used[i]) {\n                used[i] = true;\n                current.push(nums[i]);\n                backtrack(current);\n                current.pop();\n                used[i] = false;\n            }\n        }\n    }\n    \n    backtrack([]);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Swap (In-Place)",
+      "order": 2,
+      "intuition": "Swap elements to build permutations. At each level, swap current position with all later positions.",
+      "approach": "Use in-place swapping to generate permutations without extra space.",
+      "steps": [
+        "backtrack(start):",
+        "  If start == n:",
+        "    Add current nums to result",
+        "    Return",
+        "  For i from start to n:",
+        "    Swap nums[start] with nums[i]",
+        "    backtrack(start + 1)",
+        "    Swap back"
+      ],
+      "complexity": {
+        "time": "O(n! × n)",
+        "space": "O(1) (excluding output)",
+        "timeExplanation": "n! permutations, copying takes O(n)",
+        "spaceExplanation": "No extra space (in-place)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> permute(vector<int>& nums) {\n        vector<vector<int>> result;\n        backtrack(0, nums, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, vector<int>& nums, vector<vector<int>>& result) {\n        if (start == nums.size()) {\n            result.push_back(nums);\n            return;\n        }\n        \n        for (int i = start; i < nums.size(); i++) {\n            swap(nums[start], nums[i]);\n            backtrack(start + 1, nums, result);\n            swap(nums[start], nums[i]);\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> permute(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(0, nums, result);\n        return result;\n    }\n    \n    private void backtrack(int start, int[] nums, List<List<Integer>> result) {\n        if (start == nums.length) {\n            List<Integer> perm = new ArrayList<>();\n            for (int num : nums) perm.add(num);\n            result.add(perm);\n            return;\n        }\n        \n        for (int i = start; i < nums.length; i++) {\n            swap(nums, start, i);\n            backtrack(start + 1, nums, result);\n            swap(nums, start, i);\n        }\n    }\n    \n    private void swap(int[] nums, int i, int j) {\n        int temp = nums[i];\n        nums[i] = nums[j];\n        nums[j] = temp;\n    }\n}",
+        "python": "def permute(nums):\n    result = []\n    \n    def backtrack(start):\n        if start == len(nums):\n            result.append(nums[:])\n            return\n        \n        for i in range(start, len(nums)):\n            nums[start], nums[i] = nums[i], nums[start]\n            backtrack(start + 1)\n            nums[start], nums[i] = nums[i], nums[start]\n    \n    backtrack(0)\n    return result",
+        "javascript": "function permute(nums) {\n    const result = [];\n    \n    function backtrack(start) {\n        if (start === nums.length) {\n            result.push([...nums]);\n            return;\n        }\n        \n        for (let i = start; i < nums.length; i++) {\n            [nums[start], nums[i]] = [nums[i], nums[start]];\n            backtrack(start + 1);\n            [nums[start], nums[i]] = [nums[i], nums[start]];\n        }\n    }\n    \n    backtrack(0);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Iterative using Next Permutation - Optimal",
+      "order": 3,
+      "intuition": "Generate permutations iteratively. Start with smallest, keep generating next permutation until largest.",
+      "approach": "Use next permutation algorithm to generate all permutations iteratively.",
+      "steps": [
+        "Sort array to get first permutation",
+        "Add to result",
+        "While next permutation exists:",
+        "  Generate next permutation",
+        "  Add to result"
+      ],
+      "complexity": {
+        "time": "O(n! × n)",
+        "space": "O(1) (excluding output)",
+        "timeExplanation": "n! permutations, each next_permutation is O(n)",
+        "spaceExplanation": "Only store permutation, no recursion"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> permute(vector<int>& nums) {\n        vector<vector<int>> result;\n        sort(nums.begin(), nums.end());\n        \n        do {\n            result.push_back(nums);\n        } while (next_permutation(nums.begin(), nums.end()));\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> permute(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(nums);\n        \n        do {\n            List<Integer> perm = new ArrayList<>();\n            for (int num : nums) perm.add(num);\n            result.add(perm);\n        } while (nextPermutation(nums));\n        \n        return result;\n    }\n    \n    private boolean nextPermutation(int[] nums) {\n        int i = nums.length - 2;\n        while (i >= 0 && nums[i] >= nums[i + 1]) i--;\n        if (i < 0) return false;\n        \n        int j = nums.length - 1;\n        while (j > i && nums[j] <= nums[i]) j--;\n        swap(nums, i, j);\n        reverse(nums, i + 1, nums.length - 1);\n        return true;\n    }\n    \n    private void swap(int[] nums, int i, int j) {\n        int temp = nums[i];\n        nums[i] = nums[j];\n        nums[j] = temp;\n    }\n    \n    private void reverse(int[] nums, int start, int end) {\n        while (start < end) {\n            swap(nums, start, end);\n            start++;\n            end--;\n        }\n    }\n}",
+        "python": "def permute(nums):\n    from itertools import permutations\n    return [list(p) for p in permutations(nums)]",
+        "javascript": "function permute(nums) {\n    const result = [];\n    nums.sort((a, b) => a - b);\n    \n    const nextPermutation = (arr) => {\n        let i = arr.length - 2;\n        while (i >= 0 && arr[i] >= arr[i + 1]) i--;\n        if (i < 0) return false;\n        \n        let j = arr.length - 1;\n        while (j > i && arr[j] <= arr[i]) j--;\n        [arr[i], arr[j]] = [arr[j], arr[i]];\n        arr.reverse(i + 1, arr.length);\n        return true;\n    };\n    \n    do {\n        result.push([...nums]);\n    } while (nextPermutation(nums));\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not marking element as used, causing duplicates",
+    "Forgetting to backtrack (restore used status or swap)",
+    "Using shared reference instead of copying permutation",
+    "Not handling n=0 or n=1 edge cases",
+    "Returning permutations in wrong order"
+  ],
+  "hints": [
+    "Use backtracking: choose element, recurse, backtrack",
+    "Track used elements with boolean array or by swapping",
+    "Each permutation has exactly n elements",
+    "Total permutations = n!",
+    "Can use iterative approach with next_permutation"
+  ],
+  "followUp": [
+    "Generate k-length permutations? (Modify length check)",
+    "Generate permutations of string? (Same logic, chars instead)",
+    "Generate with specific constraint? (Add condition)",
+    "Return in lexicographic order? (Sort first)",
+    "Count instead of generate? (Just return n!)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft", "Apple"],
+  "tags": ["backtracking", "array"],
+  "relatedProblems": [
+    "Permutations II",
+    "Next Permutation",
+    "Permutation Sequence",
+    "Letter Permutations"
+  ]
+}

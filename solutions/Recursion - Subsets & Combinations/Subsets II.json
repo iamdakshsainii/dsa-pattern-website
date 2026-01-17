@@ -1,0 +1,162 @@
+{
+  "questionId": "90",
+  "questionSlug": "subsets-ii",
+  "title": "Subsets II (With Duplicates)",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/subsets-ii/",
+    "videos": [
+      {
+        "title": "Subsets II - Backtracking with Duplicates",
+        "url": "https://www.youtube.com/watch?v=Vn2v6ajA7KY",
+        "channel": "NeetCode",
+        "duration": "10:20",
+        "language": "English"
+      },
+      {
+        "title": "Generate Subsets with Duplicates",
+        "url": "https://www.youtube.com/watch?v=4RXm_J5Ywmk",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Subsets II - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/subsets-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Subsets with duplicate elements",
+        "url": "https://www.geeksforgeeks.org/subset-with-duplicate-elements/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/subsets-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/subsets-with-duplicate-elements/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate subsets with duplicate elements? Sort array first. Skip duplicate elements at same level.",
+  "approaches": [
+    {
+      "name": "Brute Force - Generate All Then Remove Duplicates",
+      "order": 1,
+      "intuition": "Generate all 2^n subsets, then use set to remove duplicates.",
+      "approach": "Use backtracking to generate all subsets without worrying about duplicates, then deduplicate.",
+      "steps": [
+        "Sort array",
+        "Generate all subsets using backtracking",
+        "Use Set<List> to automatically remove duplicates",
+        "Convert set to list"
+      ],
+      "complexity": {
+        "time": "O(2^n × n log n) for sorting + O(2^n × n) for generation + O(2^n log(2^n)) for set operations",
+        "space": "O(2^n × n)",
+        "timeExplanation": "Sorting + generating all subsets + deduplication",
+        "spaceExplanation": "Set and subsets storage"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> subsetsWithDup(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n        set<vector<int>> subsetSet;\n        vector<int> current;\n        backtrack(0, nums, current, subsetSet);\n        \n        vector<vector<int>> result(subsetSet.begin(), subsetSet.end());\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, vector<int>& nums, vector<int>& current, set<vector<int>>& subsetSet) {\n        subsetSet.insert(current);\n        \n        for (int i = start; i < nums.size(); i++) {\n            current.push_back(nums[i]);\n            backtrack(i + 1, nums, current, subsetSet);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> subsetsWithDup(int[] nums) {\n        Arrays.sort(nums);\n        Set<List<Integer>> subsetSet = new HashSet<>();\n        backtrack(0, nums, new ArrayList<>(), subsetSet);\n        return new ArrayList<>(subsetSet);\n    }\n    \n    private void backtrack(int start, int[] nums, List<Integer> current, Set<List<Integer>> subsetSet) {\n        subsetSet.add(new ArrayList<>(current));\n        \n        for (int i = start; i < nums.length; i++) {\n            current.add(nums[i]);\n            backtrack(i + 1, nums, current, subsetSet);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def subsetsWithDup(nums):\n    nums.sort()\n    subsetSet = set()\n    \n    def backtrack(start, current):\n        subsetSet.add(tuple(current))\n        \n        for i in range(start, len(nums)):\n            current.append(nums[i])\n            backtrack(i + 1, current)\n            current.pop()\n    \n    backtrack(0, [])\n    return [list(s) for s in subsetSet]",
+        "javascript": "function subsetsWithDup(nums) {\n    nums.sort((a, b) => a - b);\n    const subsetSet = new Set();\n    \n    function backtrack(start, current) {\n        subsetSet.add(JSON.stringify([...current]));\n        \n        for (let i = start; i < nums.length; i++) {\n            current.push(nums[i]);\n            backtrack(i + 1, current);\n            current.pop();\n        }\n    }\n    \n    backtrack(0, []);\n    return Array.from(subsetSet).map(s => JSON.parse(s));\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Skip Duplicates Logic",
+      "order": 2,
+      "intuition": "Sort first. When at same recursion level, if current element equals previous, skip it (to avoid duplicates).",
+      "approach": "Use backtracking but skip duplicate elements at the same level.",
+      "steps": [
+        "Sort array",
+        "backtrack(start, current):",
+        "  Add current to result",
+        "  For i from start to n:",
+        "    If i > start AND nums[i] == nums[i-1]: continue (skip)",
+        "    current.add(nums[i])",
+        "    backtrack(i+1, current)",
+        "    current.remove()"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(n) (recursion depth)",
+        "timeExplanation": "Generate each subset once, no deduplication overhead",
+        "spaceExplanation": "Recursion stack depth is at most n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> subsetsWithDup(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(0, nums, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, vector<int>& nums, vector<int>& current, vector<vector<int>>& result) {\n        result.push_back(current);\n        \n        for (int i = start; i < nums.size(); i++) {\n            if (i > start && nums[i] == nums[i - 1]) continue; // Skip duplicates\n            \n            current.push_back(nums[i]);\n            backtrack(i + 1, nums, current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> subsetsWithDup(int[] nums) {\n        Arrays.sort(nums);\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(0, nums, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, int[] nums, List<Integer> current, List<List<Integer>> result) {\n        result.add(new ArrayList<>(current));\n        \n        for (int i = start; i < nums.length; i++) {\n            if (i > start && nums[i] == nums[i - 1]) continue;\n            \n            current.add(nums[i]);\n            backtrack(i + 1, nums, current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def subsetsWithDup(nums):\n    nums.sort()\n    result = []\n    \n    def backtrack(start, current):\n        result.append(current[:])\n        \n        for i in range(start, len(nums)):\n            if i > start and nums[i] == nums[i - 1]:\n                continue\n            \n            current.append(nums[i])\n            backtrack(i + 1, current)\n            current.pop()\n    \n    backtrack(0, [])\n    return result",
+        "javascript": "function subsetsWithDup(nums) {\n    nums.sort((a, b) => a - b);\n    const result = [];\n    \n    function backtrack(start, current) {\n        result.push([...current]);\n        \n        for (let i = start; i < nums.length; i++) {\n            if (i > start && nums[i] === nums[i - 1]) continue;\n            \n            current.push(nums[i]);\n            backtrack(i + 1, current);\n            current.pop();\n        }\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Iterative Subset Building - Optimal",
+      "order": 3,
+      "intuition": "Build subsets iteratively. For each number, add it to all existing subsets (if not duplicate) or to specific count.",
+      "approach": "Process elements in order, for duplicates track how many to add.",
+      "steps": [
+        "Sort array",
+        "result = [[]]",
+        "i = 0",
+        "While i < n:",
+        "  If nums[i] not duplicate:",
+        "    size = result.size()",
+        "    Add nums[i] to all result[0..size-1]",
+        "    i++",
+        "  Else: (handle consecutive duplicates)",
+        "    Handle count of duplicates"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(2^n)",
+        "timeExplanation": "Build all subsets iteratively",
+        "spaceExplanation": "Storing all subsets"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> subsetsWithDup(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n        vector<vector<int>> result;\n        result.push_back({});\n        \n        int i = 0;\n        while (i < nums.size()) {\n            int count = 0;\n            vector<vector<int>> temp;\n            \n            while (i < nums.size() && nums[i] == nums[i - 1 + (i == 0 ? 1 : 0)]) {\n                int startIdx = (i == 0) ? 0 : result.size() - count;\n                for (int j = startIdx; j < result.size(); j++) {\n                    vector<int> subset = result[j];\n                    subset.push_back(nums[i]);\n                    result.push_back(subset);\n                    temp.push_back(subset);\n                }\n                count = temp.size();\n                i++;\n            }\n            i++;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> subsetsWithDup(int[] nums) {\n        Arrays.sort(nums);\n        List<List<Integer>> result = new ArrayList<>();\n        result.add(new ArrayList<>());\n        \n        int i = 0;\n        while (i < nums.length) {\n            List<List<Integer>> temp = new ArrayList<>();\n            int startIdx = result.size();\n            \n            while (i < nums.length && (i == 0 || nums[i] == nums[i - 1])) {\n                for (int j = i == 0 ? 0 : startIdx; j < result.size(); j++) {\n                    List<Integer> subset = new ArrayList<>(result.get(j));\n                    subset.add(nums[i]);\n                    result.add(subset);\n                    temp.add(subset);\n                }\n                i++;\n                startIdx = result.size() - temp.size();\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "def subsetsWithDup(nums):\n    nums.sort()\n    result = [[]]\n    \n    i = 0\n    while i < len(nums):\n        startIdx = len(result)\n        \n        while i < len(nums) and (i == 0 or nums[i] == nums[i - 1]):\n            for j in range(startIdx, len(result)):\n                result.append(result[j] + [nums[i]])\n            i += 1\n            startIdx = len(result)\n    \n    return result",
+        "javascript": "function subsetsWithDup(nums) {\n    nums.sort((a, b) => a - b);\n    const result = [[]];\n    \n    let i = 0;\n    while (i < nums.length) {\n        let startIdx = result.length;\n        \n        while (i < nums.length && (i === 0 || nums[i] === nums[i - 1])) {\n            for (let j = startIdx; j < result.length; j++) {\n                result.push([...result[j], nums[i]]);\n            }\n            i++;\n            startIdx = result.length;\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting the array first",
+    "Forgetting to skip duplicates at same recursion level",
+    "Skipping duplicates incorrectly (should only skip if i > start)",
+    "Using set-based deduplication inefficiently",
+    "Not handling case where all elements are same"
+  ],
+  "hints": [
+    "Sort array first to group duplicates together",
+    "Skip duplicate at same level: if i > start AND nums[i] == nums[i-1], skip",
+    "Backtracking: try element, recurse, backtrack",
+    "For sorted array, duplicates will be adjacent"
+  ],
+  "followUp": [
+    "Generate k-sized subsets with duplicates? (Modify backtracking condition)",
+    "Count total subsets? (Use combination formula)",
+    "Generate subsets with specific sum? (Add constraint)",
+    "Return in lexicographic order? (Already is if processing correctly)",
+    "Space-optimized iterative approach? (Use queue/BFS)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Apple"],
+  "tags": ["backtracking", "array"],
+  "relatedProblems": [
+    "Subsets (Power Set)",
+    "Combination Sum II",
+    "Permutations II",
+    "Letter Combinations of Phone Number"
+  ]
+}

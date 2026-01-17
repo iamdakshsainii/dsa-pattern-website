@@ -1,0 +1,175 @@
+{
+  "questionId": "784",
+  "questionSlug": "letter-case-permutation",
+  "title": "Letter Case Permutation",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/letter-case-permutation/",
+    "videos": [
+      {
+        "title": "Letter Case Permutation - Backtracking",
+        "url": "https://www.youtube.com/watch?v=6qXO72FUqV0",
+        "channel": "NeetCode",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "Case Permutations Explained",
+        "url": "https://www.youtube.com/watch?v=n_OMv7d9K7g",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Letter Case Permutation - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/letter-case-permutation/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Generate all case permutations of string",
+        "url": "https://www.geeksforgeeks.org/print-all-combinations-of-string/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/letter-case-permutation/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/letter-case-permutation/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all case permutations of alphanumeric string? Use backtracking. For each letter, branch to uppercase and lowercase.",
+  "approaches": [
+    {
+      "name": "Backtracking - Branch on Letters",
+      "order": 1,
+      "intuition": "Use backtracking. For digits, only one choice. For letters, branch to both cases.",
+      "approach": "Recursively process each character, branching on letters.",
+      "steps": [
+        "backtrack(index, current):",
+        "  If index == len(S):",
+        "    Add current to result",
+        "    Return",
+        "  If S[index] is digit:",
+        "    backtrack(index+1, current+S[index])",
+        "  Else (letter):",
+        "    backtrack(index+1, current+lower(S[index]))",
+        "    backtrack(index+1, current+upper(S[index]))"
+      ],
+      "complexity": {
+        "time": "O(2^m × n)",
+        "space": "O(2^m)",
+        "timeExplanation": "m letters = 2^m permutations, each takes O(n) to build",
+        "spaceExplanation": "Store all 2^m results"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> letterCasePermutation(string s) {\n        vector<string> result;\n        backtrack(0, s, \"\", result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int index, const string& s, string current, vector<string>& result) {\n        if (index == s.length()) {\n            result.push_back(current);\n            return;\n        }\n        \n        if (isdigit(s[index])) {\n            backtrack(index + 1, s, current + s[index], result);\n        } else {\n            backtrack(index + 1, s, current + tolower(s[index]), result);\n            backtrack(index + 1, s, current + toupper(s[index]), result);\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<String> letterCasePermutation(String s) {\n        List<String> result = new ArrayList<>();\n        backtrack(0, s, new StringBuilder(), result);\n        return result;\n    }\n    \n    private void backtrack(int index, String s, StringBuilder current, List<String> result) {\n        if (index == s.length()) {\n            result.add(current.toString());\n            return;\n        }\n        \n        char c = s.charAt(index);\n        if (Character.isDigit(c)) {\n            current.append(c);\n            backtrack(index + 1, s, current, result);\n            current.deleteCharAt(current.length() - 1);\n        } else {\n            current.append(Character.toLowerCase(c));\n            backtrack(index + 1, s, current, result);\n            current.setCharAt(current.length() - 1, Character.toUpperCase(c));\n            backtrack(index + 1, s, current, result);\n            current.deleteCharAt(current.length() - 1);\n        }\n    }\n}",
+        "python": "def letterCasePermutation(s):\n    result = []\n    \n    def backtrack(index, current):\n        if index == len(s):\n            result.append(current)\n            return\n        \n        if s[index].isdigit():\n            backtrack(index + 1, current + s[index])\n        else:\n            backtrack(index + 1, current + s[index].lower())\n            backtrack(index + 1, current + s[index].upper())\n    \n    backtrack(0, '')\n    return result",
+        "javascript": "function letterCasePermutation(s) {\n    const result = [];\n    \n    function backtrack(index, current) {\n        if (index === s.length) {\n            result.push(current);\n            return;\n        }\n        \n        if (/\\d/.test(s[index])) {\n            backtrack(index + 1, current + s[index]);\n        } else {\n            backtrack(index + 1, current + s[index].toLowerCase());\n            backtrack(index + 1, current + s[index].toUpperCase());\n        }\n    }\n    \n    backtrack(0, '');\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Iterative BFS - Build Level by Level",
+      "order": 2,
+      "intuition": "Use queue to build permutations iteratively. Process one character at a time.",
+      "approach": "Start with empty string, expand by processing each character.",
+      "steps": [
+        "queue = ['']",
+        "For each character in S:",
+        "  size = queue.size()",
+        "  For size times:",
+        "    current = queue.dequeue()",
+        "    If char is digit:",
+        "      queue.enqueue(current + char)",
+        "    Else:",
+        "      queue.enqueue(current + lower(char))",
+        "      queue.enqueue(current + upper(char))",
+        "Return queue as list"
+      ],
+      "complexity": {
+        "time": "O(2^m × n)",
+        "space": "O(2^m)",
+        "timeExplanation": "Process all permutations",
+        "spaceExplanation": "Queue stores all results"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> letterCasePermutation(string s) {\n        queue<string> q;\n        q.push(\"\");\n        \n        for (char c : s) {\n            int size = q.size();\n            for (int i = 0; i < size; i++) {\n                string current = q.front();\n                q.pop();\n                \n                if (isdigit(c)) {\n                    q.push(current + c);\n                } else {\n                    q.push(current + tolower(c));\n                    q.push(current + toupper(c));\n                }\n            }\n        }\n        \n        vector<string> result;\n        while (!q.empty()) {\n            result.push_back(q.front());\n            q.pop();\n        }\n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<String> letterCasePermutation(String s) {\n        Queue<String> queue = new LinkedList<>();\n        queue.offer(\"\");\n        \n        for (char c : s.toCharArray()) {\n            int size = queue.size();\n            for (int i = 0; i < size; i++) {\n                String current = queue.poll();\n                \n                if (Character.isDigit(c)) {\n                    queue.offer(current + c);\n                } else {\n                    queue.offer(current + Character.toLowerCase(c));\n                    queue.offer(current + Character.toUpperCase(c));\n                }\n            }\n        }\n        \n        return new ArrayList<>(queue);\n    }\n}",
+        "python": "def letterCasePermutation(s):\n    queue = ['']\n    \n    for c in s:\n        new_queue = []\n        for current in queue:\n            if c.isdigit():\n                new_queue.append(current + c)\n            else:\n                new_queue.append(current + c.lower())\n                new_queue.append(current + c.upper())\n        queue = new_queue\n    \n    return queue",
+        "javascript": "function letterCasePermutation(s) {\n    let queue = [''];\n    \n    for (const c of s) {\n        const newQueue = [];\n        for (const current of queue) {\n            if (/\\d/.test(c)) {\n                newQueue.push(current + c);\n            } else {\n                newQueue.push(current + c.toLowerCase());\n                newQueue.push(current + c.toUpperCase());\n            }\n        }\n        queue = newQueue;\n    }\n    \n    return queue;\n}"
+      }
+    },
+    {
+      "name": "Bit Manipulation - Optimal",
+      "order": 3,
+      "intuition": "Map letters to bit positions. For each subset of bits, generate corresponding case combination.",
+      "approach": "Use bitmask to determine which letters are uppercase.",
+      "steps": [
+        "Find positions of all letters",
+        "For mask from 0 to 2^letterCount - 1:",
+        "  result = ''",
+        "  letterIdx = 0",
+        "  For each char in S:",
+        "    If char is digit:",
+        "      result += char",
+        "    Else:",
+        "      If bit letterIdx set in mask:",
+        "        result += upper(char)",
+        "      Else:",
+        "        result += lower(char)",
+        "      letterIdx += 1",
+        "  Add result to results"
+      ],
+      "complexity": {
+        "time": "O(2^m × n)",
+        "space": "O(2^m)",
+        "timeExplanation": "Generate 2^m permutations, each O(n)",
+        "spaceExplanation": "Store all results"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> letterCasePermutation(string s) {\n        int letterCount = 0;\n        for (char c : s) {\n            if (isalpha(c)) letterCount++;\n        }\n        \n        vector<string> result;\n        \n        for (int mask = 0; mask < (1 << letterCount); mask++) {\n            string current = \"\";\n            int letterIdx = 0;\n            \n            for (char c : s) {\n                if (isdigit(c)) {\n                    current += c;\n                } else {\n                    if (mask & (1 << letterIdx)) {\n                        current += toupper(c);\n                    } else {\n                        current += tolower(c);\n                    }\n                    letterIdx++;\n                }\n            }\n            result.push_back(current);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<String> letterCasePermutation(String s) {\n        int letterCount = 0;\n        for (char c : s.toCharArray()) {\n            if (Character.isLetter(c)) letterCount++;\n        }\n        \n        List<String> result = new ArrayList<>();\n        \n        for (int mask = 0; mask < (1 << letterCount); mask++) {\n            StringBuilder current = new StringBuilder();\n            int letterIdx = 0;\n            \n            for (char c : s.toCharArray()) {\n                if (Character.isDigit(c)) {\n                    current.append(c);\n                } else {\n                    if ((mask & (1 << letterIdx)) != 0) {\n                        current.append(Character.toUpperCase(c));\n                    } else {\n                        current.append(Character.toLowerCase(c));\n                    }\n                    letterIdx++;\n                }\n            }\n            result.add(current.toString());\n        }\n        \n        return result;\n    }\n}",
+        "python": "def letterCasePermutation(s):\n    letter_count = sum(1 for c in s if c.isalpha())\n    result = []\n    \n    for mask in range(1 << letter_count):\n        current = ''\n        letter_idx = 0\n        \n        for c in s:\n            if c.isdigit():\n                current += c\n            else:\n                if mask & (1 << letter_idx):\n                    current += c.upper()\n                else:\n                    current += c.lower()\n                letter_idx += 1\n        \n        result.append(current)\n    \n    return result",
+        "javascript": "function letterCasePermutation(s) {\n    let letterCount = 0;\n    for (const c of s) {\n        if (/[a-z]/i.test(c)) letterCount++;\n    }\n    \n    const result = [];\n    \n    for (let mask = 0; mask < (1 << letterCount); mask++) {\n        let current = '';\n        let letterIdx = 0;\n        \n        for (const c of s) {\n            if (/\\d/.test(c)) {\n                current += c;\n            } else {\n                if (mask & (1 << letterIdx)) {\n                    current += c.toUpperCase();\n                } else {\n                    current += c.toLowerCase();\n                }\n                letterIdx++;\n            }\n        }\n        result.push(current);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling digits (should keep them as-is)",
+    "Forgetting to backtrack in recursive approach",
+    "Not using proper queue operations in iterative approach",
+    "Off-by-one errors in bitmask approach",
+    "Confusion with case conversion functions"
+  ],
+  "hints": [
+    "Only letters generate branches, digits are fixed",
+    "m letters = 2^m permutations",
+    "Can use backtracking, BFS, or bitmask",
+    "For each letter, try both lowercase and uppercase",
+    "Count letters to determine total permutations"
+  ],
+  "followUp": [
+    "Generate with specific case patterns? (Add constraint)",
+    "Count instead of generate? (Return 2^m)",
+    "Return only unique? (Use set)",
+    "With mixed alphanumeric? (Already handles it)",
+    "Optimize for very long strings? (Use bitmask)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon"],
+  "tags": ["backtracking", "bit-manipulation", "string"],
+  "relatedProblems": [
+    "Generate Parentheses",
+    "Letter Combinations of Phone Number",
+    "Permutations",
+    "Subsets"
+  ]
+}

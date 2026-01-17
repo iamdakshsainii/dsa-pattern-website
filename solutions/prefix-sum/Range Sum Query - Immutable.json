@@ -1,0 +1,175 @@
+{
+  "questionId": "303",
+  "questionSlug": "range-sum-query-immutable",
+  "title": "Range Sum Query - Immutable",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/range-sum-query-immutable/",
+    "videos": [
+      {
+        "title": "Range Sum Query - Prefix Sum",
+        "url": "https://www.youtube.com/watch?v=2pndAmo_sMA",
+        "channel": "NeetCode",
+        "duration": "6:15",
+        "language": "English"
+      },
+      {
+        "title": "Range Sum Query Explained",
+        "url": "https://www.youtube.com/watch?v=s2kbD2mbbCc",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:30",
+        "language": "English"
+      },
+      {
+        "title": "Prefix Sum for Range Queries",
+        "url": "https://www.youtube.com/watch?v=pVS3yhlzrlQ",
+        "channel": "take U forward",
+        "duration": "10:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Range Sum Query Immutable - LeetCode Official",
+        "url": "https://leetcode.com/problems/range-sum-query-immutable/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Prefix Sum Array",
+        "url": "https://takeuforward.org/data-structure/prefix-sum-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Range Sum Query - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/prefix-sum-array-implementation-applications-competitive-programming/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/range-sum-query-immutable/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/prefix-sum/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Multiple range sum queries on immutable array? Precompute prefix sums. Query in O(1): prefix[right+1] - prefix[left].",
+  "approaches": [
+    {
+      "name": "Brute Force - Sum on Every Query",
+      "order": 1,
+      "intuition": "For each query, iterate through the range and calculate sum. No preprocessing.",
+      "approach": "Store original array. For each query, loop from left to right and sum elements.",
+      "steps": [
+        "Constructor: store nums array",
+        "sumRange(left, right):",
+        "  sum = 0",
+        "  For i from left to right:",
+        "    sum += nums[i]",
+        "  Return sum"
+      ],
+      "complexity": {
+        "time": "O(1) init, O(n) per query",
+        "space": "O(1)",
+        "timeExplanation": "Each query requires iterating through range",
+        "spaceExplanation": "Only storing original array"
+      },
+      "code": {
+        "cpp": "class NumArray {\nprivate:\n    vector<int> nums;\n    \npublic:\n    NumArray(vector<int>& nums) {\n        this->nums = nums;\n    }\n    \n    int sumRange(int left, int right) {\n        int sum = 0;\n        for (int i = left; i <= right; i++) {\n            sum += nums[i];\n        }\n        return sum;\n    }\n};",
+        "java": "class NumArray {\n    private int[] nums;\n    \n    public NumArray(int[] nums) {\n        this.nums = nums;\n    }\n    \n    public int sumRange(int left, int right) {\n        int sum = 0;\n        for (int i = left; i <= right; i++) {\n            sum += nums[i];\n        }\n        return sum;\n    }\n}",
+        "python": "class NumArray:\n    def __init__(self, nums):\n        self.nums = nums\n    \n    def sumRange(self, left, right):\n        return sum(self.nums[left:right+1])",
+        "javascript": "class NumArray {\n    constructor(nums) {\n        this.nums = nums;\n    }\n    \n    sumRange(left, right) {\n        let sum = 0;\n        for (let i = left; i <= right; i++) {\n            sum += this.nums[i];\n        }\n        return sum;\n    }\n}"
+      }
+    },
+    {
+      "name": "Prefix Sum Array - Store Cumulative Sums",
+      "order": 2,
+      "intuition": "Precompute all prefix sums. Range sum = prefix[right+1] - prefix[left]. Uses more space but faster queries.",
+      "approach": "Build prefix sum array where prefix[i] = sum of nums[0..i-1]. Query becomes simple subtraction.",
+      "steps": [
+        "Constructor:",
+        "  Create prefix array of size n+1",
+        "  prefix[0] = 0",
+        "  For i from 0 to n-1:",
+        "    prefix[i+1] = prefix[i] + nums[i]",
+        "sumRange(left, right):",
+        "  Return prefix[right+1] - prefix[left]"
+      ],
+      "complexity": {
+        "time": "O(n) init, O(1) per query",
+        "space": "O(n)",
+        "timeExplanation": "Preprocessing takes O(n), queries are O(1)",
+        "spaceExplanation": "Prefix array of size n+1"
+      },
+      "code": {
+        "cpp": "class NumArray {\nprivate:\n    vector<int> prefix;\n    \npublic:\n    NumArray(vector<int>& nums) {\n        int n = nums.size();\n        prefix.resize(n + 1, 0);\n        \n        for (int i = 0; i < n; i++) {\n            prefix[i + 1] = prefix[i] + nums[i];\n        }\n    }\n    \n    int sumRange(int left, int right) {\n        return prefix[right + 1] - prefix[left];\n    }\n};",
+        "java": "class NumArray {\n    private int[] prefix;\n    \n    public NumArray(int[] nums) {\n        int n = nums.length;\n        prefix = new int[n + 1];\n        \n        for (int i = 0; i < n; i++) {\n            prefix[i + 1] = prefix[i] + nums[i];\n        }\n    }\n    \n    public int sumRange(int left, int right) {\n        return prefix[right + 1] - prefix[left];\n    }\n}",
+        "python": "class NumArray:\n    def __init__(self, nums):\n        n = len(nums)\n        self.prefix = [0] * (n + 1)\n        \n        for i in range(n):\n            self.prefix[i + 1] = self.prefix[i] + nums[i]\n    \n    def sumRange(self, left, right):\n        return self.prefix[right + 1] - self.prefix[left]",
+        "javascript": "class NumArray {\n    constructor(nums) {\n        const n = nums.length;\n        this.prefix = new Array(n + 1).fill(0);\n        \n        for (let i = 0; i < n; i++) {\n            this.prefix[i + 1] = this.prefix[i] + nums[i];\n        }\n    }\n    \n    sumRange(left, right) {\n        return this.prefix[right + 1] - this.prefix[left];\n    }\n}"
+      }
+    },
+    {
+      "name": "Optimized Prefix Sum - No Extra Element - Optimal",
+      "order": 3,
+      "intuition": "Same as approach 2 but reuse input array space. Modify array to become prefix sum array.",
+      "approach": "Convert input array in-place to prefix sum. Adjust query calculation accordingly.",
+      "steps": [
+        "Constructor:",
+        "  For i from 1 to n-1:",
+        "    nums[i] += nums[i-1]",
+        "sumRange(left, right):",
+        "  If left == 0:",
+        "    Return nums[right]",
+        "  Else:",
+        "    Return nums[right] - nums[left-1]"
+      ],
+      "complexity": {
+        "time": "O(n) init, O(1) per query",
+        "space": "O(1)",
+        "timeExplanation": "Preprocessing takes O(n), queries are O(1)",
+        "spaceExplanation": "Modifying input array in-place"
+      },
+      "code": {
+        "cpp": "class NumArray {\nprivate:\n    vector<int> nums;\n    \npublic:\n    NumArray(vector<int>& nums) {\n        this->nums = nums;\n        // Convert to prefix sum\n        for (int i = 1; i < nums.size(); i++) {\n            this->nums[i] += this->nums[i-1];\n        }\n    }\n    \n    int sumRange(int left, int right) {\n        if (left == 0) {\n            return nums[right];\n        }\n        return nums[right] - nums[left - 1];\n    }\n};",
+        "java": "class NumArray {\n    private int[] nums;\n    \n    public NumArray(int[] nums) {\n        this.nums = nums;\n        for (int i = 1; i < nums.length; i++) {\n            this.nums[i] += this.nums[i-1];\n        }\n    }\n    \n    public int sumRange(int left, int right) {\n        if (left == 0) {\n            return nums[right];\n        }\n        return nums[right] - nums[left - 1];\n    }\n}",
+        "python": "class NumArray:\n    def __init__(self, nums):\n        self.nums = nums\n        for i in range(1, len(nums)):\n            self.nums[i] += self.nums[i-1]\n    \n    def sumRange(self, left, right):\n        if left == 0:\n            return self.nums[right]\n        return self.nums[right] - self.nums[left - 1]",
+        "javascript": "class NumArray {\n    constructor(nums) {\n        this.nums = nums;\n        for (let i = 1; i < nums.length; i++) {\n            this.nums[i] += this.nums[i-1];\n        }\n    }\n    \n    sumRange(left, right) {\n        if (left === 0) {\n            return this.nums[right];\n        }\n        return this.nums[right] - this.nums[left - 1];\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Off-by-one errors: forgetting prefix array is size n+1",
+    "Wrong query formula: prefix[right] - prefix[left] instead of prefix[right+1] - prefix[left]",
+    "Not handling left == 0 case in optimized version",
+    "Modifying input array when problem says immutable (though usually allowed)",
+    "Integer overflow for very large sums"
+  ],
+  "hints": [
+    "If you query many times, preprocessing once saves time",
+    "prefix[i] = sum of first i elements",
+    "sum(left, right) = prefix[right+1] - prefix[left]",
+    "Why? prefix[right+1] includes everything up to right, subtract everything before left",
+    "Extra element at start (prefix[0] = 0) simplifies calculation"
+  ],
+  "followUp": [
+    "What if array is mutable? (Use Segment Tree or Fenwick Tree)",
+    "Can you handle updates efficiently? (Not with prefix sum alone)",
+    "What about 2D range sum queries? (2D prefix sum)",
+    "How to handle very large arrays? (Sparse arrays, compression)",
+    "What if queries come in specific pattern? (Cache results)"
+  ],
+  "companies": ["Facebook", "Google", "Amazon", "Microsoft", "Palantir"],
+  "tags": ["array", "design", "prefix-sum"],
+  "relatedProblems": [
+    "Range Sum Query 2D - Immutable",
+    "Range Sum Query - Mutable",
+    "Maximum Size Subarray Sum Equals k",
+    "Subarray Sum Equals K",
+    "Corporate Flight Bookings"
+  ]
+}

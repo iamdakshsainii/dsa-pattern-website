@@ -1,0 +1,173 @@
+{
+  "questionId": "394",
+  "questionSlug": "decode-string",
+  "title": "Decode String",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/decode-string/",
+    "videos": [
+      {
+        "title": "Decode String - Stack Solution",
+        "url": "https://www.youtube.com/watch?v=qB0zZpBJlh8",
+        "channel": "NeetCode",
+        "duration": "12:40",
+        "language": "English"
+      },
+      {
+        "title": "Decode String Explained",
+        "url": "https://www.youtube.com/watch?v=PzzsPiJ50RE",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "14:25",
+        "language": "English"
+      },
+      {
+        "title": "Stack Based Approach - Decode String",
+        "url": "https://www.youtube.com/watch?v=0iQqj5egK9k",
+        "channel": "take U forward",
+        "duration": "16:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Decode String - LeetCode Official",
+        "url": "https://leetcode.com/problems/decode-string/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Decode String Solution",
+        "url": "https://takeuforward.org/data-structure/decode-string/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Decode String - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/decode-string-recursively-encoded-as-count-followed-by-substring/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/decode-string/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Nested structure with brackets = Stack. Push numbers and strings, pop and decode when closing bracket found.",
+  "approaches": [
+    {
+      "name": "Recursion with Index Tracking",
+      "order": 1,
+      "intuition": "Use recursion to handle nested brackets. When '[' found, recursively decode inner string. Return when ']' found.",
+      "approach": "Recursive function processes string character by character. Handles numbers, letters, and nested brackets recursively.",
+      "steps": [
+        "Define helper(index):",
+        "  result = '', num = 0",
+        "  While index < length:",
+        "    If digit: build number",
+        "    If letter: append to result",
+        "    If '[': recursively decode, multiply by num, append",
+        "    If ']': return result and index",
+        "  Return result"
+      ],
+      "complexity": {
+        "time": "O(maxK * n)",
+        "space": "O(n)",
+        "timeExplanation": "In worst case, decode each character maxK times where maxK is maximum k value",
+        "spaceExplanation": "Recursion stack depth equals nesting level"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int index = 0;\n    \n    string helper(string& s) {\n        string result = \"\";\n        int num = 0;\n        \n        while (index < s.length()) {\n            char c = s[index];\n            \n            if (isdigit(c)) {\n                num = num * 10 + (c - '0');\n            } else if (c == '[') {\n                index++; // Skip '['\n                string decoded = helper(s);\n                for (int i = 0; i < num; i++) {\n                    result += decoded;\n                }\n                num = 0;\n            } else if (c == ']') {\n                return result;\n            } else {\n                result += c;\n            }\n            \n            index++;\n        }\n        \n        return result;\n    }\n    \npublic:\n    string decodeString(string s) {\n        index = 0;\n        return helper(s);\n    }\n};",
+        "java": "class Solution {\n    private int index = 0;\n    \n    public String decodeString(String s) {\n        index = 0;\n        return helper(s);\n    }\n    \n    private String helper(String s) {\n        StringBuilder result = new StringBuilder();\n        int num = 0;\n        \n        while (index < s.length()) {\n            char c = s.charAt(index);\n            \n            if (Character.isDigit(c)) {\n                num = num * 10 + (c - '0');\n            } else if (c == '[') {\n                index++;\n                String decoded = helper(s);\n                for (int i = 0; i < num; i++) {\n                    result.append(decoded);\n                }\n                num = 0;\n            } else if (c == ']') {\n                return result.toString();\n            } else {\n                result.append(c);\n            }\n            \n            index++;\n        }\n        \n        return result.toString();\n    }\n}",
+        "python": "class Solution:\n    def decodeString(self, s: str) -> str:\n        self.index = 0\n        return self.helper(s)\n    \n    def helper(self, s: str) -> str:\n        result = \"\"\n        num = 0\n        \n        while self.index < len(s):\n            c = s[self.index]\n            \n            if c.isdigit():\n                num = num * 10 + int(c)\n            elif c == '[':\n                self.index += 1\n                decoded = self.helper(s)\n                result += decoded * num\n                num = 0\n            elif c == ']':\n                return result\n            else:\n                result += c\n            \n            self.index += 1\n        \n        return result",
+        "javascript": "var decodeString = function(s) {\n    let index = 0;\n    \n    function helper() {\n        let result = '';\n        let num = 0;\n        \n        while (index < s.length) {\n            const c = s[index];\n            \n            if (c >= '0' && c <= '9') {\n                num = num * 10 + parseInt(c);\n            } else if (c === '[') {\n                index++;\n                const decoded = helper();\n                result += decoded.repeat(num);\n                num = 0;\n            } else if (c === ']') {\n                return result;\n            } else {\n                result += c;\n            }\n            \n            index++;\n        }\n        \n        return result;\n    }\n    \n    return helper();\n};"
+      }
+    },
+    {
+      "name": "Two Stacks - Numbers and Strings",
+      "order": 2,
+      "intuition": "Use two stacks: one for numbers, one for strings. When '[' push current state. When ']' pop and decode.",
+      "approach": "Maintain current string and number. Push to stacks at '[', pop and construct at ']'.",
+      "steps": [
+        "countStack = [], stringStack = []",
+        "currentStr = '', currentNum = 0",
+        "For each char:",
+        "  If digit: build currentNum",
+        "  If '[': push currentNum and currentStr, reset both",
+        "  If ']': pop, decode = poppedStr + (currentStr * poppedNum)",
+        "  If letter: append to currentStr",
+        "Return currentStr"
+      ],
+      "complexity": {
+        "time": "O(maxK * n)",
+        "space": "O(n)",
+        "timeExplanation": "Each character processed, repeated up to maxK times in worst case",
+        "spaceExplanation": "Two stacks store nested contexts"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string decodeString(string s) {\n        stack<int> countStack;\n        stack<string> stringStack;\n        string currentStr = \"\";\n        int currentNum = 0;\n        \n        for (char c : s) {\n            if (isdigit(c)) {\n                currentNum = currentNum * 10 + (c - '0');\n            } else if (c == '[') {\n                // Push current state and reset\n                countStack.push(currentNum);\n                stringStack.push(currentStr);\n                currentStr = \"\";\n                currentNum = 0;\n            } else if (c == ']') {\n                // Pop and decode\n                string prevStr = stringStack.top();\n                stringStack.pop();\n                int repeatCount = countStack.top();\n                countStack.pop();\n                \n                string decoded = prevStr;\n                for (int i = 0; i < repeatCount; i++) {\n                    decoded += currentStr;\n                }\n                currentStr = decoded;\n            } else {\n                currentStr += c;\n            }\n        }\n        \n        return currentStr;\n    }\n};",
+        "java": "class Solution {\n    public String decodeString(String s) {\n        Stack<Integer> countStack = new Stack<>();\n        Stack<String> stringStack = new Stack<>();\n        StringBuilder currentStr = new StringBuilder();\n        int currentNum = 0;\n        \n        for (char c : s.toCharArray()) {\n            if (Character.isDigit(c)) {\n                currentNum = currentNum * 10 + (c - '0');\n            } else if (c == '[') {\n                countStack.push(currentNum);\n                stringStack.push(currentStr.toString());\n                currentStr = new StringBuilder();\n                currentNum = 0;\n            } else if (c == ']') {\n                String prevStr = stringStack.pop();\n                int repeatCount = countStack.pop();\n                \n                StringBuilder decoded = new StringBuilder(prevStr);\n                for (int i = 0; i < repeatCount; i++) {\n                    decoded.append(currentStr);\n                }\n                currentStr = decoded;\n            } else {\n                currentStr.append(c);\n            }\n        }\n        \n        return currentStr.toString();\n    }\n}",
+        "python": "class Solution:\n    def decodeString(self, s: str) -> str:\n        count_stack = []\n        string_stack = []\n        current_str = \"\"\n        current_num = 0\n        \n        for c in s:\n            if c.isdigit():\n                current_num = current_num * 10 + int(c)\n            elif c == '[':\n                count_stack.append(current_num)\n                string_stack.append(current_str)\n                current_str = \"\"\n                current_num = 0\n            elif c == ']':\n                prev_str = string_stack.pop()\n                repeat_count = count_stack.pop()\n                current_str = prev_str + current_str * repeat_count\n            else:\n                current_str += c\n        \n        return current_str",
+        "javascript": "var decodeString = function(s) {\n    const countStack = [];\n    const stringStack = [];\n    let currentStr = '';\n    let currentNum = 0;\n    \n    for (const c of s) {\n        if (c >= '0' && c <= '9') {\n            currentNum = currentNum * 10 + parseInt(c);\n        } else if (c === '[') {\n            countStack.push(currentNum);\n            stringStack.push(currentStr);\n            currentStr = '';\n            currentNum = 0;\n        } else if (c === ']') {\n            const prevStr = stringStack.pop();\n            const repeatCount = countStack.pop();\n            currentStr = prevStr + currentStr.repeat(repeatCount);\n        } else {\n            currentStr += c;\n        }\n    }\n    \n    return currentStr;\n};"
+      }
+    },
+    {
+      "name": "Single Stack - Store State Objects - Optimal",
+      "order": 3,
+      "intuition": "Use one stack storing (count, string) pairs. Cleaner than two stacks. Each bracket level is one stack entry.",
+      "approach": "Stack stores {count, prefix_string}. Build current string, push at '[', pop and construct at ']'.",
+      "steps": [
+        "stack = []",
+        "currentStr = '', currentNum = 0",
+        "For each char:",
+        "  If digit: build currentNum",
+        "  If '[': push {currentNum, currentStr}, reset",
+        "  If ']': pop, construct prevStr + (currentStr * count)",
+        "  If letter: append to currentStr",
+        "Return currentStr"
+      ],
+      "complexity": {
+        "time": "O(maxK * n)",
+        "space": "O(n)",
+        "timeExplanation": "Linear scan with repeated string construction",
+        "spaceExplanation": "Stack depth equals nesting level"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string decodeString(string s) {\n        stack<pair<int, string>> st; // {count, prefix_string}\n        string currentStr = \"\";\n        int currentNum = 0;\n        \n        for (char c : s) {\n            if (isdigit(c)) {\n                currentNum = currentNum * 10 + (c - '0');\n            } else if (c == '[') {\n                // Save current state\n                st.push({currentNum, currentStr});\n                currentStr = \"\";\n                currentNum = 0;\n            } else if (c == ']') {\n                // Decode: prevStr + (currentStr * count)\n                auto [count, prevStr] = st.top();\n                st.pop();\n                \n                string temp = prevStr;\n                for (int i = 0; i < count; i++) {\n                    temp += currentStr;\n                }\n                currentStr = temp;\n            } else {\n                currentStr += c;\n            }\n        }\n        \n        return currentStr;\n    }\n};",
+        "java": "class Solution {\n    public String decodeString(String s) {\n        Stack<int[]> stack = new Stack<>(); // [count, stringStackIndex]\n        Stack<String> stringStack = new Stack<>();\n        StringBuilder currentStr = new StringBuilder();\n        int currentNum = 0;\n        \n        for (char c : s.toCharArray()) {\n            if (Character.isDigit(c)) {\n                currentNum = currentNum * 10 + (c - '0');\n            } else if (c == '[') {\n                stringStack.push(currentStr.toString());\n                stack.push(new int[]{currentNum});\n                currentStr = new StringBuilder();\n                currentNum = 0;\n            } else if (c == ']') {\n                int count = stack.pop()[0];\n                String prevStr = stringStack.pop();\n                \n                StringBuilder temp = new StringBuilder(prevStr);\n                for (int i = 0; i < count; i++) {\n                    temp.append(currentStr);\n                }\n                currentStr = temp;\n            } else {\n                currentStr.append(c);\n            }\n        }\n        \n        return currentStr.toString();\n    }\n}",
+        "python": "class Solution:\n    def decodeString(self, s: str) -> str:\n        stack = []  # [(count, prefix_string)]\n        current_str = \"\"\n        current_num = 0\n        \n        for c in s:\n            if c.isdigit():\n                current_num = current_num * 10 + int(c)\n            elif c == '[':\n                stack.append((current_num, current_str))\n                current_str = \"\"\n                current_num = 0\n            elif c == ']':\n                count, prev_str = stack.pop()\n                current_str = prev_str + current_str * count\n            else:\n                current_str += c\n        \n        return current_str",
+        "javascript": "var decodeString = function(s) {\n    const stack = []; // [{count, prevStr}]\n    let currentStr = '';\n    let currentNum = 0;\n    \n    for (const c of s) {\n        if (c >= '0' && c <= '9') {\n            currentNum = currentNum * 10 + parseInt(c);\n        } else if (c === '[') {\n            stack.push({count: currentNum, prevStr: currentStr});\n            currentStr = '';\n            currentNum = 0;\n        } else if (c === ']') {\n            const {count, prevStr} = stack.pop();\n            currentStr = prevStr + currentStr.repeat(count);\n        } else {\n            currentStr += c;\n        }\n    }\n    \n    return currentStr;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling multi-digit numbers (building number incrementally is crucial)",
+    "Forgetting to reset currentNum after using it",
+    "Wrong order when constructing decoded string (should be prevStr + repeated currentStr)",
+    "Not handling nested brackets correctly",
+    "Attempting to decode in single pass without stack or recursion"
+  ],
+  "hints": [
+    "Stack is perfect for handling nested brackets",
+    "When you see '[', save current state (number and prefix string)",
+    "When you see ']', pop saved state and construct decoded string",
+    "Build numbers character by character (could be multi-digit like '100')",
+    "Result is always: previous_string + (current_string * count)"
+  ],
+  "followUp": [
+    "What if encoding could have nested numbers like '2[a3[b]]'?",
+    "Can you encode a decoded string back?",
+    "What if input has invalid brackets (error handling)?",
+    "How to optimize for very large repeat counts?",
+    "Can you decode without storing entire intermediate strings?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Yelp"],
+  "tags": ["string", "stack", "recursion"],
+  "relatedProblems": [
+    "Encode String with Shortest Length",
+    "Number of Atoms",
+    "Brace Expansion",
+    "Valid Parentheses",
+    "Parse Lisp Expression"
+  ]
+}

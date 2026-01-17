@@ -1,0 +1,176 @@
+{
+  "questionId": "974",
+  "questionSlug": "subarray-sums-divisible-by-k",
+  "title": "Subarray Sums Divisible by K",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/subarray-sums-divisible-by-k/",
+    "videos": [
+      {
+        "title": "Subarray Sums Divisible by K",
+        "url": "https://www.youtube.com/watch?v=ufXxc8OECq8",
+        "channel": "NeetCode",
+        "duration": "13:25",
+        "language": "English"
+      },
+      {
+        "title": "Count Subarrays Divisible by K",
+        "url": "https://www.youtube.com/watch?v=QM0klnvTQzk",
+        "channel": "take U forward",
+        "duration": "16:40",
+        "language": "English"
+      },
+      {
+        "title": "Modulo Arithmetic for Subarrays",
+        "url": "https://www.youtube.com/watch?v=7Mzn_wqLSVQ",
+        "channel": "Aditya Verma",
+        "duration": "18:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Subarray Sums Divisible by K - LeetCode Official",
+        "url": "https://leetcode.com/problems/subarray-sums-divisible-by-k/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Count Subarrays with Sum Divisible by K",
+        "url": "https://takeuforward.org/data-structure/count-subarray-sum-equals-k/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Subarray Sum Divisible by K - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/count-sub-arrays-sum-divisible-k/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/subarray-sums-divisible-by-k/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/sub-array-sum-divisible-by-k/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Count subarrays divisible by K? Track remainder frequencies. Same remainder = divisible subarray between them.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Subarrays",
+      "order": 1,
+      "intuition": "Generate all subarrays, calculate sum for each, check if divisible by K.",
+      "approach": "Two nested loops to generate all subarrays, calculate sum, check divisibility.",
+      "steps": [
+        "count = 0",
+        "For each start i:",
+        "  sum = 0",
+        "  For each end j from i:",
+        "    sum += arr[j]",
+        "    If sum % K == 0:",
+        "      count++",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops",
+        "spaceExplanation": "Constant space"
+      },
+      "code": {
+        "cpp": "int subarraysDivByK(vector<int>& nums, int k) {\n    int n = nums.size();\n    int count = 0;\n    \n    for (int i = 0; i < n; i++) {\n        int sum = 0;\n        for (int j = i; j < n; j++) {\n            sum += nums[j];\n            if (sum % k == 0) {\n                count++;\n            }\n        }\n    }\n    \n    return count;\n}",
+        "java": "public int subarraysDivByK(int[] nums, int k) {\n    int n = nums.length;\n    int count = 0;\n    \n    for (int i = 0; i < n; i++) {\n        int sum = 0;\n        for (int j = i; j < n; j++) {\n            sum += nums[j];\n            if (sum % k == 0) {\n                count++;\n            }\n        }\n    }\n    \n    return count;\n}",
+        "python": "def subarraysDivByK(nums, k):\n    n = len(nums)\n    count = 0\n    \n    for i in range(n):\n        sum_val = 0\n        for j in range(i, n):\n            sum_val += nums[j]\n            if sum_val % k == 0:\n                count += 1\n    \n    return count",
+        "javascript": "function subarraysDivByK(nums, k) {\n    const n = nums.length;\n    let count = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let sum = 0;\n        for (let j = i; j < n; j++) {\n            sum += nums[j];\n            if (sum % k === 0) {\n                count++;\n            }\n        }\n    }\n    \n    return count;\n}"
+      }
+    },
+    {
+      "name": "Prefix Sum with Modulo Check",
+      "order": 2,
+      "intuition": "If two prefix sums have same remainder when divided by K, subarray between them is divisible by K.",
+      "approach": "Calculate prefix sums and their remainders. For each pair with same remainder, increment count.",
+      "steps": [
+        "Calculate prefix sums",
+        "Calculate remainders for each prefix",
+        "count = 0",
+        "For each pair (i, j) where i < j:",
+        "  If remainder[i] == remainder[j]:",
+        "    count++",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "Checking all pairs",
+        "spaceExplanation": "Prefix sum array"
+      },
+      "code": {
+        "cpp": "int subarraysDivByK(vector<int>& nums, int k) {\n    int n = nums.size();\n    vector<int> prefix(n + 1, 0);\n    vector<int> remainder(n + 1);\n    \n    for (int i = 0; i < n; i++) {\n        prefix[i + 1] = prefix[i] + nums[i];\n        remainder[i + 1] = ((prefix[i + 1] % k) + k) % k;  // Handle negatives\n    }\n    remainder[0] = 0;\n    \n    int count = 0;\n    for (int i = 0; i <= n; i++) {\n        for (int j = i + 1; j <= n; j++) {\n            if (remainder[i] == remainder[j]) {\n                count++;\n            }\n        }\n    }\n    \n    return count;\n}",
+        "java": "public int subarraysDivByK(int[] nums, int k) {\n    int n = nums.length;\n    int[] prefix = new int[n + 1];\n    int[] remainder = new int[n + 1];\n    \n    for (int i = 0; i < n; i++) {\n        prefix[i + 1] = prefix[i] + nums[i];\n        remainder[i + 1] = ((prefix[i + 1] % k) + k) % k;\n    }\n    \n    int count = 0;\n    for (int i = 0; i <= n; i++) {\n        for (int j = i + 1; j <= n; j++) {\n            if (remainder[i] == remainder[j]) {\n                count++;\n            }\n        }\n    }\n    \n    return count;\n}",
+        "python": "def subarraysDivByK(nums, k):\n    n = len(nums)\n    prefix = [0] * (n + 1)\n    remainder = [0] * (n + 1)\n    \n    for i in range(n):\n        prefix[i + 1] = prefix[i] + nums[i]\n        remainder[i + 1] = ((prefix[i + 1] % k) + k) % k\n    \n    count = 0\n    for i in range(n + 1):\n        for j in range(i + 1, n + 1):\n            if remainder[i] == remainder[j]:\n                count += 1\n    \n    return count",
+        "javascript": "function subarraysDivByK(nums, k) {\n    const n = nums.length;\n    const prefix = new Array(n + 1).fill(0);\n    const remainder = new Array(n + 1);\n    \n    for (let i = 0; i < n; i++) {\n        prefix[i + 1] = prefix[i] + nums[i];\n        remainder[i + 1] = ((prefix[i + 1] % k) + k) % k;\n    }\n    remainder[0] = 0;\n    \n    let count = 0;\n    for (let i = 0; i <= n; i++) {\n        for (let j = i + 1; j <= n; j++) {\n            if (remainder[i] === remainder[j]) {\n                count++;\n            }\n        }\n    }\n    \n    return count;\n}"
+      }
+    },
+    {
+      "name": "HashMap with Remainder Frequency - Optimal",
+      "order": 3,
+      "intuition": "Track frequency of each remainder. If remainder r appears f times, we can form f*(f-1)/2 pairs = subarrays.",
+      "approach": "Track running sum's remainder. Count frequency of each remainder. Use combination formula for pairs.",
+      "steps": [
+        "map = {0: 1}, sum = 0, count = 0",
+        "For each element:",
+        "  sum += element",
+        "  remainder = ((sum % k) + k) % k",
+        "  count += map[remainder]",
+        "  map[remainder]++",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(min(n, k))",
+        "timeExplanation": "Single pass with O(1) map operations",
+        "spaceExplanation": "Map stores at most k remainders"
+      },
+      "code": {
+        "cpp": "int subarraysDivByK(vector<int>& nums, int k) {\n    unordered_map<int, int> remainderCount;\n    remainderCount[0] = 1;  // For subarrays starting from index 0\n    \n    int sum = 0;\n    int count = 0;\n    \n    for (int num : nums) {\n        sum += num;\n        \n        // Handle negative remainders properly\n        int remainder = ((sum % k) + k) % k;\n        \n        // If this remainder seen before, those many subarrays end here\n        count += remainderCount[remainder];\n        \n        // Add current remainder\n        remainderCount[remainder]++;\n    }\n    \n    return count;\n}",
+        "java": "public int subarraysDivByK(int[] nums, int k) {\n    HashMap<Integer, Integer> remainderCount = new HashMap<>();\n    remainderCount.put(0, 1);\n    \n    int sum = 0;\n    int count = 0;\n    \n    for (int num : nums) {\n        sum += num;\n        \n        int remainder = ((sum % k) + k) % k;\n        \n        count += remainderCount.getOrDefault(remainder, 0);\n        \n        remainderCount.put(remainder, \n            remainderCount.getOrDefault(remainder, 0) + 1);\n    }\n    \n    return count;\n}",
+        "python": "def subarraysDivByK(nums, k):\n    from collections import defaultdict\n    \n    remainder_count = defaultdict(int)\n    remainder_count[0] = 1\n    \n    sum_val = 0\n    count = 0\n    \n    for num in nums:\n        sum_val += num\n        \n        remainder = ((sum_val % k) + k) % k\n        \n        count += remainder_count[remainder]\n        \n        remainder_count[remainder] += 1\n    \n    return count",
+        "javascript": "function subarraysDivByK(nums, k) {\n    const remainderCount = new Map();\n    remainderCount.set(0, 1);\n    \n    let sum = 0;\n    let count = 0;\n    \n    for (const num of nums) {\n        sum += num;\n        \n        let remainder = ((sum % k) + k) % k;\n        \n        count += (remainderCount.get(remainder) || 0);\n        \n        remainderCount.set(remainder, \n            (remainderCount.get(remainder) || 0) + 1);\n    }\n    \n    return count;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling negative remainders: use ((sum % k) + k) % k",
+    "Forgetting to initialize map with {0: 1}",
+    "Confusing with sum equals K (this is divisible by K)",
+    "Not understanding why same remainder means divisible subarray",
+    "Using combination formula instead of simple counting"
+  ],
+  "hints": [
+    "If (a % k) == (b % k), then (b - a) % k == 0",
+    "Track remainders, not actual sums",
+    "Handle negative numbers: ((sum % k) + k) % k ensures positive remainder",
+    "Why {0: 1}? Handles subarrays from start that are divisible",
+    "We count occurrences, not compute combinations"
+  ],
+  "followUp": [
+    "Find longest subarray with sum divisible by K?",
+    "Count subarrays with sum NOT divisible by K?",
+    "What if we need remainder equals R instead of 0?",
+    "Can you solve with only positive numbers more efficiently?",
+    "What about 2D arrays with sum divisible by K?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple"],
+  "tags": ["array", "hash-table", "prefix-sum", "math"],
+  "relatedProblems": [
+    "Subarray Sum Equals K",
+    "Continuous Subarray Sum",
+    "Make Sum Divisible by P",
+    "Subarray with Elements Greater Than Varying Threshold",
+    "Check If Array Pairs Are Divisible by k"
+  ]
+}

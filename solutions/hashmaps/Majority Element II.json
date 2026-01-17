@@ -1,0 +1,175 @@
+{
+  "questionId": "229",
+  "questionSlug": "majority-element-ii",
+  "title": "Majority Element II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/majority-element-ii/",
+    "videos": [
+      {
+        "title": "Majority Element II - Extended Boyer-Moore",
+        "url": "https://www.youtube.com/watch?v=yDbkQd9t2ig",
+        "channel": "NeetCode",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Majority Element II Explained",
+        "url": "https://www.youtube.com/watch?v=vwZj1K0e9U8",
+        "channel": "take U forward",
+        "duration": "18:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Majority Element II - LeetCode Official",
+        "url": "https://leetcode.com/problems/majority-element-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Majority Element II",
+        "url": "https://takeuforward.org/data-structure/majority-elementsn-3-times-find-the-elements-that-appears-more-than-n-3-times-in-the-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Majority Element appearing > n/3 times",
+        "url": "https://www.geeksforgeeks.org/majority-element-appearing-n3-times/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/majority-element-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/majority-element-1/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find elements appearing >n/3 times? At most 2 such elements exist. Use Extended Boyer-Moore with TWO candidates and counts.",
+  "approaches": [
+    {
+      "name": "Brute Force - Count Each Element",
+      "order": 1,
+      "intuition": "For each unique element, count its occurrences. Add to result if count > n/3.",
+      "approach": "Check each element's frequency and collect those exceeding n/3.",
+      "steps": [
+        "result = []",
+        "For each index i:",
+        "  If nums[i] already in result, continue",
+        "  count = 0",
+        "  For each index j:",
+        "    If nums[j] == nums[i]:",
+        "      count++",
+        "  If count > n/3:",
+        "    Add nums[i] to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "For each element, counting takes O(n)",
+        "spaceExplanation": "Result contains at most 2 elements (constant)"
+      },
+      "code": {
+        "cpp": "vector<int> majorityElement(vector<int>& nums) {\n    vector<int> result;\n    int n = nums.size();\n    \n    for (int i = 0; i < n; i++) {\n        if (find(result.begin(), result.end(), nums[i]) != result.end()) {\n            continue;\n        }\n        \n        int count = 0;\n        for (int j = 0; j < n; j++) {\n            if (nums[j] == nums[i]) {\n                count++;\n            }\n        }\n        \n        if (count > n / 3) {\n            result.push_back(nums[i]);\n        }\n    }\n    \n    return result;\n}",
+        "java": "public List<Integer> majorityElement(int[] nums) {\n    List<Integer> result = new ArrayList<>();\n    int n = nums.length;\n    \n    for (int i = 0; i < n; i++) {\n        if (result.contains(nums[i])) {\n            continue;\n        }\n        \n        int count = 0;\n        for (int j = 0; j < n; j++) {\n            if (nums[j] == nums[i]) {\n                count++;\n            }\n        }\n        \n        if (count > n / 3) {\n            result.add(nums[i]);\n        }\n    }\n    \n    return result;\n}",
+        "python": "def majorityElement(nums):\n    result = []\n    n = len(nums)\n    \n    for i in range(n):\n        if nums[i] in result:\n            continue\n        \n        count = 0\n        for j in range(n):\n            if nums[j] == nums[i]:\n                count += 1\n        \n        if count > n // 3:\n            result.append(nums[i])\n    \n    return result",
+        "javascript": "function majorityElement(nums) {\n    const result = [];\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        if (result.includes(nums[i])) {\n            continue;\n        }\n        \n        let count = 0;\n        for (let j = 0; j < n; j++) {\n            if (nums[j] === nums[i]) {\n                count++;\n            }\n        }\n        \n        if (count > Math.floor(n / 3)) {\n            result.push(nums[i]);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Hash Map - Count Frequencies",
+      "order": 2,
+      "intuition": "Count frequency of all elements using hash map. Return elements with count > n/3.",
+      "approach": "Build frequency map, then filter elements with frequency > n/3.",
+      "steps": [
+        "Create hash map for frequencies",
+        "Count all elements",
+        "result = []",
+        "For each (element, count) in map:",
+        "  If count > n/3:",
+        "    Add element to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass to count, single pass to filter",
+        "spaceExplanation": "Hash map stores up to n elements"
+      },
+      "code": {
+        "cpp": "vector<int> majorityElement(vector<int>& nums) {\n    unordered_map<int, int> freq;\n    int n = nums.size();\n    \n    for (int num : nums) {\n        freq[num]++;\n    }\n    \n    vector<int> result;\n    for (auto& p : freq) {\n        if (p.second > n / 3) {\n            result.push_back(p.first);\n        }\n    }\n    \n    return result;\n}",
+        "java": "public List<Integer> majorityElement(int[] nums) {\n    Map<Integer, Integer> freq = new HashMap<>();\n    int n = nums.length;\n    \n    for (int num : nums) {\n        freq.put(num, freq.getOrDefault(num, 0) + 1);\n    }\n    \n    List<Integer> result = new ArrayList<>();\n    for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {\n        if (entry.getValue() > n / 3) {\n            result.add(entry.getKey());\n        }\n    }\n    \n    return result;\n}",
+        "python": "def majorityElement(nums):\n    from collections import Counter\n    \n    freq = Counter(nums)\n    n = len(nums)\n    \n    return [num for num, count in freq.items() if count > n // 3]",
+        "javascript": "function majorityElement(nums) {\n    const freq = new Map();\n    const n = nums.length;\n    \n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    const result = [];\n    for (const [num, count] of freq.entries()) {\n        if (count > Math.floor(n / 3)) {\n            result.push(num);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Extended Boyer-Moore - Optimal",
+      "order": 3,
+      "intuition": "At most 2 elements can appear > n/3 times. Use Boyer-Moore with 2 candidates. First pass finds candidates, second pass verifies them.",
+      "approach": "Track two candidates with counts. After identifying candidates, verify their actual counts.",
+      "steps": [
+        "candidate1 = 0, candidate2 = 0",
+        "count1 = 0, count2 = 0",
+        "Pass 1: Find candidates",
+        "  For each num:",
+        "    If num == candidate1: count1++",
+        "    Else if num == candidate2: count2++",
+        "    Else if count1 == 0: candidate1 = num, count1 = 1",
+        "    Else if count2 == 0: candidate2 = num, count2 = 1",
+        "    Else: count1--, count2--",
+        "Pass 2: Verify candidates",
+        "  Count actual occurrences of candidate1 and candidate2",
+        "  Add to result if count > n/3",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through array",
+        "spaceExplanation": "Only 4 variables and result (at most 2 elements)"
+      },
+      "code": {
+        "cpp": "vector<int> majorityElement(vector<int>& nums) {\n    int candidate1 = 0, candidate2 = 0;\n    int count1 = 0, count2 = 0;\n    \n    // Pass 1: Find candidates\n    for (int num : nums) {\n        if (num == candidate1) {\n            count1++;\n        } else if (num == candidate2) {\n            count2++;\n        } else if (count1 == 0) {\n            candidate1 = num;\n            count1 = 1;\n        } else if (count2 == 0) {\n            candidate2 = num;\n            count2 = 1;\n        } else {\n            count1--;\n            count2--;\n        }\n    }\n    \n    // Pass 2: Verify candidates\n    count1 = 0;\n    count2 = 0;\n    for (int num : nums) {\n        if (num == candidate1) count1++;\n        else if (num == candidate2) count2++;\n    }\n    \n    vector<int> result;\n    int n = nums.size();\n    if (count1 > n / 3) result.push_back(candidate1);\n    if (count2 > n / 3) result.push_back(candidate2);\n    \n    return result;\n}",
+        "java": "public List<Integer> majorityElement(int[] nums) {\n    int candidate1 = 0, candidate2 = 0;\n    int count1 = 0, count2 = 0;\n    \n    for (int num : nums) {\n        if (num == candidate1) {\n            count1++;\n        } else if (num == candidate2) {\n            count2++;\n        } else if (count1 == 0) {\n            candidate1 = num;\n            count1 = 1;\n        } else if (count2 == 0) {\n            candidate2 = num;\n            count2 = 1;\n        } else {\n            count1--;\n            count2--;\n        }\n    }\n    \n    count1 = 0;\n    count2 = 0;\n    for (int num : nums) {\n        if (num == candidate1) count1++;\n        else if (num == candidate2) count2++;\n    }\n    \n    List<Integer> result = new ArrayList<>();\n    int n = nums.length;\n    if (count1 > n / 3) result.add(candidate1);\n    if (count2 > n / 3) result.add(candidate2);\n    \n    return result;\n}",
+        "python": "def majorityElement(nums):\n    candidate1, candidate2 = 0, 0\n    count1, count2 = 0, 0\n    \n    # Pass 1: Find candidates\n    for num in nums:\n        if num == candidate1:\n            count1 += 1\n        elif num == candidate2:\n            count2 += 1\n        elif count1 == 0:\n            candidate1 = num\n            count1 = 1\n        elif count2 == 0:\n            candidate2 = num\n            count2 = 1\n        else:\n            count1 -= 1\n            count2 -= 1\n    \n    # Pass 2: Verify candidates\n    count1 = sum(1 for num in nums if num == candidate1)\n    count2 = sum(1 for num in nums if num == candidate2)\n    \n    result = []\n    n = len(nums)\n    if count1 > n // 3:\n        result.append(candidate1)\n    if count2 > n // 3:\n        result.append(candidate2)\n    \n    return result",
+        "javascript": "function majorityElement(nums) {\n    let candidate1 = 0, candidate2 = 0;\n    let count1 = 0, count2 = 0;\n    \n    // Pass 1: Find candidates\n    for (const num of nums) {\n        if (num === candidate1) {\n            count1++;\n        } else if (num === candidate2) {\n            count2++;\n        } else if (count1 === 0) {\n            candidate1 = num;\n            count1 = 1;\n        } else if (count2 === 0) {\n            candidate2 = num;\n            count2 = 1;\n        } else {\n            count1--;\n            count2--;\n        }\n    }\n    \n    // Pass 2: Verify candidates\n    count1 = 0;\n    count2 = 0;\n    for (const num of nums) {\n        if (num === candidate1) count1++;\n        else if (num === candidate2) count2++;\n    }\n    \n    const result = [];\n    const n = nums.length;\n    if (count1 > Math.floor(n / 3)) result.push(candidate1);\n    if (count2 > Math.floor(n / 3)) result.push(candidate2);\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not verifying candidates after first pass (they might not actually exceed n/3)",
+    "Forgetting that at most 2 elements can appear > n/3 times",
+    "Not handling case where candidate1 == candidate2",
+    "Using >= n/3 instead of > n/3",
+    "Not checking both candidates separately in verification pass"
+  ],
+  "hints": [
+    "At most 2 elements can appear more than n/3 times (pigeonhole principle)",
+    "Need TWO candidates in Boyer-Moore extension",
+    "First pass finds potential candidates, second pass verifies",
+    "When both counts are > 0 and new element doesn't match, decrement both",
+    "Must verify candidates because they might not actually exceed n/3"
+  ],
+  "followUp": [
+    "Find elements appearing > n/k times? (Generalized Boyer-Moore with k-1 candidates)",
+    "What if we need > n/4 times? (At most 3 candidates)",
+    "Can you do it in one pass? (No, need verification pass)",
+    "Prove at most 2 elements can appear > n/3 times? (If 3 elements each > n/3, sum > n - contradiction)",
+    "How to handle case where no element exceeds n/3? (Return empty list)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Zenefits"],
+  "tags": ["array", "hash-table", "sorting", "counting"],
+  "relatedProblems": [
+    "Majority Element",
+    "Check If a Number Is Majority Element in a Sorted Array",
+    "Most Frequent Even Element"
+  ]
+}

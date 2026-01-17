@@ -1,0 +1,164 @@
+{
+  "questionId": "139",
+  "questionSlug": "word-break",
+  "title": "Word Break",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/word-break/",
+    "videos": [
+      {
+        "title": "Word Break - Dynamic Programming",
+        "url": "https://www.youtube.com/watch?v=Sx9NNqCT-nA",
+        "channel": "NeetCode",
+        "duration": "10:20",
+        "language": "English"
+      },
+      {
+        "title": "Word Break Explained",
+        "url": "https://www.youtube.com/watch?v=fSaVlV-lYRM",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Word Break - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/word-break/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Word break problem with dynamic programming",
+        "url": "https://www.geeksforgeeks.org/word-break-problem-dp-32/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/word-break/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/word-break-1587115620/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Can string be segmented into words from dictionary? Use DP. dp[i] = can s[0:i] be segmented.",
+  "approaches": [
+    {
+      "name": "Brute Force - Recursive Backtracking",
+      "order": 1,
+      "intuition": "Try all possible ways to segment string. For each position, check if prefix is in dictionary, recurse on suffix.",
+      "approach": "Recursively check if we can segment substring starting from position.",
+      "steps": [
+        "canBreak(start):",
+        "  If start == len(s): return True (whole string processed)",
+        "  For end from start+1 to len(s):",
+        "    If s[start:end] in dictionary:",
+        "      If canBreak(end): return True",
+        "  Return False"
+      ],
+      "complexity": {
+        "time": "O(2^n)",
+        "space": "O(n)",
+        "timeExplanation": "Exponential: worst case try all subsets",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> dict(wordDict.begin(), wordDict.end());\n        return canBreak(0, s, dict);\n    }\n    \nprivate:\n    bool canBreak(int start, const string& s, const unordered_set<string>& dict) {\n        if (start == s.length()) return true;\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            string prefix = s.substr(start, end - start);\n            if (dict.count(prefix) && canBreak(end, s, dict)) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        return canBreak(0, s, dict);\n    }\n    \n    private boolean canBreak(int start, String s, Set<String> dict) {\n        if (start == s.length()) return true;\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            String prefix = s.substring(start, end);\n            if (dict.contains(prefix) && canBreak(end, s, dict)) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "def wordBreak(s, wordDict):\n    word_set = set(wordDict)\n    \n    def canBreak(start):\n        if start == len(s):\n            return True\n        \n        for end in range(start + 1, len(s) + 1):\n            if s[start:end] in word_set and canBreak(end):\n                return True\n        \n        return False\n    \n    return canBreak(0)",
+        "javascript": "function wordBreak(s, wordDict) {\n    const dict = new Set(wordDict);\n    \n    function canBreak(start) {\n        if (start === s.length) return true;\n        \n        for (let end = start + 1; end <= s.length; end++) {\n            const prefix = s.substring(start, end);\n            if (dict.has(prefix) && canBreak(end)) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n    \n    return canBreak(0);\n}"
+      }
+    },
+    {
+      "name": "Dynamic Programming - Bottom-Up DP",
+      "order": 2,
+      "intuition": "dp[i] = can s[0:i] be segmented into dictionary words. For each i, check all j < i where s[j:i] is in dict and dp[j] is true.",
+      "approach": "Build DP table where dp[i] represents if s[0:i] can be segmented.",
+      "steps": [
+        "dp[0] = True (empty string)",
+        "For i from 1 to len(s):",
+        "  For j from 0 to i:",
+        "    If dp[j] and s[j:i] in dictionary:",
+        "      dp[i] = True",
+        "      break",
+        "Return dp[len(s)]"
+      ],
+      "complexity": {
+        "time": "O(n^2 × m)",
+        "space": "O(n)",
+        "timeExplanation": "Check all i,j pairs (O(n^2)), substring check is O(m) where m is word length",
+        "spaceExplanation": "DP array of size n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> dict(wordDict.begin(), wordDict.end());\n        int n = s.length();\n        vector<bool> dp(n + 1, false);\n        dp[0] = true;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                if (dp[j]) {\n                    string word = s.substr(j, i - j);\n                    if (dict.count(word)) {\n                        dp[i] = true;\n                        break;\n                    }\n                }\n            }\n        }\n        \n        return dp[n];\n    }\n};",
+        "java": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        int n = s.length();\n        boolean[] dp = new boolean[n + 1];\n        dp[0] = true;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                if (dp[j]) {\n                    String word = s.substring(j, i);\n                    if (dict.contains(word)) {\n                        dp[i] = true;\n                        break;\n                    }\n                }\n            }\n        }\n        \n        return dp[n];\n    }\n}",
+        "python": "def wordBreak(s, wordDict):\n    word_set = set(wordDict)\n    n = len(s)\n    dp = [False] * (n + 1)\n    dp[0] = True\n    \n    for i in range(1, n + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break\n    \n    return dp[n]",
+        "javascript": "function wordBreak(s, wordDict) {\n    const dict = new Set(wordDict);\n    const n = s.length;\n    const dp = Array(n + 1).fill(false);\n    dp[0] = true;\n    \n    for (let i = 1; i <= n; i++) {\n        for (let j = 0; j < i; j++) {\n            if (dp[j]) {\n                const word = s.substring(j, i);\n                if (dict.has(word)) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n    }\n    \n    return dp[n];\n}"
+      }
+    },
+    {
+      "name": "Recursion with Memoization - Optimal",
+      "order": 3,
+      "intuition": "Use recursion but cache results to avoid recalculating same subproblems.",
+      "approach": "Top-down DP: recursively check, but cache visited positions.",
+      "steps": [
+        "memo = {}",
+        "canBreak(start):",
+        "  If start in memo: return memo[start]",
+        "  If start == len(s): return True",
+        "  For end from start+1 to len(s):",
+        "    If s[start:end] in dict and canBreak(end):",
+        "      memo[start] = True",
+        "      return True",
+        "  memo[start] = False",
+        "  return False"
+      ],
+      "complexity": {
+        "time": "O(n^2 × m)",
+        "space": "O(n)",
+        "timeExplanation": "Each position computed once, checking substrings is O(n × m)",
+        "spaceExplanation": "Memoization cache of size n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> dict(wordDict.begin(), wordDict.end());\n        unordered_map<int, bool> memo;\n        return canBreak(0, s, dict, memo);\n    }\n    \nprivate:\n    bool canBreak(int start, const string& s, const unordered_set<string>& dict, unordered_map<int, bool>& memo) {\n        if (start == s.length()) return true;\n        if (memo.count(start)) return memo[start];\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            string word = s.substr(start, end - start);\n            if (dict.count(word) && canBreak(end, s, dict, memo)) {\n                return memo[start] = true;\n            }\n        }\n        \n        return memo[start] = false;\n    }\n};",
+        "java": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        Map<Integer, Boolean> memo = new HashMap<>();\n        return canBreak(0, s, dict, memo);\n    }\n    \n    private boolean canBreak(int start, String s, Set<String> dict, Map<Integer, Boolean> memo) {\n        if (start == s.length()) return true;\n        if (memo.containsKey(start)) return memo.get(start);\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            String word = s.substring(start, end);\n            if (dict.contains(word) && canBreak(end, s, dict, memo)) {\n                memo.put(start, true);\n                return true;\n            }\n        }\n        \n        memo.put(start, false);\n        return false;\n    }\n}",
+        "python": "def wordBreak(s, wordDict):\n    word_set = set(wordDict)\n    memo = {}\n    \n    def canBreak(start):\n        if start in memo:\n            return memo[start]\n        \n        if start == len(s):\n            return True\n        \n        for end in range(start + 1, len(s) + 1):\n            if s[start:end] in word_set and canBreak(end):\n                memo[start] = True\n                return True\n        \n        memo[start] = False\n        return False\n    \n    return canBreak(0)",
+        "javascript": "function wordBreak(s, wordDict) {\n    const dict = new Set(wordDict);\n    const memo = {};\n    \n    function canBreak(start) {\n        if (start in memo) return memo[start];\n        if (start === s.length) return true;\n        \n        for (let end = start + 1; end <= s.length; end++) {\n            const word = s.substring(start, end);\n            if (dict.has(word) && canBreak(end)) {\n                memo[start] = true;\n                return true;\n            }\n        }\n        \n        memo[start] = false;\n        return false;\n    }\n    \n    return canBreak(0);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using list instead of set for dictionary lookup (O(n) instead of O(1))",
+    "Not initializing dp[0] = true",
+    "Checking substring after recursion instead of during",
+    "Off-by-one errors in substring indices",
+    "Not using memoization, causing TLE on large inputs"
+  ],
+  "hints": [
+    "Use hash set for O(1) word lookup",
+    "DP state: dp[i] = can s[0:i] be segmented",
+    "For each position, check all previous positions",
+    "If dp[j] true and s[j:i] in dict, then dp[i] = true",
+    "Consider memoization for recursive approach"
+  ],
+  "followUp": [
+    "Find all ways to segment string? (Word Break II - backtracking)",
+    "Return the segmentation itself? (Track parent in DP)",
+    "Minimum segments needed? (Track count in DP)",
+    "Multiple dictionaries? (Combine or check each)",
+    "Case-insensitive matching? (Convert to lowercase)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft", "Apple"],
+  "tags": ["dynamic-programming", "string", "backtracking"],
+  "relatedProblems": [
+    "Word Break II",
+    "Word Ladder",
+    "Palindrome Partitioning",
+    "Letter Combinations of Phone Number"
+  ]
+}

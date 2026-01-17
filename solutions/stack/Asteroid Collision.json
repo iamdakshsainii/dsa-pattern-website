@@ -1,0 +1,178 @@
+{
+  "questionId": "735",
+  "questionSlug": "asteroid-collision",
+  "title": "Asteroid Collision",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/asteroid-collision/",
+    "videos": [
+      {
+        "title": "Asteroid Collision - Stack Solution",
+        "url": "https://www.youtube.com/watch?v=LN7KjRszjk4",
+        "channel": "NeetCode",
+        "duration": "11:35",
+        "language": "English"
+      },
+      {
+        "title": "Asteroid Collision Explained",
+        "url": "https://www.youtube.com/watch?v=6tZF7FCco0Y",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "13:20",
+        "language": "English"
+      },
+      {
+        "title": "Stack Based Approach - Asteroid Collision",
+        "url": "https://www.youtube.com/watch?v=M3cDEUo_l-M",
+        "channel": "Pepcoding",
+        "duration": "15:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Asteroid Collision - LeetCode Official",
+        "url": "https://leetcode.com/problems/asteroid-collision/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Asteroid Collision Solution",
+        "url": "https://takeuforward.org/data-structure/asteroid-collision/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Asteroid Collision - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/asteroid-collision/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/asteroid-collision/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Collision/cancellation pattern = Stack. Right-moving asteroids in stack, left-moving collide with stack top. Process collisions until stable.",
+  "approaches": [
+    {
+      "name": "Simulation - Track All Asteroids",
+      "order": 1,
+      "intuition": "Simulate collisions by repeatedly scanning array and removing colliding asteroids until no more collisions occur.",
+      "approach": "Keep scanning array, find collisions (positive followed by negative), resolve them, repeat until stable.",
+      "steps": [
+        "Initialize result with asteroids",
+        "While changes occur:",
+        "  For i from 0 to n-2:",
+        "    If result[i] > 0 and result[i+1] < 0:",
+        "      Compare absolute values",
+        "      Remove smaller/both based on comparison",
+        "      Mark changed = true",
+        "      break",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "May need multiple passes through array to resolve all collisions",
+        "spaceExplanation": "Result array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> asteroidCollision(vector<int>& asteroids) {\n        vector<int> result = asteroids;\n        bool changed = true;\n        \n        while (changed) {\n            changed = false;\n            vector<int> temp;\n            \n            for (int i = 0; i < result.size(); i++) {\n                if (i < result.size() - 1 && result[i] > 0 && result[i+1] < 0) {\n                    // Collision\n                    int left = result[i];\n                    int right = -result[i+1];\n                    \n                    if (left > right) {\n                        temp.push_back(result[i]);\n                    } else if (left < right) {\n                        temp.push_back(result[i+1]);\n                    }\n                    // If equal, both destroyed\n                    \n                    i++; // Skip next asteroid\n                    changed = true;\n                } else {\n                    temp.push_back(result[i]);\n                }\n            }\n            \n            result = temp;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] asteroidCollision(int[] asteroids) {\n        List<Integer> result = new ArrayList<>();\n        for (int a : asteroids) result.add(a);\n        \n        boolean changed = true;\n        while (changed) {\n            changed = false;\n            List<Integer> temp = new ArrayList<>();\n            \n            for (int i = 0; i < result.size(); i++) {\n                if (i < result.size() - 1 && result.get(i) > 0 && result.get(i+1) < 0) {\n                    int left = result.get(i);\n                    int right = -result.get(i+1);\n                    \n                    if (left > right) {\n                        temp.add(result.get(i));\n                    } else if (left < right) {\n                        temp.add(result.get(i+1));\n                    }\n                    \n                    i++;\n                    changed = true;\n                } else {\n                    temp.add(result.get(i));\n                }\n            }\n            \n            result = temp;\n        }\n        \n        return result.stream().mapToInt(i -> i).toArray();\n    }\n}",
+        "python": "class Solution:\n    def asteroidCollision(self, asteroids: List[int]) -> List[int]:\n        result = asteroids[:]\n        changed = True\n        \n        while changed:\n            changed = False\n            temp = []\n            i = 0\n            \n            while i < len(result):\n                if i < len(result) - 1 and result[i] > 0 and result[i+1] < 0:\n                    left = result[i]\n                    right = -result[i+1]\n                    \n                    if left > right:\n                        temp.append(result[i])\n                    elif left < right:\n                        temp.append(result[i+1])\n                    \n                    i += 2\n                    changed = True\n                else:\n                    temp.append(result[i])\n                    i += 1\n            \n            result = temp\n        \n        return result",
+        "javascript": "var asteroidCollision = function(asteroids) {\n    let result = [...asteroids];\n    let changed = true;\n    \n    while (changed) {\n        changed = false;\n        const temp = [];\n        \n        for (let i = 0; i < result.length; i++) {\n            if (i < result.length - 1 && result[i] > 0 && result[i+1] < 0) {\n                const left = result[i];\n                const right = -result[i+1];\n                \n                if (left > right) {\n                    temp.push(result[i]);\n                } else if (left < right) {\n                    temp.push(result[i+1]);\n                }\n                \n                i++;\n                changed = true;\n            } else {\n                temp.push(result[i]);\n            }\n        }\n        \n        result = temp;\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Stack - Process Collisions on the Fly",
+      "order": 2,
+      "intuition": "Use stack to track right-moving asteroids. When left-moving asteroid comes, resolve collisions with stack immediately.",
+      "approach": "Push right-moving to stack. For left-moving, pop and compare until collision resolved or stack empty.",
+      "steps": [
+        "Create stack",
+        "For each asteroid:",
+        "  If positive: push to stack",
+        "  If negative:",
+        "    While stack not empty and stack.top() > 0 and stack.top() < |asteroid|:",
+        "      Pop (smaller right-moving destroyed)",
+        "    If stack empty or stack.top() < 0:",
+        "      Push asteroid (no collision or both moving left)",
+        "    Else if stack.top() == |asteroid|:",
+        "      Pop (both destroyed)",
+        "Return stack as array"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each asteroid pushed and popped at most once",
+        "spaceExplanation": "Stack holds surviving asteroids"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> asteroidCollision(vector<int>& asteroids) {\n        vector<int> stack;\n        \n        for (int asteroid : asteroids) {\n            bool destroyed = false;\n            \n            // Process collisions for left-moving asteroid\n            while (!stack.empty() && asteroid < 0 && stack.back() > 0) {\n                if (stack.back() < -asteroid) {\n                    // Right-moving destroyed, continue checking\n                    stack.pop_back();\n                } else if (stack.back() == -asteroid) {\n                    // Both destroyed\n                    stack.pop_back();\n                    destroyed = true;\n                    break;\n                } else {\n                    // Left-moving destroyed\n                    destroyed = true;\n                    break;\n                }\n            }\n            \n            if (!destroyed) {\n                stack.push_back(asteroid);\n            }\n        }\n        \n        return stack;\n    }\n};",
+        "java": "class Solution {\n    public int[] asteroidCollision(int[] asteroids) {\n        Stack<Integer> stack = new Stack<>();\n        \n        for (int asteroid : asteroids) {\n            boolean destroyed = false;\n            \n            while (!stack.isEmpty() && asteroid < 0 && stack.peek() > 0) {\n                if (stack.peek() < -asteroid) {\n                    stack.pop();\n                } else if (stack.peek() == -asteroid) {\n                    stack.pop();\n                    destroyed = true;\n                    break;\n                } else {\n                    destroyed = true;\n                    break;\n                }\n            }\n            \n            if (!destroyed) {\n                stack.push(asteroid);\n            }\n        }\n        \n        return stack.stream().mapToInt(i -> i).toArray();\n    }\n}",
+        "python": "class Solution:\n    def asteroidCollision(self, asteroids: List[int]) -> List[int]:\n        stack = []\n        \n        for asteroid in asteroids:\n            destroyed = False\n            \n            while stack and asteroid < 0 and stack[-1] > 0:\n                if stack[-1] < -asteroid:\n                    stack.pop()\n                elif stack[-1] == -asteroid:\n                    stack.pop()\n                    destroyed = True\n                    break\n                else:\n                    destroyed = True\n                    break\n            \n            if not destroyed:\n                stack.append(asteroid)\n        \n        return stack",
+        "javascript": "var asteroidCollision = function(asteroids) {\n    const stack = [];\n    \n    for (const asteroid of asteroids) {\n        let destroyed = false;\n        \n        while (stack.length > 0 && asteroid < 0 && stack[stack.length - 1] > 0) {\n            if (stack[stack.length - 1] < -asteroid) {\n                stack.pop();\n            } else if (stack[stack.length - 1] === -asteroid) {\n                stack.pop();\n                destroyed = true;\n                break;\n            } else {\n                destroyed = true;\n                break;\n            }\n        }\n        \n        if (!destroyed) {\n            stack.push(asteroid);\n        }\n    }\n    \n    return stack;\n};"
+      }
+    },
+    {
+      "name": "Stack - Cleaner Logic - Optimal",
+      "order": 3,
+      "intuition": "Same stack approach but with cleaner collision handling logic. Separate concerns: collision detection, resolution, and survival.",
+      "approach": "Use flag to track if asteroid survives. Process all collisions in while loop before deciding to add.",
+      "steps": [
+        "Create stack",
+        "For each asteroid:",
+        "  alive = true",
+        "  While alive and asteroid < 0 and stack not empty and stack.top() > 0:",
+        "    If stack.top() < |asteroid|: pop",
+        "    Else if stack.top() == |asteroid|: pop and alive = false",
+        "    Else: alive = false",
+        "  If alive: push asteroid",
+        "Return stack"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each asteroid pushed and popped at most once",
+        "spaceExplanation": "Stack stores surviving asteroids"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> asteroidCollision(vector<int>& asteroids) {\n        vector<int> stack;\n        \n        for (int asteroid : asteroids) {\n            bool alive = true;\n            \n            // Handle collisions\n            while (alive && asteroid < 0 && !stack.empty() && stack.back() > 0) {\n                // Right-moving vs left-moving collision\n                if (stack.back() < -asteroid) {\n                    // Right asteroid destroyed\n                    stack.pop_back();\n                } else if (stack.back() == -asteroid) {\n                    // Both destroyed\n                    stack.pop_back();\n                    alive = false;\n                } else {\n                    // Left asteroid destroyed\n                    alive = false;\n                }\n            }\n            \n            if (alive) {\n                stack.push_back(asteroid);\n            }\n        }\n        \n        return stack;\n    }\n};",
+        "java": "class Solution {\n    public int[] asteroidCollision(int[] asteroids) {\n        Stack<Integer> stack = new Stack<>();\n        \n        for (int asteroid : asteroids) {\n            boolean alive = true;\n            \n            while (alive && asteroid < 0 && !stack.isEmpty() && stack.peek() > 0) {\n                if (stack.peek() < -asteroid) {\n                    stack.pop();\n                } else if (stack.peek() == -asteroid) {\n                    stack.pop();\n                    alive = false;\n                } else {\n                    alive = false;\n                }\n            }\n            \n            if (alive) {\n                stack.push(asteroid);\n            }\n        }\n        \n        int[] result = new int[stack.size()];\n        for (int i = result.length - 1; i >= 0; i--) {\n            result[i] = stack.pop();\n        }\n        return result;\n    }\n}",
+        "python": "class Solution:\n    def asteroidCollision(self, asteroids: List[int]) -> List[int]:\n        stack = []\n        \n        for asteroid in asteroids:\n            alive = True\n            \n            while alive and asteroid < 0 and stack and stack[-1] > 0:\n                if stack[-1] < -asteroid:\n                    stack.pop()\n                elif stack[-1] == -asteroid:\n                    stack.pop()\n                    alive = False\n                else:\n                    alive = False\n            \n            if alive:\n                stack.append(asteroid)\n        \n        return stack",
+        "javascript": "var asteroidCollision = function(asteroids) {\n    const stack = [];\n    \n    for (const asteroid of asteroids) {\n        let alive = true;\n        \n        while (alive && asteroid < 0 && stack.length > 0 && stack[stack.length - 1] > 0) {\n            if (stack[stack.length - 1] < -asteroid) {\n                stack.pop();\n            } else if (stack[stack.length - 1] === -asteroid) {\n                stack.pop();\n                alive = false;\n            } else {\n                alive = false;\n            }\n        }\n        \n        if (alive) {\n            stack.push(asteroid);\n        }\n    }\n    \n    return stack;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting that only right-moving and left-moving asteroids collide (not same direction)",
+    "Not handling equal size collisions (both should be destroyed)",
+    "Processing collisions in wrong order (should process immediately as we go)",
+    "Not considering that left-moving asteroids never collide with each other",
+    "Forgetting edge case where all asteroids move in same direction"
+  ],
+  "hints": [
+    "Collision only happens between right-moving (positive) and left-moving (negative)",
+    "Stack naturally tracks right-moving asteroids waiting for collision",
+    "When left-moving comes, resolve ALL collisions with stack before adding",
+    "Compare absolute values to determine which survives",
+    "If both same size, both are destroyed"
+  ],
+  "followUp": [
+    "What if asteroids have different speeds?",
+    "Can you handle 2D version (asteroids moving in 4 directions)?",
+    "What if we need to track collision history?",
+    "How to optimize for stream of asteroids?",
+    "What about circular orbit (wraparound)?"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Apple"],
+  "tags": ["array", "stack", "simulation"],
+  "relatedProblems": [
+    "Can Place Flowers",
+    "Destroy Sequential Targets",
+    "Robot Collisions",
+    "Remove All Adjacent Duplicates in String",
+    "Car Fleet"
+  ]
+}

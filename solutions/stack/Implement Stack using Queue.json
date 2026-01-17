@@ -1,0 +1,182 @@
+{
+  "questionId": "225",
+  "questionSlug": "implement-stack-using-queues",
+  "title": "Implement Stack using Queues",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/implement-stack-using-queues/",
+    "videos": [
+      {
+        "title": "Implement Stack using Queues",
+        "url": "https://www.youtube.com/watch?v=rW4vm0-DLYc",
+        "channel": "NeetCode",
+        "duration": "7:45",
+        "language": "English"
+      },
+      {
+        "title": "Stack using One Queue",
+        "url": "https://www.youtube.com/watch?v=ht_JuPq2JJw",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Stack Implementation with Queues",
+        "url": "https://www.youtube.com/watch?v=SPeeXYShB5I",
+        "channel": "take U forward",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Implement Stack using Queues - LeetCode Official",
+        "url": "https://leetcode.com/problems/implement-stack-using-queues/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Stack using Queues",
+        "url": "https://takeuforward.org/data-structure/implement-stack-using-queue/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Stack using Queues - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/implement-stack-using-queue/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/implement-stack-using-queues/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/stack-using-two-queues/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Stack (LIFO) from Queues (FIFO) = Rotate queue on push OR rotate on pop. Single queue sufficient with rotation.",
+  "approaches": [
+    {
+      "name": "Two Queues - Push Expensive",
+      "order": 1,
+      "intuition": "Use two queues. On push, add to q2, transfer all from q1 to q2, then swap names. Keeps newest element at front.",
+      "approach": "Push: add to empty queue, move all from other queue, swap. Pop/top: simple dequeue from q1.",
+      "steps": [
+        "push(x):",
+        "  Add x to q2",
+        "  Move all from q1 to q2",
+        "  Swap q1 and q2",
+        "pop():",
+        "  Dequeue from q1",
+        "top():",
+        "  Return q1.front()",
+        "empty():",
+        "  Return q1.empty()"
+      ],
+      "complexity": {
+        "time": "O(n) push, O(1) pop/top",
+        "space": "O(n)",
+        "timeExplanation": "Push moves all n elements",
+        "spaceExplanation": "Two queues store elements"
+      },
+      "code": {
+        "cpp": "class MyStack {\nprivate:\n    queue<int> q1;\n    queue<int> q2;\n    \npublic:\n    MyStack() {\n    }\n    \n    void push(int x) {\n        // Add to q2\n        q2.push(x);\n        \n        // Move all from q1 to q2\n        while (!q1.empty()) {\n            q2.push(q1.front());\n            q1.pop();\n        }\n        \n        // Swap queues\n        swap(q1, q2);\n    }\n    \n    int pop() {\n        int top = q1.front();\n        q1.pop();\n        return top;\n    }\n    \n    int top() {\n        return q1.front();\n    }\n    \n    bool empty() {\n        return q1.empty();\n    }\n};",
+        "java": "class MyStack {\n    private Queue<Integer> q1;\n    private Queue<Integer> q2;\n    \n    public MyStack() {\n        q1 = new LinkedList<>();\n        q2 = new LinkedList<>();\n    }\n    \n    public void push(int x) {\n        q2.add(x);\n        \n        while (!q1.isEmpty()) {\n            q2.add(q1.remove());\n        }\n        \n        Queue<Integer> temp = q1;\n        q1 = q2;\n        q2 = temp;\n    }\n    \n    public int pop() {\n        return q1.remove();\n    }\n    \n    public int top() {\n        return q1.peek();\n    }\n    \n    public boolean empty() {\n        return q1.isEmpty();\n    }\n}",
+        "python": "from collections import deque\n\nclass MyStack:\n    def __init__(self):\n        self.q1 = deque()\n        self.q2 = deque()\n    \n    def push(self, x: int) -> None:\n        self.q2.append(x)\n        \n        while self.q1:\n            self.q2.append(self.q1.popleft())\n        \n        self.q1, self.q2 = self.q2, self.q1\n    \n    def pop(self) -> int:\n        return self.q1.popleft()\n    \n    def top(self) -> int:\n        return self.q1[0]\n    \n    def empty(self) -> bool:\n        return len(self.q1) == 0",
+        "javascript": "var MyStack = function() {\n    this.q1 = [];\n    this.q2 = [];\n};\n\nMyStack.prototype.push = function(x) {\n    this.q2.push(x);\n    \n    while (this.q1.length > 0) {\n        this.q2.push(this.q1.shift());\n    }\n    \n    [this.q1, this.q2] = [this.q2, this.q1];\n};\n\nMyStack.prototype.pop = function() {\n    return this.q1.shift();\n};\n\nMyStack.prototype.top = function() {\n    return this.q1[0];\n};\n\nMyStack.prototype.empty = function() {\n    return this.q1.length === 0;\n};"
+      }
+    },
+    {
+      "name": "Two Queues - Pop Expensive",
+      "order": 2,
+      "intuition": "Use two queues. On pop, move all but last element to q2, pop last from q1. Swap for next operation.",
+      "approach": "Push: simple add to q1. Pop: move n-1 elements to q2, pop last, swap queues.",
+      "steps": [
+        "push(x):",
+        "  Add to q1",
+        "pop():",
+        "  Move all but last from q1 to q2",
+        "  Pop and return last from q1",
+        "  Swap q1 and q2",
+        "top():",
+        "  Similar to pop but re-add last element"
+      ],
+      "complexity": {
+        "time": "O(1) push, O(n) pop/top",
+        "space": "O(n)",
+        "timeExplanation": "Pop moves n-1 elements",
+        "spaceExplanation": "Two queues"
+      },
+      "code": {
+        "cpp": "class MyStack {\nprivate:\n    queue<int> q1;\n    queue<int> q2;\n    \npublic:\n    MyStack() {\n    }\n    \n    void push(int x) {\n        q1.push(x);\n    }\n    \n    int pop() {\n        // Move all but last to q2\n        while (q1.size() > 1) {\n            q2.push(q1.front());\n            q1.pop();\n        }\n        \n        int top = q1.front();\n        q1.pop();\n        \n        // Swap queues\n        swap(q1, q2);\n        \n        return top;\n    }\n    \n    int top() {\n        // Move all but last to q2\n        while (q1.size() > 1) {\n            q2.push(q1.front());\n            q1.pop();\n        }\n        \n        int topElement = q1.front();\n        q2.push(topElement);\n        q1.pop();\n        \n        // Swap queues\n        swap(q1, q2);\n        \n        return topElement;\n    }\n    \n    bool empty() {\n        return q1.empty();\n    }\n};",
+        "java": "class MyStack {\n    private Queue<Integer> q1;\n    private Queue<Integer> q2;\n    \n    public MyStack() {\n        q1 = new LinkedList<>();\n        q2 = new LinkedList<>();\n    }\n    \n    public void push(int x) {\n        q1.add(x);\n    }\n    \n    public int pop() {\n        while (q1.size() > 1) {\n            q2.add(q1.remove());\n        }\n        \n        int top = q1.remove();\n        \n        Queue<Integer> temp = q1;\n        q1 = q2;\n        q2 = temp;\n        \n        return top;\n    }\n    \n    public int top() {\n        while (q1.size() > 1) {\n            q2.add(q1.remove());\n        }\n        \n        int topElement = q1.peek();\n        q2.add(q1.remove());\n        \n        Queue<Integer> temp = q1;\n        q1 = q2;\n        q2 = temp;\n        \n        return topElement;\n    }\n    \n    public boolean empty() {\n        return q1.isEmpty();\n    }\n}",
+        "python": "from collections import deque\n\nclass MyStack:\n    def __init__(self):\n        self.q1 = deque()\n        self.q2 = deque()\n    \n    def push(self, x: int) -> None:\n        self.q1.append(x)\n    \n    def pop(self) -> int:\n        while len(self.q1) > 1:\n            self.q2.append(self.q1.popleft())\n        \n        top = self.q1.popleft()\n        self.q1, self.q2 = self.q2, self.q1\n        \n        return top\n    \n    def top(self) -> int:\n        while len(self.q1) > 1:\n            self.q2.append(self.q1.popleft())\n        \n        top_element = self.q1[0]\n        self.q2.append(self.q1.popleft())\n        self.q1, self.q2 = self.q2, self.q1\n        \n        return top_element\n    \n    def empty(self) -> bool:\n        return len(self.q1) == 0",
+        "javascript": "var MyStack = function() {\n    this.q1 = [];\n    this.q2 = [];\n};\n\nMyStack.prototype.push = function(x) {\n    this.q1.push(x);\n};\n\nMyStack.prototype.pop = function() {\n    while (this.q1.length > 1) {\n        this.q2.push(this.q1.shift());\n    }\n    \n    const top = this.q1.shift();\n    [this.q1, this.q2] = [this.q2, this.q1];\n    \n    return top;\n};\n\nMyStack.prototype.top = function() {\n    while (this.q1.length > 1) {\n        this.q2.push(this.q1.shift());\n    }\n    \n    const topElement = this.q1[0];\n    this.q2.push(this.q1.shift());\n    [this.q1, this.q2] = [this.q2, this.q1];\n    \n    return topElement;\n};\n\nMyStack.prototype.empty = function() {\n    return this.q1.length === 0;\n};"
+      }
+    },
+    {
+      "name": "Single Queue - Rotate on Push - Optimal",
+      "order": 3,
+      "intuition": "Only need one queue! On push, add element then rotate all previous elements to back. Newest element ends up at front.",
+      "approach": "Push: add element, then dequeue and enqueue each existing element (size-1 times). Makes newest element front.",
+      "steps": [
+        "push(x):",
+        "  size = queue.size()",
+        "  queue.push(x)",
+        "  For i from 0 to size-1:",
+        "    queue.push(queue.front())",
+        "    queue.pop()",
+        "pop():",
+        "  Return queue.pop()",
+        "top():",
+        "  Return queue.front()"
+      ],
+      "complexity": {
+        "time": "O(n) push, O(1) pop/top",
+        "space": "O(n)",
+        "timeExplanation": "Push rotates all n elements",
+        "spaceExplanation": "Single queue"
+      },
+      "code": {
+        "cpp": "class MyStack {\nprivate:\n    queue<int> q;\n    \npublic:\n    MyStack() {\n    }\n    \n    void push(int x) {\n        int size = q.size();\n        q.push(x);\n        \n        // Rotate: move all previous elements to back\n        for (int i = 0; i < size; i++) {\n            q.push(q.front());\n            q.pop();\n        }\n    }\n    \n    int pop() {\n        int top = q.front();\n        q.pop();\n        return top;\n    }\n    \n    int top() {\n        return q.front();\n    }\n    \n    bool empty() {\n        return q.empty();\n    }\n};",
+        "java": "class MyStack {\n    private Queue<Integer> q;\n    \n    public MyStack() {\n        q = new LinkedList<>();\n    }\n    \n    public void push(int x) {\n        int size = q.size();\n        q.add(x);\n        \n        for (int i = 0; i < size; i++) {\n            q.add(q.remove());\n        }\n    }\n    \n    public int pop() {\n        return q.remove();\n    }\n    \n    public int top() {\n        return q.peek();\n    }\n    \n    public boolean empty() {\n        return q.isEmpty();\n    }\n}",
+        "python": "from collections import deque\n\nclass MyStack:\n    def __init__(self):\n        self.q = deque()\n    \n    def push(self, x: int) -> None:\n        size = len(self.q)\n        self.q.append(x)\n        \n        for _ in range(size):\n            self.q.append(self.q.popleft())\n    \n    def pop(self) -> int:\n        return self.q.popleft()\n    \n    def top(self) -> int:\n        return self.q[0]\n    \n    def empty(self) -> bool:\n        return len(self.q) == 0",
+        "javascript": "var MyStack = function() {\n    this.q = [];\n};\n\nMyStack.prototype.push = function(x) {\n    const size = this.q.length;\n    this.q.push(x);\n    \n    for (let i = 0; i < size; i++) {\n        this.q.push(this.q.shift());\n    }\n};\n\nMyStack.prototype.pop = function() {\n    return this.q.shift();\n};\n\nMyStack.prototype.top = function() {\n    return this.q[0];\n};\n\nMyStack.prototype.empty = function() {\n    return this.q.length === 0;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "In single queue approach: forgetting to capture size before adding new element",
+    "Rotating wrong number of times (should be old size, not new size)",
+    "Not understanding that rotation brings newest to front",
+    "In two queue approach: forgetting to swap queues after operation",
+    "Thinking you need more than two queues (one is sufficient!)"
+  ],
+  "hints": [
+    "Stack is LIFO, Queue is FIFO - need to reverse order somehow",
+    "Single queue is sufficient with rotation technique",
+    "Key insight: after adding element, rotate old elements to back",
+    "Two queue approach: either make push expensive or pop expensive",
+    "Single queue approach is most elegant and space efficient"
+  ],
+  "followUp": [
+    "Which is better: push expensive or pop expensive? (Depends on usage pattern)",
+    "Can you do it with O(1) push AND O(1) pop? (No, not possible with queues)",
+    "What if queue supports random access? (Could optimize top() to O(1))",
+    "How does performance compare to array-based stack?",
+    "Can you implement with deque for better performance?"
+  ],
+  "companies": ["Microsoft", "Amazon", "Bloomberg", "Apple", "Oracle"],
+  "tags": ["stack", "design", "queue"],
+  "relatedProblems": [
+    "Implement Queue using Stacks",
+    "Design Circular Queue",
+    "Design Circular Deque",
+    "Min Stack",
+    "Max Stack"
+  ]
+}

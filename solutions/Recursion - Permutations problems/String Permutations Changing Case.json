@@ -1,0 +1,176 @@
+{
+  "questionId": "60",
+  "questionSlug": "permutation-sequence",
+  "title": "Permutation Sequence",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/permutation-sequence/",
+    "videos": [
+      {
+        "title": "Permutation Sequence - Factoradic Algorithm",
+        "url": "https://www.youtube.com/watch?v=RCbkAX1-_F0",
+        "channel": "NeetCode",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Kth Permutation Explained",
+        "url": "https://www.youtube.com/watch?v=ximHdaKAhH8",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Permutation Sequence - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/permutation-sequence/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Kth Permutation - Factoradic Number System",
+        "url": "https://www.geeksforgeeks.org/find-the-k-th-permutation-of-n-numbers/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/permutation-sequence/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/permutation-sequence/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find kth permutation of 1 to n without generating all? Use factoradic number system. Divide k by factorials.",
+  "approaches": [
+    {
+      "name": "Brute Force - Generate All and Find",
+      "order": 1,
+      "intuition": "Generate all n! permutations, return kth one. Very inefficient for large n.",
+      "approach": "Generate all permutations using next_permutation, return kth.",
+      "steps": [
+        "Create list [1, 2, ..., n]",
+        "Generate all permutations using next_permutation",
+        "Return the kth permutation (k-1 index)"
+      ],
+      "complexity": {
+        "time": "O(n! × n)",
+        "space": "O(n!)",
+        "timeExplanation": "Generate and process all n! permutations",
+        "spaceExplanation": "Store all permutations"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string getPermutation(int n, int k) {\n        string nums = \"\";\n        for (int i = 1; i <= n; i++) nums += to_string(i);\n        \n        for (int i = 1; i < k; i++) {\n            next_permutation(nums.begin(), nums.end());\n        }\n        \n        return nums;\n    }\n};",
+        "java": "class Solution {\n    public String getPermutation(int n, int k) {\n        StringBuilder nums = new StringBuilder();\n        for (int i = 1; i <= n; i++) nums.append(i);\n        \n        String s = nums.toString();\n        char[] chars = s.toCharArray();\n        \n        for (int i = 1; i < k; i++) {\n            nextPermutation(chars);\n        }\n        \n        return new String(chars);\n    }\n    \n    private void nextPermutation(char[] chars) {\n        int i = chars.length - 2;\n        while (i >= 0 && chars[i] >= chars[i + 1]) i--;\n        if (i < 0) return;\n        \n        int j = chars.length - 1;\n        while (j > i && chars[j] <= chars[i]) j--;\n        swap(chars, i, j);\n        reverse(chars, i + 1);\n    }\n    \n    private void swap(char[] chars, int i, int j) {\n        char t = chars[i];\n        chars[i] = chars[j];\n        chars[j] = t;\n    }\n    \n    private void reverse(char[] chars, int start) {\n        int end = chars.length - 1;\n        while (start < end) {\n            swap(chars, start++, end--);\n        }\n    }\n}",
+        "python": "def getPermutation(n, k):\n    from itertools import permutations\n    perms = permutations(range(1, n + 1))\n    for i, perm in enumerate(perms, 1):\n        if i == k:\n            return ''.join(map(str, perm))",
+        "javascript": "function getPermutation(n, k) {\n    let nums = [];\n    for (let i = 1; i <= n; i++) nums.push(i);\n    \n    for (let i = 1; i < k; i++) {\n        nextPermutation(nums);\n    }\n    \n    return nums.join('');\n}\n\nfunction nextPermutation(nums) {\n    let i = nums.length - 2;\n    while (i >= 0 && nums[i] >= nums[i + 1]) i--;\n    if (i < 0) return;\n    \n    let j = nums.length - 1;\n    while (j > i && nums[j] <= nums[i]) j--;\n    [nums[i], nums[j]] = [nums[j], nums[i]];\n    \n    let left = i + 1, right = nums.length - 1;\n    while (left < right) {\n        [nums[left], nums[right]] = [nums[right], nums[left]];\n        left++;\n        right--;\n    }\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Early Termination",
+      "order": 2,
+      "intuition": "Use backtracking to generate permutations and count. Stop when we reach the kth permutation.",
+      "approach": "Build permutations recursively, increment counter, return when counter reaches k.",
+      "steps": [
+        "nums = [1, 2, ..., n]",
+        "used = [False] * n",
+        "count = [0]",
+        "result = ['']",
+        "",
+        "backtrack(current):",
+        "  If len(current) == n:",
+        "    count[0] += 1",
+        "    If count[0] == k:",
+        "      result[0] = current",
+        "    Return",
+        "  For i in range(n):",
+        "    If not used[i] and not found:",
+        "      used[i] = True",
+        "      backtrack(current + str(nums[i]))",
+        "      used[i] = False"
+      ],
+      "complexity": {
+        "time": "O(k × n)",
+        "space": "O(n)",
+        "timeExplanation": "Generate up to kth permutation, not all n!",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string getPermutation(int n, int k) {\n        vector<int> nums;\n        for (int i = 1; i <= n; i++) nums.push_back(i);\n        \n        string result = \"\";\n        vector<bool> used(n, false);\n        int count = 0;\n        \n        backtrack(nums, used, \"\", k, count, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(vector<int>& nums, vector<bool>& used, string current, int k, int& count, string& result) {\n        if (current.length() == nums.size()) {\n            count++;\n            if (count == k) result = current;\n            return;\n        }\n        \n        if (!result.empty()) return; // Already found\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (!used[i]) {\n                used[i] = true;\n                current += to_string(nums[i]);\n                backtrack(nums, used, current, k, count, result);\n                current.pop_back();\n                used[i] = false;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    private int count = 0;\n    private String result = \"\";\n    \n    public String getPermutation(int n, int k) {\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 1; i <= n; i++) nums.add(i);\n        \n        backtrack(nums, new boolean[n], \"\", k);\n        return result;\n    }\n    \n    private void backtrack(List<Integer> nums, boolean[] used, String current, int k) {\n        if (current.length() == nums.size()) {\n            count++;\n            if (count == k) result = current;\n            return;\n        }\n        \n        if (!result.isEmpty()) return;\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (!used[i]) {\n                used[i] = true;\n                backtrack(nums, used, current + nums.get(i), k);\n                used[i] = false;\n            }\n        }\n    }\n}",
+        "python": "def getPermutation(n, k):\n    nums = list(range(1, n + 1))\n    count = [0]\n    result = ['']\n    used = [False] * n\n    \n    def backtrack(current):\n        if len(current) == n:\n            count[0] += 1\n            if count[0] == k:\n                result[0] = current\n            return\n        \n        if result[0]:  # Already found\n            return\n        \n        for i in range(n):\n            if not used[i]:\n                used[i] = True\n                backtrack(current + str(nums[i]))\n                used[i] = False\n    \n    backtrack('')\n    return result[0]",
+        "javascript": "function getPermutation(n, k) {\n    const nums = Array.from({length: n}, (_, i) => i + 1);\n    let count = 0, result = '';\n    const used = Array(n).fill(false);\n    \n    function backtrack(current) {\n        if (current.length === n) {\n            count++;\n            if (count === k) result = current;\n            return;\n        }\n        \n        if (result) return;\n        \n        for (let i = 0; i < n; i++) {\n            if (!used[i]) {\n                used[i] = true;\n                backtrack(current + nums[i]);\n                used[i] = false;\n            }\n        }\n    }\n    \n    backtrack('');\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Factoradic Number System - Optimal",
+      "order": 3,
+      "intuition": "Use factorial number system. k directly maps to which elements to choose at each step without generating permutations.",
+      "approach": "Convert k using factorial division to pick elements directly.",
+      "steps": [
+        "nums = [1, 2, ..., n]",
+        "k = k - 1  (convert to 0-indexed)",
+        "result = ''",
+        "fact = (n-1)!",
+        "",
+        "For i from 0 to n-1:",
+        "  idx = k / fact",
+        "  result += str(nums[idx])",
+        "  nums.remove(nums[idx])",
+        "  k = k % fact",
+        "  If i < n-1:",
+        "    fact = fact / (n-1-i)",
+        "",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n^2)",
+        "space": "O(n)",
+        "timeExplanation": "n iterations, each removes from list (O(n))",
+        "spaceExplanation": "Store nums list"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string getPermutation(int n, int k) {\n        vector<int> nums;\n        vector<int> fact(n);\n        fact[0] = 1;\n        \n        for (int i = 1; i < n; i++) {\n            nums.push_back(i);\n            fact[i] = fact[i - 1] * i;\n        }\n        nums.push_back(n);\n        \n        k--; // Convert to 0-indexed\n        string result = \"\";\n        \n        for (int i = 0; i < n; i++) {\n            int idx = k / fact[n - 1 - i];\n            result += to_string(nums[idx]);\n            nums.erase(nums.begin() + idx);\n            k %= fact[n - 1 - i];\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public String getPermutation(int n, int k) {\n        List<Integer> nums = new ArrayList<>();\n        int[] fact = new int[n];\n        fact[0] = 1;\n        \n        for (int i = 1; i < n; i++) {\n            nums.add(i);\n            fact[i] = fact[i - 1] * i;\n        }\n        nums.add(n);\n        \n        k--;\n        StringBuilder result = new StringBuilder();\n        \n        for (int i = 0; i < n; i++) {\n            int idx = k / fact[n - 1 - i];\n            result.append(nums.get(idx));\n            nums.remove(idx);\n            k %= fact[n - 1 - i];\n        }\n        \n        return result.toString();\n    }\n}",
+        "python": "def getPermutation(n, k):\n    nums = list(range(1, n + 1))\n    fact = [1]\n    \n    for i in range(1, n):\n        fact.append(fact[-1] * i)\n    \n    k -= 1  # Convert to 0-indexed\n    result = ''\n    \n    for i in range(n):\n        idx = k // fact[n - 1 - i]\n        result += str(nums.pop(idx))\n        k %= fact[n - 1 - i]\n    \n    return result",
+        "javascript": "function getPermutation(n, k) {\n    const nums = Array.from({length: n}, (_, i) => i + 1);\n    const fact = [1];\n    \n    for (let i = 1; i < n; i++) {\n        fact.push(fact[fact.length - 1] * i);\n    }\n    \n    k--;\n    let result = '';\n    \n    for (let i = 0; i < n; i++) {\n        const idx = Math.floor(k / fact[n - 1 - i]);\n        result += nums[idx];\n        nums.splice(idx, 1);\n        k %= fact[n - 1 - i];\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not converting k to 0-indexed (k-1) for factoradic approach",
+    "Calculating factorial array incorrectly",
+    "Using wrong index in factorial array (off-by-one)",
+    "Not properly removing used numbers from list",
+    "Integer overflow when calculating factorials for large n",
+    "Confusing factorial division: should be fact[n-1-i], not fact[i]"
+  ],
+  "hints": [
+    "There are n! total permutations of n numbers",
+    "First (n-1)! permutations start with 1, next (n-1)! start with 2",
+    "Use k / (n-1)! to find which number to pick first",
+    "Update k = k % (n-1)! for remaining selection",
+    "Factoradic approach: k directly tells which element at each position",
+    "Can precompute factorials to avoid overflow issues"
+  ],
+  "followUp": [
+    "Find rank of given permutation? (Reverse of factoradic system)",
+    "Generate all permutations up to k? (Modify to collect all)",
+    "Find previous kth permutation? (Similar with different division)",
+    "Large n (> 13)? (Use string-based factoradic or BigInteger)",
+    "Optimize for multiple queries? (Precompute and cache factorials)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft"],
+  "tags": ["math", "factorial", "permutation", "greedy"],
+  "relatedProblems": [
+    "Permutations",
+    "Permutations II",
+    "Next Permutation",
+    "Find Permutation"
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "questionId": "290",
+  "questionSlug": "word-pattern",
+  "title": "Word Pattern",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/word-pattern/",
+    "videos": [
+      {
+        "title": "Word Pattern - Bijection Mapping",
+        "url": "https://www.youtube.com/watch?v=W_akoecmCbM",
+        "channel": "NeetCode",
+        "duration": "7:30",
+        "language": "English"
+      },
+      {
+        "title": "Word Pattern Explained",
+        "url": "https://www.youtube.com/watch?v=W7K4rC0L1pQ",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Word Pattern - LeetCode Official",
+        "url": "https://leetcode.com/problems/word-pattern/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Word Pattern Matching",
+        "url": "https://www.geeksforgeeks.org/word-pattern-matching/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/word-pattern/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Bijection mapping between pattern and words? Use TWO HashMaps - one for pattern->word and one for word->pattern. Check both directions.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Mappings",
+      "order": 1,
+      "intuition": "Try to manually track which character maps to which word and verify consistency.",
+      "approach": "For each character in pattern, check if it has been mapped before and verify consistency.",
+      "steps": [
+        "Split string s into words",
+        "If pattern.length != words.length, return false",
+        "For each position i:",
+        "  char = pattern[i]",
+        "  word = words[i]",
+        "  Search previous positions for char:",
+        "    If found at position j:",
+        "      If words[j] != word, return false",
+        "  Search previous positions for word:",
+        "    If found at position j:",
+        "      If pattern[j] != char, return false",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n² × m)",
+        "space": "O(n × m)",
+        "timeExplanation": "For each of n characters, searching previous positions takes O(n), word comparison takes O(m)",
+        "spaceExplanation": "Storing words array"
+      },
+      "code": {
+        "cpp": "bool wordPattern(string pattern, string s) {\n    vector<string> words;\n    stringstream ss(s);\n    string word;\n    while (ss >> word) {\n        words.push_back(word);\n    }\n    \n    if (pattern.length() != words.size()) {\n        return false;\n    }\n    \n    int n = pattern.length();\n    for (int i = 0; i < n; i++) {\n        char c = pattern[i];\n        string w = words[i];\n        \n        for (int j = 0; j < i; j++) {\n            if (pattern[j] == c && words[j] != w) {\n                return false;\n            }\n            if (words[j] == w && pattern[j] != c) {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n}",
+        "java": "public boolean wordPattern(String pattern, String s) {\n    String[] words = s.split(\" \");\n    \n    if (pattern.length() != words.length) {\n        return false;\n    }\n    \n    int n = pattern.length();\n    for (int i = 0; i < n; i++) {\n        char c = pattern.charAt(i);\n        String w = words[i];\n        \n        for (int j = 0; j < i; j++) {\n            if (pattern.charAt(j) == c && !words[j].equals(w)) {\n                return false;\n            }\n            if (words[j].equals(w) && pattern.charAt(j) != c) {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n}",
+        "python": "def wordPattern(pattern, s):\n    words = s.split()\n    \n    if len(pattern) != len(words):\n        return False\n    \n    n = len(pattern)\n    for i in range(n):\n        c = pattern[i]\n        w = words[i]\n        \n        for j in range(i):\n            if pattern[j] == c and words[j] != w:\n                return False\n            if words[j] == w and pattern[j] != c:\n                return False\n    \n    return True",
+        "javascript": "function wordPattern(pattern, s) {\n    const words = s.split(' ');\n    \n    if (pattern.length !== words.length) {\n        return false;\n    }\n    \n    const n = pattern.length;\n    for (let i = 0; i < n; i++) {\n        const c = pattern[i];\n        const w = words[i];\n        \n        for (let j = 0; j < i; j++) {\n            if (pattern[j] === c && words[j] !== w) {\n                return false;\n            }\n            if (words[j] === w && pattern[j] !== c) {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n}"
+      }
+    },
+    {
+      "name": "Single Hash Map (Incorrect Approach)",
+      "order": 2,
+      "intuition": "Use one hash map to track pattern->word mapping. However, this fails to detect when two different characters map to same word.",
+      "approach": "Map each character to a word and verify. This approach is INCOMPLETE and shown for learning.",
+      "steps": [
+        "Split string into words",
+        "Create map: char -> word",
+        "For each char in pattern:",
+        "  If char in map:",
+        "    If map[char] != current word, return false",
+        "  Else:",
+        "    map[char] = current word",
+        "Return true",
+        "❌ PROBLEM: Doesn't check if two chars map to same word!"
+      ],
+      "complexity": {
+        "time": "O(n × m)",
+        "space": "O(n × m)",
+        "timeExplanation": "Single pass, word comparison takes O(m)",
+        "spaceExplanation": "Map stores n entries with words of length m"
+      },
+      "code": {
+        "cpp": "// ⚠️ INCORRECT - Shown for learning purposes\nbool wordPattern(string pattern, string s) {\n    vector<string> words;\n    stringstream ss(s);\n    string word;\n    while (ss >> word) {\n        words.push_back(word);\n    }\n    \n    if (pattern.length() != words.size()) {\n        return false;\n    }\n    \n    unordered_map<char, string> map;\n    \n    for (int i = 0; i < pattern.length(); i++) {\n        char c = pattern[i];\n        string w = words[i];\n        \n        if (map.count(c)) {\n            if (map[c] != w) {\n                return false;\n            }\n        } else {\n            map[c] = w;\n        }\n    }\n    \n    return true;\n    // Fails for: pattern=\"abba\", s=\"dog dog dog dog\"\n}",
+        "java": "// ⚠️ INCORRECT - Shown for learning purposes\npublic boolean wordPattern(String pattern, String s) {\n    String[] words = s.split(\" \");\n    \n    if (pattern.length() != words.length) {\n        return false;\n    }\n    \n    Map<Character, String> map = new HashMap<>();\n    \n    for (int i = 0; i < pattern.length(); i++) {\n        char c = pattern.charAt(i);\n        String w = words[i];\n        \n        if (map.containsKey(c)) {\n            if (!map.get(c).equals(w)) {\n                return false;\n            }\n        } else {\n            map.put(c, w);\n        }\n    }\n    \n    return true;\n    // Fails for: pattern=\"abba\", s=\"dog dog dog dog\"\n}",
+        "python": "# ⚠️ INCORRECT - Shown for learning purposes\ndef wordPattern(pattern, s):\n    words = s.split()\n    \n    if len(pattern) != len(words):\n        return False\n    \n    char_to_word = {}\n    \n    for c, w in zip(pattern, words):\n        if c in char_to_word:\n            if char_to_word[c] != w:\n                return False\n        else:\n            char_to_word[c] = w\n    \n    return True\n    # Fails for: pattern=\"abba\", s=\"dog dog dog dog\"",
+        "javascript": "// ⚠️ INCORRECT - Shown for learning purposes\nfunction wordPattern(pattern, s) {\n    const words = s.split(' ');\n    \n    if (pattern.length !== words.length) {\n        return false;\n    }\n    \n    const map = new Map();\n    \n    for (let i = 0; i < pattern.length; i++) {\n        const c = pattern[i];\n        const w = words[i];\n        \n        if (map.has(c)) {\n            if (map.get(c) !== w) {\n                return false;\n            }\n        } else {\n            map.set(c, w);\n        }\n    }\n    \n    return true;\n    // Fails for: pattern=\"abba\", s=\"dog dog dog dog\"\n}"
+      }
+    },
+    {
+      "name": "Two Hash Maps - Bijection - Optimal",
+      "order": 3,
+      "intuition": "Need bijection (one-to-one mapping). Use two maps: char->word AND word->char. Both must be consistent.",
+      "approach": "Maintain two hash maps to ensure one-to-one correspondence in both directions.",
+      "steps": [
+        "Split string into words",
+        "If lengths differ, return false",
+        "Create charToWord map and wordToChar map",
+        "For each position i:",
+        "  char c = pattern[i]",
+        "  word w = words[i]",
+        "  If c in charToWord:",
+        "    If charToWord[c] != w, return false",
+        "  Else:",
+        "    charToWord[c] = w",
+        "  If w in wordToChar:",
+        "    If wordToChar[w] != c, return false",
+        "  Else:",
+        "    wordToChar[w] = c",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n × m)",
+        "space": "O(n × m)",
+        "timeExplanation": "Single pass, word operations take O(m) where m is avg word length",
+        "spaceExplanation": "Two maps storing n entries with words/chars"
+      },
+      "code": {
+        "cpp": "bool wordPattern(string pattern, string s) {\n    vector<string> words;\n    stringstream ss(s);\n    string word;\n    while (ss >> word) {\n        words.push_back(word);\n    }\n    \n    if (pattern.length() != words.size()) {\n        return false;\n    }\n    \n    unordered_map<char, string> charToWord;\n    unordered_map<string, char> wordToChar;\n    \n    for (int i = 0; i < pattern.length(); i++) {\n        char c = pattern[i];\n        string w = words[i];\n        \n        if (charToWord.count(c)) {\n            if (charToWord[c] != w) {\n                return false;\n            }\n        } else {\n            charToWord[c] = w;\n        }\n        \n        if (wordToChar.count(w)) {\n            if (wordToChar[w] != c) {\n                return false;\n            }\n        } else {\n            wordToChar[w] = c;\n        }\n    }\n    \n    return true;\n}",
+        "java": "public boolean wordPattern(String pattern, String s) {\n    String[] words = s.split(\" \");\n    \n    if (pattern.length() != words.length) {\n        return false;\n    }\n    \n    Map<Character, String> charToWord = new HashMap<>();\n    Map<String, Character> wordToChar = new HashMap<>();\n    \n    for (int i = 0; i < pattern.length(); i++) {\n        char c = pattern.charAt(i);\n        String w = words[i];\n        \n        if (charToWord.containsKey(c)) {\n            if (!charToWord.get(c).equals(w)) {\n                return false;\n            }\n        } else {\n            charToWord.put(c, w);\n        }\n        \n        if (wordToChar.containsKey(w)) {\n            if (wordToChar.get(w) != c) {\n                return false;\n            }\n        } else {\n            wordToChar.put(w, c);\n        }\n    }\n    \n    return true;\n}",
+        "python": "def wordPattern(pattern, s):\n    words = s.split()\n    \n    if len(pattern) != len(words):\n        return False\n    \n    char_to_word = {}\n    word_to_char = {}\n    \n    for c, w in zip(pattern, words):\n        if c in char_to_word:\n            if char_to_word[c] != w:\n                return False\n        else:\n            char_to_word[c] = w\n        \n        if w in word_to_char:\n            if word_to_char[w] != c:\n                return False\n        else:\n            word_to_char[w] = c\n    \n    return True",
+        "javascript": "function wordPattern(pattern, s) {\n    const words = s.split(' ');\n    \n    if (pattern.length !== words.length) {\n        return false;\n    }\n    \n    const charToWord = new Map();\n    const wordToChar = new Map();\n    \n    for (let i = 0; i < pattern.length; i++) {\n        const c = pattern[i];\n        const w = words[i];\n        \n        if (charToWord.has(c)) {\n            if (charToWord.get(c) !== w) {\n                return false;\n            }\n        } else {\n            charToWord.set(c, w);\n        }\n        \n        if (wordToChar.has(w)) {\n            if (wordToChar.get(w) !== c) {\n                return false;\n            }\n        } else {\n            wordToChar.set(w, c);\n        }\n    }\n    \n    return true;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using only one hash map (fails when two chars map to same word)",
+    "Not checking word->char mapping (only checking char->word)",
+    "Not splitting string correctly (handling extra spaces)",
+    "Forgetting to check if lengths are equal",
+    "Not handling empty pattern or string"
+  ],
+  "hints": [
+    "This is a bijection problem - need one-to-one mapping",
+    "One hash map is NOT enough",
+    "Need to verify both directions: char->word AND word->char",
+    "Example that breaks single map: pattern='abba', s='dog dog dog dog'",
+    "Two hash maps ensure no two characters map to same word"
+  ],
+  "followUp": [
+    "What if pattern and string can be swapped? (Same algorithm works)",
+    "How to handle case sensitivity in words? (Convert to lowercase)",
+    "What if words can have spaces? (Change delimiter or pre-process)",
+    "Can you solve with one data structure? (Use single map with combined keys)",
+    "What if we need to find all valid patterns for given words?"
+  ],
+  "companies": ["Dropbox", "Uber", "Facebook", "Google", "Amazon"],
+  "tags": ["hash-table", "string"],
+  "relatedProblems": [
+    "Isomorphic Strings",
+    "Word Pattern II",
+    "Find and Replace Pattern"
+  ]
+}

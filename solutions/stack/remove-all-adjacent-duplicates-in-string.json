@@ -1,0 +1,170 @@
+{
+  "questionId": "1047",
+  "questionSlug": "remove-all-adjacent-duplicates-in-string",
+  "title": "Remove All Adjacent Duplicates In String",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
+    "videos": [
+      {
+        "title": "Remove All Adjacent Duplicates - Stack",
+        "url": "https://www.youtube.com/watch?v=w6LcypDgC4w",
+        "channel": "NeetCode",
+        "duration": "7:35",
+        "language": "English"
+      },
+      {
+        "title": "Remove Adjacent Duplicates using Stack",
+        "url": "https://www.youtube.com/watch?v=2908LYW_3_M",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:20",
+        "language": "English"
+      },
+      {
+        "title": "Stack Based String Manipulation",
+        "url": "https://www.youtube.com/watch?v=M3cDEUo_l-M",
+        "channel": "Pepcoding",
+        "duration": "11:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Remove All Adjacent Duplicates - LeetCode Official",
+        "url": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Remove Adjacent Duplicates Solution",
+        "url": "https://takeuforward.org/data-structure/remove-adjacent-duplicates/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Remove Duplicates - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/remove-all-adjacent-duplicates-from-a-string/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Remove adjacent pairs = Stack. If stack top matches current char, pop (remove pair). Otherwise push.",
+  "approaches": [
+    {
+      "name": "Recursion - Remove and Repeat",
+      "order": 1,
+      "intuition": "Repeatedly scan string and remove first duplicate pair found. Recurse until no more pairs exist.",
+      "approach": "Find adjacent duplicates, remove them, recursively process remaining string.",
+      "steps": [
+        "Scan string for adjacent duplicates",
+        "If found:",
+        "  Remove the pair",
+        "  Recursively process new string",
+        "If none found: return string",
+        "Base case: empty or single character"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "May need multiple passes, each scanning entire string",
+        "spaceExplanation": "Recursion stack and string copies"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string removeDuplicates(string s) {\n        bool found = true;\n        \n        while (found) {\n            found = false;\n            string temp = \"\";\n            \n            for (int i = 0; i < s.length(); ) {\n                if (i < s.length() - 1 && s[i] == s[i+1]) {\n                    // Skip both duplicates\n                    i += 2;\n                    found = true;\n                } else {\n                    temp += s[i];\n                    i++;\n                }\n            }\n            \n            s = temp;\n        }\n        \n        return s;\n    }\n};",
+        "java": "class Solution {\n    public String removeDuplicates(String s) {\n        boolean found = true;\n        \n        while (found) {\n            found = false;\n            StringBuilder temp = new StringBuilder();\n            \n            for (int i = 0; i < s.length(); ) {\n                if (i < s.length() - 1 && s.charAt(i) == s.charAt(i+1)) {\n                    i += 2;\n                    found = true;\n                } else {\n                    temp.append(s.charAt(i));\n                    i++;\n                }\n            }\n            \n            s = temp.toString();\n        }\n        \n        return s;\n    }\n}",
+        "python": "class Solution:\n    def removeDuplicates(self, s: str) -> str:\n        found = True\n        \n        while found:\n            found = False\n            temp = []\n            i = 0\n            \n            while i < len(s):\n                if i < len(s) - 1 and s[i] == s[i+1]:\n                    i += 2\n                    found = True\n                else:\n                    temp.append(s[i])\n                    i += 1\n            \n            s = ''.join(temp)\n        \n        return s",
+        "javascript": "var removeDuplicates = function(s) {\n    let found = true;\n    \n    while (found) {\n        found = false;\n        let temp = '';\n        \n        for (let i = 0; i < s.length; ) {\n            if (i < s.length - 1 && s[i] === s[i+1]) {\n                i += 2;\n                found = true;\n            } else {\n                temp += s[i];\n                i++;\n            }\n        }\n        \n        s = temp;\n    }\n    \n    return s;\n};"
+      }
+    },
+    {
+      "name": "Two Pointers - In-place Modification",
+      "order": 2,
+      "intuition": "Use write pointer to build result. When duplicate found with previous char, move write pointer back.",
+      "approach": "Convert to array, use slow pointer for writing. Fast pointer scans, slow pointer manages duplicates.",
+      "steps": [
+        "Convert string to char array",
+        "write = 0 (write pointer)",
+        "For each char at read pointer:",
+        "  If write > 0 and arr[write-1] == char:",
+        "    write-- (remove previous)",
+        "  Else:",
+        "    arr[write] = char, write++",
+        "Return substring [0, write)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through string",
+        "spaceExplanation": "Char array for modification"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string removeDuplicates(string s) {\n        int write = 0;\n        \n        for (int read = 0; read < s.length(); read++) {\n            if (write > 0 && s[write-1] == s[read]) {\n                // Remove duplicate\n                write--;\n            } else {\n                // Keep character\n                s[write] = s[read];\n                write++;\n            }\n        }\n        \n        return s.substr(0, write);\n    }\n};",
+        "java": "class Solution {\n    public String removeDuplicates(String s) {\n        char[] arr = s.toCharArray();\n        int write = 0;\n        \n        for (int read = 0; read < arr.length; read++) {\n            if (write > 0 && arr[write-1] == arr[read]) {\n                write--;\n            } else {\n                arr[write] = arr[read];\n                write++;\n            }\n        }\n        \n        return new String(arr, 0, write);\n    }\n}",
+        "python": "class Solution:\n    def removeDuplicates(self, s: str) -> str:\n        result = []\n        \n        for char in s:\n            if result and result[-1] == char:\n                result.pop()\n            else:\n                result.append(char)\n        \n        return ''.join(result)",
+        "javascript": "var removeDuplicates = function(s) {\n    const arr = s.split('');\n    let write = 0;\n    \n    for (let read = 0; read < arr.length; read++) {\n        if (write > 0 && arr[write-1] === arr[read]) {\n            write--;\n        } else {\n            arr[write] = arr[read];\n            write++;\n        }\n    }\n    \n    return arr.slice(0, write).join('');\n};"
+      }
+    },
+    {
+      "name": "Stack - Explicit Stack - Optimal",
+      "order": 3,
+      "intuition": "Stack naturally handles adjacent pairs. If top matches current char, it's a duplicate pair - pop. Otherwise push.",
+      "approach": "Use stack to track characters. Pop when match found, push otherwise. Stack contents are final result.",
+      "steps": [
+        "Create stack",
+        "For each character:",
+        "  If stack not empty and stack.top() == char:",
+        "    Pop (remove duplicate pair)",
+        "  Else:",
+        "    Push char",
+        "Return stack contents as string"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass, each character processed once",
+        "spaceExplanation": "Stack stores characters"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string removeDuplicates(string s) {\n        string stack;\n        \n        for (char c : s) {\n            if (!stack.empty() && stack.back() == c) {\n                stack.pop_back();\n            } else {\n                stack.push_back(c);\n            }\n        }\n        \n        return stack;\n    }\n};",
+        "java": "class Solution {\n    public String removeDuplicates(String s) {\n        StringBuilder stack = new StringBuilder();\n        \n        for (char c : s.toCharArray()) {\n            int n = stack.length();\n            if (n > 0 && stack.charAt(n-1) == c) {\n                stack.deleteCharAt(n-1);\n            } else {\n                stack.append(c);\n            }\n        }\n        \n        return stack.toString();\n    }\n}",
+        "python": "class Solution:\n    def removeDuplicates(self, s: str) -> str:\n        stack = []\n        \n        for char in s:\n            if stack and stack[-1] == char:\n                stack.pop()\n            else:\n                stack.append(char)\n        \n        return ''.join(stack)",
+        "javascript": "var removeDuplicates = function(s) {\n    const stack = [];\n    \n    for (const char of s) {\n        if (stack.length > 0 && stack[stack.length - 1] === char) {\n            stack.pop();\n        } else {\n            stack.push(char);\n        }\n    }\n    \n    return stack.join('');\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Only removing first pair and not continuing (need to process repeatedly)",
+    "Not handling cascading removals (\"abba\" -> \"aa\" -> \"\")",
+    "Inefficient string concatenation in loops",
+    "Not considering that removal can expose new adjacent pairs",
+    "Using nested loops unnecessarily"
+  ],
+  "hints": [
+    "Stack is perfect - it naturally tracks the 'last' character",
+    "When current char matches stack top, they form adjacent pair - remove both",
+    "Single pass is sufficient with stack approach",
+    "Can use string as stack (push_back/pop_back in C++, StringBuilder in Java)",
+    "Result is whatever remains in stack"
+  ],
+  "followUp": [
+    "What if we can remove K adjacent duplicates? (See Remove All Adjacent Duplicates in String II)",
+    "Can you solve with O(1) extra space?",
+    "What if string is very large (stream processing)?",
+    "How to count total removals made?",
+    "What about removing adjacent duplicates with different operations (remove all, keep one, etc.)?"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Bloomberg"],
+  "tags": ["string", "stack"],
+  "relatedProblems": [
+    "Remove All Adjacent Duplicates in String II",
+    "Remove K Digits",
+    "Simplify Path",
+    "Make The String Great",
+    "Crawler Log Folder"
+  ]
+}

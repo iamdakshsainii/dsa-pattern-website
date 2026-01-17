@@ -1,0 +1,182 @@
+{
+  "questionId": "503",
+  "questionSlug": "next-greater-element-ii",
+  "title": "Next Greater Element II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/next-greater-element-ii/",
+    "videos": [
+      {
+        "title": "Next Greater Element II - Circular Array",
+        "url": "https://www.youtube.com/watch?v=ARkl69eBzhY",
+        "channel": "NeetCode",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Next Greater Element in Circular Array",
+        "url": "https://www.youtube.com/watch?v=Du881K7Jtk8",
+        "channel": "take U forward",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Circular Array Next Greater",
+        "url": "https://www.youtube.com/watch?v=NXOOYYwpbg4",
+        "channel": "Aditya Verma",
+        "duration": "16:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Next Greater Element II",
+        "url": "https://takeuforward.org/data-structure/next-greater-element-in-circular-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Next Greater Element in Circular Array - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/next-greater-element-in-same-order-as-input/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Next Greater Element II - LeetCode Solution",
+        "url": "https://leetcode.com/problems/next-greater-element-ii/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/next-greater-element-ii/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Circular array + next greater = Monotonic stack with 2 passes. Use modulo to wrap around array.",
+  "approaches": [
+    {
+      "name": "Brute Force - For Each Check Right Circular",
+      "order": 1,
+      "intuition": "For each element, check all elements to the right in circular manner until finding greater.",
+      "approach": "For each index, iterate circularly up to n elements ahead to find next greater.",
+      "steps": [
+        "For i from 0 to n-1:",
+        "  result[i] = -1",
+        "  For j from 1 to n:",
+        "    idx = (i + j) % n (circular)",
+        "    If nums[idx] > nums[i]:",
+        "      result[i] = nums[idx]",
+        "      break",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1) excluding output",
+        "timeExplanation": "For each element, check up to n elements",
+        "spaceExplanation": "Only output array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n, -1);\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = 1; j < n; j++) {\n                int idx = (i + j) % n;\n                if (nums[idx] > nums[i]) {\n                    result[i] = nums[idx];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] nextGreaterElements(int[] nums) {\n        int n = nums.length;\n        int[] result = new int[n];\n        Arrays.fill(result, -1);\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = 1; j < n; j++) {\n                int idx = (i + j) % n;\n                if (nums[idx] > nums[i]) {\n                    result[i] = nums[idx];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreaterElements(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        result = [-1] * n\n        \n        for i in range(n):\n            for j in range(1, n):\n                idx = (i + j) % n\n                if nums[idx] > nums[i]:\n                    result[i] = nums[idx]\n                    break\n        \n        return result",
+        "javascript": "var nextGreaterElements = function(nums) {\n    const n = nums.length;\n    const result = new Array(n).fill(-1);\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = 1; j < n; j++) {\n            const idx = (i + j) % n;\n            if (nums[idx] > nums[i]) {\n                result[i] = nums[idx];\n                break;\n            }\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Single Pass with 2n Range",
+      "order": 2,
+      "intuition": "Treat array as if it's duplicated [nums, nums]. Process 2n elements with monotonic stack.",
+      "approach": "Iterate from 2n-1 to 0, use modulo for actual index. Monotonic stack handles circular nature.",
+      "steps": [
+        "Initialize result array with -1",
+        "Create stack",
+        "For i from 2*n - 1 to 0:",
+        "  actualIdx = i % n",
+        "  While stack not empty and stack.top() <= nums[actualIdx]:",
+        "    Pop",
+        "  If i < n:",
+        "    result[i] = stack.empty() ? -1 : stack.top()",
+        "  Push nums[actualIdx]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Process 2n elements, each pushed/popped once",
+        "spaceExplanation": "Stack and result array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n, -1);\n        stack<int> st;\n        \n        // Process from 2n-1 to 0\n        for (int i = 2 * n - 1; i >= 0; i--) {\n            int idx = i % n;\n            \n            // Pop smaller or equal elements\n            while (!st.empty() && st.top() <= nums[idx]) {\n                st.pop();\n            }\n            \n            // Only update result in first pass (i < n)\n            if (i < n) {\n                result[i] = st.empty() ? -1 : st.top();\n            }\n            \n            st.push(nums[idx]);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] nextGreaterElements(int[] nums) {\n        int n = nums.length;\n        int[] result = new int[n];\n        Arrays.fill(result, -1);\n        Stack<Integer> stack = new Stack<>();\n        \n        for (int i = 2 * n - 1; i >= 0; i--) {\n            int idx = i % n;\n            \n            while (!stack.isEmpty() && stack.peek() <= nums[idx]) {\n                stack.pop();\n            }\n            \n            if (i < n) {\n                result[i] = stack.isEmpty() ? -1 : stack.peek();\n            }\n            \n            stack.push(nums[idx]);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreaterElements(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        result = [-1] * n\n        stack = []\n        \n        for i in range(2 * n - 1, -1, -1):\n            idx = i % n\n            \n            while stack and stack[-1] <= nums[idx]:\n                stack.pop()\n            \n            if i < n:\n                result[i] = stack[-1] if stack else -1\n            \n            stack.append(nums[idx])\n        \n        return result",
+        "javascript": "var nextGreaterElements = function(nums) {\n    const n = nums.length;\n    const result = new Array(n).fill(-1);\n    const stack = [];\n    \n    for (let i = 2 * n - 1; i >= 0; i--) {\n        const idx = i % n;\n        \n        while (stack.length > 0 && stack[stack.length - 1] <= nums[idx]) {\n            stack.pop();\n        }\n        \n        if (i < n) {\n            result[i] = stack.length === 0 ? -1 : stack[stack.length - 1];\n        }\n        \n        stack.push(nums[idx]);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Two Passes - Optimal",
+      "order": 3,
+      "intuition": "Make two passes through array: one to build stack, second to find next greater. Cleaner than single pass.",
+      "approach": "First pass fills stack, second pass finds next greater element for each position.",
+      "steps": [
+        "Initialize result with -1",
+        "Create stack",
+        "First pass (right to left):",
+        "  For i from n-1 to 0:",
+        "    While stack not empty and stack.top() <= nums[i]:",
+        "      Pop",
+        "    Push nums[i]",
+        "Second pass (right to left):",
+        "  Clear stack or start fresh",
+        "  For i from n-1 to 0:",
+        "    While stack not empty and stack.top() <= nums[i]:",
+        "      Pop",
+        "    result[i] = stack.empty() ? -1 : stack.top()",
+        "    Push nums[i]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes through array, each element pushed/popped once per pass",
+        "spaceExplanation": "Stack and result array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n, -1);\n        stack<int> st;\n        \n        // Two passes through the array\n        for (int pass = 0; pass < 2; pass++) {\n            for (int i = n - 1; i >= 0; i--) {\n                // Pop smaller or equal elements\n                while (!st.empty() && st.top() <= nums[i]) {\n                    st.pop();\n                }\n                \n                // Only update result in second pass\n                if (pass == 1) {\n                    result[i] = st.empty() ? -1 : st.top();\n                }\n                \n                st.push(nums[i]);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] nextGreaterElements(int[] nums) {\n        int n = nums.length;\n        int[] result = new int[n];\n        Arrays.fill(result, -1);\n        Stack<Integer> stack = new Stack<>();\n        \n        // Two passes through the array\n        for (int pass = 0; pass < 2; pass++) {\n            for (int i = n - 1; i >= 0; i--) {\n                while (!stack.isEmpty() && stack.peek() <= nums[i]) {\n                    stack.pop();\n                }\n                \n                if (pass == 1) {\n                    result[i] = stack.isEmpty() ? -1 : stack.peek();\n                }\n                \n                stack.push(nums[i]);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreaterElements(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        result = [-1] * n\n        stack = []\n        \n        # Two passes through the array\n        for pass_num in range(2):\n            for i in range(n - 1, -1, -1):\n                while stack and stack[-1] <= nums[i]:\n                    stack.pop()\n                \n                if pass_num == 1:\n                    result[i] = stack[-1] if stack else -1\n                \n                stack.append(nums[i])\n        \n        return result",
+        "javascript": "var nextGreaterElements = function(nums) {\n    const n = nums.length;\n    const result = new Array(n).fill(-1);\n    const stack = [];\n    \n    // Two passes through the array\n    for (let pass = 0; pass < 2; pass++) {\n        for (let i = n - 1; i >= 0; i--) {\n            while (stack.length > 0 && stack[stack.length - 1] <= nums[i]) {\n                stack.pop();\n            }\n            \n            if (pass === 1) {\n                result[i] = stack.length === 0 ? -1 : stack[stack.length - 1];\n            }\n            \n            stack.push(nums[i]);\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling circular nature properly",
+    "Processing only once instead of twice",
+    "Wrong modulo calculation for circular indexing",
+    "Not maintaining monotonic decreasing stack",
+    "Updating result in both passes instead of just second"
+  ],
+  "hints": [
+    "Array is circular - element can wrap around to beginning",
+    "Think of array as [nums, nums] - doubled array",
+    "Use monotonic stack similar to NGE I",
+    "Process 2n elements but only update first n results",
+    "Can also do two separate passes for clarity"
+  ],
+  "followUp": [
+    "Can you do it in one pass?",
+    "What if you need previous greater element in circular array?",
+    "How to find next smaller in circular array?",
+    "What about k circular rotations?",
+    "Can you optimize space further?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple"],
+  "tags": ["stack", "array", "monotonic-stack"],
+  "relatedProblems": [
+    "Next Greater Element I",
+    "Next Greater Element III",
+    "Daily Temperatures",
+    "Online Stock Span",
+    "Sum of Subarray Minimums"
+  ]
+}

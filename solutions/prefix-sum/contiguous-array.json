@@ -1,191 +1,178 @@
 {
-  "questionId": "694d4a3a98494915f3bc8e9f",
+  "questionId": "525",
   "questionSlug": "contiguous-array",
   "title": "Contiguous Array",
   "difficulty": "Medium",
   "resources": {
-    "leetcode": "https://leetcode.com/problems/contiguous-array/description/",
+    "leetcode": "https://leetcode.com/problems/contiguous-array/",
     "videos": [
       {
-        "title": "Contiguous Array - Leetcode 525",
-        "url": "https://www.youtube.com/watch?v=agB1LyObUNE",
+        "title": "Contiguous Array - HashMap Solution",
+        "url": "https://www.youtube.com/watch?v=agB1LyObtnA",
         "channel": "NeetCode",
-        "duration": "10:45",
+        "duration": "10:55",
         "language": "English"
       },
       {
-        "title": "Maximum Length Binary Subarray Equal 0s and 1s",
+        "title": "Equal 0s and 1s Subarray",
         "url": "https://www.youtube.com/watch?v=9ZyLjjk536U",
-        "channel": "TECH DOSE",
-        "duration": "15:30",
+        "channel": "take U forward",
+        "duration": "13:40",
         "language": "English"
       },
       {
-        "title": "Contiguous Array Using HashMap",
-        "url": "https://www.youtube.com/watch?v=u_AhGZBr7xg",
-        "channel": "take U forward",
-        "duration": "18:20",
+        "title": "Contiguous Array Explained",
+        "url": "https://www.youtube.com/watch?v=yCZZO1jgT34",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:25",
         "language": "English"
       }
     ],
     "articles": [
       {
-        "title": "Contiguous Array Solution",
-        "url": "https://leetcode.com/problems/contiguous-array/solutions/",
+        "title": "Contiguous Array - LeetCode Official",
+        "url": "https://leetcode.com/problems/contiguous-array/editorial/",
         "source": "LeetCode"
       },
       {
-        "title": "Largest Subarray with Equal 0s and 1s",
-        "url": "https://www.geeksforgeeks.org/largest-subarray-with-equal-number-of-0s-and-1s/",
-        "source": "GeeksforGeeks"
+        "title": "Longest Subarray with Equal 0s and 1s",
+        "url": "https://takeuforward.org/data-structure/length-of-the-longest-subarray-with-zero-sum/",
+        "source": "takeuforward"
       },
       {
-        "title": "Binary Array Balance Using Prefix Sum",
-        "url": "https://algo.monster/problems/contiguous_array",
-        "source": "AlgoMonster"
+        "title": "Contiguous Array - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/largest-subarray-with-equal-number-of-0s-and-1s/",
+        "source": "GeeksforGeeks"
       }
     ],
     "practice": [
       {
-        "title": "Subarray Sum Equals K",
-        "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/contiguous-array/",
         "platform": "LeetCode"
       },
       {
-        "title": "Maximum Size Subarray Sum Equals k",
-        "url": "https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/",
-        "platform": "LeetCode"
-      },
-      {
-        "title": "Continuous Subarray Sum",
-        "url": "https://leetcode.com/problems/continuous-subarray-sum/",
-        "platform": "LeetCode"
-      },
-      {
-        "title": "Replace the Substring for Balanced String",
-        "url": "https://leetcode.com/problems/replace-the-substring-for-balanced-string/",
-        "platform": "LeetCode"
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/largest-subarray-of-0s-and-1s/",
+        "platform": "GeeksforGeeks"
       }
-    ],
-    "discussions": []
+    ]
   },
-  "patternTriggers": "Use Contiguous Array pattern when finding longest subarray with equal count of two elements (like 0s and 1s). Key indicators: equal number of elements, longest/maximum length subarray, binary array, balanced subarray.",
+  "patternTriggers": "Equal 0s and 1s? Convert 0→-1, find longest subarray with sum=0. Track cumulative sum in hashmap.",
   "approaches": [
     {
-      "name": "HashMap with Running Count (Optimal)",
+      "name": "Brute Force - Check All Subarrays",
       "order": 1,
-      "intuition": "Transform problem: treat 0 as -1, then find longest subarray with sum 0. Use running count and hashmap to track first occurrence of each count. When same count appears again, subarray between has sum 0 (equal 0s and 1s). Track maximum length found.",
-      "approach": "Convert 0s to -1s conceptually. Use running count starting at 0. Store first occurrence of each count in hashmap. When count repeats, calculate subarray length. Track maximum length.",
+      "intuition": "Generate all subarrays, count 0s and 1s, track maximum length where counts are equal.",
+      "approach": "Two nested loops to generate subarrays, count 0s and 1s for each.",
       "steps": [
-        "Initialize count = 0, maxLength = 0",
-        "Create hashmap to store {count: firstIndex}",
-        "Add {0: -1} to handle subarrays starting at index 0",
-        "For each index i from 0 to n-1:",
-        " - If nums[i] == 1: count++",
-        " - If nums[i] == 0: count--",
-        " - If count exists in hashmap:",
-        "   - length = i - hashmap[count]",
-        "   - maxLength = max(maxLength, length)",
-        " - Else:",
-        "   - Store count in hashmap: hashmap[count] = i",
-        "Return maxLength"
-      ],
-      "complexity": {
-        "time": "O(n)",
-        "space": "O(n)",
-        "timeExplanation": "Single pass through array of n elements. HashMap operations are O(1). Total: O(n).",
-        "spaceExplanation": "HashMap stores at most n+1 unique counts. O(n) space."
-      },
-      "code": {
-        "cpp": "class Solution {\npublic:\n    int findMaxLength(vector<int>& nums) {\n        unordered_map<int, int> countMap;\n        countMap[0] = -1; // Handle subarrays starting at index 0\n        \n        int count = 0;\n        int maxLength = 0;\n        \n        for (int i = 0; i < nums.size(); i++) {\n            // Treat 0 as -1, 1 as +1\n            count += (nums[i] == 1) ? 1 : -1;\n            \n            if (countMap.find(count) != countMap.end()) {\n                // Same count seen before, calculate length\n                maxLength = max(maxLength, i - countMap[count]);\n            } else {\n                // First time seeing this count\n                countMap[count] = i;\n            }\n        }\n        \n        return maxLength;\n    }\n};",
-        "java": "class Solution {\n    public int findMaxLength(int[] nums) {\n        Map<Integer, Integer> countMap = new HashMap<>();\n        countMap.put(0, -1); // Handle subarrays starting at index 0\n        \n        int count = 0;\n        int maxLength = 0;\n        \n        for (int i = 0; i < nums.length; i++) {\n            // Treat 0 as -1, 1 as +1\n            count += (nums[i] == 1) ? 1 : -1;\n            \n            if (countMap.containsKey(count)) {\n                // Same count seen before, calculate length\n                maxLength = Math.max(maxLength, i - countMap.get(count));\n            } else {\n                // First time seeing this count\n                countMap.put(count, i);\n            }\n        }\n        \n        return maxLength;\n    }\n}",
-        "python": "class Solution:\n    def findMaxLength(self, nums: List[int]) -> int:\n        count_map = {0: -1}  # Handle subarrays starting at index 0\n        \n        count = 0\n        max_length = 0\n        \n        for i, num in enumerate(nums):\n            # Treat 0 as -1, 1 as +1\n            count += 1 if num == 1 else -1\n            \n            if count in count_map:\n                # Same count seen before, calculate length\n                max_length = max(max_length, i - count_map[count])\n            else:\n                # First time seeing this count\n                count_map[count] = i\n        \n        return max_length",
-        "javascript": "function findMaxLength(nums) {\n    const countMap = new Map();\n    countMap.set(0, -1); // Handle subarrays starting at index 0\n    \n    let count = 0;\n    let maxLength = 0;\n    \n    for (let i = 0; i < nums.length; i++) {\n        // Treat 0 as -1, 1 as +1\n        count += (nums[i] === 1) ? 1 : -1;\n        \n        if (countMap.has(count)) {\n            // Same count seen before, calculate length\n            maxLength = Math.max(maxLength, i - countMap.get(count));\n        } else {\n            // First time seeing this count\n            countMap.set(count, i);\n        }\n    }\n    \n    return maxLength;\n}"
-      }
-    },
-    {
-      "name": "Brute Force (Check All Subarrays)",
-      "order": 2,
-      "intuition": "Check every possible subarray. For each subarray, count 0s and 1s. If counts are equal, update maximum length. Straightforward but inefficient approach.",
-      "approach": "Use two nested loops to generate all subarrays. For each subarray, count number of 0s and 1s. If equal, track maximum length found.",
-      "steps": [
-        "Initialize maxLength = 0",
-        "For each starting index i from 0 to n-1:",
-        " - Initialize zeros = 0, ones = 0",
-        " - For each ending index j from i to n-1:",
-        "   - If nums[j] == 0: zeros++",
-        "   - If nums[j] == 1: ones++",
-        "   - If zeros == ones:",
-        "     - maxLength = max(maxLength, j - i + 1)",
-        "Return maxLength"
+        "maxLen = 0",
+        "For each start i:",
+        "  zeros = 0, ones = 0",
+        "  For each end j from i:",
+        "    If nums[j] == 0: zeros++",
+        "    Else: ones++",
+        "    If zeros == ones:",
+        "      maxLen = max(maxLen, j - i + 1)",
+        "Return maxLen"
       ],
       "complexity": {
         "time": "O(n²)",
         "space": "O(1)",
-        "timeExplanation": "Two nested loops iterate through all subarrays. n² subarrays total. O(n²) time.",
-        "spaceExplanation": "Only constant extra space for counters. O(1) space."
+        "timeExplanation": "Two nested loops",
+        "spaceExplanation": "Constant space"
       },
       "code": {
-        "cpp": "class Solution {\npublic:\n    int findMaxLength(vector<int>& nums) {\n        int maxLength = 0;\n        int n = nums.size();\n        \n        for (int i = 0; i < n; i++) {\n            int zeros = 0, ones = 0;\n            \n            for (int j = i; j < n; j++) {\n                if (nums[j] == 0) {\n                    zeros++;\n                } else {\n                    ones++;\n                }\n                \n                if (zeros == ones) {\n                    maxLength = max(maxLength, j - i + 1);\n                }\n            }\n        }\n        \n        return maxLength;\n    }\n};",
-        "java": "class Solution {\n    public int findMaxLength(int[] nums) {\n        int maxLength = 0;\n        int n = nums.length;\n        \n        for (int i = 0; i < n; i++) {\n            int zeros = 0, ones = 0;\n            \n            for (int j = i; j < n; j++) {\n                if (nums[j] == 0) {\n                    zeros++;\n                } else {\n                    ones++;\n                }\n                \n                if (zeros == ones) {\n                    maxLength = Math.max(maxLength, j - i + 1);\n                }\n            }\n        }\n        \n        return maxLength;\n    }\n}",
-        "python": "class Solution:\n    def findMaxLength(self, nums: List[int]) -> int:\n        max_length = 0\n        n = len(nums)\n        \n        for i in range(n):\n            zeros = 0\n            ones = 0\n            \n            for j in range(i, n):\n                if nums[j] == 0:\n                    zeros += 1\n                else:\n                    ones += 1\n                \n                if zeros == ones:\n                    max_length = max(max_length, j - i + 1)\n        \n        return max_length",
-        "javascript": "function findMaxLength(nums) {\n    let maxLength = 0;\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        let zeros = 0, ones = 0;\n        \n        for (let j = i; j < n; j++) {\n            if (nums[j] === 0) {\n                zeros++;\n            } else {\n                ones++;\n            }\n            \n            if (zeros === ones) {\n                maxLength = Math.max(maxLength, j - i + 1);\n            }\n        }\n    }\n    \n    return maxLength;\n}"
+        "cpp": "int findMaxLength(vector<int>& nums) {\n    int n = nums.size();\n    int maxLen = 0;\n    \n    for (int i = 0; i < n; i++) {\n        int zeros = 0, ones = 0;\n        for (int j = i; j < n; j++) {\n            if (nums[j] == 0) zeros++;\n            else ones++;\n            \n            if (zeros == ones) {\n                maxLen = max(maxLen, j - i + 1);\n            }\n        }\n    }\n    \n    return maxLen;\n}",
+        "java": "public int findMaxLength(int[] nums) {\n    int n = nums.length;\n    int maxLen = 0;\n    \n    for (int i = 0; i < n; i++) {\n        int zeros = 0, ones = 0;\n        for (int j = i; j < n; j++) {\n            if (nums[j] == 0) zeros++;\n            else ones++;\n            \n            if (zeros == ones) {\n                maxLen = Math.max(maxLen, j - i + 1);\n            }\n        }\n    }\n    \n    return maxLen;\n}",
+        "python": "def findMaxLength(nums):\n    n = len(nums)\n    max_len = 0\n    \n    for i in range(n):\n        zeros = 0\n        ones = 0\n        for j in range(i, n):\n            if nums[j] == 0:\n                zeros += 1\n            else:\n                ones += 1\n            \n            if zeros == ones:\n                max_len = max(max_len, j - i + 1)\n    \n    return max_len",
+        "javascript": "function findMaxLength(nums) {\n    const n = nums.length;\n    let maxLen = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let zeros = 0, ones = 0;\n        for (let j = i; j < n; j++) {\n            if (nums[j] === 0) zeros++;\n            else ones++;\n            \n            if (zeros === ones) {\n                maxLen = Math.max(maxLen, j - i + 1);\n            }\n        }\n    }\n    \n    return maxLen;\n}"
+      }
+    },
+    {
+      "name": "Convert to Sum Problem with Tracking",
+      "order": 2,
+      "intuition": "Convert 0 to -1, 1 stays 1. Equal 0s/1s means sum = 0. Find longest subarray with sum 0 using array.",
+      "approach": "Replace 0 with -1. Calculate cumulative sums. Track first occurrence of each sum.",
+      "steps": [
+        "Replace all 0s with -1",
+        "Calculate cumulative sum array",
+        "For each index i:",
+        "  If sum == 0: maxLen = i + 1",
+        "  Search for same sum at earlier index j:",
+        "    maxLen = max(maxLen, i - j)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "Finding first occurrence takes O(n) for each position",
+        "spaceExplanation": "Cumulative sum array"
+      },
+      "code": {
+        "cpp": "int findMaxLength(vector<int>& nums) {\n    int n = nums.size();\n    vector<int> arr(n);\n    \n    // Convert 0 to -1\n    for (int i = 0; i < n; i++) {\n        arr[i] = (nums[i] == 0) ? -1 : 1;\n    }\n    \n    // Calculate cumulative sums\n    vector<int> cumSum(n);\n    cumSum[0] = arr[0];\n    for (int i = 1; i < n; i++) {\n        cumSum[i] = cumSum[i-1] + arr[i];\n    }\n    \n    int maxLen = 0;\n    for (int i = 0; i < n; i++) {\n        if (cumSum[i] == 0) {\n            maxLen = max(maxLen, i + 1);\n        }\n        \n        // Find first occurrence of same sum\n        for (int j = 0; j < i; j++) {\n            if (cumSum[j] == cumSum[i]) {\n                maxLen = max(maxLen, i - j);\n                break;\n            }\n        }\n    }\n    \n    return maxLen;\n}",
+        "java": "public int findMaxLength(int[] nums) {\n    int n = nums.length;\n    int[] arr = new int[n];\n    \n    for (int i = 0; i < n; i++) {\n        arr[i] = (nums[i] == 0) ? -1 : 1;\n    }\n    \n    int[] cumSum = new int[n];\n    cumSum[0] = arr[0];\n    for (int i = 1; i < n; i++) {\n        cumSum[i] = cumSum[i-1] + arr[i];\n    }\n    \n    int maxLen = 0;\n    for (int i = 0; i < n; i++) {\n        if (cumSum[i] == 0) {\n            maxLen = Math.max(maxLen, i + 1);\n        }\n        \n        for (int j = 0; j < i; j++) {\n            if (cumSum[j] == cumSum[i]) {\n                maxLen = Math.max(maxLen, i - j);\n                break;\n            }\n        }\n    }\n    \n    return maxLen;\n}",
+        "python": "def findMaxLength(nums):\n    n = len(nums)\n    arr = [-1 if x == 0 else 1 for x in nums]\n    \n    cum_sum = [0] * n\n    cum_sum[0] = arr[0]\n    for i in range(1, n):\n        cum_sum[i] = cum_sum[i-1] + arr[i]\n    \n    max_len = 0\n    for i in range(n):\n        if cum_sum[i] == 0:\n            max_len = max(max_len, i + 1)\n        \n        for j in range(i):\n            if cum_sum[j] == cum_sum[i]:\n                max_len = max(max_len, i - j)\n                break\n    \n    return max_len",
+        "javascript": "function findMaxLength(nums) {\n    const n = nums.length;\n    const arr = nums.map(x => x === 0 ? -1 : 1);\n    \n    const cumSum = new Array(n);\n    cumSum[0] = arr[0];\n    for (let i = 1; i < n; i++) {\n        cumSum[i] = cumSum[i-1] + arr[i];\n    }\n    \n    let maxLen = 0;\n    for (let i = 0; i < n; i++) {\n        if (cumSum[i] === 0) {\n            maxLen = Math.max(maxLen, i + 1);\n        }\n        \n        for (let j = 0; j < i; j++) {\n            if (cumSum[j] === cumSum[i]) {\n                maxLen = Math.max(maxLen, i - j);\n                break;\n            }\n        }\n    }\n    \n    return maxLen;\n}"
+      }
+    },
+    {
+      "name": "HashMap with Cumulative Sum - Optimal",
+      "order": 3,
+      "intuition": "Convert 0→-1. Track cumulative sum in hashmap with first occurrence index. Same sum means equal 0s and 1s between.",
+      "approach": "Treat 0 as -1. Running sum in hashmap. When sum repeats, calculate length.",
+      "steps": [
+        "map = {0: -1}, sum = 0, maxLen = 0",
+        "For i from 0 to n-1:",
+        "  sum += (nums[i] == 0 ? -1 : 1)",
+        "  If sum in map:",
+        "    maxLen = max(maxLen, i - map[sum])",
+        "  Else:",
+        "    map[sum] = i",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass with O(1) operations",
+        "spaceExplanation": "HashMap stores at most n sums"
+      },
+      "code": {
+        "cpp": "int findMaxLength(vector<int>& nums) {\n    unordered_map<int, int> sumIndex;\n    sumIndex[0] = -1;  // For subarrays starting from index 0\n    \n    int sum = 0;\n    int maxLen = 0;\n    \n    for (int i = 0; i < nums.size(); i++) {\n        // Treat 0 as -1, 1 as +1\n        sum += (nums[i] == 0) ? -1 : 1;\n        \n        if (sumIndex.find(sum) != sumIndex.end()) {\n            maxLen = max(maxLen, i - sumIndex[sum]);\n        } else {\n            // Store first occurrence only\n            sumIndex[sum] = i;\n        }\n    }\n    \n    return maxLen;\n}",
+        "java": "public int findMaxLength(int[] nums) {\n    HashMap<Integer, Integer> sumIndex = new HashMap<>();\n    sumIndex.put(0, -1);\n    \n    int sum = 0;\n    int maxLen = 0;\n    \n    for (int i = 0; i < nums.length; i++) {\n        sum += (nums[i] == 0) ? -1 : 1;\n        \n        if (sumIndex.containsKey(sum)) {\n            maxLen = Math.max(maxLen, i - sumIndex.get(sum));\n        } else {\n            sumIndex.put(sum, i);\n        }\n    }\n    \n    return maxLen;\n}",
+        "python": "def findMaxLength(nums):\n    sum_index = {0: -1}\n    sum_val = 0\n    max_len = 0\n    \n    for i in range(len(nums)):\n        sum_val += -1 if nums[i] == 0 else 1\n        \n        if sum_val in sum_index:\n            max_len = max(max_len, i - sum_index[sum_val])\n        else:\n            sum_index[sum_val] = i\n    \n    return max_len",
+        "javascript": "function findMaxLength(nums) {\n    const sumIndex = new Map();\n    sumIndex.set(0, -1);\n    \n    let sum = 0;\n    let maxLen = 0;\n    \n    for (let i = 0; i < nums.length; i++) {\n        sum += (nums[i] === 0) ? -1 : 1;\n        \n        if (sumIndex.has(sum)) {\n            maxLen = Math.max(maxLen, i - sumIndex.get(sum));\n        } else {\n            sumIndex.set(sum, i);\n        }\n    }\n    \n    return maxLen;\n}"
       }
     }
   ],
   "commonMistakes": [
-    "Not initializing hashmap with {0: -1} to handle subarrays from start",
-    "Updating hashmap value when count repeats (should only store first occurrence)",
-    "Calculating length incorrectly (should be i - firstIndex, not i - firstIndex + 1)",
-    "Treating both 0 and 1 as +1 instead of 0 as -1 and 1 as +1",
-    "Not understanding why we convert to sum problem (0→-1, 1→+1)",
-    "Forgetting to track maximum length across all valid subarrays",
-    "Using wrong index in hashmap (should store index, not count)",
-    "Not handling empty array or single element array edge cases"
+    "Not converting 0 to -1 (counts won't balance out)",
+    "Storing latest index instead of first (need first for maximum length)",
+    "Forgetting to initialize map with {0: -1}",
+    "Updating map even when sum exists (should only store first occurrence)",
+    "Calculating wrong length (should be i - map[sum], not i - map[sum] + 1)"
   ],
   "hints": [
-    "Transform problem: treat 0 as -1, then find subarray with sum 0",
-    "Use running count: +1 for each 1, -1 for each 0",
-    "When running count repeats, subarray between has equal 0s and 1s",
-    "Store first occurrence of each count in hashmap",
-    "Initialize hashmap with {0: -1} for subarrays starting at index 0",
-    "Only store first occurrence of count, don't update on repeats",
-    "Maximum length is found when same count appears again"
+    "Equal 0s and 1s means (count_0s - count_1s) = 0",
+    "Convert 0→-1: now equal counts means sum = 0",
+    "This becomes 'longest subarray with sum 0' problem",
+    "Use hashmap to track first occurrence of each cumulative sum",
+    "When sum repeats, subarray between has equal 0s and 1s"
   ],
   "followUp": [
-    "What if array has more than 2 distinct elements?",
-    "How to find all subarrays with equal 0s and 1s?",
-    "What if you need shortest subarray instead of longest?",
-    "How to handle if array has negative numbers?",
-    "What if you need count of valid subarrays, not length?",
-    "How to solve for k equal groups instead of 2?",
-    "What if array is a stream and you need online algorithm?",
-    "How to handle very large arrays that don't fit in memory?"
+    "Find all subarrays with equal 0s and 1s (not just longest)?",
+    "What if we want equal number of three distinct values?",
+    "Can you solve with equal 0s, 1s, and 2s?",
+    "Find shortest subarray with equal 0s and 1s?",
+    "What if input is very large (streaming solution)?"
   ],
-  "companies": [
-    "Facebook",
-    "Google",
-    "Amazon",
-    "Microsoft",
-    "Apple",
-    "Bloomberg",
-    "Uber",
-    "Adobe"
-  ],
-  "tags": [
-    "Array",
-    "Hash Table",
-    "Prefix Sum",
-    "Binary Array"
-  ],
+  "companies": ["Facebook", "Google", "Amazon", "Microsoft", "Bloomberg"],
+  "tags": ["array", "hash-table", "prefix-sum"],
   "relatedProblems": [
-    "Subarray Sum Equals K",
     "Maximum Size Subarray Sum Equals k",
-    "Continuous Subarray Sum",
-    "Binary Subarrays With Sum",
-    "Count Number of Nice Subarrays",
-    "Replace the Substring for Balanced String",
-    "Longest Well-Performing Interval",
-    "Make Sum Divisible by P"
+    "Largest Subarray with 0 Sum",
+    "Subarray Sum Equals K",
+    "K-diff Pairs in an Array",
+    "Longest Well-Performing Interval"
   ]
 }

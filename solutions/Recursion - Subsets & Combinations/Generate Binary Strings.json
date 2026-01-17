@@ -1,0 +1,161 @@
+{
+  "questionId": "1980",
+  "questionSlug": "find-unique-binary-string",
+  "title": "Generate Binary Strings",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-unique-binary-string/",
+    "videos": [
+      {
+        "title": "Generate Binary Strings - Backtracking",
+        "url": "https://www.youtube.com/watch?v=sJVivjuMfWA",
+        "channel": "NeetCode",
+        "duration": "7:30",
+        "language": "English"
+      },
+      {
+        "title": "Binary String Generation Explained",
+        "url": "https://www.youtube.com/watch?v=T_xJ0zj4yBo",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Generate Binary Strings - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/find-unique-binary-string/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Generate all binary strings",
+        "url": "https://www.geeksforgeeks.org/generate-binary-strings/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/find-unique-binary-string/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/generate-all-binary-strings/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all binary strings of length n? Use backtracking. At each position, add '0' and '1', recurse.",
+  "approaches": [
+    {
+      "name": "Recursive Backtracking - Add 0 and 1",
+      "order": 1,
+      "intuition": "At each position, recursively add both '0' and '1', build string from left to right.",
+      "approach": "Backtrack by adding '0' and '1' at each step.",
+      "steps": [
+        "backtrack(index, current):",
+        "  If index == n:",
+        "    Add current to result",
+        "    Return",
+        "  current += '0'",
+        "  backtrack(index + 1, current)",
+        "  current.remove()  // backtrack",
+        "  current += '1'",
+        "  backtrack(index + 1, current)",
+        "  current.remove()  // backtrack"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "2^n binary strings, each takes O(n) to create",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> generateBinaryStrings(int n) {\n        vector<string> result;\n        string current = \"\";\n        backtrack(0, n, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int index, int n, string& current, vector<string>& result) {\n        if (index == n) {\n            result.push_back(current);\n            return;\n        }\n        \n        current += '0';\n        backtrack(index + 1, n, current, result);\n        current.pop_back();\n        \n        current += '1';\n        backtrack(index + 1, n, current, result);\n        current.pop_back();\n    }\n};",
+        "java": "class Solution {\n    public List<String> generateBinaryStrings(int n) {\n        List<String> result = new ArrayList<>();\n        backtrack(0, n, new StringBuilder(), result);\n        return result;\n    }\n    \n    private void backtrack(int index, int n, StringBuilder current, List<String> result) {\n        if (index == n) {\n            result.add(current.toString());\n            return;\n        }\n        \n        current.append('0');\n        backtrack(index + 1, n, current, result);\n        current.deleteCharAt(current.length() - 1);\n        \n        current.append('1');\n        backtrack(index + 1, n, current, result);\n        current.deleteCharAt(current.length() - 1);\n    }\n}",
+        "python": "def generateBinaryStrings(n):\n    result = []\n    \n    def backtrack(index, current):\n        if index == n:\n            result.append(current)\n            return\n        \n        backtrack(index + 1, current + '0')\n        backtrack(index + 1, current + '1')\n    \n    backtrack(0, '')\n    return result",
+        "javascript": "function generateBinaryStrings(n) {\n    const result = [];\n    \n    function backtrack(index, current) {\n        if (index === n) {\n            result.push(current);\n            return;\n        }\n        \n        backtrack(index + 1, current + '0');\n        backtrack(index + 1, current + '1');\n    }\n    \n    backtrack(0, '');\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Iterative - Bit Manipulation",
+      "order": 2,
+      "intuition": "Each number from 0 to 2^n-1 represents a binary string. Convert each number to binary.",
+      "approach": "Iterate from 0 to 2^n-1, convert each to binary string with leading zeros.",
+      "steps": [
+        "For i from 0 to 2^n - 1:",
+        "  Convert i to binary with n bits",
+        "  Add to result"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(1) (excluding output)",
+        "timeExplanation": "Generate 2^n strings, each conversion takes O(n)",
+        "spaceExplanation": "No extra space needed"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> generateBinaryStrings(int n) {\n        vector<string> result;\n        \n        for (int i = 0; i < (1 << n); i++) {\n            string binary = \"\";\n            for (int j = n - 1; j >= 0; j--) {\n                binary += (i & (1 << j)) ? '1' : '0';\n            }\n            result.push_back(binary);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<String> generateBinaryStrings(int n) {\n        List<String> result = new ArrayList<>();\n        \n        for (int i = 0; i < (1 << n); i++) {\n            StringBuilder binary = new StringBuilder();\n            for (int j = n - 1; j >= 0; j--) {\n                binary.append((i & (1 << j)) != 0 ? '1' : '0');\n            }\n            result.add(binary.toString());\n        }\n        \n        return result;\n    }\n}",
+        "python": "def generateBinaryStrings(n):\n    result = []\n    \n    for i in range(1 << n):\n        binary = bin(i)[2:].zfill(n)\n        result.append(binary)\n    \n    return result",
+        "javascript": "function generateBinaryStrings(n) {\n    const result = [];\n    \n    for (let i = 0; i < (1 << n); i++) {\n        const binary = i.toString(2).padStart(n, '0');\n        result.push(binary);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Queue-Based BFS - Optimal",
+      "order": 3,
+      "intuition": "Use queue to build strings level by level. Start with '', add '0' and '1' to each string.",
+      "approach": "BFS approach building strings incrementally.",
+      "steps": [
+        "queue = ['']",
+        "For i from 0 to n-1:",
+        "  size = queue.size()",
+        "  For size times:",
+        "    current = queue.dequeue()",
+        "    queue.enqueue(current + '0')",
+        "    queue.enqueue(current + '1')",
+        "Return queue as list"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(2^n)",
+        "timeExplanation": "Building 2^n strings",
+        "spaceExplanation": "Queue stores all strings"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> generateBinaryStrings(int n) {\n        queue<string> q;\n        q.push(\"\");\n        \n        for (int i = 0; i < n; i++) {\n            int size = q.size();\n            for (int j = 0; j < size; j++) {\n                string current = q.front();\n                q.pop();\n                q.push(current + \"0\");\n                q.push(current + \"1\");\n            }\n        }\n        \n        vector<string> result;\n        while (!q.empty()) {\n            result.push_back(q.front());\n            q.pop();\n        }\n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<String> generateBinaryStrings(int n) {\n        Queue<String> queue = new LinkedList<>();\n        queue.offer(\"\");\n        \n        for (int i = 0; i < n; i++) {\n            int size = queue.size();\n            for (int j = 0; j < size; j++) {\n                String current = queue.poll();\n                queue.offer(current + \"0\");\n                queue.offer(current + \"1\");\n            }\n        }\n        \n        return new ArrayList<>(queue);\n    }\n}",
+        "python": "def generateBinaryStrings(n):\n    from collections import deque\n    queue = deque([''])\n    \n    for i in range(n):\n        for _ in range(len(queue)):\n            current = queue.popleft()\n            queue.append(current + '0')\n            queue.append(current + '1')\n    \n    return list(queue)",
+        "javascript": "function generateBinaryStrings(n) {\n    const queue = [''];\n    \n    for (let i = 0; i < n; i++) {\n        const size = queue.length;\n        for (let j = 0; j < size; j++) {\n            const current = queue.shift();\n            queue.push(current + '0');\n            queue.push(current + '1');\n        }\n    }\n    \n    return queue;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling n=0 case (should return [''])",
+    "Forgetting to backtrack properly",
+    "Off-by-one errors in bit manipulation",
+    "Not padding with leading zeros in binary conversion",
+    "Using 1D array instead of proper string building"
+  ],
+  "hints": [
+    "Each binary string of length n is unique",
+    "There are exactly 2^n binary strings",
+    "Can use backtracking or bit manipulation",
+    "Think of it as tree where each node branches to 0 and 1"
+  ],
+  "followUp": [
+    "Generate binary strings with exactly k ones? (Add constraint)",
+    "Generate in lexicographic order? (Already is if iterating correctly)",
+    "Generate with no consecutive ones? (Skip '11')",
+    "Find specific binary string? (Use bitmask directly)",
+    "Generate all k-bit numbers? (Same problem, different interpretation)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft"],
+  "tags": ["backtracking", "bit-manipulation"],
+  "relatedProblems": [
+    "Generate Parentheses",
+    "Letter Combinations of Phone Number",
+    "Subsets",
+    "Binary Watch"
+  ]
+}

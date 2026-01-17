@@ -1,0 +1,176 @@
+{
+  "questionId": "304",
+  "questionSlug": "range-sum-query-2d-immutable",
+  "title": "Range Sum Query 2D - Immutable",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/range-sum-query-2d-immutable/",
+    "videos": [
+      {
+        "title": "Range Sum Query 2D - 2D Prefix Sum",
+        "url": "https://www.youtube.com/watch?v=KE8MQuwE2yA",
+        "channel": "NeetCode",
+        "duration": "11:40",
+        "language": "English"
+      },
+      {
+        "title": "2D Matrix Range Sum",
+        "url": "https://www.youtube.com/watch?v=yCQN096CwWM",
+        "channel": "take U forward",
+        "duration": "14:25",
+        "language": "English"
+      },
+      {
+        "title": "2D Prefix Sum Explained",
+        "url": "https://www.youtube.com/watch?v=PwDqpOMwg6U",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "13:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Range Sum Query 2D Immutable - LeetCode Official",
+        "url": "https://leetcode.com/problems/range-sum-query-2d-immutable/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "2D Prefix Sum Array",
+        "url": "https://takeuforward.org/data-structure/prefix-sum-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Matrix Range Sum - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/submatrix-sum-queries/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/range-sum-query-2d-immutable/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/submatrix-sum-queries/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "2D range sum queries? Build 2D prefix sum. Query = prefix[r2+1][c2+1] - prefix[r1][c2+1] - prefix[r2+1][c1] + prefix[r1][c1].",
+  "approaches": [
+    {
+      "name": "Brute Force - Sum Rectangle Each Time",
+      "order": 1,
+      "intuition": "For each query, iterate through all cells in the rectangle and sum them. No preprocessing.",
+      "approach": "Store original matrix. For each query, double loop through the rectangle.",
+      "steps": [
+        "Constructor: store matrix",
+        "sumRegion(r1, c1, r2, c2):",
+        "  sum = 0",
+        "  For row from r1 to r2:",
+        "    For col from c1 to c2:",
+        "      sum += matrix[row][col]",
+        "  Return sum"
+      ],
+      "complexity": {
+        "time": "O(1) init, O(m*n) per query",
+        "space": "O(1)",
+        "timeExplanation": "Each query iterates through entire rectangle",
+        "spaceExplanation": "Only storing original matrix"
+      },
+      "code": {
+        "cpp": "class NumMatrix {\nprivate:\n    vector<vector<int>> matrix;\n    \npublic:\n    NumMatrix(vector<vector<int>>& matrix) {\n        this->matrix = matrix;\n    }\n    \n    int sumRegion(int row1, int col1, int row2, int col2) {\n        int sum = 0;\n        for (int r = row1; r <= row2; r++) {\n            for (int c = col1; c <= col2; c++) {\n                sum += matrix[r][c];\n            }\n        }\n        return sum;\n    }\n};",
+        "java": "class NumMatrix {\n    private int[][] matrix;\n    \n    public NumMatrix(int[][] matrix) {\n        this.matrix = matrix;\n    }\n    \n    public int sumRegion(int row1, int col1, int row2, int col2) {\n        int sum = 0;\n        for (int r = row1; r <= row2; r++) {\n            for (int c = col1; c <= col2; c++) {\n                sum += matrix[r][c];\n            }\n        }\n        return sum;\n    }\n}",
+        "python": "class NumMatrix:\n    def __init__(self, matrix):\n        self.matrix = matrix\n    \n    def sumRegion(self, row1, col1, row2, col2):\n        total = 0\n        for r in range(row1, row2 + 1):\n            for c in range(col1, col2 + 1):\n                total += self.matrix[r][c]\n        return total",
+        "javascript": "class NumMatrix {\n    constructor(matrix) {\n        this.matrix = matrix;\n    }\n    \n    sumRegion(row1, col1, row2, col2) {\n        let sum = 0;\n        for (let r = row1; r <= row2; r++) {\n            for (let c = col1; c <= col2; c++) {\n                sum += this.matrix[r][c];\n            }\n        }\n        return sum;\n    }\n}"
+      }
+    },
+    {
+      "name": "Row-wise Prefix Sum",
+      "order": 2,
+      "intuition": "Precompute prefix sum for each row. Query sums each row's range using 1D prefix sum logic.",
+      "approach": "Store row prefix sums. For query, sum up the relevant range in each row.",
+      "steps": [
+        "Constructor:",
+        "  For each row i:",
+        "    Build prefix sum: prefix[i][j] = sum of row i from col 0 to j-1",
+        "sumRegion(r1, c1, r2, c2):",
+        "  sum = 0",
+        "  For row from r1 to r2:",
+        "    sum += prefix[row][c2+1] - prefix[row][c1]",
+        "  Return sum"
+      ],
+      "complexity": {
+        "time": "O(m*n) init, O(m) per query",
+        "space": "O(m*n)",
+        "timeExplanation": "Query needs to sum m rows",
+        "spaceExplanation": "2D prefix array"
+      },
+      "code": {
+        "cpp": "class NumMatrix {\nprivate:\n    vector<vector<int>> prefix;\n    \npublic:\n    NumMatrix(vector<vector<int>>& matrix) {\n        if (matrix.empty()) return;\n        int m = matrix.size();\n        int n = matrix[0].size();\n        \n        prefix.resize(m, vector<int>(n + 1, 0));\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                prefix[i][j + 1] = prefix[i][j] + matrix[i][j];\n            }\n        }\n    }\n    \n    int sumRegion(int row1, int col1, int row2, int col2) {\n        int sum = 0;\n        for (int r = row1; r <= row2; r++) {\n            sum += prefix[r][col2 + 1] - prefix[r][col1];\n        }\n        return sum;\n    }\n};",
+        "java": "class NumMatrix {\n    private int[][] prefix;\n    \n    public NumMatrix(int[][] matrix) {\n        if (matrix.length == 0) return;\n        int m = matrix.length;\n        int n = matrix[0].length;\n        \n        prefix = new int[m][n + 1];\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                prefix[i][j + 1] = prefix[i][j] + matrix[i][j];\n            }\n        }\n    }\n    \n    public int sumRegion(int row1, int col1, int row2, int col2) {\n        int sum = 0;\n        for (int r = row1; r <= row2; r++) {\n            sum += prefix[r][col2 + 1] - prefix[r][col1];\n        }\n        return sum;\n    }\n}",
+        "python": "class NumMatrix:\n    def __init__(self, matrix):\n        if not matrix:\n            return\n        m, n = len(matrix), len(matrix[0])\n        \n        self.prefix = [[0] * (n + 1) for _ in range(m)]\n        \n        for i in range(m):\n            for j in range(n):\n                self.prefix[i][j + 1] = self.prefix[i][j] + matrix[i][j]\n    \n    def sumRegion(self, row1, col1, row2, col2):\n        total = 0\n        for r in range(row1, row2 + 1):\n            total += self.prefix[r][col2 + 1] - self.prefix[r][col1]\n        return total",
+        "javascript": "class NumMatrix {\n    constructor(matrix) {\n        if (matrix.length === 0) return;\n        const m = matrix.length;\n        const n = matrix[0].length;\n        \n        this.prefix = Array(m).fill(0).map(() => Array(n + 1).fill(0));\n        \n        for (let i = 0; i < m; i++) {\n            for (let j = 0; j < n; j++) {\n                this.prefix[i][j + 1] = this.prefix[i][j] + matrix[i][j];\n            }\n        }\n    }\n    \n    sumRegion(row1, col1, row2, col2) {\n        let sum = 0;\n        for (let r = row1; r <= row2; r++) {\n            sum += this.prefix[r][col2 + 1] - this.prefix[r][col1];\n        }\n        return sum;\n    }\n}"
+      }
+    },
+    {
+      "name": "2D Prefix Sum - Optimal",
+      "order": 3,
+      "intuition": "Build 2D prefix sum where prefix[i][j] = sum of rectangle from (0,0) to (i-1,j-1). Use inclusion-exclusion for query.",
+      "approach": "Precompute 2D prefix. Query: add bottom-right, subtract top-right and bottom-left, add back top-left (counted twice).",
+      "steps": [
+        "Constructor:",
+        "  prefix[i][j] = prefix[i-1][j] + prefix[i][j-1] - prefix[i-1][j-1] + matrix[i-1][j-1]",
+        "sumRegion(r1, c1, r2, c2):",
+        "  Return prefix[r2+1][c2+1]",
+        "         - prefix[r1][c2+1]",
+        "         - prefix[r2+1][c1]",
+        "         + prefix[r1][c1]"
+      ],
+      "complexity": {
+        "time": "O(m*n) init, O(1) per query",
+        "space": "O(m*n)",
+        "timeExplanation": "Preprocessing builds entire 2D prefix array, queries are O(1)",
+        "spaceExplanation": "2D prefix array of size (m+1)×(n+1)"
+      },
+      "code": {
+        "cpp": "class NumMatrix {\nprivate:\n    vector<vector<int>> prefix;\n    \npublic:\n    NumMatrix(vector<vector<int>>& matrix) {\n        if (matrix.empty() || matrix[0].empty()) return;\n        \n        int m = matrix.size();\n        int n = matrix[0].size();\n        prefix.resize(m + 1, vector<int>(n + 1, 0));\n        \n        // Build 2D prefix sum\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                prefix[i][j] = prefix[i-1][j] + prefix[i][j-1] \n                             - prefix[i-1][j-1] + matrix[i-1][j-1];\n            }\n        }\n    }\n    \n    int sumRegion(int row1, int col1, int row2, int col2) {\n        return prefix[row2+1][col2+1] \n             - prefix[row1][col2+1] \n             - prefix[row2+1][col1] \n             + prefix[row1][col1];\n    }\n};",
+        "java": "class NumMatrix {\n    private int[][] prefix;\n    \n    public NumMatrix(int[][] matrix) {\n        if (matrix.length == 0 || matrix[0].length == 0) return;\n        \n        int m = matrix.length;\n        int n = matrix[0].length;\n        prefix = new int[m + 1][n + 1];\n        \n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                prefix[i][j] = prefix[i-1][j] + prefix[i][j-1] \n                             - prefix[i-1][j-1] + matrix[i-1][j-1];\n            }\n        }\n    }\n    \n    public int sumRegion(int row1, int col1, int row2, int col2) {\n        return prefix[row2+1][col2+1] \n             - prefix[row1][col2+1] \n             - prefix[row2+1][col1] \n             + prefix[row1][col1];\n    }\n}",
+        "python": "class NumMatrix:\n    def __init__(self, matrix):\n        if not matrix or not matrix[0]:\n            return\n        \n        m, n = len(matrix), len(matrix[0])\n        self.prefix = [[0] * (n + 1) for _ in range(m + 1)]\n        \n        for i in range(1, m + 1):\n            for j in range(1, n + 1):\n                self.prefix[i][j] = (self.prefix[i-1][j] + \n                                    self.prefix[i][j-1] - \n                                    self.prefix[i-1][j-1] + \n                                    matrix[i-1][j-1])\n    \n    def sumRegion(self, row1, col1, row2, col2):\n        return (self.prefix[row2+1][col2+1] - \n                self.prefix[row1][col2+1] - \n                self.prefix[row2+1][col1] + \n                self.prefix[row1][col1])",
+        "javascript": "class NumMatrix {\n    constructor(matrix) {\n        if (matrix.length === 0 || matrix[0].length === 0) return;\n        \n        const m = matrix.length;\n        const n = matrix[0].length;\n        this.prefix = Array(m + 1).fill(0)\n            .map(() => Array(n + 1).fill(0));\n        \n        for (let i = 1; i <= m; i++) {\n            for (let j = 1; j <= n; j++) {\n                this.prefix[i][j] = this.prefix[i-1][j] + \n                                   this.prefix[i][j-1] - \n                                   this.prefix[i-1][j-1] + \n                                   matrix[i-1][j-1];\n            }\n        }\n    }\n    \n    sumRegion(row1, col1, row2, col2) {\n        return this.prefix[row2+1][col2+1] - \n               this.prefix[row1][col2+1] - \n               this.prefix[row2+1][col1] + \n               this.prefix[row1][col1];\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Wrong formula: forgetting to add back prefix[r1][c1] (counted twice in subtractions)",
+    "Off-by-one errors in indices (prefix is (m+1)×(n+1))",
+    "Not handling empty matrix edge case",
+    "Confusing which rectangles to subtract/add in query",
+    "Integer overflow for very large matrices"
+  ],
+  "hints": [
+    "2D extension of 1D prefix sum",
+    "prefix[i][j] = sum of rectangle from (0,0) to (i-1,j-1)",
+    "Build using: prefix[i][j] = top + left - diagonal + current",
+    "Query using inclusion-exclusion: bottom-right - top-right - bottom-left + top-left",
+    "Draw a picture to understand why we add back the top-left corner"
+  ],
+  "followUp": [
+    "What if matrix is mutable? (2D Segment Tree or 2D Fenwick Tree)",
+    "Can you handle updates efficiently? (Not with simple prefix sum)",
+    "What about 3D range sum queries? (3D prefix sum with more terms)",
+    "How to optimize space if matrix is sparse? (Store only non-zero sums)",
+    "What if we need maximum instead of sum in range?"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft", "Uber"],
+  "tags": ["array", "design", "matrix", "prefix-sum"],
+  "relatedProblems": [
+    "Range Sum Query - Immutable",
+    "Range Sum Query - Mutable",
+    "Range Sum Query 2D - Mutable",
+    "Maximum Sum of Rectangle No Larger Than K",
+    "Count Square Submatrices with All Ones"
+  ]
+}

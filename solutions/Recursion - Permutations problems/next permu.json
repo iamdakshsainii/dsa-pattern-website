@@ -1,0 +1,154 @@
+{
+  "questionId": "31",
+  "questionSlug": "next-permutation",
+  "title": "Next Permutation",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/next-permutation/",
+    "videos": [
+      {
+        "title": "Next Permutation Algorithm",
+        "url": "https://www.youtube.com/watch?v=6qXO72FUqV0",
+        "channel": "NeetCode",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Next Permutation Explained",
+        "url": "https://www.youtube.com/watch?v=kk0bZzqnY5A",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Next Permutation - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/next-permutation/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Next lexicographic permutation algorithm",
+        "url": "https://www.geeksforgeeks.org/next-permutation/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/next-permutation/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/next-permutation/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find next lexicographic permutation in-place? Find rightmost smaller element, swap with just larger, reverse suffix.",
+  "approaches": [
+    {
+      "name": "Naive - Generate All Permutations and Find",
+      "order": 1,
+      "intuition": "Generate all permutations, find current position, return next one.",
+      "approach": "Generate all permutations, sort them, find current in list, return next.",
+      "steps": [
+        "Generate all n! permutations",
+        "Sort permutations lexicographically",
+        "Find current permutation in list",
+        "If found and not last: return next",
+        "Otherwise: return first permutation (wraparound)"
+      ],
+      "complexity": {
+        "time": "O(n! × n log(n!))",
+        "space": "O(n!)",
+        "timeExplanation": "Generate all and sort all permutations",
+        "spaceExplanation": "Store all n! permutations"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void nextPermutation(vector<int>& nums) {\n        vector<vector<int>> perms;\n        vector<int> temp = nums;\n        sort(temp.begin(), temp.end());\n        \n        do {\n            perms.push_back(temp);\n        } while (next_permutation(temp.begin(), temp.end()));\n        \n        for (int i = 0; i < perms.size(); i++) {\n            if (perms[i] == nums) {\n                if (i + 1 < perms.size()) {\n                    nums = perms[i + 1];\n                } else {\n                    nums = perms[0];\n                }\n                return;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public void nextPermutation(int[] nums) {\n        List<int[]> perms = new ArrayList<>();\n        int[] temp = nums.clone();\n        Arrays.sort(temp);\n        \n        do {\n            perms.add(temp.clone());\n        } while (nextPerm(temp));\n        \n        for (int i = 0; i < perms.size(); i++) {\n            if (Arrays.equals(perms.get(i), nums)) {\n                if (i + 1 < perms.size()) {\n                    System.arraycopy(perms.get(i + 1), 0, nums, 0, nums.length);\n                } else {\n                    System.arraycopy(perms.get(0), 0, nums, 0, nums.length);\n                }\n                return;\n            }\n        }\n    }\n    \n    private boolean nextPerm(int[] arr) {\n        int i = arr.length - 2;\n        while (i >= 0 && arr[i] >= arr[i + 1]) i--;\n        if (i < 0) return false;\n        \n        int j = arr.length - 1;\n        while (arr[j] <= arr[i]) j--;\n        swap(arr, i, j);\n        reverse(arr, i + 1);\n        return true;\n    }\n    \n    private void swap(int[] arr, int i, int j) {\n        int t = arr[i];\n        arr[i] = arr[j];\n        arr[j] = t;\n    }\n    \n    private void reverse(int[] arr, int start) {\n        int end = arr.length - 1;\n        while (start < end) {\n            swap(arr, start++, end--);\n        }\n    }\n}",
+        "python": "def nextPermutation(nums):\n    from itertools import permutations\n    perms = sorted(set(tuple(p) for p in permutations(nums)))\n    current = tuple(nums)\n    idx = perms.index(current)\n    next_perm = perms[(idx + 1) % len(perms)]\n    nums[:] = list(next_perm)",
+        "javascript": "function nextPermutation(nums) {\n    const perms = [];\n    let temp = [...nums];\n    temp.sort((a, b) => a - b);\n    \n    const nextPerm = (arr) => {\n        let i = arr.length - 2;\n        while (i >= 0 && arr[i] >= arr[i + 1]) i--;\n        if (i < 0) return false;\n        let j = arr.length - 1;\n        while (arr[j] <= arr[i]) j--;\n        [arr[i], arr[j]] = [arr[j], arr[i]];\n        arr.reverse(i + 1);\n        return true;\n    };\n    \n    do {\n        perms.push([...temp]);\n    } while (nextPerm(temp));\n    \n    for (let i = 0; i < perms.length; i++) {\n        if (JSON.stringify(perms[i]) === JSON.stringify(nums)) {\n            const next = i + 1 < perms.length ? perms[i + 1] : perms[0];\n            nums.splice(0, nums.length, ...next);\n            return;\n        }\n    }\n}"
+      }
+    },
+    {
+      "name": "Algorithm - Standard Next Permutation",
+      "order": 2,
+      "intuition": "Find rightmost i where nums[i] < nums[i+1]. Swap with smallest element larger than it. Reverse suffix.",
+      "approach": "Implement next permutation algorithm directly.",
+      "steps": [
+        "1. Find rightmost i where nums[i] < nums[i+1]",
+        "   If no such i: reverse entire array, return",
+        "2. Find rightmost j where j > i and nums[j] > nums[i]",
+        "3. Swap nums[i] and nums[j]",
+        "4. Reverse nums[i+1:]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "In-place modification"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void nextPermutation(vector<int>& nums) {\n        int n = nums.size();\n        int i = n - 2;\n        \n        while (i >= 0 && nums[i] >= nums[i + 1]) {\n            i--;\n        }\n        \n        if (i < 0) {\n            reverse(nums.begin(), nums.end());\n            return;\n        }\n        \n        int j = n - 1;\n        while (j > i && nums[j] <= nums[i]) {\n            j--;\n        }\n        \n        swap(nums[i], nums[j]);\n        reverse(nums.begin() + i + 1, nums.end());\n    }\n};",
+        "java": "class Solution {\n    public void nextPermutation(int[] nums) {\n        int n = nums.length;\n        int i = n - 2;\n        \n        while (i >= 0 && nums[i] >= nums[i + 1]) {\n            i--;\n        }\n        \n        if (i < 0) {\n            reverse(nums, 0, n - 1);\n            return;\n        }\n        \n        int j = n - 1;\n        while (j > i && nums[j] <= nums[i]) {\n            j--;\n        }\n        \n        swap(nums, i, j);\n        reverse(nums, i + 1, n - 1);\n    }\n    \n    private void swap(int[] nums, int i, int j) {\n        int temp = nums[i];\n        nums[i] = nums[j];\n        nums[j] = temp;\n    }\n    \n    private void reverse(int[] nums, int start, int end) {\n        while (start < end) {\n            swap(nums, start++, end--);\n        }\n    }\n}",
+        "python": "def nextPermutation(nums):\n    n = len(nums)\n    i = n - 2\n    \n    while i >= 0 and nums[i] >= nums[i + 1]:\n        i -= 1\n    \n    if i < 0:\n        nums.reverse()\n        return\n    \n    j = n - 1\n    while j > i and nums[j] <= nums[i]:\n        j -= 1\n    \n    nums[i], nums[j] = nums[j], nums[i]\n    nums[i + 1:] = reversed(nums[i + 1:])",
+        "javascript": "function nextPermutation(nums) {\n    const n = nums.length;\n    let i = n - 2;\n    \n    while (i >= 0 && nums[i] >= nums[i + 1]) {\n        i--;\n    }\n    \n    if (i < 0) {\n        nums.reverse();\n        return;\n    }\n    \n    let j = n - 1;\n    while (j > i && nums[j] <= nums[i]) {\n        j--;\n    }\n    \n    [nums[i], nums[j]] = [nums[j], nums[i]];\n    \n    let left = i + 1, right = n - 1;\n    while (left < right) {\n        [nums[left], nums[right]] = [nums[right], nums[left]];\n        left++;\n        right--;\n    }\n}"
+      }
+    },
+    {
+      "name": "Optimized with Built-in - Optimal",
+      "order": 3,
+      "intuition": "Use language built-in next_permutation function if available.",
+      "approach": "Direct use of standard library function.",
+      "steps": [
+        "Simply call next_permutation on the array",
+        "It modifies in-place",
+        "Returns whether next permutation exists"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Built-in is optimized to O(n)",
+        "spaceExplanation": "In-place"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void nextPermutation(vector<int>& nums) {\n        next_permutation(nums.begin(), nums.end());\n    }\n};",
+        "java": "class Solution {\n    public void nextPermutation(int[] nums) {\n        int i = nums.length - 2;\n        while (i >= 0 && nums[i] >= nums[i + 1]) i--;\n        if (i < 0) {\n            Arrays.sort(nums);\n            return;\n        }\n        \n        int j = nums.length - 1;\n        while (nums[j] <= nums[i]) j--;\n        swap(nums, i, j);\n        reverse(nums, i + 1);\n    }\n    \n    private void swap(int[] nums, int i, int j) {\n        int t = nums[i];\n        nums[i] = nums[j];\n        nums[j] = t;\n    }\n    \n    private void reverse(int[] nums, int start) {\n        int end = nums.length - 1;\n        while (start < end) {\n            swap(nums, start++, end--);\n        }\n    }\n}",
+        "python": "from itertools import permutations\n\nclass Solution:\n    def nextPermutation(self, nums):\n        nums.sort()\n        perms = list(permutations(nums))\n        idx = perms.index(tuple(nums))\n        next_perm = perms[(idx + 1) % len(perms)]\n        nums[:] = list(next_perm)",
+        "javascript": "function nextPermutation(nums) {\n    const n = nums.length;\n    let i = n - 2;\n    \n    while (i >= 0 && nums[i] >= nums[i + 1]) i--;\n    \n    if (i >= 0) {\n        let j = n - 1;\n        while (nums[j] <= nums[i]) j--;\n        [nums[i], nums[j]] = [nums[j], nums[i]];\n    }\n    \n    const reverse = (start) => {\n        let left = start, right = n - 1;\n        while (left < right) {\n            [nums[left], nums[right]] = [nums[right], nums[left]];\n            left++;\n            right--;\n        }\n    };\n    \n    reverse(i + 1);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not finding rightmost i (should start from end)",
+    "Not finding rightmost j > i where nums[j] > nums[i]",
+    "Not reversing the suffix properly",
+    "Forgetting to handle when no next permutation exists (reverse array)",
+    "Confusing ascending/descending comparisons"
+  ],
+  "hints": [
+    "Rightmost i where nums[i] < nums[i+1]",
+    "If no such i: array is in descending order, reverse it",
+    "Find rightmost j > i where nums[j] > nums[i]",
+    "Swap nums[i] and nums[j]",
+    "Reverse suffix nums[i+1:]"
+  ],
+  "followUp": [
+    "Find previous permutation? (Similar algorithm, opposite comparisons)",
+    "Check if permutation exists? (Just check return value)",
+    "Get kth permutation? (Use factoradic number system)",
+    "Find rank of permutation? (Factorial number system)",
+    "Generate in specific order? (Modify algorithm)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft"],
+  "tags": ["array", "two-pointers", "math"],
+  "relatedProblems": [
+    "Previous Permutation",
+    "Permutations",
+    "Permutations II",
+    "Permutation Sequence"
+  ]
+}

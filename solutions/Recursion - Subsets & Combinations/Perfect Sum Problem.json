@@ -1,0 +1,163 @@
+{
+  "questionId": "416-variant",
+  "questionSlug": "perfect-sum-problem",
+  "title": "Perfect Sum Problem",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/partition-equal-subset-sum/",
+    "videos": [
+      {
+        "title": "Perfect Sum Problem - Dynamic Programming",
+        "url": "https://www.youtube.com/watch?v=Xv_odBTuI1A",
+        "channel": "NeetCode",
+        "duration": "10:45",
+        "language": "English"
+      },
+      {
+        "title": "Count Subsets with Sum",
+        "url": "https://www.youtube.com/watch?v=gxKgYdXKb6g",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Perfect Sum Problem - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/perfect-sum-problem-print-subsets-with-given-sum/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Count subsets with given sum",
+        "url": "https://www.geeksforgeeks.org/count-subsets-with-given-sum/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/perfect-sum-problem5725/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Similar Problem on LeetCode",
+        "url": "https://leetcode.com/problems/partition-equal-subset-sum/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Count subsets with given sum? Use DP. dp[i][j] = count of subsets using first i elements with sum j.",
+  "approaches": [
+    {
+      "name": "Recursive Backtracking - Count All Subsets",
+      "order": 1,
+      "intuition": "Try all subsets. For each element, include it or exclude it. Count those with target sum.",
+      "approach": "Generate all 2^n subsets, track which sum to target sum.",
+      "steps": [
+        "countSubsets(index, currentSum):",
+        "  If currentSum == target: return 1",
+        "  If index == n: return 0 (not equal to target)",
+        "  Include current element: countSubsets(index+1, currentSum+nums[index])",
+        "  Exclude current element: countSubsets(index+1, currentSum)",
+        "  Return include + exclude"
+      ],
+      "complexity": {
+        "time": "O(2^n)",
+        "space": "O(n)",
+        "timeExplanation": "Explore all 2^n subsets",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countSubsets(vector<int>& nums, int target) {\n        return count(0, nums, 0, target);\n    }\n    \nprivate:\n    int count(int index, vector<int>& nums, int currentSum, int target) {\n        if (currentSum == target) return 1;\n        if (index == nums.size()) return 0;\n        \n        int include = count(index + 1, nums, currentSum + nums[index], target);\n        int exclude = count(index + 1, nums, currentSum, target);\n        \n        return include + exclude;\n    }\n};",
+        "java": "class Solution {\n    public int countSubsets(int[] nums, int target) {\n        return count(0, nums, 0, target);\n    }\n    \n    private int count(int index, int[] nums, int currentSum, int target) {\n        if (currentSum == target) return 1;\n        if (index == nums.length) return 0;\n        \n        int include = count(index + 1, nums, currentSum + nums[index], target);\n        int exclude = count(index + 1, nums, currentSum, target);\n        \n        return include + exclude;\n    }\n}",
+        "python": "def countSubsets(nums, target):\n    def count(index, currentSum):\n        if currentSum == target:\n            return 1\n        if index == len(nums):\n            return 0\n        \n        include = count(index + 1, currentSum + nums[index])\n        exclude = count(index + 1, currentSum)\n        \n        return include + exclude\n    \n    return count(0, 0)",
+        "javascript": "function countSubsets(nums, target) {\n    function count(index, currentSum) {\n        if (currentSum === target) return 1;\n        if (index === nums.length) return 0;\n        \n        const include = count(index + 1, currentSum + nums[index]);\n        const exclude = count(index + 1, currentSum);\n        \n        return include + exclude;\n    }\n    \n    return count(0, 0);\n}"
+      }
+    },
+    {
+      "name": "2D Dynamic Programming - Exact Sum",
+      "order": 2,
+      "intuition": "dp[i][j] = number of subsets using first i elements with sum j. Build table bottom-up.",
+      "approach": "Create 2D DP table where rows = elements, cols = possible sums.",
+      "steps": [
+        "dp[i][j] = ways to get sum j using first i elements",
+        "dp[0][0] = 1 (empty subset)",
+        "For i from 1 to n:",
+        "  For j from 0 to target:",
+        "    dp[i][j] = dp[i-1][j]  // exclude current",
+        "    If j >= nums[i-1]:",
+        "      dp[i][j] += dp[i-1][j-nums[i-1]]  // include current",
+        "Return dp[n][target]"
+      ],
+      "complexity": {
+        "time": "O(n × sum)",
+        "space": "O(n × sum)",
+        "timeExplanation": "Fill n × sum table",
+        "spaceExplanation": "2D array of size n × sum"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countSubsets(vector<int>& nums, int target) {\n        int n = nums.size();\n        vector<vector<int>> dp(n + 1, vector<int>(target + 1, 0));\n        dp[0][0] = 1;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j <= target; j++) {\n                dp[i][j] = dp[i - 1][j]; // Exclude\n                if (j >= nums[i - 1]) {\n                    dp[i][j] += dp[i - 1][j - nums[i - 1]]; // Include\n                }\n            }\n        }\n        \n        return dp[n][target];\n    }\n};",
+        "java": "class Solution {\n    public int countSubsets(int[] nums, int target) {\n        int n = nums.length;\n        int[][] dp = new int[n + 1][target + 1];\n        dp[0][0] = 1;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j <= target; j++) {\n                dp[i][j] = dp[i - 1][j];\n                if (j >= nums[i - 1]) {\n                    dp[i][j] += dp[i - 1][j - nums[i - 1]];\n                }\n            }\n        }\n        \n        return dp[n][target];\n    }\n}",
+        "python": "def countSubsets(nums, target):\n    n = len(nums)\n    dp = [[0] * (target + 1) for _ in range(n + 1)]\n    dp[0][0] = 1\n    \n    for i in range(1, n + 1):\n        for j in range(target + 1):\n            dp[i][j] = dp[i - 1][j]\n            if j >= nums[i - 1]:\n                dp[i][j] += dp[i - 1][j - nums[i - 1]]\n    \n    return dp[n][target]",
+        "javascript": "function countSubsets(nums, target) {\n    const n = nums.length;\n    const dp = Array.from({length: n + 1}, () => Array(target + 1).fill(0));\n    dp[0][0] = 1;\n    \n    for (let i = 1; i <= n; i++) {\n        for (let j = 0; j <= target; j++) {\n            dp[i][j] = dp[i - 1][j];\n            if (j >= nums[i - 1]) {\n                dp[i][j] += dp[i - 1][j - nums[i - 1]];\n            }\n        }\n    }\n    \n    return dp[n][target];\n}"
+      }
+    },
+    {
+      "name": "1D DP Space Optimization - Optimal",
+      "order": 3,
+      "intuition": "Optimize 2D DP to 1D by using single array. Update from right to left to avoid using updated values.",
+      "approach": "Use 1D array dp[j] = count of subsets with sum j. Update right-to-left.",
+      "steps": [
+        "dp[0] = 1 (empty subset)",
+        "For each num in nums:",
+        "  For j from target down to num:",
+        "    dp[j] += dp[j - num]",
+        "Return dp[target]",
+        "",
+        "Iterate right-to-left to avoid using updated values"
+      ],
+      "complexity": {
+        "time": "O(n × sum)",
+        "space": "O(sum)",
+        "timeExplanation": "Same iterations but optimized space",
+        "spaceExplanation": "Only 1D array of size sum"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countSubsets(vector<int>& nums, int target) {\n        vector<int> dp(target + 1, 0);\n        dp[0] = 1;\n        \n        for (int num : nums) {\n            for (int j = target; j >= num; j--) {\n                dp[j] += dp[j - num];\n            }\n        }\n        \n        return dp[target];\n    }\n};",
+        "java": "class Solution {\n    public int countSubsets(int[] nums, int target) {\n        int[] dp = new int[target + 1];\n        dp[0] = 1;\n        \n        for (int num : nums) {\n            for (int j = target; j >= num; j--) {\n                dp[j] += dp[j - num];\n            }\n        }\n        \n        return dp[target];\n    }\n}",
+        "python": "def countSubsets(nums, target):\n    dp = [0] * (target + 1)\n    dp[0] = 1\n    \n    for num in nums:\n        for j in range(target, num - 1, -1):\n            dp[j] += dp[j - num]\n    \n    return dp[target]",
+        "javascript": "function countSubsets(nums, target) {\n    const dp = Array(target + 1).fill(0);\n    dp[0] = 1;\n    \n    for (const num of nums) {\n        for (let j = target; j >= num; j--) {\n            dp[j] += dp[j - num];\n        }\n    }\n    \n    return dp[target];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not initializing dp[0] = 1 (empty subset)",
+    "Iterating left-to-right in 1D DP (causes using updated values)",
+    "Not handling sum exceeding target properly",
+    "Off-by-one errors in array indexing",
+    "Forgetting that order doesn't matter in subsets"
+  ],
+  "hints": [
+    "Count subsets with sum = target",
+    "For each element, either include or exclude it",
+    "dp[j] = number of ways to make sum j",
+    "Include: dp[j] += dp[j - num]",
+    "Iterate from right to left in 1D DP to avoid using updated values"
+  ],
+  "followUp": [
+    "Print all subsets with given sum? (Backtracking + path tracking)",
+    "Count subsets with sum in range [a, b]? (Modify condition)",
+    "Handle negative numbers? (Use offset/different DP)",
+    "Count with distinct elements only? (Different constraint)",
+    "Find minimum count to reach sum? (Use min instead of sum)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft"],
+  "tags": ["dynamic-programming", "subset-sum", "backtracking"],
+  "relatedProblems": [
+    "Partition Equal Subset Sum",
+    "Target Sum (count ways)",
+    "Combination Sum",
+    "Coin Change",
+    "0/1 Knapsack"
+  ]
+}

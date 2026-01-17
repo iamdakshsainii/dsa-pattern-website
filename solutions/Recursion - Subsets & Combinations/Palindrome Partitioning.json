@@ -1,0 +1,174 @@
+{
+  "questionId": "131",
+  "questionSlug": "palindrome-partitioning",
+  "title": "Palindrome Partitioning",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/palindrome-partitioning/",
+    "videos": [
+      {
+        "title": "Palindrome Partitioning - Backtracking",
+        "url": "https://www.youtube.com/watch?v=3jvWodd6ItYI",
+        "channel": "NeetCode",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Split String into Palindrome Substrings",
+        "url": "https://www.youtube.com/watch?v=niR1p-gFp9Q",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Palindrome Partitioning - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/palindrome-partitioning/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Palindrome partitioning problem",
+        "url": "https://www.geeksforgeeks.org/palindrome-partitioning-of-a-string/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/palindrome-partitioning/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/palindrome-partitioning/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Partition string into all palindrome substrings? Use backtracking. At each position, try all palindromes starting here.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check Every Partition",
+      "order": 1,
+      "intuition": "Try every possible way to partition string. For each partition, check if all parts are palindromes.",
+      "approach": "Recursively try all positions to split, validate palindromes.",
+      "steps": [
+        "backtrack(index, current):",
+        "  If index == n:",
+        "    If all partitions are palindromes: add to result",
+        "    Return",
+        "  For end from index to n:",
+        "    substring = s[index:end+1]",
+        "    current.add(substring)",
+        "    backtrack(end+1, current)",
+        "    current.remove()",
+        "",
+        "Check validity after building partition"
+      ],
+      "complexity": {
+        "time": "O(N × 2^N)",
+        "space": "O(N)",
+        "timeExplanation": "2^N possible partitions, N to check validity of each",
+        "spaceExplanation": "Recursion depth is N"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<string>> partition(string s) {\n        vector<vector<string>> result;\n        vector<string> current;\n        backtrack(0, s, current, result);\n        return result;\n    }\n    \nprivate:\n    bool isPalindrome(const string& s, int start, int end) {\n        while (start < end) {\n            if (s[start] != s[end]) return false;\n            start++;\n            end--;\n        }\n        return true;\n    }\n    \n    void backtrack(int start, const string& s, vector<string>& current, vector<vector<string>>& result) {\n        if (start == s.length()) {\n            result.push_back(current);\n            return;\n        }\n        \n        for (int end = start; end < s.length(); end++) {\n            if (isPalindrome(s, start, end)) {\n                current.push_back(s.substr(start, end - start + 1));\n                backtrack(end + 1, s, current, result);\n                current.pop_back();\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<String>> partition(String s) {\n        List<List<String>> result = new ArrayList<>();\n        backtrack(0, s, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private boolean isPalindrome(String s, int start, int end) {\n        while (start < end) {\n            if (s.charAt(start) != s.charAt(end)) return false;\n            start++;\n            end--;\n        }\n        return true;\n    }\n    \n    private void backtrack(int start, String s, List<String> current, List<List<String>> result) {\n        if (start == s.length()) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        for (int end = start; end < s.length(); end++) {\n            if (isPalindrome(s, start, end)) {\n                current.add(s.substring(start, end + 1));\n                backtrack(end + 1, s, current, result);\n                current.remove(current.size() - 1);\n            }\n        }\n    }\n}",
+        "python": "def partition(s):\n    def isPalindrome(start, end):\n        while start < end:\n            if s[start] != s[end]:\n                return False\n            start += 1\n            end -= 1\n        return True\n    \n    result = []\n    \n    def backtrack(start, current):\n        if start == len(s):\n            result.append(current[:])\n            return\n        \n        for end in range(start, len(s)):\n            if isPalindrome(start, end):\n                current.append(s[start:end+1])\n                backtrack(end + 1, current)\n                current.pop()\n    \n    backtrack(0, [])\n    return result",
+        "javascript": "function partition(s) {\n    const isPalindrome = (start, end) => {\n        while (start < end) {\n            if (s[start] !== s[end]) return false;\n            start++;\n            end--;\n        }\n        return true;\n    };\n    \n    const result = [];\n    \n    function backtrack(start, current) {\n        if (start === s.length) {\n            result.push([...current]);\n            return;\n        }\n        \n        for (let end = start; end < s.length; end++) {\n            if (isPalindrome(start, end)) {\n                current.push(s.substring(start, end + 1));\n                backtrack(end + 1, current);\n                current.pop();\n            }\n        }\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Memoized Palindrome Check",
+      "order": 2,
+      "intuition": "Pre-compute which substrings are palindromes using DP, then use backtracking only.",
+      "approach": "Use 2D DP table to store isPalindrome[i][j], then backtrack.",
+      "steps": [
+        "Create isPalin[n][n] table using DP",
+        "For len from 1 to n:",
+        "  For start from 0 to n-len:",
+        "    If s[start] == s[end]:",
+        "      isPalin[start][end] = (len <= 2) or isPalin[start+1][end-1]",
+        "",
+        "backtrack(start, current):",
+        "  If start == n: add to result",
+        "  For end from start to n:",
+        "    If isPalin[start][end]:",
+        "      current.add(s[start:end+1])",
+        "      backtrack(end+1, current)",
+        "      current.remove()"
+      ],
+      "complexity": {
+        "time": "O(N^2 + N × 2^N)",
+        "space": "O(N^2)",
+        "timeExplanation": "O(N^2) for DP, O(2^N) for backtracking with O(N) path length",
+        "spaceExplanation": "O(N^2) for DP table"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<string>> partition(string s) {\n        int n = s.length();\n        vector<vector<bool>> isPalin(n, vector<bool>(n, false));\n        \n        for (int end = 0; end < n; end++) {\n            for (int start = 0; start <= end; start++) {\n                if (s[start] == s[end]) {\n                    isPalin[start][end] = (end - start <= 1) || isPalin[start + 1][end - 1];\n                }\n            }\n        }\n        \n        vector<vector<string>> result;\n        vector<string> current;\n        backtrack(0, s, isPalin, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, const string& s, const vector<vector<bool>>& isPalin, vector<string>& current, vector<vector<string>>& result) {\n        if (start == s.length()) {\n            result.push_back(current);\n            return;\n        }\n        \n        for (int end = start; end < s.length(); end++) {\n            if (isPalin[start][end]) {\n                current.push_back(s.substr(start, end - start + 1));\n                backtrack(end + 1, s, isPalin, current, result);\n                current.pop_back();\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<String>> partition(String s) {\n        int n = s.length();\n        boolean[][] isPalin = new boolean[n][n];\n        \n        for (int end = 0; end < n; end++) {\n            for (int start = 0; start <= end; start++) {\n                if (s.charAt(start) == s.charAt(end)) {\n                    isPalin[start][end] = (end - start <= 1) || isPalin[start + 1][end - 1];\n                }\n            }\n        }\n        \n        List<List<String>> result = new ArrayList<>();\n        backtrack(0, s, isPalin, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, String s, boolean[][] isPalin, List<String> current, List<List<String>> result) {\n        if (start == s.length()) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        for (int end = start; end < s.length(); end++) {\n            if (isPalin[start][end]) {\n                current.add(s.substring(start, end + 1));\n                backtrack(end + 1, s, isPalin, current, result);\n                current.remove(current.size() - 1);\n            }\n        }\n    }\n}",
+        "python": "def partition(s):\n    n = len(s)\n    isPalin = [[False] * n for _ in range(n)]\n    \n    for end in range(n):\n        for start in range(end + 1):\n            if s[start] == s[end]:\n                isPalin[start][end] = (end - start <= 1) or isPalin[start + 1][end - 1]\n    \n    result = []\n    \n    def backtrack(start, current):\n        if start == n:\n            result.append(current[:])\n            return\n        \n        for end in range(start, n):\n            if isPalin[start][end]:\n                current.append(s[start:end+1])\n                backtrack(end + 1, current)\n                current.pop()\n    \n    backtrack(0, [])\n    return result",
+        "javascript": "function partition(s) {\n    const n = s.length;\n    const isPalin = Array.from({length: n}, () => Array(n).fill(false));\n    \n    for (let end = 0; end < n; end++) {\n        for (let start = 0; start <= end; start++) {\n            if (s[start] === s[end]) {\n                isPalin[start][end] = (end - start <= 1) || isPalin[start + 1][end - 1];\n            }\n        }\n    }\n    \n    const result = [];\n    \n    function backtrack(start, current) {\n        if (start === n) {\n            result.push([...current]);\n            return;\n        }\n        \n        for (let end = start; end < n; end++) {\n            if (isPalin[start][end]) {\n                current.push(s.substring(start, end + 1));\n                backtrack(end + 1, current);\n                current.pop();\n            }\n        }\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Palindrome DP Expansion - Optimal",
+      "order": 3,
+      "intuition": "Combine palindrome checking and partitioning. Use expand-around-center approach in backtracking.",
+      "approach": "During backtracking, use center expansion to check palindromes on-the-fly without pre-computation.",
+      "steps": [
+        "backtrack(start, current):",
+        "  If start == n: add to result, return",
+        "  For end from start to n:",
+        "    If isPalindrome(start, end):",
+        "      current.add(s[start:end+1])",
+        "      backtrack(end+1, current)",
+        "      current.remove()",
+        "",
+        "Use center expansion for O(N) check"
+      ],
+      "complexity": {
+        "time": "O(N × 2^N)",
+        "space": "O(N)",
+        "timeExplanation": "2^N partitions, each check is O(N) but optimized",
+        "spaceExplanation": "Recursion depth is N"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<string>> partition(string s) {\n        vector<vector<string>> result;\n        vector<string> current;\n        backtrack(0, s, current, result);\n        return result;\n    }\n    \nprivate:\n    bool isPalindrome(const string& s, int left, int right) {\n        while (left < right) {\n            if (s[left] != s[right]) return false;\n            left++;\n            right--;\n        }\n        return true;\n    }\n    \n    void backtrack(int start, const string& s, vector<string>& current, vector<vector<string>>& result) {\n        if (start == s.length()) {\n            result.push_back(current);\n            return;\n        }\n        \n        for (int end = start; end < s.length(); end++) {\n            if (isPalindrome(s, start, end)) {\n                current.push_back(s.substr(start, end - start + 1));\n                backtrack(end + 1, s, current, result);\n                current.pop_back();\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<String>> partition(String s) {\n        List<List<String>> result = new ArrayList<>();\n        backtrack(0, s, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private boolean isPalindrome(String s, int left, int right) {\n        while (left < right) {\n            if (s.charAt(left) != s.charAt(right)) return false;\n            left++;\n            right--;\n        }\n        return true;\n    }\n    \n    private void backtrack(int start, String s, List<String> current, List<List<String>> result) {\n        if (start == s.length()) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        for (int end = start; end < s.length(); end++) {\n            if (isPalindrome(s, start, end)) {\n                current.add(s.substring(start, end + 1));\n                backtrack(end + 1, s, current, result);\n                current.remove(current.size() - 1);\n            }\n        }\n    }\n}",
+        "python": "def partition(s):\n    def isPalindrome(left, right):\n        while left < right:\n            if s[left] != s[right]:\n                return False\n            left += 1\n            right -= 1\n        return True\n    \n    result = []\n    \n    def backtrack(start, current):\n        if start == len(s):\n            result.append(current[:])\n            return\n        \n        for end in range(start, len(s)):\n            if isPalindrome(start, end):\n                current.append(s[start:end+1])\n                backtrack(end + 1, current)\n                current.pop()\n    \n    backtrack(0, [])\n    return result",
+        "javascript": "function partition(s) {\n    const isPalindrome = (left, right) => {\n        while (left < right) {\n            if (s[left] !== s[right]) return false;\n            left++;\n            right--;\n        }\n        return true;\n    };\n    \n    const result = [];\n    \n    function backtrack(start, current) {\n        if (start === s.length) {\n            result.push([...current]);\n            return;\n        }\n        \n        for (let end = start; end < s.length; end++) {\n            if (isPalindrome(start, end)) {\n                current.push(s.substring(start, end + 1));\n                backtrack(end + 1, current);\n                current.pop();\n            }\n        }\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking palindrome condition before adding to partition",
+    "Forgetting to backtrack properly (modify and restore state)",
+    "Checking palindrome incorrectly (off-by-one in indices)",
+    "Passing wrong start index to recursive call",
+    "Not handling single character strings (always palindrome)"
+  ],
+  "hints": [
+    "Use backtracking: try each possible first palindrome, then partition rest",
+    "Check palindrome by comparing characters from ends",
+    "Single character is always palindrome",
+    "Skip if no valid palindrome starting at current position",
+    "Use DP to precompute palindromes for optimization"
+  ],
+  "followUp": [
+    "Count minimum cuts needed to make all palindromes? (Different DP problem)",
+    "Find only longest palindromic partition? (Modify backtracking)",
+    "Find partitions with specific properties? (Add constraints)",
+    "Return in lexicographic order? (Sort result)",
+    "Find partitions of length k? (Add length constraint)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Apple"],
+  "tags": ["backtracking", "string", "dynamic-programming"],
+  "relatedProblems": [
+    "Palindrome Partitioning II (Min Cuts)",
+    "Generate Parentheses",
+    "Word Break",
+    "Letter Combinations of Phone Number"
+  ]
+}

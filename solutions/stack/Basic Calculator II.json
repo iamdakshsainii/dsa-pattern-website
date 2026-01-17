@@ -1,0 +1,175 @@
+{
+  "questionId": "227",
+  "questionSlug": "basic-calculator-ii",
+  "title": "Basic Calculator II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/basic-calculator-ii/",
+    "videos": [
+      {
+        "title": "Basic Calculator II - Stack Solution",
+        "url": "https://www.youtube.com/watch?v=u8_YdqI_-5Q",
+        "channel": "NeetCode",
+        "duration": "13:25",
+        "language": "English"
+      },
+      {
+        "title": "Calculator without Parentheses",
+        "url": "https://www.youtube.com/watch?v=C66DZwJY9Hk",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "15:40",
+        "language": "English"
+      },
+      {
+        "title": "Stack Based Calculator",
+        "url": "https://www.youtube.com/watch?v=2908LYW_3_M",
+        "channel": "take U forward",
+        "duration": "17:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Basic Calculator II - LeetCode Official",
+        "url": "https://leetcode.com/problems/basic-calculator-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Basic Calculator II Solution",
+        "url": "https://takeuforward.org/data-structure/basic-calculator-ii/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Expression Evaluation - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/expression-evaluation/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/basic-calculator-ii/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Infix expression with +,-,*,/ = Stack. Handle */  immediately, push +/- to stack for later. No parentheses simplifies logic.",
+  "approaches": [
+    {
+      "name": "Two Pass - Separate Multiplication/Division",
+      "order": 1,
+      "intuition": "First pass handles * and /, second pass handles + and -. Respects operator precedence by processing high priority first.",
+      "approach": "Parse to list with operators. First evaluate */ creating new list. Then evaluate +- on that list.",
+      "steps": [
+        "Parse expression into [num, op, num, op, ...]",
+        "First pass: process * and /:",
+        "  When found, compute and replace",
+        "Second pass: process + and -:",
+        "  Compute final result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes through expression",
+        "spaceExplanation": "Store parsed tokens and intermediate results"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int calculate(string s) {\n        vector<long long> nums;\n        vector<char> ops;\n        \n        // Parse expression\n        long long num = 0;\n        for (int i = 0; i < s.length(); i++) {\n            if (isdigit(s[i])) {\n                num = num * 10 + (s[i] - '0');\n            } else if (s[i] != ' ') {\n                nums.push_back(num);\n                ops.push_back(s[i]);\n                num = 0;\n            }\n        }\n        nums.push_back(num);\n        \n        // First pass: handle * and /\n        for (int i = 0; i < ops.size(); i++) {\n            if (ops[i] == '*' || ops[i] == '/') {\n                long long result = (ops[i] == '*') ? \n                    nums[i] * nums[i+1] : nums[i] / nums[i+1];\n                nums[i] = result;\n                nums.erase(nums.begin() + i + 1);\n                ops.erase(ops.begin() + i);\n                i--;\n            }\n        }\n        \n        // Second pass: handle + and -\n        long long result = nums[0];\n        for (int i = 0; i < ops.size(); i++) {\n            if (ops[i] == '+') result += nums[i+1];\n            else result -= nums[i+1];\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int calculate(String s) {\n        List<Long> nums = new ArrayList<>();\n        List<Character> ops = new ArrayList<>();\n        \n        long num = 0;\n        for (int i = 0; i < s.length(); i++) {\n            char c = s.charAt(i);\n            if (Character.isDigit(c)) {\n                num = num * 10 + (c - '0');\n            } else if (c != ' ') {\n                nums.add(num);\n                ops.add(c);\n                num = 0;\n            }\n        }\n        nums.add(num);\n        \n        // Handle * and /\n        for (int i = 0; i < ops.size(); i++) {\n            if (ops.get(i) == '*' || ops.get(i) == '/') {\n                long result = (ops.get(i) == '*') ?\n                    nums.get(i) * nums.get(i+1) : nums.get(i) / nums.get(i+1);\n                nums.set(i, result);\n                nums.remove(i+1);\n                ops.remove(i);\n                i--;\n            }\n        }\n        \n        // Handle + and -\n        long result = nums.get(0);\n        for (int i = 0; i < ops.size(); i++) {\n            if (ops.get(i) == '+') result += nums.get(i+1);\n            else result -= nums.get(i+1);\n        }\n        \n        return (int) result;\n    }\n}",
+        "python": "class Solution:\n    def calculate(self, s: str) -> int:\n        nums = []\n        ops = []\n        \n        num = 0\n        for char in s + '+':\n            if char.isdigit():\n                num = num * 10 + int(char)\n            elif char != ' ':\n                nums.append(num)\n                if ops:\n                    ops.append(char)\n                else:\n                    ops.append(char)\n                num = 0\n        \n        # Handle * and /\n        i = 0\n        while i < len(ops) - 1:\n            if ops[i] in ['*', '/']:\n                result = nums[i] * nums[i+1] if ops[i] == '*' else nums[i] // nums[i+1]\n                nums[i] = result\n                nums.pop(i+1)\n                ops.pop(i)\n            else:\n                i += 1\n        \n        # Handle + and -\n        result = nums[0]\n        for i, op in enumerate(ops[:-1]):\n            if op == '+':\n                result += nums[i+1]\n            else:\n                result -= nums[i+1]\n        \n        return result",
+        "javascript": "var calculate = function(s) {\n    const nums = [];\n    const ops = [];\n    \n    let num = 0;\n    for (const char of s + '+') {\n        if (char >= '0' && char <= '9') {\n            num = num * 10 + parseInt(char);\n        } else if (char !== ' ') {\n            nums.push(num);\n            ops.push(char);\n            num = 0;\n        }\n    }\n    \n    // Handle * and /\n    for (let i = 0; i < ops.length - 1; i++) {\n        if (ops[i] === '*' || ops[i] === '/') {\n            const result = ops[i] === '*' ? \n                nums[i] * nums[i+1] : Math.trunc(nums[i] / nums[i+1]);\n            nums[i] = result;\n            nums.splice(i+1, 1);\n            ops.splice(i, 1);\n            i--;\n        }\n    }\n    \n    // Handle + and -\n    let result = nums[0];\n    for (let i = 0; i < ops.length - 1; i++) {\n        if (ops[i] === '+') result += nums[i+1];\n        else result -= nums[i+1];\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Stack - Process High Priority Operations",
+      "order": 2,
+      "intuition": "Use stack to handle operator precedence. Process * and / immediately, defer + and - by pushing to stack.",
+      "approach": "Track last operator. For */ apply immediately. For +/- push to stack. Sum stack at end.",
+      "steps": [
+        "lastOp = '+', currentNum = 0",
+        "stack = []",
+        "For each char:",
+        "  If digit: build currentNum",
+        "  If operator or end:",
+        "    Apply lastOp with currentNum",
+        "    If + or -: push ±currentNum to stack",
+        "    If * or /: pop, compute, push result",
+        "    lastOp = current operator",
+        "Return sum of stack"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through string",
+        "spaceExplanation": "Stack stores intermediate values"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int calculate(string s) {\n        stack<int> st;\n        int currentNum = 0;\n        char lastOp = '+';\n        \n        for (int i = 0; i < s.length(); i++) {\n            char c = s[i];\n            \n            if (isdigit(c)) {\n                currentNum = currentNum * 10 + (c - '0');\n            }\n            \n            if ((!isdigit(c) && c != ' ') || i == s.length() - 1) {\n                if (lastOp == '+') {\n                    st.push(currentNum);\n                } else if (lastOp == '-') {\n                    st.push(-currentNum);\n                } else if (lastOp == '*') {\n                    int top = st.top(); st.pop();\n                    st.push(top * currentNum);\n                } else if (lastOp == '/') {\n                    int top = st.top(); st.pop();\n                    st.push(top / currentNum);\n                }\n                \n                lastOp = c;\n                currentNum = 0;\n            }\n        }\n        \n        int result = 0;\n        while (!st.empty()) {\n            result += st.top();\n            st.pop();\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int calculate(String s) {\n        Stack<Integer> stack = new Stack<>();\n        int currentNum = 0;\n        char lastOp = '+';\n        \n        for (int i = 0; i < s.length(); i++) {\n            char c = s.charAt(i);\n            \n            if (Character.isDigit(c)) {\n                currentNum = currentNum * 10 + (c - '0');\n            }\n            \n            if ((!Character.isDigit(c) && c != ' ') || i == s.length() - 1) {\n                if (lastOp == '+') {\n                    stack.push(currentNum);\n                } else if (lastOp == '-') {\n                    stack.push(-currentNum);\n                } else if (lastOp == '*') {\n                    stack.push(stack.pop() * currentNum);\n                } else if (lastOp == '/') {\n                    stack.push(stack.pop() / currentNum);\n                }\n                \n                lastOp = c;\n                currentNum = 0;\n            }\n        }\n        \n        int result = 0;\n        for (int num : stack) {\n            result += num;\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def calculate(self, s: str) -> int:\n        stack = []\n        current_num = 0\n        last_op = '+'\n        \n        for i, char in enumerate(s):\n            if char.isdigit():\n                current_num = current_num * 10 + int(char)\n            \n            if (char in '+-*/' and char != ' ') or i == len(s) - 1:\n                if last_op == '+':\n                    stack.append(current_num)\n                elif last_op == '-':\n                    stack.append(-current_num)\n                elif last_op == '*':\n                    stack.append(stack.pop() * current_num)\n                elif last_op == '/':\n                    stack.append(int(stack.pop() / current_num))\n                \n                last_op = char\n                current_num = 0\n        \n        return sum(stack)",
+        "javascript": "var calculate = function(s) {\n    const stack = [];\n    let currentNum = 0;\n    let lastOp = '+';\n    \n    for (let i = 0; i < s.length; i++) {\n        const char = s[i];\n        \n        if (char >= '0' && char <= '9') {\n            currentNum = currentNum * 10 + parseInt(char);\n        }\n        \n        if ((char !== ' ' && isNaN(char)) || i === s.length - 1) {\n            if (lastOp === '+') {\n                stack.push(currentNum);\n            } else if (lastOp === '-') {\n                stack.push(-currentNum);\n            } else if (lastOp === '*') {\n                stack.push(stack.pop() * currentNum);\n            } else if (lastOp === '/') {\n                stack.push(Math.trunc(stack.pop() / currentNum));\n            }\n            \n            lastOp = char;\n            currentNum = 0;\n        }\n    }\n    \n    return stack.reduce((a, b) => a + b, 0);\n};"
+      }
+    },
+    {
+      "name": "Optimized - Without Stack - Optimal",
+      "order": 3,
+      "intuition": "Since we only sum stack at end, track sum directly. Only need to remember last value for * and /.",
+      "approach": "Track result and last value. Update immediately for */ using last value. Accumulate for +/-.",
+      "steps": [
+        "result = 0, lastValue = 0, currentNum = 0, lastOp = '+'",
+        "For each char:",
+        "  If digit: build currentNum",
+        "  If operator or end:",
+        "    Process based on lastOp:",
+        "      +: result += lastValue, lastValue = currentNum",
+        "      -: result += lastValue, lastValue = -currentNum",
+        "      *: lastValue *= currentNum",
+        "      /: lastValue /= currentNum",
+        "Return result + lastValue"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass",
+        "spaceExplanation": "Only constant variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int calculate(string s) {\n        int result = 0;\n        int lastValue = 0;\n        int currentNum = 0;\n        char lastOp = '+';\n        \n        for (int i = 0; i < s.length(); i++) {\n            char c = s[i];\n            \n            if (isdigit(c)) {\n                currentNum = currentNum * 10 + (c - '0');\n            }\n            \n            if ((!isdigit(c) && c != ' ') || i == s.length() - 1) {\n                if (lastOp == '+' || lastOp == '-') {\n                    result += lastValue;\n                    lastValue = (lastOp == '+') ? currentNum : -currentNum;\n                } else if (lastOp == '*') {\n                    lastValue *= currentNum;\n                } else if (lastOp == '/') {\n                    lastValue /= currentNum;\n                }\n                \n                lastOp = c;\n                currentNum = 0;\n            }\n        }\n        \n        return result + lastValue;\n    }\n};",
+        "java": "class Solution {\n    public int calculate(String s) {\n        int result = 0;\n        int lastValue = 0;\n        int currentNum = 0;\n        char lastOp = '+';\n        \n        for (int i = 0; i < s.length(); i++) {\n            char c = s.charAt(i);\n            \n            if (Character.isDigit(c)) {\n                currentNum = currentNum * 10 + (c - '0');\n            }\n            \n            if ((!Character.isDigit(c) && c != ' ') || i == s.length() - 1) {\n                if (lastOp == '+' || lastOp == '-') {\n                    result += lastValue;\n                    lastValue = (lastOp == '+') ? currentNum : -currentNum;\n                } else if (lastOp == '*') {\n                    lastValue *= currentNum;\n                } else if (lastOp == '/') {\n                    lastValue /= currentNum;\n                }\n                \n                lastOp = c;\n                currentNum = 0;\n            }\n        }\n        \n        return result + lastValue;\n    }\n}",
+        "python": "class Solution:\n    def calculate(self, s: str) -> int:\n        result = 0\n        last_value = 0\n        current_num = 0\n        last_op = '+'\n        \n        for i, char in enumerate(s):\n            if char.isdigit():\n                current_num = current_num * 10 + int(char)\n            \n            if (char in '+-*/' and char != ' ') or i == len(s) - 1:\n                if last_op in ['+', '-']:\n                    result += last_value\n                    last_value = current_num if last_op == '+' else -current_num\n                elif last_op == '*':\n                    last_value *= current_num\n                elif last_op == '/':\n                    last_value = int(last_value / current_num)\n                \n                last_op = char\n                current_num = 0\n        \n        return result + last_value",
+        "javascript": "var calculate = function(s) {\n    let result = 0;\n    let lastValue = 0;\n    let currentNum = 0;\n    let lastOp = '+';\n    \n    for (let i = 0; i < s.length; i++) {\n        const char = s[i];\n        \n        if (char >= '0' && char <= '9') {\n            currentNum = currentNum * 10 + parseInt(char);\n        }\n        \n        if ((char !== ' ' && isNaN(char)) || i === s.length - 1) {\n            if (lastOp === '+' || lastOp === '-') {\n                result += lastValue;\n                lastValue = lastOp === '+' ? currentNum : -currentNum;\n            } else if (lastOp === '*') {\n                lastValue *= currentNum;\n            } else if (lastOp === '/') {\n                lastValue = Math.trunc(lastValue / currentNum);\n            }\n            \n            lastOp = char;\n            currentNum = 0;\n        }\n    }\n    \n    return result + lastValue;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling spaces correctly",
+    "Processing operator at wrong time (should process when seeing next operator or at end)",
+    "Not handling division truncation toward zero correctly",
+    "Forgetting to process last number (check at end of string)",
+    "Not respecting operator precedence (* and / before + and -)"
+  ],
+  "hints": [
+    "No parentheses simplifies the problem significantly",
+    "Handle * and / immediately when encountered",
+    "Defer + and - by pushing to stack (or accumulating result)",
+    "Track last operator to know how to process current number",
+    "Process number when you see next operator or reach end of string"
+  ],
+  "followUp": [
+    "What if expression has parentheses? (See Basic Calculator I)",
+    "Can you handle more operators (^, %, etc.)?",
+    "What about unary operators (+5, -3)?",
+    "How to validate expression syntax?",
+    "Can you convert to RPN first then evaluate?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple", "Airbnb"],
+  "tags": ["math", "string", "stack"],
+  "relatedProblems": [
+    "Basic Calculator",
+    "Basic Calculator III",
+    "Expression Add Operators",
+    "Evaluate Reverse Polish Notation",
+    "Different Ways to Add Parentheses"
+  ]
+}

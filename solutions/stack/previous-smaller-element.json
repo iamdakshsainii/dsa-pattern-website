@@ -1,0 +1,179 @@
+{
+  "questionId": "GFG-PSE",
+  "questionSlug": "previous-smaller-element",
+  "title": "Previous Smaller Element",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/discuss/interview-question/1416548/",
+    "videos": [
+      {
+        "title": "Previous Smaller Element using Stack",
+        "url": "https://www.youtube.com/watch?v=NXOOYYwpbg4",
+        "channel": "Aditya Verma",
+        "duration": "16:45",
+        "language": "English"
+      },
+      {
+        "title": "Stock Span Problem & Previous Smaller",
+        "url": "https://www.youtube.com/watch?v=p9T-fE1g1pU",
+        "channel": "take U forward",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Nearest Smaller Element - Monotonic Stack",
+        "url": "https://www.youtube.com/watch?v=T5c1pZu19YI",
+        "channel": "Pepcoding",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Previous Smaller Element",
+        "url": "https://takeuforward.org/data-structure/previous-smaller-element-using-stack/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Nearest Smaller Element - InterviewBit",
+        "url": "https://www.interviewbit.com/problems/nearest-smaller-element/",
+        "source": "InterviewBit"
+      },
+      {
+        "title": "Previous Smaller Element - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/previous-smaller-element/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on InterviewBit",
+        "url": "https://www.interviewbit.com/problems/nearest-smaller-element/",
+        "platform": "InterviewBit"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/previous-smaller-element/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find previous smaller = Traverse left to right with monotonic increasing stack. Stack top is always previous smaller.",
+  "approaches": [
+    {
+      "name": "Brute Force - Nested Loops",
+      "order": 1,
+      "intuition": "For each element, scan backward to find previous smaller element.",
+      "approach": "For each index, iterate left until finding smaller element or reaching start.",
+      "steps": [
+        "For i from 0 to n-1:",
+        "  result[i] = -1",
+        "  For j from i-1 to 0:",
+        "    If arr[j] < arr[i]:",
+        "      result[i] = arr[j]",
+        "      break",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1) excluding output",
+        "timeExplanation": "Nested loops, worst case check all previous elements for each element",
+        "spaceExplanation": "Only output array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> prevSmallerElement(vector<int>& arr) {\n        int n = arr.size();\n        vector<int> result(n, -1);\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i - 1; j >= 0; j--) {\n                if (arr[j] < arr[i]) {\n                    result[i] = arr[j];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] prevSmallerElement(int[] arr) {\n        int n = arr.length;\n        int[] result = new int[n];\n        Arrays.fill(result, -1);\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i - 1; j >= 0; j--) {\n                if (arr[j] < arr[i]) {\n                    result[i] = arr[j];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def prevSmallerElement(self, arr: List[int]) -> List[int]:\n        n = len(arr)\n        result = [-1] * n\n        \n        for i in range(n):\n            for j in range(i - 1, -1, -1):\n                if arr[j] < arr[i]:\n                    result[i] = arr[j]\n                    break\n        \n        return result",
+        "javascript": "var prevSmallerElement = function(arr) {\n    const n = arr.length;\n    const result = new Array(n).fill(-1);\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = i - 1; j >= 0; j--) {\n            if (arr[j] < arr[i]) {\n                result[i] = arr[j];\n                break;\n            }\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Left to Right",
+      "order": 2,
+      "intuition": "Use monotonic increasing stack. Traverse left to right. Stack top is always previous smaller candidate.",
+      "approach": "Process elements left to right, maintain monotonic increasing stack. Pop larger/equal elements before processing.",
+      "steps": [
+        "Initialize result array",
+        "Create stack",
+        "For i from 0 to n-1:",
+        "  While stack not empty and stack.top() >= arr[i]:",
+        "    Pop (these can't be previous smaller for future elements)",
+        "  If stack empty: result[i] = -1",
+        "  Else: result[i] = stack.top()",
+        "  Push arr[i]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each element pushed and popped at most once",
+        "spaceExplanation": "Stack can hold up to n elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> prevSmallerElement(vector<int>& arr) {\n        int n = arr.size();\n        vector<int> result(n);\n        stack<int> st;\n        \n        // Traverse from left to right\n        for (int i = 0; i < n; i++) {\n            // Pop larger or equal elements\n            while (!st.empty() && st.top() >= arr[i]) {\n                st.pop();\n            }\n            \n            // Store result\n            result[i] = st.empty() ? -1 : st.top();\n            \n            // Push current element\n            st.push(arr[i]);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] prevSmallerElement(int[] arr) {\n        int n = arr.length;\n        int[] result = new int[n];\n        Stack<Integer> stack = new Stack<>();\n        \n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && stack.peek() >= arr[i]) {\n                stack.pop();\n            }\n            \n            result[i] = stack.isEmpty() ? -1 : stack.peek();\n            stack.push(arr[i]);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def prevSmallerElement(self, arr: List[int]) -> List[int]:\n        n = len(arr)\n        result = [-1] * n\n        stack = []\n        \n        for i in range(n):\n            while stack and stack[-1] >= arr[i]:\n                stack.pop()\n            \n            result[i] = stack[-1] if stack else -1\n            stack.append(arr[i])\n        \n        return result",
+        "javascript": "var prevSmallerElement = function(arr) {\n    const n = arr.length;\n    const result = new Array(n).fill(-1);\n    const stack = [];\n    \n    for (let i = 0; i < n; i++) {\n        while (stack.length > 0 && stack[stack.length - 1] >= arr[i]) {\n            stack.pop();\n        }\n        \n        result[i] = stack.length === 0 ? -1 : stack[stack.length - 1];\n        stack.push(arr[i]);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Store Indices - Optimal",
+      "order": 3,
+      "intuition": "Store indices instead of values. Gives more flexibility for problems needing distance/position info.",
+      "approach": "Same logic as approach 2 but store indices. Access values using arr[stack.top()].",
+      "steps": [
+        "Initialize result array",
+        "Create stack (stores indices)",
+        "For i from 0 to n-1:",
+        "  While stack not empty and arr[stack.top()] >= arr[i]:",
+        "    Pop",
+        "  If stack empty: result[i] = -1",
+        "  Else: result[i] = arr[stack.top()]",
+        "  Push i (current index)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each element pushed and popped at most once",
+        "spaceExplanation": "Stack stores indices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> prevSmallerElement(vector<int>& arr) {\n        int n = arr.size();\n        vector<int> result(n);\n        stack<int> st;  // Store indices\n        \n        // Traverse from left to right\n        for (int i = 0; i < n; i++) {\n            // Pop indices with larger or equal values\n            while (!st.empty() && arr[st.top()] >= arr[i]) {\n                st.pop();\n            }\n            \n            // Store result\n            result[i] = st.empty() ? -1 : arr[st.top()];\n            \n            // Push current index\n            st.push(i);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] prevSmallerElement(int[] arr) {\n        int n = arr.length;\n        int[] result = new int[n];\n        Stack<Integer> stack = new Stack<>();  // Store indices\n        \n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && arr[stack.peek()] >= arr[i]) {\n                stack.pop();\n            }\n            \n            result[i] = stack.isEmpty() ? -1 : arr[stack.peek()];\n            stack.push(i);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def prevSmallerElement(self, arr: List[int]) -> List[int]:\n        n = len(arr)\n        result = [-1] * n\n        stack = []  # Store indices\n        \n        for i in range(n):\n            while stack and arr[stack[-1]] >= arr[i]:\n                stack.pop()\n            \n            result[i] = arr[stack[-1]] if stack else -1\n            stack.append(i)\n        \n        return result",
+        "javascript": "var prevSmallerElement = function(arr) {\n    const n = arr.length;\n    const result = new Array(n).fill(-1);\n    const stack = [];  // Store indices\n    \n    for (let i = 0; i < n; i++) {\n        while (stack.length > 0 && arr[stack[stack.length - 1]] >= arr[i]) {\n            stack.pop();\n        }\n        \n        result[i] = stack.length === 0 ? -1 : arr[stack[stack.length - 1]];\n        stack.push(i);\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Traversing right to left instead of left to right",
+    "Not maintaining monotonic increasing property",
+    "Using > instead of >= when popping",
+    "Confusing with next smaller or previous greater logic",
+    "Forgetting to push current element after processing"
+  ],
+  "hints": [
+    "Traverse left to right for previous elements",
+    "Use monotonic increasing stack",
+    "Pop elements >= current element",
+    "Stack top is always previous smaller candidate",
+    "Similar to next smaller but different traversal direction"
+  ],
+  "followUp": [
+    "Can you find both previous and next smaller together?",
+    "How to calculate distance to previous smaller element?",
+    "What if we need nearest smaller on both sides?",
+    "Can this be used for Stock Span problem?",
+    "How does this help in histogram problems?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Adobe", "Flipkart"],
+  "tags": ["stack", "array", "monotonic-stack"],
+  "relatedProblems": [
+    "Next Smaller Element",
+    "Previous Greater Element",
+    "Stock Span Problem",
+    "Largest Rectangle in Histogram",
+    "Sum of Subarray Minimums"
+  ]
+}

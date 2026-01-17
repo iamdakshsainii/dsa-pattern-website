@@ -1,0 +1,174 @@
+{
+  "questionId": "216",
+  "questionSlug": "combination-sum-iii",
+  "title": "Combination Sum III",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/combination-sum-iii/",
+    "videos": [
+      {
+        "title": "Combination Sum III - Backtracking",
+        "url": "https://www.youtube.com/watch?v=6pkZqt1l2jM",
+        "channel": "NeetCode",
+        "duration": "8:20",
+        "language": "English"
+      },
+      {
+        "title": "Combination Sum III Explained",
+        "url": "https://www.youtube.com/watch?v=aSv1vr6mS2k",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Combination Sum III - LeetCode Official",
+        "url": "https://leetcode.com/problems/combination-sum-iii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "K numbers that sum to N",
+        "url": "https://www.geeksforgeeks.org/find-k-numbers-sum-n/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/combination-sum-iii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/find-all-combinations-of-numbers-that-sum-to-a-target/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find k numbers from 1-9 that sum to n? Use backtracking with constraints on length and sum. Track both current sum and count.",
+  "approaches": [
+    {
+      "name": "Brute Force - Generate All Combinations",
+      "order": 1,
+      "intuition": "Generate all possible combinations of k numbers from 1-9, then filter those that sum to n.",
+      "approach": "Use backtracking to generate combinations, check if sum equals n and length equals k.",
+      "steps": [
+        "backtrack(start, current, currentSum):",
+        "  If currentSum > n: return (prune)",
+        "  If len(current) == k:",
+        "    If currentSum == n: add to result",
+        "    Return",
+        "  For i from start to 9:",
+        "    current.add(i)",
+        "    backtrack(i+1, current, currentSum+i)",
+        "    current.remove(i)"
+      ],
+      "complexity": {
+        "time": "O(C(9,k) × k)",
+        "space": "O(k)",
+        "timeExplanation": "Generate all C(9,k) combinations, each takes O(k) to copy",
+        "spaceExplanation": "Recursion depth and current array size is at most k"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combinationSum3(int k, int n) {\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(1, k, n, 0, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, int k, int n, int currentSum, vector<int>& current, vector<vector<int>>& result) {\n        if (currentSum > n) return; // Prune\n        \n        if (current.size() == k) {\n            if (currentSum == n) {\n                result.push_back(current);\n            }\n            return;\n        }\n        \n        for (int i = start; i <= 9; i++) {\n            current.push_back(i);\n            backtrack(i + 1, k, n, currentSum + i, current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(1, k, n, 0, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, int k, int n, int currentSum, List<Integer> current, List<List<Integer>> result) {\n        if (currentSum > n) return;\n        \n        if (current.size() == k) {\n            if (currentSum == n) {\n                result.add(new ArrayList<>(current));\n            }\n            return;\n        }\n        \n        for (int i = start; i <= 9; i++) {\n            current.add(i);\n            backtrack(i + 1, k, n, currentSum + i, current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def combinationSum3(k, n):\n    result = []\n    \n    def backtrack(start, k, n, currentSum, current):\n        if currentSum > n:\n            return\n        \n        if len(current) == k:\n            if currentSum == n:\n                result.append(current[:])\n            return\n        \n        for i in range(start, 10):\n            current.append(i)\n            backtrack(i + 1, k, n, currentSum + i, current)\n            current.pop()\n    \n    backtrack(1, k, n, 0, [])\n    return result",
+        "javascript": "function combinationSum3(k, n) {\n    const result = [];\n    \n    function backtrack(start, currentSum, current) {\n        if (currentSum > n) return;\n        \n        if (current.length === k) {\n            if (currentSum === n) {\n                result.push([...current]);\n            }\n            return;\n        }\n        \n        for (let i = start; i <= 9; i++) {\n            current.push(i);\n            backtrack(i + 1, currentSum + i, current);\n            current.pop();\n        }\n    }\n    \n    backtrack(1, 0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Early Termination",
+      "order": 2,
+      "intuition": "Similar to above but add more pruning: if remaining numbers can't sum to target, stop early.",
+      "approach": "Calculate remaining sum needed and numbers left to pick. Prune if impossible.",
+      "steps": [
+        "Sum of 1-9 = 45",
+        "backtrack(start, current, currentSum):",
+        "  remaining = n - currentSum",
+        "  If remaining < 0: return (prune)",
+        "  If len(current) == k:",
+        "    If remaining == 0: add to result",
+        "    Return",
+        "  For i from start to 9:",
+        "    If i > remaining: break (prune)",
+        "    current.add(i)",
+        "    backtrack(i+1, current, currentSum+i)",
+        "    current.remove(i)"
+      ],
+      "complexity": {
+        "time": "O(C(9,k) × k)",
+        "space": "O(k)",
+        "timeExplanation": "Same as above but with more aggressive pruning",
+        "spaceExplanation": "Recursion depth is at most k"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combinationSum3(int k, int n) {\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(1, k, n, 0, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, int k, int n, int currentSum, vector<int>& current, vector<vector<int>>& result) {\n        int remaining = n - currentSum;\n        \n        if (remaining < 0) return; // Prune\n        if (current.size() == k) {\n            if (remaining == 0) result.push_back(current);\n            return;\n        }\n        \n        for (int i = start; i <= 9; i++) {\n            if (i > remaining) break; // Prune\n            current.push_back(i);\n            backtrack(i + 1, k, n, currentSum + i, current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(1, k, n, 0, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, int k, int n, int currentSum, List<Integer> current, List<List<Integer>> result) {\n        int remaining = n - currentSum;\n        \n        if (remaining < 0) return;\n        if (current.size() == k) {\n            if (remaining == 0) {\n                result.add(new ArrayList<>(current));\n            }\n            return;\n        }\n        \n        for (int i = start; i <= 9; i++) {\n            if (i > remaining) break;\n            current.add(i);\n            backtrack(i + 1, k, n, currentSum + i, current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def combinationSum3(k, n):\n    result = []\n    \n    def backtrack(start, currentSum, current):\n        remaining = n - currentSum\n        \n        if remaining < 0:\n            return\n        \n        if len(current) == k:\n            if remaining == 0:\n                result.append(current[:])\n            return\n        \n        for i in range(start, 10):\n            if i > remaining:\n                break\n            current.append(i)\n            backtrack(i + 1, currentSum + i, current)\n            current.pop()\n    \n    backtrack(1, 0, [])\n    return result",
+        "javascript": "function combinationSum3(k, n) {\n    const result = [];\n    \n    function backtrack(start, currentSum, current) {\n        const remaining = n - currentSum;\n        \n        if (remaining < 0) return;\n        \n        if (current.length === k) {\n            if (remaining === 0) {\n                result.push([...current]);\n            }\n            return;\n        }\n        \n        for (let i = start; i <= 9; i++) {\n            if (i > remaining) break;\n            current.push(i);\n            backtrack(i + 1, currentSum + i, current);\n            current.pop();\n        }\n    }\n    \n    backtrack(1, 0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Remaining Count Optimization - Optimal",
+      "order": 3,
+      "intuition": "Track remaining count and sum. If it's impossible to fill remaining slots with remaining sum, prune immediately.",
+      "approach": "Pass remaining count and sum to avoid recalculating. Prune if min/max sums can't be achieved.",
+      "steps": [
+        "backtrack(start, remainingK, remainingSum):",
+        "  minPossible = start + (start+1) + ... (remainingK terms)",
+        "  maxPossible = (9) + (8) + ... (remainingK terms)",
+        "  If remainingSum < minPossible or remainingSum > maxPossible:",
+        "    return (prune)",
+        "  If remainingK == 0:",
+        "    If remainingSum == 0: add to result",
+        "    Return",
+        "  For i from start to 9:",
+        "    current.add(i)",
+        "    backtrack(i+1, remainingK-1, remainingSum-i)",
+        "    current.remove(i)"
+      ],
+      "complexity": {
+        "time": "O(C(9,k) × k)",
+        "space": "O(k)",
+        "timeExplanation": "Generates C(9,k) combinations with k insertions each",
+        "spaceExplanation": "Recursion depth at most k"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combinationSum3(int k, int n) {\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(1, k, n, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, int remainingK, int remainingSum, vector<int>& current, vector<vector<int>>& result) {\n        if (remainingSum < 0) return;\n        \n        if (remainingK == 0) {\n            if (remainingSum == 0) {\n                result.push_back(current);\n            }\n            return;\n        }\n        \n        // Prune: if we can't possibly reach the sum\n        int minSum = start * remainingK + (remainingK * (remainingK - 1)) / 2;\n        int maxSum = (9 + 9 - remainingK + 1) * remainingK / 2;\n        \n        if (remainingSum < minSum || remainingSum > maxSum) return;\n        \n        for (int i = start; i <= 9; i++) {\n            current.push_back(i);\n            backtrack(i + 1, remainingK - 1, remainingSum - i, current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(1, k, n, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, int remainingK, int remainingSum, List<Integer> current, List<List<Integer>> result) {\n        if (remainingSum < 0) return;\n        \n        if (remainingK == 0) {\n            if (remainingSum == 0) {\n                result.add(new ArrayList<>(current));\n            }\n            return;\n        }\n        \n        int minSum = start * remainingK + remainingK * (remainingK - 1) / 2;\n        int maxSum = (9 + 9 - remainingK + 1) * remainingK / 2;\n        \n        if (remainingSum < minSum || remainingSum > maxSum) return;\n        \n        for (int i = start; i <= 9; i++) {\n            current.add(i);\n            backtrack(i + 1, remainingK - 1, remainingSum - i, current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def combinationSum3(k, n):\n    result = []\n    \n    def backtrack(start, remainingK, remainingSum, current):\n        if remainingSum < 0:\n            return\n        \n        if remainingK == 0:\n            if remainingSum == 0:\n                result.append(current[:])\n            return\n        \n        minSum = start * remainingK + remainingK * (remainingK - 1) // 2\n        maxSum = (9 + 9 - remainingK + 1) * remainingK // 2\n        \n        if remainingSum < minSum or remainingSum > maxSum:\n            return\n        \n        for i in range(start, 10):\n            current.append(i)\n            backtrack(i + 1, remainingK - 1, remainingSum - i, current)\n            current.pop()\n    \n    backtrack(1, k, n, [])\n    return result",
+        "javascript": "function combinationSum3(k, n) {\n    const result = [];\n    \n    function backtrack(start, remainingK, remainingSum, current) {\n        if (remainingSum < 0) return;\n        \n        if (remainingK === 0) {\n            if (remainingSum === 0) {\n                result.push([...current]);\n            }\n            return;\n        }\n        \n        const minSum = start * remainingK + (remainingK * (remainingK - 1)) / 2;\n        const maxSum = ((9 + 9 - remainingK + 1) * remainingK) / 2;\n        \n        if (remainingSum < minSum || remainingSum > maxSum) return;\n        \n        for (let i = start; i <= 9; i++) {\n            current.push(i);\n            backtrack(i + 1, remainingK - 1, remainingSum - i, current);\n            current.pop();\n        }\n    }\n    \n    backtrack(1, k, n, []);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to check both length k AND sum n",
+    "Not pruning early enough, leading to TLE",
+    "Using numbers outside range 1-9",
+    "Not tracking current sum or count properly",
+    "Modifying parameters instead of passing new values"
+  ],
+  "hints": [
+    "Numbers must be from 1-9 (only 9 numbers available)",
+    "Each number used at most once",
+    "Need exactly k numbers that sum to n",
+    "Backtracking: try each number, recurse, backtrack",
+    "Pruning: if current sum exceeds n, stop; if remaining can't reach n, stop"
+  ],
+  "followUp": [
+    "What if k can be any value? (Still works, just no guaranteed solution)",
+    "What if we can use numbers 0-9? (Adjust range, handle 0 specially)",
+    "Can you use DP? (Not ideal due to combination counting)",
+    "How many valid combinations exist? (Count instead of storing)",
+    "What if we want sorted output? (Natural if iterating in order)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Apple"],
+  "tags": ["backtracking", "combination"],
+  "relatedProblems": [
+    "Combination Sum",
+    "Combination Sum II",
+    "Combinations",
+    "Letter Combinations of Phone Number"
+  ]
+}

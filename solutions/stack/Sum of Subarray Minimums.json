@@ -1,0 +1,170 @@
+{
+  "questionId": "907",
+  "questionSlug": "sum-of-subarray-minimums",
+  "title": "Sum of Subarray Minimums",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/sum-of-subarray-minimums/",
+    "videos": [
+      {
+        "title": "Sum of Subarray Minimums - Monotonic Stack",
+        "url": "https://www.youtube.com/watch?v=HRQB7-D2bi0",
+        "channel": "NeetCode",
+        "duration": "17:25",
+        "language": "English"
+      },
+      {
+        "title": "Sum of Subarray Minimums Explained",
+        "url": "https://www.youtube.com/watch?v=Ulb3ixSpE4Y",
+        "channel": "take U forward",
+        "duration": "19:40",
+        "language": "English"
+      },
+      {
+        "title": "Stack Solution - Sum of Subarray Minimums",
+        "url": "https://www.youtube.com/watch?v=9-TXIVEXX2w",
+        "channel": "Pepcoding",
+        "duration": "22:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sum of Subarray Minimums - LeetCode Official",
+        "url": "https://leetcode.com/problems/sum-of-subarray-minimums/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Sum of Subarray Minimums Detailed",
+        "url": "https://takeuforward.org/data-structure/sum-of-subarray-minimums/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Sum of Subarray Minimums - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/sum-of-minimum-elements-of-all-subarrays/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/sum-of-subarray-minimums/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Sum involving subarrays with min/max = Find contribution of each element. Use monotonic stack to find boundaries where element is minimum.",
+  "approaches": [
+    {
+      "name": "Brute Force - Generate All Subarrays",
+      "order": 1,
+      "intuition": "Generate all possible subarrays, find minimum of each, and sum them up.",
+      "approach": "Use two nested loops to generate subarrays, third loop to find minimum of each subarray.",
+      "steps": [
+        "Initialize sum = 0",
+        "For i from 0 to n-1:",
+        "  For j from i to n-1:",
+        "    Find minimum in arr[i...j]",
+        "    Add minimum to sum",
+        "Return sum % MOD"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(1)",
+        "timeExplanation": "Two loops for subarray generation, one loop to find min of each subarray",
+        "spaceExplanation": "Only storing sum"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int sumSubarrayMins(vector<int>& arr) {\n        const int MOD = 1e9 + 7;\n        int n = arr.size();\n        long long sum = 0;\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i; j < n; j++) {\n                int minVal = arr[i];\n                for (int k = i; k <= j; k++) {\n                    minVal = min(minVal, arr[k]);\n                }\n                sum = (sum + minVal) % MOD;\n            }\n        }\n        \n        return sum;\n    }\n};",
+        "java": "class Solution {\n    public int sumSubarrayMins(int[] arr) {\n        final int MOD = 1_000_000_007;\n        int n = arr.length;\n        long sum = 0;\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i; j < n; j++) {\n                int minVal = arr[i];\n                for (int k = i; k <= j; k++) {\n                    minVal = Math.min(minVal, arr[k]);\n                }\n                sum = (sum + minVal) % MOD;\n            }\n        }\n        \n        return (int) sum;\n    }\n}",
+        "python": "class Solution:\n    def sumSubarrayMins(self, arr: List[int]) -> int:\n        MOD = 10**9 + 7\n        n = len(arr)\n        total = 0\n        \n        for i in range(n):\n            for j in range(i, n):\n                min_val = min(arr[i:j+1])\n                total = (total + min_val) % MOD\n        \n        return total",
+        "javascript": "var sumSubarrayMins = function(arr) {\n    const MOD = 1e9 + 7;\n    const n = arr.length;\n    let sum = 0;\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = i; j < n; j++) {\n            let minVal = arr[i];\n            for (let k = i; k <= j; k++) {\n                minVal = Math.min(minVal, arr[k]);\n            }\n            sum = (sum + minVal) % MOD;\n        }\n    }\n    \n    return sum;\n};"
+      }
+    },
+    {
+      "name": "Optimized Brute - Maintain Running Min",
+      "order": 2,
+      "intuition": "Instead of finding min for each subarray from scratch, maintain running minimum as we extend subarray.",
+      "approach": "For each starting position, extend subarray one element at a time while maintaining current minimum.",
+      "steps": [
+        "Initialize sum = 0",
+        "For i from 0 to n-1:",
+        "  minVal = arr[i]",
+        "  For j from i to n-1:",
+        "    minVal = min(minVal, arr[j])",
+        "    sum = (sum + minVal) % MOD",
+        "Return sum"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops, but no inner loop for finding min",
+        "spaceExplanation": "Only storing sum and running minimum"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int sumSubarrayMins(vector<int>& arr) {\n        const int MOD = 1e9 + 7;\n        int n = arr.size();\n        long long sum = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int minVal = arr[i];\n            for (int j = i; j < n; j++) {\n                minVal = min(minVal, arr[j]);\n                sum = (sum + minVal) % MOD;\n            }\n        }\n        \n        return sum;\n    }\n};",
+        "java": "class Solution {\n    public int sumSubarrayMins(int[] arr) {\n        final int MOD = 1_000_000_007;\n        int n = arr.length;\n        long sum = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int minVal = arr[i];\n            for (int j = i; j < n; j++) {\n                minVal = Math.min(minVal, arr[j]);\n                sum = (sum + minVal) % MOD;\n            }\n        }\n        \n        return (int) sum;\n    }\n}",
+        "python": "class Solution:\n    def sumSubarrayMins(self, arr: List[int]) -> int:\n        MOD = 10**9 + 7\n        n = len(arr)\n        total = 0\n        \n        for i in range(n):\n            min_val = arr[i]\n            for j in range(i, n):\n                min_val = min(min_val, arr[j])\n                total = (total + min_val) % MOD\n        \n        return total",
+        "javascript": "var sumSubarrayMins = function(arr) {\n    const MOD = 1e9 + 7;\n    const n = arr.length;\n    let sum = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let minVal = arr[i];\n        for (let j = i; j < n; j++) {\n            minVal = Math.min(minVal, arr[j]);\n            sum = (sum + minVal) % MOD;\n        }\n    }\n    \n    return sum;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Count Contributions - Optimal",
+      "order": 3,
+      "intuition": "Count how many subarrays have arr[i] as minimum. Use stacks to find previous and next smaller elements. Contribution = arr[i] * left_count * right_count.",
+      "approach": "Find boundaries where each element is minimum using monotonic stacks. Calculate contribution of each element.",
+      "steps": [
+        "Find previous smaller element indices (PSE)",
+        "Find next smaller element indices (NSE)",
+        "For each index i:",
+        "  left = i - PSE[i] (subarrays ending at i with arr[i] as min)",
+        "  right = NSE[i] - i (subarrays starting at i with arr[i] as min)",
+        "  contribution = arr[i] * left * right",
+        "  sum += contribution",
+        "Return sum % MOD"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes to find PSE and NSE, one pass to calculate contributions",
+        "spaceExplanation": "Arrays to store PSE and NSE indices, and stacks"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int sumSubarrayMins(vector<int>& arr) {\n        const int MOD = 1e9 + 7;\n        int n = arr.size();\n        \n        // Find previous smaller element indices\n        vector<int> prevSmaller(n);\n        stack<int> st;\n        for (int i = 0; i < n; i++) {\n            while (!st.empty() && arr[st.top()] >= arr[i]) {\n                st.pop();\n            }\n            prevSmaller[i] = st.empty() ? -1 : st.top();\n            st.push(i);\n        }\n        \n        // Find next smaller element indices\n        vector<int> nextSmaller(n);\n        while (!st.empty()) st.pop();\n        for (int i = n - 1; i >= 0; i--) {\n            while (!st.empty() && arr[st.top()] > arr[i]) {\n                st.pop();\n            }\n            nextSmaller[i] = st.empty() ? n : st.top();\n            st.push(i);\n        }\n        \n        // Calculate sum of contributions\n        long long sum = 0;\n        for (int i = 0; i < n; i++) {\n            long long left = i - prevSmaller[i];\n            long long right = nextSmaller[i] - i;\n            long long contribution = (arr[i] * left % MOD * right % MOD) % MOD;\n            sum = (sum + contribution) % MOD;\n        }\n        \n        return sum;\n    }\n};",
+        "java": "class Solution {\n    public int sumSubarrayMins(int[] arr) {\n        final int MOD = 1_000_000_007;\n        int n = arr.length;\n        \n        // Find previous smaller element indices\n        int[] prevSmaller = new int[n];\n        Stack<Integer> stack = new Stack<>();\n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && arr[stack.peek()] >= arr[i]) {\n                stack.pop();\n            }\n            prevSmaller[i] = stack.isEmpty() ? -1 : stack.peek();\n            stack.push(i);\n        }\n        \n        // Find next smaller element indices\n        int[] nextSmaller = new int[n];\n        stack.clear();\n        for (int i = n - 1; i >= 0; i--) {\n            while (!stack.isEmpty() && arr[stack.peek()] > arr[i]) {\n                stack.pop();\n            }\n            nextSmaller[i] = stack.isEmpty() ? n : stack.peek();\n            stack.push(i);\n        }\n        \n        // Calculate sum\n        long sum = 0;\n        for (int i = 0; i < n; i++) {\n            long left = i - prevSmaller[i];\n            long right = nextSmaller[i] - i;\n            long contribution = (arr[i] * left % MOD * right % MOD) % MOD;\n            sum = (sum + contribution) % MOD;\n        }\n        \n        return (int) sum;\n    }\n}",
+        "python": "class Solution:\n    def sumSubarrayMins(self, arr: List[int]) -> int:\n        MOD = 10**9 + 7\n        n = len(arr)\n        \n        # Find previous smaller element indices\n        prev_smaller = [-1] * n\n        stack = []\n        for i in range(n):\n            while stack and arr[stack[-1]] >= arr[i]:\n                stack.pop()\n            prev_smaller[i] = stack[-1] if stack else -1\n            stack.append(i)\n        \n        # Find next smaller element indices\n        next_smaller = [n] * n\n        stack = []\n        for i in range(n - 1, -1, -1):\n            while stack and arr[stack[-1]] > arr[i]:\n                stack.pop()\n            next_smaller[i] = stack[-1] if stack else n\n            stack.append(i)\n        \n        # Calculate sum\n        total = 0\n        for i in range(n):\n            left = i - prev_smaller[i]\n            right = next_smaller[i] - i\n            contribution = arr[i] * left * right\n            total = (total + contribution) % MOD\n        \n        return total",
+        "javascript": "var sumSubarrayMins = function(arr) {\n    const MOD = 1e9 + 7;\n    const n = arr.length;\n    \n    // Find previous smaller element indices\n    const prevSmaller = new Array(n);\n    let stack = [];\n    for (let i = 0; i < n; i++) {\n        while (stack.length > 0 && arr[stack[stack.length - 1]] >= arr[i]) {\n            stack.pop();\n        }\n        prevSmaller[i] = stack.length === 0 ? -1 : stack[stack.length - 1];\n        stack.push(i);\n    }\n    \n    // Find next smaller element indices\n    const nextSmaller = new Array(n);\n    stack = [];\n    for (let i = n - 1; i >= 0; i--) {\n        while (stack.length > 0 && arr[stack[stack.length - 1]] > arr[i]) {\n            stack.pop();\n        }\n        nextSmaller[i] = stack.length === 0 ? n : stack[stack.length - 1];\n        stack.push(i);\n    }\n    \n    // Calculate sum\n    let sum = 0;\n    for (let i = 0; i < n; i++) {\n        const left = i - prevSmaller[i];\n        const right = nextSmaller[i] - i;\n        const contribution = (arr[i] * left % MOD * right % MOD) % MOD;\n        sum = (sum + contribution) % MOD;\n    }\n    \n    return sum;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling duplicates correctly (use >= for PSE, > for NSE to avoid double counting)",
+    "Forgetting to take MOD at each step causing integer overflow",
+    "Confusing left and right boundary calculations",
+    "Not initializing PSE with -1 and NSE with n",
+    "Thinking contribution is just arr[i] * count instead of arr[i] * left * right"
+  ],
+  "hints": [
+    "Think about contribution of each element rather than generating all subarrays",
+    "For arr[i] to be minimum, need to find range where it's smallest",
+    "Use monotonic stack to find previous and next smaller elements",
+    "left_count = i - previous_smaller_index, right_count = next_smaller_index - i",
+    "Handle duplicates carefully: use >= for one direction, > for other"
+  ],
+  "followUp": [
+    "What about Sum of Subarray Maximums?",
+    "Can you solve Sum of Subarray Ranges (max - min for each subarray)?",
+    "What if we want product instead of sum?",
+    "Can you solve if array can have negative numbers?",
+    "How to optimize space further (single pass solution)?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Apple", "Facebook"],
+  "tags": ["stack", "array", "monotonic-stack", "dynamic-programming"],
+  "relatedProblems": [
+    "Sum of Subarray Ranges",
+    "Previous Smaller Element",
+    "Next Smaller Element",
+    "Largest Rectangle in Histogram",
+    "Maximal Rectangle"
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "questionId": "49",
+  "questionSlug": "group-anagrams",
+  "title": "Group Anagrams",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/group-anagrams/",
+    "videos": [
+      {
+        "title": "Group Anagrams - Hash Map Solution",
+        "url": "https://www.youtube.com/watch?v=vzdNOK2oB2E",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Group Anagrams Explained",
+        "url": "https://www.youtube.com/watch?v=--k5-3EOObs",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Group Anagrams - LeetCode Official",
+        "url": "https://leetcode.com/problems/group-anagrams/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Print Anagrams Together",
+        "url": "https://www.geeksforgeeks.org/given-a-sequence-of-words-print-all-anagrams-together/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/group-anagrams/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/print-anagrams-together/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Group anagrams together? Use sorted string or character count as key in HashMap. Map key -> list of anagrams.",
+  "approaches": [
+    {
+      "name": "Brute Force - Compare All Pairs",
+      "order": 1,
+      "intuition": "Compare each string with all others to find anagrams. Group them together.",
+      "approach": "For each string, check all other strings if they're anagrams using sorting.",
+      "steps": [
+        "Create result list",
+        "Create visited array",
+        "For each string i:",
+        "  If not visited:",
+        "    Create group with string i",
+        "    For each string j after i:",
+        "      If anagram(i, j):",
+        "        Add to group, mark j visited",
+        "    Add group to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n² × k log k)",
+        "space": "O(n × k)",
+        "timeExplanation": "n² comparisons, each requires O(k log k) sorting where k is max string length",
+        "spaceExplanation": "Storing all strings in groups"
+      },
+      "code": {
+        "cpp": "vector<vector<string>> groupAnagrams(vector<string>& strs) {\n    int n = strs.size();\n    vector<vector<string>> result;\n    vector<bool> visited(n, false);\n    \n    for (int i = 0; i < n; i++) {\n        if (visited[i]) continue;\n        \n        vector<string> group;\n        group.push_back(strs[i]);\n        visited[i] = true;\n        \n        string sorted_i = strs[i];\n        sort(sorted_i.begin(), sorted_i.end());\n        \n        for (int j = i + 1; j < n; j++) {\n            if (visited[j]) continue;\n            \n            string sorted_j = strs[j];\n            sort(sorted_j.begin(), sorted_j.end());\n            \n            if (sorted_i == sorted_j) {\n                group.push_back(strs[j]);\n                visited[j] = true;\n            }\n        }\n        \n        result.push_back(group);\n    }\n    \n    return result;\n}",
+        "java": "public List<List<String>> groupAnagrams(String[] strs) {\n    int n = strs.length;\n    List<List<String>> result = new ArrayList<>();\n    boolean[] visited = new boolean[n];\n    \n    for (int i = 0; i < n; i++) {\n        if (visited[i]) continue;\n        \n        List<String> group = new ArrayList<>();\n        group.add(strs[i]);\n        visited[i] = true;\n        \n        char[] sortedI = strs[i].toCharArray();\n        Arrays.sort(sortedI);\n        String strI = new String(sortedI);\n        \n        for (int j = i + 1; j < n; j++) {\n            if (visited[j]) continue;\n            \n            char[] sortedJ = strs[j].toCharArray();\n            Arrays.sort(sortedJ);\n            String strJ = new String(sortedJ);\n            \n            if (strI.equals(strJ)) {\n                group.add(strs[j]);\n                visited[j] = true;\n            }\n        }\n        \n        result.add(group);\n    }\n    \n    return result;\n}",
+        "python": "def groupAnagrams(strs):\n    n = len(strs)\n    result = []\n    visited = [False] * n\n    \n    for i in range(n):\n        if visited[i]:\n            continue\n        \n        group = [strs[i]]\n        visited[i] = True\n        sorted_i = ''.join(sorted(strs[i]))\n        \n        for j in range(i + 1, n):\n            if visited[j]:\n                continue\n            \n            sorted_j = ''.join(sorted(strs[j]))\n            if sorted_i == sorted_j:\n                group.append(strs[j])\n                visited[j] = True\n        \n        result.append(group)\n    \n    return result",
+        "javascript": "function groupAnagrams(strs) {\n    const n = strs.length;\n    const result = [];\n    const visited = new Array(n).fill(false);\n    \n    for (let i = 0; i < n; i++) {\n        if (visited[i]) continue;\n        \n        const group = [strs[i]];\n        visited[i] = true;\n        const sortedI = strs[i].split('').sort().join('');\n        \n        for (let j = i + 1; j < n; j++) {\n            if (visited[j]) continue;\n            \n            const sortedJ = strs[j].split('').sort().join('');\n            if (sortedI === sortedJ) {\n                group.push(strs[j]);\n                visited[j] = true;\n            }\n        }\n        \n        result.push(group);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Hash Map with Sorted String Key",
+      "order": 2,
+      "intuition": "Anagrams have same characters. Sort each string and use it as key. All anagrams map to same sorted key.",
+      "approach": "Use sorted string as hash map key, group strings with same key.",
+      "steps": [
+        "Create hash map: sorted_string -> list of strings",
+        "For each string:",
+        "  Sort it to get key",
+        "  Add original string to map[key]",
+        "Return all values from map"
+      ],
+      "complexity": {
+        "time": "O(n × k log k)",
+        "space": "O(n × k)",
+        "timeExplanation": "Sorting each of n strings takes O(k log k) where k is max length",
+        "spaceExplanation": "Storing all n strings in hash map"
+      },
+      "code": {
+        "cpp": "vector<vector<string>> groupAnagrams(vector<string>& strs) {\n    unordered_map<string, vector<string>> map;\n    \n    for (string& s : strs) {\n        string key = s;\n        sort(key.begin(), key.end());\n        map[key].push_back(s);\n    }\n    \n    vector<vector<string>> result;\n    for (auto& pair : map) {\n        result.push_back(pair.second);\n    }\n    \n    return result;\n}",
+        "java": "public List<List<String>> groupAnagrams(String[] strs) {\n    Map<String, List<String>> map = new HashMap<>();\n    \n    for (String s : strs) {\n        char[] chars = s.toCharArray();\n        Arrays.sort(chars);\n        String key = new String(chars);\n        \n        map.putIfAbsent(key, new ArrayList<>());\n        map.get(key).add(s);\n    }\n    \n    return new ArrayList<>(map.values());\n}",
+        "python": "def groupAnagrams(strs):\n    from collections import defaultdict\n    \n    anagram_map = defaultdict(list)\n    \n    for s in strs:\n        key = ''.join(sorted(s))\n        anagram_map[key].append(s)\n    \n    return list(anagram_map.values())",
+        "javascript": "function groupAnagrams(strs) {\n    const map = new Map();\n    \n    for (const s of strs) {\n        const key = s.split('').sort().join('');\n        \n        if (!map.has(key)) {\n            map.set(key, []);\n        }\n        map.get(key).push(s);\n    }\n    \n    return Array.from(map.values());\n}"
+      }
+    },
+    {
+      "name": "Hash Map with Character Count Key - Optimal",
+      "order": 3,
+      "intuition": "Instead of sorting, create a character count signature. Same counts = anagrams. Faster than sorting.",
+      "approach": "Create character frequency array as key (e.g., '1a2b1c' for 'abc'). Use as hash map key.",
+      "steps": [
+        "Create hash map: count_signature -> list of strings",
+        "For each string:",
+        "  Count character frequencies",
+        "  Create signature from count array",
+        "  Add string to map[signature]",
+        "Return all values from map"
+      ],
+      "complexity": {
+        "time": "O(n × k)",
+        "space": "O(n × k)",
+        "timeExplanation": "For each of n strings, counting k characters takes O(k)",
+        "spaceExplanation": "Storing all n strings plus keys in hash map"
+      },
+      "code": {
+        "cpp": "vector<vector<string>> groupAnagrams(vector<string>& strs) {\n    unordered_map<string, vector<string>> map;\n    \n    for (string& s : strs) {\n        vector<int> count(26, 0);\n        for (char c : s) {\n            count[c - 'a']++;\n        }\n        \n        // Create key from count\n        string key = \"\";\n        for (int i = 0; i < 26; i++) {\n            key += to_string(count[i]) + \",\";\n        }\n        \n        map[key].push_back(s);\n    }\n    \n    vector<vector<string>> result;\n    for (auto& pair : map) {\n        result.push_back(pair.second);\n    }\n    \n    return result;\n}",
+        "java": "public List<List<String>> groupAnagrams(String[] strs) {\n    Map<String, List<String>> map = new HashMap<>();\n    \n    for (String s : strs) {\n        int[] count = new int[26];\n        for (char c : s.toCharArray()) {\n            count[c - 'a']++;\n        }\n        \n        StringBuilder key = new StringBuilder();\n        for (int i = 0; i < 26; i++) {\n            key.append(count[i]).append(\",\");\n        }\n        \n        String keyStr = key.toString();\n        map.putIfAbsent(keyStr, new ArrayList<>());\n        map.get(keyStr).add(s);\n    }\n    \n    return new ArrayList<>(map.values());\n}",
+        "python": "def groupAnagrams(strs):\n    from collections import defaultdict\n    \n    anagram_map = defaultdict(list)\n    \n    for s in strs:\n        count = [0] * 26\n        for c in s:\n            count[ord(c) - ord('a')] += 1\n        \n        key = tuple(count)\n        anagram_map[key].append(s)\n    \n    return list(anagram_map.values())",
+        "javascript": "function groupAnagrams(strs) {\n    const map = new Map();\n    \n    for (const s of strs) {\n        const count = new Array(26).fill(0);\n        for (const c of s) {\n            count[c.charCodeAt(0) - 'a'.charCodeAt(0)]++;\n        }\n        \n        const key = count.join(',');\n        \n        if (!map.has(key)) {\n            map.set(key, []);\n        }\n        map.get(key).push(s);\n    }\n    \n    return Array.from(map.values());\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling empty strings correctly",
+    "Using inefficient key generation (too complex)",
+    "Forgetting to add original string (adding sorted version instead)",
+    "Not considering Unicode characters (array[26] won't work)",
+    "Modifying input array when not allowed"
+  ],
+  "hints": [
+    "Anagrams have same characters, just in different order",
+    "Sorted strings are identical for anagrams",
+    "Can use sorted string as hash map key",
+    "Character frequency count can also be used as key",
+    "Group by signature - all anagrams have same signature"
+  ],
+  "followUp": [
+    "What if strings contain Unicode? (Use hash map for counts, not array)",
+    "How to minimize space? (Can't avoid storing all strings)",
+    "What if we need to find largest group? (Track max size while building)",
+    "Case sensitive or insensitive? (Convert to lowercase if needed)",
+    "Can you do better than O(n × k log k)? (Yes, O(n × k) with counting)"
+  ],
+  "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Uber", "Bloomberg"],
+  "tags": ["array", "hash-table", "string", "sorting"],
+  "relatedProblems": [
+    "Valid Anagram",
+    "Group Shifted Strings",
+    "Find All Anagrams in a String",
+    "Encode and Decode Strings"
+  ]
+}

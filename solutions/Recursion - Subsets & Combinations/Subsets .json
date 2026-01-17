@@ -1,0 +1,181 @@
+{
+  "questionId": "78",
+  "questionSlug": "subsets",
+  "title": "Subsets (Power Set)",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/subsets/",
+    "videos": [
+      {
+        "title": "Subsets - Backtracking",
+        "url": "https://www.youtube.com/watch?v=REOH22Xwdkk",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Power Set using Recursion",
+        "url": "https://www.youtube.com/watch?v=b7AYbpM5YrE",
+        "channel": "take U forward",
+        "duration": "16:30",
+        "language": "English"
+      },
+      {
+        "title": "Subsets Explained",
+        "url": "https://www.youtube.com/watch?v=xTNFs5KRV_g",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Subsets - LeetCode Official",
+        "url": "https://leetcode.com/problems/subsets/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Power Set",
+        "url": "https://takeuforward.org/data-structure/power-set-print-all-the-possible-subsequences-of-the-string/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Power Set - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/power-set/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/subsets/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/power-set/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all subsets/subsequences? Use backtracking with include/exclude pattern OR iterative bit manipulation. Power set has 2^n subsets.",
+  "approaches": [
+    {
+      "name": "Iterative - Build Subsets",
+      "order": 1,
+      "intuition": "Start with empty set. For each element, add it to all existing subsets to create new subsets.",
+      "approach": "Iterate through each element, for each existing subset, create new subset by adding current element.",
+      "steps": [
+        "result = [[]]  // Start with empty subset",
+        "For each num in nums:",
+        "  currentSize = result.size()",
+        "  For each existing subset in result (first currentSize items):",
+        "    Create new subset = existing + [num]",
+        "    Add new subset to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n × 2^n)",
+        "space": "O(2^n)",
+        "timeExplanation": "For each of n elements, we duplicate all existing subsets (which grows to 2^n)",
+        "spaceExplanation": "Storing 2^n subsets"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> subsets(vector<int>& nums) {\n    vector<vector<int>> result = {{}};\n    \n    for (int num : nums) {\n        int size = result.size();\n        for (int i = 0; i < size; i++) {\n            vector<int> subset = result[i];\n            subset.push_back(num);\n            result.push_back(subset);\n        }\n    }\n    \n    return result;\n}",
+        "java": "public List<List<Integer>> subsets(int[] nums) {\n    List<List<Integer>> result = new ArrayList<>();\n    result.add(new ArrayList<>());\n    \n    for (int num : nums) {\n        int size = result.size();\n        for (int i = 0; i < size; i++) {\n            List<Integer> subset = new ArrayList<>(result.get(i));\n            subset.add(num);\n            result.add(subset);\n        }\n    }\n    \n    return result;\n}",
+        "python": "def subsets(nums):\n    result = [[]]\n    \n    for num in nums:\n        result += [curr + [num] for curr in result]\n    \n    return result",
+        "javascript": "function subsets(nums) {\n    const result = [[]];\n    \n    for (const num of nums) {\n        const size = result.length;\n        for (let i = 0; i < size; i++) {\n            result.push([...result[i], num]);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking - Include/Exclude",
+      "order": 2,
+      "intuition": "For each element, we have two choices: include it or exclude it. Build subsets recursively by making these choices.",
+      "approach": "Use backtracking to explore all include/exclude combinations.",
+      "steps": [
+        "backtrack(index, current, result):",
+        "  If index == n:",
+        "    Add current to result",
+        "    Return",
+        "  // Exclude current element",
+        "  backtrack(index + 1, current, result)",
+        "  // Include current element",
+        "  current.add(nums[index])",
+        "  backtrack(index + 1, current, result)",
+        "  current.remove_last()  // backtrack",
+        "Start: backtrack(0, [], result)"
+      ],
+      "complexity": {
+        "time": "O(n × 2^n)",
+        "space": "O(n)",
+        "timeExplanation": "2^n subsets, each taking O(n) to copy",
+        "spaceExplanation": "Recursion depth is n, current subset size is at most n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> subsets(vector<int>& nums) {\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(nums, 0, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(vector<int>& nums, int index, \n                   vector<int>& current, vector<vector<int>>& result) {\n        if (index == nums.size()) {\n            result.push_back(current);\n            return;\n        }\n        \n        // Exclude current element\n        backtrack(nums, index + 1, current, result);\n        \n        // Include current element\n        current.push_back(nums[index]);\n        backtrack(nums, index + 1, current, result);\n        current.pop_back();\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> subsets(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(nums, 0, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int[] nums, int index, \n                          List<Integer> current, List<List<Integer>> result) {\n        if (index == nums.length) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        // Exclude\n        backtrack(nums, index + 1, current, result);\n        \n        // Include\n        current.add(nums[index]);\n        backtrack(nums, index + 1, current, result);\n        current.remove(current.size() - 1);\n    }\n}",
+        "python": "def subsets(nums):\n    result = []\n    \n    def backtrack(index, current):\n        if index == len(nums):\n            result.append(current[:])\n            return\n        \n        # Exclude\n        backtrack(index + 1, current)\n        \n        # Include\n        current.append(nums[index])\n        backtrack(index + 1, current)\n        current.pop()\n    \n    backtrack(0, [])\n    return result",
+        "javascript": "function subsets(nums) {\n    const result = [];\n    \n    function backtrack(index, current) {\n        if (index === nums.length) {\n            result.push([...current]);\n            return;\n        }\n        \n        // Exclude\n        backtrack(index + 1, current);\n        \n        // Include\n        current.push(nums[index]);\n        backtrack(index + 1, current);\n        current.pop();\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Bit Manipulation - Optimal",
+      "order": 3,
+      "intuition": "n elements = 2^n subsets. Use binary representation: each number from 0 to 2^n-1 represents a subset (bit=1 means include element).",
+      "approach": "Iterate through all numbers from 0 to 2^n-1. For each number, check bits to determine which elements to include.",
+      "steps": [
+        "n = nums.length",
+        "totalSubsets = 2^n",
+        "For i from 0 to totalSubsets - 1:",
+        "  current = []",
+        "  For j from 0 to n - 1:",
+        "    If j-th bit of i is set:",
+        "      Add nums[j] to current",
+        "  Add current to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n × 2^n)",
+        "space": "O(1)",
+        "timeExplanation": "2^n subsets, each requires checking n bits",
+        "spaceExplanation": "No extra space except output (excluding result array)"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> subsets(vector<int>& nums) {\n    int n = nums.size();\n    int totalSubsets = 1 << n;  // 2^n\n    vector<vector<int>> result;\n    \n    for (int i = 0; i < totalSubsets; i++) {\n        vector<int> subset;\n        for (int j = 0; j < n; j++) {\n            if (i & (1 << j)) {\n                subset.push_back(nums[j]);\n            }\n        }\n        result.push_back(subset);\n    }\n    \n    return result;\n}",
+        "java": "public List<List<Integer>> subsets(int[] nums) {\n    int n = nums.length;\n    int totalSubsets = 1 << n;\n    List<List<Integer>> result = new ArrayList<>();\n    \n    for (int i = 0; i < totalSubsets; i++) {\n        List<Integer> subset = new ArrayList<>();\n        for (int j = 0; j < n; j++) {\n            if ((i & (1 << j)) != 0) {\n                subset.add(nums[j]);\n            }\n        }\n        result.add(subset);\n    }\n    \n    return result;\n}",
+        "python": "def subsets(nums):\n    n = len(nums)\n    total_subsets = 1 << n  # 2^n\n    result = []\n    \n    for i in range(total_subsets):\n        subset = []\n        for j in range(n):\n            if i & (1 << j):\n                subset.append(nums[j])\n        result.append(subset)\n    \n    return result",
+        "javascript": "function subsets(nums) {\n    const n = nums.length;\n    const totalSubsets = 1 << n;\n    const result = [];\n    \n    for (let i = 0; i < totalSubsets; i++) {\n        const subset = [];\n        for (let j = 0; j < n; j++) {\n            if (i & (1 << j)) {\n                subset.push(nums[j]);\n            }\n        }\n        result.push(subset);\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not making a copy of current subset when adding to result (reference issue)",
+    "Forgetting to backtrack (remove last element after recursion)",
+    "Incorrect bit manipulation (checking wrong bit position)",
+    "Not handling empty subset",
+    "Modifying input array when not allowed"
+  ],
+  "hints": [
+    "Total number of subsets is always 2^n",
+    "For each element, you have 2 choices: include or exclude",
+    "Can use binary representation: n=3 → 000 to 111 (8 subsets)",
+    "Backtracking template: explore choice, recurse, undo choice",
+    "Empty set is always a valid subset"
+  ],
+  "followUp": [
+    "What if array has duplicates? (Subsets II - need to skip duplicates)",
+    "How to generate only subsets of size k? (Combinations problem)",
+    "Can you generate in lexicographic order? (Sort first, then generate)",
+    "How to generate without recursion? (Use iterative or bit manipulation)",
+    "What if we need sum of all subset sums? (Each element appears in 2^(n-1) subsets)"
+  ],
+  "companies": ["Facebook", "Amazon", "Microsoft", "Google", "Bloomberg", "Adobe"],
+  "tags": ["array", "backtracking", "bit-manipulation"],
+  "relatedProblems": [
+    "Subsets II",
+    "Generalized Abbreviation",
+    "Letter Case Permutation",
+    "Find Array Given Subset Sums",
+    "Count Number of Maximum Bitwise-OR Subsets"
+  ]
+}

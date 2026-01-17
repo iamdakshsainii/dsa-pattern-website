@@ -1,0 +1,174 @@
+{
+  "questionId": "325",
+  "questionSlug": "largest-subarray-with-0-sum",
+  "title": "Largest Subarray with 0 Sum",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/",
+    "videos": [
+      {
+        "title": "Longest Subarray with Sum 0",
+        "url": "https://www.youtube.com/watch?v=xmguZ6GbatA",
+        "channel": "take U forward",
+        "duration": "12:45",
+        "language": "English"
+      },
+      {
+        "title": "Largest Subarray with 0 Sum",
+        "url": "https://www.youtube.com/watch?v=f8m2E_-7vHY",
+        "channel": "Aditya Verma",
+        "duration": "15:30",
+        "language": "English"
+      },
+      {
+        "title": "Zero Sum Subarray",
+        "url": "https://www.youtube.com/watch?v=C-4_K1qFjjc",
+        "channel": "Pepcoding",
+        "duration": "18:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Longest Subarray with Sum 0",
+        "url": "https://takeuforward.org/data-structure/length-of-the-longest-subarray-with-zero-sum/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Largest Subarray with 0 Sum - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/find-the-largest-subarray-with-0-sum/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Practice on LeetCode (Similar)",
+        "url": "https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Subarray with sum = 0? Track prefix sums in hashmap. Same prefix sum at two indices means subarray between them = 0.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Subarrays",
+      "order": 1,
+      "intuition": "Generate all possible subarrays and check if their sum equals 0. Track maximum length found.",
+      "approach": "Use two nested loops to generate all subarrays, calculate sum for each, update max length when sum is 0.",
+      "steps": [
+        "For each starting index i:",
+        "  Initialize sum = 0",
+        "  For each ending index j from i:",
+        "    Add arr[j] to sum",
+        "    If sum == 0:",
+        "      maxLen = max(maxLen, j - i + 1)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops checking all subarrays",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "int maxLen(vector<int>& arr, int n) {\n    int maxLength = 0;\n    \n    for (int i = 0; i < n; i++) {\n        int sum = 0;\n        for (int j = i; j < n; j++) {\n            sum += arr[j];\n            if (sum == 0) {\n                maxLength = max(maxLength, j - i + 1);\n            }\n        }\n    }\n    \n    return maxLength;\n}",
+        "java": "public int maxLen(int arr[], int n) {\n    int maxLength = 0;\n    \n    for (int i = 0; i < n; i++) {\n        int sum = 0;\n        for (int j = i; j < n; j++) {\n            sum += arr[j];\n            if (sum == 0) {\n                maxLength = Math.max(maxLength, j - i + 1);\n            }\n        }\n    }\n    \n    return maxLength;\n}",
+        "python": "def maxLen(arr, n):\n    max_length = 0\n    \n    for i in range(n):\n        sum_val = 0\n        for j in range(i, n):\n            sum_val += arr[j]\n            if sum_val == 0:\n                max_length = max(max_length, j - i + 1)\n    \n    return max_length",
+        "javascript": "function maxLen(arr, n) {\n    let maxLength = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let sum = 0;\n        for (let j = i; j < n; j++) {\n            sum += arr[j];\n            if (sum === 0) {\n                maxLength = Math.max(maxLength, j - i + 1);\n            }\n        }\n    }\n    \n    return maxLength;\n}"
+      }
+    },
+    {
+      "name": "Prefix Sum Array",
+      "order": 2,
+      "intuition": "If prefix sum at index i equals prefix sum at index j, then subarray (i, j] has sum 0. Use array to store first occurrence.",
+      "approach": "Calculate prefix sums, store in array. For each sum, if seen before, calculate length. Handle sum=0 separately.",
+      "steps": [
+        "Create prefix sum array",
+        "For each index:",
+        "  If prefix[i] == 0:",
+        "    maxLen = max(maxLen, i + 1)",
+        "  Search for same prefix sum earlier",
+        "  If found at j:",
+        "    maxLen = max(maxLen, i - j)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "For each prefix sum, searching for previous occurrence takes O(n)",
+        "spaceExplanation": "Prefix sum array"
+      },
+      "code": {
+        "cpp": "int maxLen(vector<int>& arr, int n) {\n    vector<int> prefix(n);\n    prefix[0] = arr[0];\n    \n    for (int i = 1; i < n; i++) {\n        prefix[i] = prefix[i-1] + arr[i];\n    }\n    \n    int maxLength = 0;\n    \n    for (int i = 0; i < n; i++) {\n        if (prefix[i] == 0) {\n            maxLength = max(maxLength, i + 1);\n        }\n        \n        // Search for same prefix sum before i\n        for (int j = 0; j < i; j++) {\n            if (prefix[j] == prefix[i]) {\n                maxLength = max(maxLength, i - j);\n            }\n        }\n    }\n    \n    return maxLength;\n}",
+        "java": "public int maxLen(int arr[], int n) {\n    int[] prefix = new int[n];\n    prefix[0] = arr[0];\n    \n    for (int i = 1; i < n; i++) {\n        prefix[i] = prefix[i-1] + arr[i];\n    }\n    \n    int maxLength = 0;\n    \n    for (int i = 0; i < n; i++) {\n        if (prefix[i] == 0) {\n            maxLength = Math.max(maxLength, i + 1);\n        }\n        \n        for (int j = 0; j < i; j++) {\n            if (prefix[j] == prefix[i]) {\n                maxLength = Math.max(maxLength, i - j);\n            }\n        }\n    }\n    \n    return maxLength;\n}",
+        "python": "def maxLen(arr, n):\n    prefix = [0] * n\n    prefix[0] = arr[0]\n    \n    for i in range(1, n):\n        prefix[i] = prefix[i-1] + arr[i]\n    \n    max_length = 0\n    \n    for i in range(n):\n        if prefix[i] == 0:\n            max_length = max(max_length, i + 1)\n        \n        for j in range(i):\n            if prefix[j] == prefix[i]:\n                max_length = max(max_length, i - j)\n    \n    return max_length",
+        "javascript": "function maxLen(arr, n) {\n    const prefix = new Array(n);\n    prefix[0] = arr[0];\n    \n    for (let i = 1; i < n; i++) {\n        prefix[i] = prefix[i-1] + arr[i];\n    }\n    \n    let maxLength = 0;\n    \n    for (let i = 0; i < n; i++) {\n        if (prefix[i] === 0) {\n            maxLength = Math.max(maxLength, i + 1);\n        }\n        \n        for (let j = 0; j < i; j++) {\n            if (prefix[j] === prefix[i]) {\n                maxLength = Math.max(maxLength, i - j);\n            }\n        }\n    }\n    \n    return maxLength;\n}"
+      }
+    },
+    {
+      "name": "HashMap with Prefix Sum - Optimal",
+      "order": 3,
+      "intuition": "Use HashMap to store first occurrence of each prefix sum in O(1). When same sum appears again, subarray between has sum 0.",
+      "approach": "Track running sum. Store first index of each sum in map. When sum repeats or equals 0, update max length.",
+      "steps": [
+        "Create hashmap, sum = 0, maxLen = 0",
+        "For each index i:",
+        "  sum += arr[i]",
+        "  If sum == 0:",
+        "    maxLen = i + 1",
+        "  If sum in map:",
+        "    maxLen = max(maxLen, i - map[sum])",
+        "  Else:",
+        "    map[sum] = i",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass, O(1) hashmap operations",
+        "spaceExplanation": "HashMap stores at most n prefix sums"
+      },
+      "code": {
+        "cpp": "int maxLen(vector<int>& arr, int n) {\n    unordered_map<int, int> sumMap;\n    int sum = 0;\n    int maxLength = 0;\n    \n    for (int i = 0; i < n; i++) {\n        sum += arr[i];\n        \n        // If sum is 0, entire array from 0 to i\n        if (sum == 0) {\n            maxLength = i + 1;\n        }\n        \n        // If sum seen before\n        if (sumMap.find(sum) != sumMap.end()) {\n            maxLength = max(maxLength, i - sumMap[sum]);\n        }\n        // Store first occurrence only\n        else {\n            sumMap[sum] = i;\n        }\n    }\n    \n    return maxLength;\n}",
+        "java": "public int maxLen(int arr[], int n) {\n    HashMap<Integer, Integer> sumMap = new HashMap<>();\n    int sum = 0;\n    int maxLength = 0;\n    \n    for (int i = 0; i < n; i++) {\n        sum += arr[i];\n        \n        if (sum == 0) {\n            maxLength = i + 1;\n        }\n        \n        if (sumMap.containsKey(sum)) {\n            maxLength = Math.max(maxLength, i - sumMap.get(sum));\n        } else {\n            sumMap.put(sum, i);\n        }\n    }\n    \n    return maxLength;\n}",
+        "python": "def maxLen(arr, n):\n    sum_map = {}\n    sum_val = 0\n    max_length = 0\n    \n    for i in range(n):\n        sum_val += arr[i]\n        \n        if sum_val == 0:\n            max_length = i + 1\n        \n        if sum_val in sum_map:\n            max_length = max(max_length, i - sum_map[sum_val])\n        else:\n            sum_map[sum_val] = i\n    \n    return max_length",
+        "javascript": "function maxLen(arr, n) {\n    const sumMap = new Map();\n    let sum = 0;\n    let maxLength = 0;\n    \n    for (let i = 0; i < n; i++) {\n        sum += arr[i];\n        \n        if (sum === 0) {\n            maxLength = i + 1;\n        }\n        \n        if (sumMap.has(sum)) {\n            maxLength = Math.max(maxLength, i - sumMap.get(sum));\n        } else {\n            sumMap.set(sum, i);\n        }\n    }\n    \n    return maxLength;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Storing latest index instead of first occurrence (need first for max length)",
+    "Forgetting to handle sum == 0 case separately (entire subarray from start)",
+    "Updating map even when sum already exists (should only store first)",
+    "Off-by-one errors when calculating length (i - map[sum], not i - map[sum] + 1)",
+    "Not initializing maxLength to 0"
+  ],
+  "hints": [
+    "If sum from index 0 to i equals sum from 0 to j, what's sum from i+1 to j?",
+    "Think about prefix sums - when do they equal each other?",
+    "HashMap can store first occurrence of each sum in O(1) time",
+    "Special case: when prefix sum itself becomes 0",
+    "Only need to track first occurrence, not all occurrences"
+  ],
+  "followUp": [
+    "Find count of subarrays with sum 0 (instead of longest)",
+    "What if we need longest subarray with sum K instead of 0?",
+    "Can you solve with negative numbers? (Yes, same approach works)",
+    "What if we need to return the actual subarray, not just length?",
+    "How to find shortest subarray with sum 0?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Adobe"],
+  "tags": ["array", "hash-table", "prefix-sum"],
+  "relatedProblems": [
+    "Subarray Sum Equals K",
+    "Continuous Subarray Sum",
+    "Contiguous Array",
+    "Maximum Size Subarray Sum Equals k",
+    "Count Number of Nice Subarrays"
+  ]
+}

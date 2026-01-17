@@ -1,0 +1,178 @@
+{
+  "questionId": "901",
+  "questionSlug": "online-stock-span",
+  "title": "Online Stock Span",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/online-stock-span/",
+    "videos": [
+      {
+        "title": "Stock Span Problem - Monotonic Stack",
+        "url": "https://www.youtube.com/watch?v=slYh0ZNEqSw",
+        "channel": "NeetCode",
+        "duration": "10:45",
+        "language": "English"
+      },
+      {
+        "title": "Stock Span Problem Explained",
+        "url": "https://www.youtube.com/watch?v=p9T-fE1g1pU",
+        "channel": "take U forward",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Stack Solution - Stock Span",
+        "url": "https://www.youtube.com/watch?v=NXOOYYwpbg4",
+        "channel": "Aditya Verma",
+        "duration": "16:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Online Stock Span - LeetCode Official",
+        "url": "https://leetcode.com/problems/online-stock-span/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Stock Span Problem",
+        "url": "https://takeuforward.org/data-structure/stock-span-problem/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Stock Span - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/the-stock-span-problem/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/online-stock-span/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/stock-span-problem/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Count consecutive smaller/equal elements before current = Previous greater element variant. Use monotonic decreasing stack with (price, span) pairs.",
+  "approaches": [
+    {
+      "name": "Brute Force - Store All Prices",
+      "order": 1,
+      "intuition": "Store all prices seen so far. For each new price, scan backward to count consecutive days with price <= current.",
+      "approach": "Maintain list of all prices. For each next(), scan backward until finding larger price or reaching start.",
+      "steps": [
+        "Initialize: prices = []",
+        "next(price):",
+        "  prices.append(price)",
+        "  span = 1",
+        "  For i from len(prices)-2 down to 0:",
+        "    If prices[i] <= price: span++",
+        "    Else: break",
+        "  Return span"
+      ],
+      "complexity": {
+        "time": "O(n) per call",
+        "space": "O(n)",
+        "timeExplanation": "For each call, potentially scan all previous prices",
+        "spaceExplanation": "Store all historical prices"
+      },
+      "code": {
+        "cpp": "class StockSpanner {\nprivate:\n    vector<int> prices;\n    \npublic:\n    StockSpanner() {\n    }\n    \n    int next(int price) {\n        prices.push_back(price);\n        int span = 1;\n        \n        for (int i = prices.size() - 2; i >= 0; i--) {\n            if (prices[i] <= price) {\n                span++;\n            } else {\n                break;\n            }\n        }\n        \n        return span;\n    }\n};",
+        "java": "class StockSpanner {\n    private List<Integer> prices;\n    \n    public StockSpanner() {\n        prices = new ArrayList<>();\n    }\n    \n    public int next(int price) {\n        prices.add(price);\n        int span = 1;\n        \n        for (int i = prices.size() - 2; i >= 0; i--) {\n            if (prices.get(i) <= price) {\n                span++;\n            } else {\n                break;\n            }\n        }\n        \n        return span;\n    }\n}",
+        "python": "class StockSpanner:\n    def __init__(self):\n        self.prices = []\n    \n    def next(self, price: int) -> int:\n        self.prices.append(price)\n        span = 1\n        \n        for i in range(len(self.prices) - 2, -1, -1):\n            if self.prices[i] <= price:\n                span += 1\n            else:\n                break\n        \n        return span",
+        "javascript": "var StockSpanner = function() {\n    this.prices = [];\n};\n\nStockSpanner.prototype.next = function(price) {\n    this.prices.push(price);\n    let span = 1;\n    \n    for (let i = this.prices.length - 2; i >= 0; i--) {\n        if (this.prices[i] <= price) {\n            span++;\n        } else {\n            break;\n        }\n    }\n    \n    return span;\n};"
+      }
+    },
+    {
+      "name": "Stack with Prices and Indices",
+      "order": 2,
+      "intuition": "Use monotonic decreasing stack storing (price, index). When new price comes, pop smaller prices and calculate span from indices.",
+      "approach": "Stack maintains decreasing prices. For each price, pop smaller/equal, calculate span from index difference.",
+      "steps": [
+        "Initialize: stack = [], index = 0",
+        "next(price):",
+        "  While stack not empty and stack.top().price <= price:",
+        "    Pop",
+        "  span = (index - stack.top().index) if stack else (index + 1)",
+        "  Push (price, index)",
+        "  index++",
+        "  Return span"
+      ],
+      "complexity": {
+        "time": "O(1) amortized",
+        "space": "O(n)",
+        "timeExplanation": "Each price pushed and popped at most once across all calls",
+        "spaceExplanation": "Stack stores at most n elements"
+      },
+      "code": {
+        "cpp": "class StockSpanner {\nprivate:\n    stack<pair<int, int>> st; // {price, index}\n    int index;\n    \npublic:\n    StockSpanner() {\n        index = 0;\n    }\n    \n    int next(int price) {\n        // Pop all prices <= current price\n        while (!st.empty() && st.top().first <= price) {\n            st.pop();\n        }\n        \n        // Calculate span\n        int span = st.empty() ? (index + 1) : (index - st.top().second);\n        \n        // Push current price with index\n        st.push({price, index});\n        index++;\n        \n        return span;\n    }\n};",
+        "java": "class StockSpanner {\n    private Stack<int[]> stack; // [price, index]\n    private int index;\n    \n    public StockSpanner() {\n        stack = new Stack<>();\n        index = 0;\n    }\n    \n    public int next(int price) {\n        while (!stack.isEmpty() && stack.peek()[0] <= price) {\n            stack.pop();\n        }\n        \n        int span = stack.isEmpty() ? (index + 1) : (index - stack.peek()[1]);\n        \n        stack.push(new int[]{price, index});\n        index++;\n        \n        return span;\n    }\n}",
+        "python": "class StockSpanner:\n    def __init__(self):\n        self.stack = []  # [(price, index)]\n        self.index = 0\n    \n    def next(self, price: int) -> int:\n        while self.stack and self.stack[-1][0] <= price:\n            self.stack.pop()\n        \n        span = (self.index + 1) if not self.stack else (self.index - self.stack[-1][1])\n        \n        self.stack.append((price, self.index))\n        self.index += 1\n        \n        return span",
+        "javascript": "var StockSpanner = function() {\n    this.stack = []; // [price, index]\n    this.index = 0;\n};\n\nStockSpanner.prototype.next = function(price) {\n    while (this.stack.length > 0 && this.stack[this.stack.length - 1][0] <= price) {\n        this.stack.pop();\n    }\n    \n    const span = this.stack.length === 0 ? \n        (this.index + 1) : \n        (this.index - this.stack[this.stack.length - 1][1]);\n    \n    this.stack.push([price, this.index]);\n    this.index++;\n    \n    return span;\n};"
+      }
+    },
+    {
+      "name": "Stack with Price and Span - Optimal",
+      "order": 3,
+      "intuition": "Store (price, span) in stack instead of indices. When popping, accumulate spans. More intuitive and slightly simpler.",
+      "approach": "Stack stores (price, its_span). When popping smaller prices, add their spans to current span.",
+      "steps": [
+        "Initialize: stack = []",
+        "next(price):",
+        "  span = 1",
+        "  While stack not empty and stack.top().price <= price:",
+        "    span += stack.top().span",
+        "    Pop",
+        "  Push (price, span)",
+        "  Return span"
+      ],
+      "complexity": {
+        "time": "O(1) amortized",
+        "space": "O(n)",
+        "timeExplanation": "Each price pushed and popped at most once",
+        "spaceExplanation": "Stack stores prices with spans"
+      },
+      "code": {
+        "cpp": "class StockSpanner {\nprivate:\n    stack<pair<int, int>> st; // {price, span}\n    \npublic:\n    StockSpanner() {\n    }\n    \n    int next(int price) {\n        int span = 1;\n        \n        // Pop and accumulate spans of smaller/equal prices\n        while (!st.empty() && st.top().first <= price) {\n            span += st.top().second;\n            st.pop();\n        }\n        \n        // Push current price with its span\n        st.push({price, span});\n        \n        return span;\n    }\n};",
+        "java": "class StockSpanner {\n    private Stack<int[]> stack; // [price, span]\n    \n    public StockSpanner() {\n        stack = new Stack<>();\n    }\n    \n    public int next(int price) {\n        int span = 1;\n        \n        while (!stack.isEmpty() && stack.peek()[0] <= price) {\n            span += stack.peek()[1];\n            stack.pop();\n        }\n        \n        stack.push(new int[]{price, span});\n        \n        return span;\n    }\n}",
+        "python": "class StockSpanner:\n    def __init__(self):\n        self.stack = []  # [(price, span)]\n    \n    def next(self, price: int) -> int:\n        span = 1\n        \n        while self.stack and self.stack[-1][0] <= price:\n            span += self.stack[-1][1]\n            self.stack.pop()\n        \n        self.stack.append((price, span))\n        \n        return span",
+        "javascript": "var StockSpanner = function() {\n    this.stack = []; // [price, span]\n};\n\nStockSpanner.prototype.next = function(price) {\n    let span = 1;\n    \n    while (this.stack.length > 0 && this.stack[this.stack.length - 1][0] <= price) {\n        span += this.stack[this.stack.length - 1][1];\n        this.stack.pop();\n    }\n    \n    this.stack.push([price, span]);\n    \n    return span;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using < instead of <= when comparing prices (equal prices should be included in span)",
+    "Not maintaining monotonic decreasing stack property",
+    "Forgetting to include current day in span (initialize span = 1, not 0)",
+    "In index-based approach: wrong span calculation (should be index - prev_index, not index - prev_index - 1)",
+    "Not understanding that popped elements' spans are already counted in their span values"
+  ],
+  "hints": [
+    "This is a variant of previous greater element problem",
+    "Use monotonic decreasing stack (pop prices <= current)",
+    "Two approaches: store indices and calculate span, or store spans and accumulate",
+    "Span-based approach is more intuitive: span = 1 + sum of popped spans",
+    "Each price is pushed and popped at most once, so O(1) amortized"
+  ],
+  "followUp": [
+    "What if we need to query span for any historical day?",
+    "Can you support removal of old data (sliding window)?",
+    "What if prices can decrease (undo operation)?",
+    "How to handle if prices come in batches?",
+    "Can you find average span over last k days?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Bloomberg", "Goldman Sachs"],
+  "tags": ["stack", "design", "monotonic-stack", "data-stream"],
+  "relatedProblems": [
+    "Previous Greater Element",
+    "Daily Temperatures",
+    "Next Greater Element I",
+    "Sum of Subarray Minimums",
+    "Maximum Frequency Stack"
+  ]
+}

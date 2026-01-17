@@ -1,0 +1,182 @@
+{
+  "questionId": "496",
+  "questionSlug": "next-greater-element-i",
+  "title": "Next Greater Element I",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/next-greater-element-i/",
+    "videos": [
+      {
+        "title": "Next Greater Element - Stack",
+        "url": "https://www.youtube.com/watch?v=Du881K7Jtk8",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Next Greater Element",
+        "url": "https://www.youtube.com/watch?v=rSf9vPtKcmI",
+        "channel": "take U forward",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Next Greater Element using Stack",
+        "url": "https://www.youtube.com/watch?v=NXOOYYwpbg4",
+        "channel": "Aditya Verma",
+        "duration": "18:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Next Greater Element",
+        "url": "https://takeuforward.org/data-structure/next-greater-element-using-stack/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Next Greater Element - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/next-greater-element/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Next Greater Element I - LeetCode Solution",
+        "url": "https://leetcode.com/problems/next-greater-element-i/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/next-greater-element-i/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/next-larger-element/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find next greater element = Monotonic decreasing stack. Traverse right to left, pop smaller elements.",
+  "approaches": [
+    {
+      "name": "Brute Force - Nested Loops",
+      "order": 1,
+      "intuition": "For each element in nums1, find it in nums2, then search right for next greater element.",
+      "approach": "For each nums1 element, locate in nums2 and scan right until finding greater element.",
+      "steps": [
+        "For each element x in nums1:",
+        "  Find index of x in nums2",
+        "  Scan right from that index in nums2:",
+        "    If nums2[j] > x:",
+        "      result[i] = nums2[j]",
+        "      break",
+        "  If no greater found: result[i] = -1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n * m) where n = len(nums1), m = len(nums2)",
+        "space": "O(1) excluding output",
+        "timeExplanation": "For each nums1 element, potentially scan entire nums2",
+        "spaceExplanation": "Only output array needed"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {\n        int n = nums1.size(), m = nums2.size();\n        vector<int> result(n);\n        \n        for (int i = 0; i < n; i++) {\n            int target = nums1[i];\n            result[i] = -1;\n            \n            // Find target in nums2\n            bool found = false;\n            for (int j = 0; j < m; j++) {\n                if (nums2[j] == target) {\n                    found = true;\n                }\n                \n                // After finding target, look for next greater\n                if (found && nums2[j] > target) {\n                    result[i] = nums2[j];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] nextGreaterElement(int[] nums1, int[] nums2) {\n        int n = nums1.length, m = nums2.length;\n        int[] result = new int[n];\n        \n        for (int i = 0; i < n; i++) {\n            int target = nums1[i];\n            result[i] = -1;\n            \n            boolean found = false;\n            for (int j = 0; j < m; j++) {\n                if (nums2[j] == target) {\n                    found = true;\n                }\n                \n                if (found && nums2[j] > target) {\n                    result[i] = nums2[j];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:\n        n, m = len(nums1), len(nums2)\n        result = [-1] * n\n        \n        for i in range(n):\n            target = nums1[i]\n            found = False\n            \n            for j in range(m):\n                if nums2[j] == target:\n                    found = True\n                \n                if found and nums2[j] > target:\n                    result[i] = nums2[j]\n                    break\n        \n        return result",
+        "javascript": "var nextGreaterElement = function(nums1, nums2) {\n    const n = nums1.length, m = nums2.length;\n    const result = new Array(n).fill(-1);\n    \n    for (let i = 0; i < n; i++) {\n        const target = nums1[i];\n        let found = false;\n        \n        for (let j = 0; j < m; j++) {\n            if (nums2[j] === target) {\n                found = true;\n            }\n            \n            if (found && nums2[j] > target) {\n                result[i] = nums2[j];\n                break;\n            }\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "HashMap + Linear Search",
+      "order": 2,
+      "intuition": "Use HashMap to avoid repeatedly finding elements in nums2. For each element, still scan right linearly.",
+      "approach": "Create index map for nums2, then for each nums1 element, directly access position and scan right.",
+      "steps": [
+        "Create HashMap: nums2[i] -> i",
+        "For each element x in nums1:",
+        "  Get index of x from map",
+        "  Scan right from that index:",
+        "    If nums2[j] > x:",
+        "      result[i] = nums2[j]",
+        "      break",
+        "  If no greater found: result[i] = -1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n * m)",
+        "space": "O(m)",
+        "timeExplanation": "For each nums1 element, scan part of nums2",
+        "spaceExplanation": "HashMap stores nums2 elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {\n        int n = nums1.size(), m = nums2.size();\n        vector<int> result(n);\n        unordered_map<int, int> indexMap;\n        \n        // Create index map\n        for (int i = 0; i < m; i++) {\n            indexMap[nums2[i]] = i;\n        }\n        \n        for (int i = 0; i < n; i++) {\n            int target = nums1[i];\n            int startIdx = indexMap[target];\n            result[i] = -1;\n            \n            // Scan right from startIdx\n            for (int j = startIdx + 1; j < m; j++) {\n                if (nums2[j] > target) {\n                    result[i] = nums2[j];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] nextGreaterElement(int[] nums1, int[] nums2) {\n        int n = nums1.length, m = nums2.length;\n        int[] result = new int[n];\n        Map<Integer, Integer> indexMap = new HashMap<>();\n        \n        for (int i = 0; i < m; i++) {\n            indexMap.put(nums2[i], i);\n        }\n        \n        for (int i = 0; i < n; i++) {\n            int target = nums1[i];\n            int startIdx = indexMap.get(target);\n            result[i] = -1;\n            \n            for (int j = startIdx + 1; j < m; j++) {\n                if (nums2[j] > target) {\n                    result[i] = nums2[j];\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:\n        n, m = len(nums1), len(nums2)\n        result = [-1] * n\n        index_map = {num: i for i, num in enumerate(nums2)}\n        \n        for i in range(n):\n            target = nums1[i]\n            start_idx = index_map[target]\n            \n            for j in range(start_idx + 1, m):\n                if nums2[j] > target:\n                    result[i] = nums2[j]\n                    break\n        \n        return result",
+        "javascript": "var nextGreaterElement = function(nums1, nums2) {\n    const n = nums1.length, m = nums2.length;\n    const result = new Array(n).fill(-1);\n    const indexMap = new Map();\n    \n    for (let i = 0; i < m; i++) {\n        indexMap.set(nums2[i], i);\n    }\n    \n    for (let i = 0; i < n; i++) {\n        const target = nums1[i];\n        const startIdx = indexMap.get(target);\n        \n        for (let j = startIdx + 1; j < m; j++) {\n            if (nums2[j] > target) {\n                result[i] = nums2[j];\n                break;\n            }\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack + HashMap - Optimal",
+      "order": 3,
+      "intuition": "Use monotonic stack to precompute next greater element for all nums2 elements. Then use HashMap for O(1) lookup.",
+      "approach": "Traverse nums2 from right to left with monotonic decreasing stack. Store results in HashMap, then query for nums1.",
+      "steps": [
+        "Create HashMap to store element -> next greater",
+        "Create stack (monotonic decreasing)",
+        "Traverse nums2 from right to left:",
+        "  While stack not empty and stack.top() <= nums2[i]:",
+        "    Pop (these are not greater)",
+        "  If stack empty: map[nums2[i]] = -1",
+        "  Else: map[nums2[i]] = stack.top()",
+        "  Push nums2[i] to stack",
+        "For each element in nums1:",
+        "  result[i] = map[nums1[i]]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(m)",
+        "timeExplanation": "O(m) to build map, O(n) to query. Each element pushed/popped once",
+        "spaceExplanation": "HashMap and stack store up to m elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {\n        unordered_map<int, int> nextGreater;\n        stack<int> st;\n        \n        // Process nums2 from right to left\n        for (int i = nums2.size() - 1; i >= 0; i--) {\n            int num = nums2[i];\n            \n            // Pop smaller or equal elements\n            while (!st.empty() && st.top() <= num) {\n                st.pop();\n            }\n            \n            // Store next greater element\n            nextGreater[num] = st.empty() ? -1 : st.top();\n            \n            // Push current element\n            st.push(num);\n        }\n        \n        // Build result for nums1\n        vector<int> result(nums1.size());\n        for (int i = 0; i < nums1.size(); i++) {\n            result[i] = nextGreater[nums1[i]];\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] nextGreaterElement(int[] nums1, int[] nums2) {\n        Map<Integer, Integer> nextGreater = new HashMap<>();\n        Stack<Integer> stack = new Stack<>();\n        \n        // Process nums2 from right to left\n        for (int i = nums2.length - 1; i >= 0; i--) {\n            int num = nums2[i];\n            \n            // Pop smaller or equal elements\n            while (!stack.isEmpty() && stack.peek() <= num) {\n                stack.pop();\n            }\n            \n            // Store next greater element\n            nextGreater.put(num, stack.isEmpty() ? -1 : stack.peek());\n            \n            // Push current element\n            stack.push(num);\n        }\n        \n        // Build result for nums1\n        int[] result = new int[nums1.length];\n        for (int i = 0; i < nums1.length; i++) {\n            result[i] = nextGreater.get(nums1[i]);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:\n        next_greater = {}\n        stack = []\n        \n        # Process nums2 from right to left\n        for i in range(len(nums2) - 1, -1, -1):\n            num = nums2[i]\n            \n            # Pop smaller or equal elements\n            while stack and stack[-1] <= num:\n                stack.pop()\n            \n            # Store next greater element\n            next_greater[num] = stack[-1] if stack else -1\n            \n            # Push current element\n            stack.append(num)\n        \n        # Build result for nums1\n        return [next_greater[num] for num in nums1]",
+        "javascript": "var nextGreaterElement = function(nums1, nums2) {\n    const nextGreater = new Map();\n    const stack = [];\n    \n    // Process nums2 from right to left\n    for (let i = nums2.length - 1; i >= 0; i--) {\n        const num = nums2[i];\n        \n        // Pop smaller or equal elements\n        while (stack.length > 0 && stack[stack.length - 1] <= num) {\n            stack.pop();\n        }\n        \n        // Store next greater element\n        nextGreater.set(num, stack.length === 0 ? -1 : stack[stack.length - 1]);\n        \n        // Push current element\n        stack.push(num);\n    }\n    \n    // Build result for nums1\n    return nums1.map(num => nextGreater.get(num));\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not maintaining monotonic decreasing property in stack",
+    "Traversing from left to right instead of right to left",
+    "Using >= instead of > when comparing elements",
+    "Not popping equal elements from stack",
+    "Forgetting to push current element after processing"
+  ],
+  "hints": [
+    "Monotonic stack is key to O(m+n) solution",
+    "Traverse nums2 from right to left",
+    "Stack should be monotonic decreasing (top is next greater)",
+    "Precompute all next greater elements, store in HashMap",
+    "Then just lookup for nums1 elements"
+  ],
+  "followUp": [
+    "What if you need to find next greater for entire array?",
+    "How to find next smaller element?",
+    "Can you solve without HashMap?",
+    "What about circular array?",
+    "How to find next greater to the left?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook"],
+  "tags": ["stack", "array", "hash-table", "monotonic-stack"],
+  "relatedProblems": [
+    "Next Greater Element II",
+    "Next Greater Element III",
+    "Daily Temperatures",
+    "Online Stock Span",
+    "Sum of Subarray Minimums"
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "questionId": "128",
+  "questionSlug": "longest-consecutive-sequence",
+  "title": "Longest Consecutive Sequence",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/longest-consecutive-sequence/",
+    "videos": [
+      {
+        "title": "Longest Consecutive Sequence - Hash Set",
+        "url": "https://www.youtube.com/watch?v=P6RZZMu_maU",
+        "channel": "NeetCode",
+        "duration": "10:20",
+        "language": "English"
+      },
+      {
+        "title": "Longest Consecutive Sequence Explained",
+        "url": "https://www.youtube.com/watch?v=qgizvmgeyUM",
+        "channel": "take U forward",
+        "duration": "15:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Longest Consecutive Sequence - LeetCode Official",
+        "url": "https://leetcode.com/problems/longest-consecutive-sequence/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Longest Consecutive Subsequence",
+        "url": "https://www.geeksforgeeks.org/longest-consecutive-subsequence/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/longest-consecutive-sequence/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/longest-consecutive-subsequence/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find longest consecutive sequence in O(n)? Use HashSet. For each number that starts a sequence (num-1 not in set), count consecutive numbers.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Sequences",
+      "order": 1,
+      "intuition": "For each number, try to build the longest sequence starting from it by checking num+1, num+2, etc.",
+      "approach": "For each number, count how many consecutive numbers exist starting from it.",
+      "steps": [
+        "maxLen = 0",
+        "For each num in array:",
+        "  currentNum = num",
+        "  currentLen = 1",
+        "  While (currentNum + 1) exists in array:",
+        "    currentNum++",
+        "    currentLen++",
+        "  maxLen = max(maxLen, currentLen)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(1)",
+        "timeExplanation": "For each element, searching if next exists takes O(n), and sequence can be O(n) long",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "int longestConsecutive(vector<int>& nums) {\n    if (nums.empty()) return 0;\n    \n    int maxLen = 0;\n    \n    for (int num : nums) {\n        int currentNum = num;\n        int currentLen = 1;\n        \n        while (find(nums.begin(), nums.end(), currentNum + 1) != nums.end()) {\n            currentNum++;\n            currentLen++;\n        }\n        \n        maxLen = max(maxLen, currentLen);\n    }\n    \n    return maxLen;\n}",
+        "java": "public int longestConsecutive(int[] nums) {\n    if (nums.length == 0) return 0;\n    \n    int maxLen = 0;\n    \n    for (int num : nums) {\n        int currentNum = num;\n        int currentLen = 1;\n        \n        while (contains(nums, currentNum + 1)) {\n            currentNum++;\n            currentLen++;\n        }\n        \n        maxLen = Math.max(maxLen, currentLen);\n    }\n    \n    return maxLen;\n}\n\nprivate boolean contains(int[] nums, int target) {\n    for (int num : nums) {\n        if (num == target) return true;\n    }\n    return false;\n}",
+        "python": "def longestConsecutive(nums):\n    if not nums:\n        return 0\n    \n    max_len = 0\n    \n    for num in nums:\n        current_num = num\n        current_len = 1\n        \n        while (current_num + 1) in nums:\n            current_num += 1\n            current_len += 1\n        \n        max_len = max(max_len, current_len)\n    \n    return max_len",
+        "javascript": "function longestConsecutive(nums) {\n    if (nums.length === 0) return 0;\n    \n    let maxLen = 0;\n    \n    for (const num of nums) {\n        let currentNum = num;\n        let currentLen = 1;\n        \n        while (nums.includes(currentNum + 1)) {\n            currentNum++;\n            currentLen++;\n        }\n        \n        maxLen = Math.max(maxLen, currentLen);\n    }\n    \n    return maxLen;\n}"
+      }
+    },
+    {
+      "name": "Sorting Approach",
+      "order": 2,
+      "intuition": "Sort array first. Then consecutive numbers will be adjacent or equal. Count longest consecutive run.",
+      "approach": "Sort, then iterate counting consecutive elements while handling duplicates.",
+      "steps": [
+        "Sort array",
+        "maxLen = 1, currentLen = 1",
+        "For i from 1 to n-1:",
+        "  If nums[i] == nums[i-1]: continue (skip duplicates)",
+        "  If nums[i] == nums[i-1] + 1:",
+        "    currentLen++",
+        "  Else:",
+        "    maxLen = max(maxLen, currentLen)",
+        "    currentLen = 1",
+        "Return max(maxLen, currentLen)"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1) or O(n)",
+        "timeExplanation": "Sorting takes O(n log n)",
+        "spaceExplanation": "O(1) if in-place sort, O(n) otherwise"
+      },
+      "code": {
+        "cpp": "int longestConsecutive(vector<int>& nums) {\n    if (nums.empty()) return 0;\n    \n    sort(nums.begin(), nums.end());\n    \n    int maxLen = 1;\n    int currentLen = 1;\n    \n    for (int i = 1; i < nums.size(); i++) {\n        if (nums[i] == nums[i-1]) {\n            continue;  // Skip duplicates\n        }\n        \n        if (nums[i] == nums[i-1] + 1) {\n            currentLen++;\n        } else {\n            maxLen = max(maxLen, currentLen);\n            currentLen = 1;\n        }\n    }\n    \n    return max(maxLen, currentLen);\n}",
+        "java": "public int longestConsecutive(int[] nums) {\n    if (nums.length == 0) return 0;\n    \n    Arrays.sort(nums);\n    \n    int maxLen = 1;\n    int currentLen = 1;\n    \n    for (int i = 1; i < nums.length; i++) {\n        if (nums[i] == nums[i-1]) {\n            continue;\n        }\n        \n        if (nums[i] == nums[i-1] + 1) {\n            currentLen++;\n        } else {\n            maxLen = Math.max(maxLen, currentLen);\n            currentLen = 1;\n        }\n    }\n    \n    return Math.max(maxLen, currentLen);\n}",
+        "python": "def longestConsecutive(nums):\n    if not nums:\n        return 0\n    \n    nums.sort()\n    \n    max_len = 1\n    current_len = 1\n    \n    for i in range(1, len(nums)):\n        if nums[i] == nums[i-1]:\n            continue\n        \n        if nums[i] == nums[i-1] + 1:\n            current_len += 1\n        else:\n            max_len = max(max_len, current_len)\n            current_len = 1\n    \n    return max(max_len, current_len)",
+        "javascript": "function longestConsecutive(nums) {\n    if (nums.length === 0) return 0;\n    \n    nums.sort((a, b) => a - b);\n    \n    let maxLen = 1;\n    let currentLen = 1;\n    \n    for (let i = 1; i < nums.length; i++) {\n        if (nums[i] === nums[i-1]) {\n            continue;\n        }\n        \n        if (nums[i] === nums[i-1] + 1) {\n            currentLen++;\n        } else {\n            maxLen = Math.max(maxLen, currentLen);\n            currentLen = 1;\n        }\n    }\n    \n    return Math.max(maxLen, currentLen);\n}"
+      }
+    },
+    {
+      "name": "Hash Set - O(n) - Optimal",
+      "order": 3,
+      "intuition": "Use set for O(1) lookups. Only start counting from numbers that BEGIN a sequence (num-1 doesn't exist). This ensures each number is visited at most twice.",
+      "approach": "Add all to set. For each number that starts a sequence, count consecutive numbers.",
+      "steps": [
+        "Add all numbers to set",
+        "maxLen = 0",
+        "For each num in set:",
+        "  If (num - 1) NOT in set: // num starts a sequence",
+        "    currentNum = num",
+        "    currentLen = 1",
+        "    While (currentNum + 1) in set:",
+        "      currentNum++",
+        "      currentLen++",
+        "    maxLen = max(maxLen, currentLen)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each number visited at most twice (once to check if it starts sequence, once as part of sequence)",
+        "spaceExplanation": "Hash set stores all n numbers"
+      },
+      "code": {
+        "cpp": "int longestConsecutive(vector<int>& nums) {\n    if (nums.empty()) return 0;\n    \n    unordered_set<int> numSet(nums.begin(), nums.end());\n    int maxLen = 0;\n    \n    for (int num : numSet) {\n        // Only start counting if num is the beginning of a sequence\n        if (numSet.find(num - 1) == numSet.end()) {\n            int currentNum = num;\n            int currentLen = 1;\n            \n            while (numSet.find(currentNum + 1) != numSet.end()) {\n                currentNum++;\n                currentLen++;\n            }\n            \n            maxLen = max(maxLen, currentLen);\n        }\n    }\n    \n    return maxLen;\n}",
+        "java": "public int longestConsecutive(int[] nums) {\n    if (nums.length == 0) return 0;\n    \n    Set<Integer> numSet = new HashSet<>();\n    for (int num : nums) {\n        numSet.add(num);\n    }\n    \n    int maxLen = 0;\n    \n    for (int num : numSet) {\n        if (!numSet.contains(num - 1)) {\n            int currentNum = num;\n            int currentLen = 1;\n            \n            while (numSet.contains(currentNum + 1)) {\n                currentNum++;\n                currentLen++;\n            }\n            \n            maxLen = Math.max(maxLen, currentLen);\n        }\n    }\n    \n    return maxLen;\n}",
+        "python": "def longestConsecutive(nums):\n    if not nums:\n        return 0\n    \n    num_set = set(nums)\n    max_len = 0\n    \n    for num in num_set:\n        if num - 1 not in num_set:\n            current_num = num\n            current_len = 1\n            \n            while current_num + 1 in num_set:\n                current_num += 1\n                current_len += 1\n            \n            max_len = max(max_len, current_len)\n    \n    return max_len",
+        "javascript": "function longestConsecutive(nums) {\n    if (nums.length === 0) return 0;\n    \n    const numSet = new Set(nums);\n    let maxLen = 0;\n    \n    for (const num of numSet) {\n        if (!numSet.has(num - 1)) {\n            let currentNum = num;\n            let currentLen = 1;\n            \n            while (numSet.has(currentNum + 1)) {\n                currentNum++;\n                currentLen++;\n            }\n            \n            maxLen = Math.max(maxLen, currentLen);\n        }\n    }\n    \n    return maxLen;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling duplicates correctly when sorting",
+    "Trying to count sequence from every number (should only start from sequence beginning)",
+    "Not using set for O(1) lookup (using array search is O(n))",
+    "Forgetting to check if num-1 exists before starting count",
+    "Off-by-one errors in sequence length counting"
+  ],
+  "hints": [
+    "Can you check if a number exists in O(1)? (Use hash set)",
+    "How to avoid recounting same sequence? (Only start from beginning of sequence)",
+    "A number starts a sequence if (num-1) doesn't exist",
+    "Each number is visited at most twice with optimal approach",
+    "Sorting works but takes O(n log n) - can you do O(n)?"
+  ],
+  "followUp": [
+    "What if we need to return the actual sequence, not just length?",
+    "Can you solve in O(n) time without extra space? (No, need set for O(1) lookup)",
+    "What if array can't fit in memory? (External sort then scan)",
+    "How to handle very large numbers (overflow)? (Use long or BigInteger)",
+    "What if duplicates should count as extending sequence?"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft", "Bloomberg", "Uber"],
+  "tags": ["array", "hash-table", "union-find"],
+  "relatedProblems": [
+    "Binary Tree Longest Consecutive Sequence",
+    "Find Three Consecutive Integers That Sum to a Given Number",
+    "Maximum Consecutive Floors Without Special Floors",
+    "Length of the Longest Alphabetical Continuous Substring"
+  ]
+}

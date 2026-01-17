@@ -1,0 +1,158 @@
+{
+  "questionId": "217",
+  "questionSlug": "contains-duplicate",
+  "title": "Contains Duplicate",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/contains-duplicate/",
+    "videos": [
+      {
+        "title": "Contains Duplicate - Hash Set Solution",
+        "url": "https://www.youtube.com/watch?v=3OamzN90kPg",
+        "channel": "NeetCode",
+        "duration": "4:15",
+        "language": "English"
+      },
+      {
+        "title": "Contains Duplicate Explained",
+        "url": "https://www.youtube.com/watch?v=jkLZDLPiw0E",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "5:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Contains Duplicate - LeetCode Official",
+        "url": "https://leetcode.com/problems/contains-duplicate/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find duplicates in an array",
+        "url": "https://www.geeksforgeeks.org/find-duplicates-in-on-time-and-constant-extra-space/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/contains-duplicate/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/find-duplicates-in-an-array/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Check for duplicates? Use HashSet. Add elements one by one. If element already exists, return true.",
+  "approaches": [
+    {
+      "name": "Brute Force - Compare All Pairs",
+      "order": 1,
+      "intuition": "Compare every element with every other element to find duplicates.",
+      "approach": "Use nested loops to check if any two elements are equal.",
+      "steps": [
+        "For i from 0 to n-2:",
+        "  For j from i+1 to n-1:",
+        "    If nums[i] == nums[j]:",
+        "      Return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Comparing each element with all others",
+        "spaceExplanation": "No extra space needed"
+      },
+      "code": {
+        "cpp": "bool containsDuplicate(vector<int>& nums) {\n    int n = nums.size();\n    \n    for (int i = 0; i < n - 1; i++) {\n        for (int j = i + 1; j < n; j++) {\n            if (nums[i] == nums[j]) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}",
+        "java": "public boolean containsDuplicate(int[] nums) {\n    int n = nums.length;\n    \n    for (int i = 0; i < n - 1; i++) {\n        for (int j = i + 1; j < n; j++) {\n            if (nums[i] == nums[j]) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}",
+        "python": "def containsDuplicate(nums):\n    n = len(nums)\n    \n    for i in range(n - 1):\n        for j in range(i + 1, n):\n            if nums[i] == nums[j]:\n                return True\n    \n    return False",
+        "javascript": "function containsDuplicate(nums) {\n    const n = nums.length;\n    \n    for (let i = 0; i < n - 1; i++) {\n        for (let j = i + 1; j < n; j++) {\n            if (nums[i] === nums[j]) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Sorting Approach",
+      "order": 2,
+      "intuition": "If array is sorted, duplicates will be adjacent. Check consecutive elements.",
+      "approach": "Sort array, then check if any adjacent elements are equal.",
+      "steps": [
+        "Sort the array",
+        "For i from 0 to n-2:",
+        "  If nums[i] == nums[i+1]:",
+        "    Return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1) or O(n)",
+        "timeExplanation": "Sorting takes O(n log n)",
+        "spaceExplanation": "O(1) if in-place sort, O(n) if sort creates copy"
+      },
+      "code": {
+        "cpp": "bool containsDuplicate(vector<int>& nums) {\n    sort(nums.begin(), nums.end());\n    \n    for (int i = 0; i < nums.size() - 1; i++) {\n        if (nums[i] == nums[i + 1]) {\n            return true;\n        }\n    }\n    \n    return false;\n}",
+        "java": "public boolean containsDuplicate(int[] nums) {\n    Arrays.sort(nums);\n    \n    for (int i = 0; i < nums.length - 1; i++) {\n        if (nums[i] == nums[i + 1]) {\n            return true;\n        }\n    }\n    \n    return false;\n}",
+        "python": "def containsDuplicate(nums):\n    nums.sort()\n    \n    for i in range(len(nums) - 1):\n        if nums[i] == nums[i + 1]:\n            return True\n    \n    return False",
+        "javascript": "function containsDuplicate(nums) {\n    nums.sort((a, b) => a - b);\n    \n    for (let i = 0; i < nums.length - 1; i++) {\n        if (nums[i] === nums[i + 1]) {\n            return true;\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Hash Set - Optimal",
+      "order": 3,
+      "intuition": "Use a set to track seen elements. If we encounter an element already in set, it's a duplicate.",
+      "approach": "Iterate through array, adding elements to set. If element already exists, return true.",
+      "steps": [
+        "Create empty set",
+        "For each num in nums:",
+        "  If num exists in set:",
+        "    Return true",
+        "  Add num to set",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array with O(1) set operations",
+        "spaceExplanation": "Set can store up to n elements in worst case"
+      },
+      "code": {
+        "cpp": "bool containsDuplicate(vector<int>& nums) {\n    unordered_set<int> seen;\n    \n    for (int num : nums) {\n        if (seen.count(num)) {\n            return true;\n        }\n        seen.insert(num);\n    }\n    \n    return false;\n}",
+        "java": "public boolean containsDuplicate(int[] nums) {\n    Set<Integer> seen = new HashSet<>();\n    \n    for (int num : nums) {\n        if (seen.contains(num)) {\n            return true;\n        }\n        seen.add(num);\n    }\n    \n    return false;\n}",
+        "python": "def containsDuplicate(nums):\n    seen = set()\n    \n    for num in nums:\n        if num in seen:\n            return True\n        seen.add(num)\n    \n    return False",
+        "javascript": "function containsDuplicate(nums) {\n    const seen = new Set();\n    \n    for (const num of nums) {\n        if (seen.has(num)) {\n            return true;\n        }\n        seen.add(num);\n    }\n    \n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not returning early when duplicate found",
+    "Modifying input array when not allowed",
+    "Using array instead of set for tracking (O(n) lookup vs O(1))",
+    "Forgetting edge cases like empty array or single element",
+    "Not considering space-time tradeoffs"
+  ],
+  "hints": [
+    "How can you check if you've seen an element before in O(1) time?",
+    "Hash Set allows O(1) insertion and lookup",
+    "You can return true as soon as you find first duplicate",
+    "If array is sorted, duplicates will be adjacent",
+    "Set size will be less than array size if duplicates exist"
+  ],
+  "followUp": [
+    "What if you can't use extra space? (Sort and check adjacent)",
+    "Find all duplicates instead of just detecting them?",
+    "What if we need to find duplicates within distance k?",
+    "Return the duplicate element, not just true/false?",
+    "Handle stream of numbers - can you detect duplicates online?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Bloomberg"],
+  "tags": ["array", "hash-table", "sorting"],
+  "relatedProblems": [
+    "Contains Duplicate II",
+    "Contains Duplicate III",
+    "Find All Duplicates in an Array",
+    "Find the Duplicate Number",
+    "Single Number"
+  ]
+}

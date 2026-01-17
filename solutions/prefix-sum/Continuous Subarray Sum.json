@@ -1,0 +1,179 @@
+{
+  "questionId": "523",
+  "questionSlug": "continuous-subarray-sum",
+  "title": "Continuous Subarray Sum",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/continuous-subarray-sum/",
+    "videos": [
+      {
+        "title": "Continuous Subarray Sum",
+        "url": "https://www.youtube.com/watch?v=OKcrLfR-8mE",
+        "channel": "NeetCode",
+        "duration": "11:45",
+        "language": "English"
+      },
+      {
+        "title": "Check Subarray Sum",
+        "url": "https://www.youtube.com/watch?v=QVmBP97FdBA",
+        "channel": "take U forward",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Modulo Arithmetic Subarray",
+        "url": "https://www.youtube.com/watch?v=DYMZJGKpqws",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Continuous Subarray Sum - LeetCode Official",
+        "url": "https://leetcode.com/problems/continuous-subarray-sum/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Check if Subarray Sum is Multiple of K",
+        "url": "https://takeuforward.org/data-structure/count-subarray-sum-equals-k/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Continuous Subarray Sum - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/check-if-subarray-with-given-sum-exists-or-not/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/continuous-subarray-sum/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/subarray-with-given-sum/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Check if subarray sum is multiple of K AND length >= 2? Track remainder + index. Same remainder with gap >= 2.",
+  "approaches": [
+    {
+      "name": "Brute Force - All Subarrays Length >= 2",
+      "order": 1,
+      "intuition": "Check all subarrays of length at least 2, calculate sum, check if divisible by k.",
+      "approach": "Two nested loops, ensure j - i >= 1 (length >= 2), check divisibility.",
+      "steps": [
+        "For each start i:",
+        "  sum = 0",
+        "  For each end j from i:",
+        "    sum += nums[j]",
+        "    If j - i >= 1 AND sum % k == 0:",
+        "      Return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops",
+        "spaceExplanation": "Constant space"
+      },
+      "code": {
+        "cpp": "bool checkSubarraySum(vector<int>& nums, int k) {\n    int n = nums.size();\n    \n    for (int i = 0; i < n; i++) {\n        int sum = 0;\n        for (int j = i; j < n; j++) {\n            sum += nums[j];\n            \n            // Check length >= 2 and divisible by k\n            if (j - i >= 1 && sum % k == 0) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}",
+        "java": "public boolean checkSubarraySum(int[] nums, int k) {\n    int n = nums.length;\n    \n    for (int i = 0; i < n; i++) {\n        int sum = 0;\n        for (int j = i; j < n; j++) {\n            sum += nums[j];\n            \n            if (j - i >= 1 && sum % k == 0) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}",
+        "python": "def checkSubarraySum(nums, k):\n    n = len(nums)\n    \n    for i in range(n):\n        sum_val = 0\n        for j in range(i, n):\n            sum_val += nums[j]\n            \n            if j - i >= 1 and sum_val % k == 0:\n                return True\n    \n    return False",
+        "javascript": "function checkSubarraySum(nums, k) {\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        let sum = 0;\n        for (let j = i; j < n; j++) {\n            sum += nums[j];\n            \n            if (j - i >= 1 && sum % k === 0) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Prefix Sum with Remainder Tracking",
+      "order": 2,
+      "intuition": "If two prefix sums have same remainder and indices differ by at least 2, we have valid subarray.",
+      "approach": "Calculate prefix sums and remainders. Check if any two positions with same remainder are at least 2 apart.",
+      "steps": [
+        "Calculate prefix sums",
+        "For each position i:",
+        "  remainder_i = prefix[i] % k",
+        "  For each position j > i:",
+        "    remainder_j = prefix[j] % k",
+        "    If remainder_i == remainder_j AND j - i >= 2:",
+        "      Return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "Checking all pairs",
+        "spaceExplanation": "Prefix array"
+      },
+      "code": {
+        "cpp": "bool checkSubarraySum(vector<int>& nums, int k) {\n    int n = nums.size();\n    vector<int> prefix(n + 1, 0);\n    \n    for (int i = 0; i < n; i++) {\n        prefix[i + 1] = prefix[i] + nums[i];\n    }\n    \n    for (int i = 0; i <= n; i++) {\n        for (int j = i + 2; j <= n; j++) {  // j - i >= 2\n            int rem_i = ((prefix[i] % k) + k) % k;\n            int rem_j = ((prefix[j] % k) + k) % k;\n            \n            if (rem_i == rem_j) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}",
+        "java": "public boolean checkSubarraySum(int[] nums, int k) {\n    int n = nums.length;\n    int[] prefix = new int[n + 1];\n    \n    for (int i = 0; i < n; i++) {\n        prefix[i + 1] = prefix[i] + nums[i];\n    }\n    \n    for (int i = 0; i <= n; i++) {\n        for (int j = i + 2; j <= n; j++) {\n            int rem_i = ((prefix[i] % k) + k) % k;\n            int rem_j = ((prefix[j] % k) + k) % k;\n            \n            if (rem_i == rem_j) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}",
+        "python": "def checkSubarraySum(nums, k):\n    n = len(nums)\n    prefix = [0] * (n + 1)\n    \n    for i in range(n):\n        prefix[i + 1] = prefix[i] + nums[i]\n    \n    for i in range(n + 1):\n        for j in range(i + 2, n + 1):\n            rem_i = ((prefix[i] % k) + k) % k\n            rem_j = ((prefix[j] % k) + k) % k\n            \n            if rem_i == rem_j:\n                return True\n    \n    return False",
+        "javascript": "function checkSubarraySum(nums, k) {\n    const n = nums.length;\n    const prefix = new Array(n + 1).fill(0);\n    \n    for (let i = 0; i < n; i++) {\n        prefix[i + 1] = prefix[i] + nums[i];\n    }\n    \n    for (let i = 0; i <= n; i++) {\n        for (let j = i + 2; j <= n; j++) {\n            const rem_i = ((prefix[i] % k) + k) % k;\n            const rem_j = ((prefix[j] % k) + k) % k;\n            \n            if (rem_i === rem_j) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "HashMap with Remainder and Index - Optimal",
+      "order": 3,
+      "intuition": "Store first occurrence index of each remainder. When same remainder appears again, check if gap >= 2.",
+      "approach": "Track remainder -> index mapping. When remainder repeats, check if current_index - stored_index >= 2.",
+      "steps": [
+        "map = {0: -1}, sum = 0",
+        "For i from 0 to n-1:",
+        "  sum += nums[i]",
+        "  remainder = ((sum % k) + k) % k",
+        "  If remainder in map:",
+        "    If i - map[remainder] >= 2:",
+        "      Return true",
+        "  Else:",
+        "    map[remainder] = i",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(min(n, k))",
+        "timeExplanation": "Single pass with O(1) operations",
+        "spaceExplanation": "Map stores at most k remainders"
+      },
+      "code": {
+        "cpp": "bool checkSubarraySum(vector<int>& nums, int k) {\n    unordered_map<int, int> remainderIndex;\n    remainderIndex[0] = -1;  // For subarrays starting from index 0\n    \n    int sum = 0;\n    \n    for (int i = 0; i < nums.size(); i++) {\n        sum += nums[i];\n        \n        int remainder = ((sum % k) + k) % k;\n        \n        if (remainderIndex.find(remainder) != remainderIndex.end()) {\n            // Check if length >= 2\n            if (i - remainderIndex[remainder] >= 2) {\n                return true;\n            }\n        } else {\n            // Store first occurrence only\n            remainderIndex[remainder] = i;\n        }\n    }\n    \n    return false;\n}",
+        "java": "public boolean checkSubarraySum(int[] nums, int k) {\n    HashMap<Integer, Integer> remainderIndex = new HashMap<>();\n    remainderIndex.put(0, -1);\n    \n    int sum = 0;\n    \n    for (int i = 0; i < nums.length; i++) {\n        sum += nums[i];\n        \n        int remainder = ((sum % k) + k) % k;\n        \n        if (remainderIndex.containsKey(remainder)) {\n            if (i - remainderIndex.get(remainder) >= 2) {\n                return true;\n            }\n        } else {\n            remainderIndex.put(remainder, i);\n        }\n    }\n    \n    return false;\n}",
+        "python": "def checkSubarraySum(nums, k):\n    remainder_index = {0: -1}\n    sum_val = 0\n    \n    for i in range(len(nums)):\n        sum_val += nums[i]\n        \n        remainder = ((sum_val % k) + k) % k\n        \n        if remainder in remainder_index:\n            if i - remainder_index[remainder] >= 2:\n                return True\n        else:\n            remainder_index[remainder] = i\n    \n    return False",
+        "javascript": "function checkSubarraySum(nums, k) {\n    const remainderIndex = new Map();\n    remainderIndex.set(0, -1);\n    \n    let sum = 0;\n    \n    for (let i = 0; i < nums.length; i++) {\n        sum += nums[i];\n        \n        const remainder = ((sum % k) + k) % k;\n        \n        if (remainderIndex.has(remainder)) {\n            if (i - remainderIndex.get(remainder) >= 2) {\n                return true;\n            }\n        } else {\n            remainderIndex.set(remainder, i);\n        }\n    }\n    \n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Checking i - map[remainder] >= 1 instead of >= 2 (need length >= 2)",
+    "Not initializing map with {0: -1} for subarrays from start",
+    "Updating index even when remainder exists (should only store first)",
+    "Not handling negative remainders properly",
+    "Forgetting k=0 edge case (though typically k >= 1 in problem)"
+  ],
+  "hints": [
+    "Why length >= 2? Problem requirement to avoid single element edge case",
+    "Same remainder means difference is divisible by k",
+    "Store first occurrence index, not last (need maximum length)",
+    "Initialize with {0: -1} handles subarrays starting from index 0",
+    "Gap of 2 between indices means subarray has at least 2 elements"
+  ],
+  "followUp": [
+    "Find longest subarray with sum divisible by K?",
+    "Count all subarrays of length >= 2 with sum divisible by K?",
+    "What if length must be exactly K?",
+    "Can you handle k = 0 case?",
+    "What if array can have very large sums (overflow)?"
+  ],
+  "companies": ["Facebook", "Google", "Amazon", "Microsoft", "Apple"],
+  "tags": ["array", "hash-table", "math", "prefix-sum"],
+  "relatedProblems": [
+    "Subarray Sum Equals K",
+    "Subarray Sums Divisible by K",
+    "Make Sum Divisible by P",
+    "Continuous Subarray Sum",
+    "Subarray Product Less Than K"
+  ]
+}

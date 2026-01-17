@@ -1,0 +1,180 @@
+{
+  "questionId": "84",
+  "questionSlug": "largest-rectangle-in-histogram",
+  "title": "Largest Rectangle in Histogram",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+    "videos": [
+      {
+        "title": "Largest Rectangle in Histogram - Stack",
+        "url": "https://www.youtube.com/watch?v=zx5Sw9130L0",
+        "channel": "NeetCode",
+        "duration": "16:45",
+        "language": "English"
+      },
+      {
+        "title": "Largest Rectangle in Histogram",
+        "url": "https://www.youtube.com/watch?v=jC_cWLy7jSI",
+        "channel": "take U forward",
+        "duration": "22:30",
+        "language": "English"
+      },
+      {
+        "title": "Stack Solution - Largest Rectangle",
+        "url": "https://www.youtube.com/watch?v=FbGG2qpNXQs",
+        "channel": "Aditya Verma",
+        "duration": "25:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Largest Rectangle in Histogram - LeetCode Official",
+        "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Largest Rectangle Explained",
+        "url": "https://takeuforward.org/data-structure/area-of-largest-rectangle-in-histogram/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Largest Rectangle - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/largest-rectangle-under-histogram/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/maximum-rectangular-area-in-a-histogram/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Max rectangle with bar as height = Find left and right boundaries where height >= current. Use monotonic increasing stack to find previous and next smaller.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Possible Rectangles",
+      "order": 1,
+      "intuition": "For each bar as minimum height, find the extent (left and right boundaries) where all bars are >= this height.",
+      "approach": "For each bar, expand left and right as far as possible while maintaining minimum height.",
+      "steps": [
+        "Initialize maxArea = 0",
+        "For each index i:",
+        "  minHeight = heights[i]",
+        "  Expand left: find leftmost bar >= heights[i]",
+        "  Expand right: find rightmost bar >= heights[i]",
+        "  width = right - left + 1",
+        "  area = minHeight * width",
+        "  maxArea = max(maxArea, area)",
+        "Return maxArea"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "For each bar, potentially scan entire array to find boundaries",
+        "spaceExplanation": "Only storing result"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n        int n = heights.size();\n        int maxArea = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int minHeight = heights[i];\n            \n            // Find left boundary\n            int left = i;\n            while (left > 0 && heights[left-1] >= minHeight) {\n                left--;\n            }\n            \n            // Find right boundary\n            int right = i;\n            while (right < n-1 && heights[right+1] >= minHeight) {\n                right++;\n            }\n            \n            int width = right - left + 1;\n            int area = minHeight * width;\n            maxArea = max(maxArea, area);\n        }\n        \n        return maxArea;\n    }\n};",
+        "java": "class Solution {\n    public int largestRectangleArea(int[] heights) {\n        int n = heights.length;\n        int maxArea = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int minHeight = heights[i];\n            \n            int left = i;\n            while (left > 0 && heights[left-1] >= minHeight) {\n                left--;\n            }\n            \n            int right = i;\n            while (right < n-1 && heights[right+1] >= minHeight) {\n                right++;\n            }\n            \n            int width = right - left + 1;\n            int area = minHeight * width;\n            maxArea = Math.max(maxArea, area);\n        }\n        \n        return maxArea;\n    }\n}",
+        "python": "class Solution:\n    def largestRectangleArea(self, heights: List[int]) -> int:\n        n = len(heights)\n        max_area = 0\n        \n        for i in range(n):\n            min_height = heights[i]\n            \n            left = i\n            while left > 0 and heights[left-1] >= min_height:\n                left -= 1\n            \n            right = i\n            while right < n-1 and heights[right+1] >= min_height:\n                right += 1\n            \n            width = right - left + 1\n            area = min_height * width\n            max_area = max(max_area, area)\n        \n        return max_area",
+        "javascript": "var largestRectangleArea = function(heights) {\n    const n = heights.length;\n    let maxArea = 0;\n    \n    for (let i = 0; i < n; i++) {\n        const minHeight = heights[i];\n        \n        let left = i;\n        while (left > 0 && heights[left-1] >= minHeight) {\n            left--;\n        }\n        \n        let right = i;\n        while (right < n-1 && heights[right+1] >= minHeight) {\n            right++;\n        }\n        \n        const width = right - left + 1;\n        const area = minHeight * width;\n        maxArea = Math.max(maxArea, area);\n    }\n    \n    return maxArea;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Find Boundaries - Better",
+      "order": 2,
+      "intuition": "For each bar, find indices of previous smaller and next smaller bars. These define the maximum width for rectangle with this bar's height.",
+      "approach": "Use monotonic stack to precompute previous smaller and next smaller indices, then calculate max area.",
+      "steps": [
+        "Find prevSmaller[i]: index of previous bar with height < heights[i]",
+        "Find nextSmaller[i]: index of next bar with height < heights[i]",
+        "For each bar i:",
+        "  left = prevSmaller[i] + 1",
+        "  right = nextSmaller[i] - 1",
+        "  width = right - left + 1",
+        "  area = heights[i] * width",
+        "  maxArea = max(maxArea, area)",
+        "Return maxArea"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two O(n) passes for prev/next smaller, one for area calculation",
+        "spaceExplanation": "Arrays for prev/next smaller indices and stack"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n        int n = heights.size();\n        \n        // Find previous smaller indices\n        vector<int> prevSmaller(n);\n        stack<int> st;\n        for (int i = 0; i < n; i++) {\n            while (!st.empty() && heights[st.top()] >= heights[i]) {\n                st.pop();\n            }\n            prevSmaller[i] = st.empty() ? -1 : st.top();\n            st.push(i);\n        }\n        \n        // Find next smaller indices\n        vector<int> nextSmaller(n);\n        while (!st.empty()) st.pop();\n        for (int i = n-1; i >= 0; i--) {\n            while (!st.empty() && heights[st.top()] >= heights[i]) {\n                st.pop();\n            }\n            nextSmaller[i] = st.empty() ? n : st.top();\n            st.push(i);\n        }\n        \n        // Calculate max area\n        int maxArea = 0;\n        for (int i = 0; i < n; i++) {\n            int width = nextSmaller[i] - prevSmaller[i] - 1;\n            int area = heights[i] * width;\n            maxArea = max(maxArea, area);\n        }\n        \n        return maxArea;\n    }\n};",
+        "java": "class Solution {\n    public int largestRectangleArea(int[] heights) {\n        int n = heights.length;\n        \n        int[] prevSmaller = new int[n];\n        Stack<Integer> stack = new Stack<>();\n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && heights[stack.peek()] >= heights[i]) {\n                stack.pop();\n            }\n            prevSmaller[i] = stack.isEmpty() ? -1 : stack.peek();\n            stack.push(i);\n        }\n        \n        int[] nextSmaller = new int[n];\n        stack.clear();\n        for (int i = n-1; i >= 0; i--) {\n            while (!stack.isEmpty() && heights[stack.peek()] >= heights[i]) {\n                stack.pop();\n            }\n            nextSmaller[i] = stack.isEmpty() ? n : stack.peek();\n            stack.push(i);\n        }\n        \n        int maxArea = 0;\n        for (int i = 0; i < n; i++) {\n            int width = nextSmaller[i] - prevSmaller[i] - 1;\n            int area = heights[i] * width;\n            maxArea = Math.max(maxArea, area);\n        }\n        \n        return maxArea;\n    }\n}",
+        "python": "class Solution:\n    def largestRectangleArea(self, heights: List[int]) -> int:\n        n = len(heights)\n        \n        prev_smaller = [-1] * n\n        stack = []\n        for i in range(n):\n            while stack and heights[stack[-1]] >= heights[i]:\n                stack.pop()\n            prev_smaller[i] = stack[-1] if stack else -1\n            stack.append(i)\n        \n        next_smaller = [n] * n\n        stack = []\n        for i in range(n-1, -1, -1):\n            while stack and heights[stack[-1]] >= heights[i]:\n                stack.pop()\n            next_smaller[i] = stack[-1] if stack else n\n            stack.append(i)\n        \n        max_area = 0\n        for i in range(n):\n            width = next_smaller[i] - prev_smaller[i] - 1\n            area = heights[i] * width\n            max_area = max(max_area, area)\n        \n        return max_area",
+        "javascript": "var largestRectangleArea = function(heights) {\n    const n = heights.length;\n    \n    const prevSmaller = new Array(n);\n    let stack = [];\n    for (let i = 0; i < n; i++) {\n        while (stack.length > 0 && heights[stack[stack.length-1]] >= heights[i]) {\n            stack.pop();\n        }\n        prevSmaller[i] = stack.length === 0 ? -1 : stack[stack.length-1];\n        stack.push(i);\n    }\n    \n    const nextSmaller = new Array(n);\n    stack = [];\n    for (let i = n-1; i >= 0; i--) {\n        while (stack.length > 0 && heights[stack[stack.length-1]] >= heights[i]) {\n            stack.pop();\n        }\n        nextSmaller[i] = stack.length === 0 ? n : stack[stack.length-1];\n        stack.push(i);\n    }\n    \n    let maxArea = 0;\n    for (let i = 0; i < n; i++) {\n        const width = nextSmaller[i] - prevSmaller[i] - 1;\n        const area = heights[i] * width;\n        maxArea = Math.max(maxArea, area);\n    }\n    \n    return maxArea;\n};"
+      }
+    },
+    {
+      "name": "Single Pass Stack - Optimal",
+      "order": 3,
+      "intuition": "Calculate area when we find next smaller bar (when popping from stack). Pop = bar whose rectangle ends here. Stack maintains increasing heights.",
+      "approach": "Single pass with monotonic increasing stack. When popping, the popped bar's rectangle ends at current position.",
+      "steps": [
+        "Create stack, maxArea = 0",
+        "For i from 0 to n:",
+        "  While stack not empty and (i == n or heights[i] < heights[stack.top()]):",
+        "    h = heights[stack.pop()]",
+        "    width = i if stack empty else (i - stack.top() - 1)",
+        "    maxArea = max(maxArea, h * width)",
+        "  If i < n: push i",
+        "Return maxArea"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass, each element pushed and popped once",
+        "spaceExplanation": "Stack can hold up to n indices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n        stack<int> st;\n        int maxArea = 0;\n        int n = heights.size();\n        \n        for (int i = 0; i <= n; i++) {\n            // Use 0 as dummy height at end to force all bars to be popped\n            int h = (i == n) ? 0 : heights[i];\n            \n            while (!st.empty() && h < heights[st.top()]) {\n                int height = heights[st.top()];\n                st.pop();\n                \n                // Width: from next smaller on left to current (next smaller on right)\n                int width = st.empty() ? i : (i - st.top() - 1);\n                maxArea = max(maxArea, height * width);\n            }\n            \n            st.push(i);\n        }\n        \n        return maxArea;\n    }\n};",
+        "java": "class Solution {\n    public int largestRectangleArea(int[] heights) {\n        Stack<Integer> stack = new Stack<>();\n        int maxArea = 0;\n        int n = heights.length;\n        \n        for (int i = 0; i <= n; i++) {\n            int h = (i == n) ? 0 : heights[i];\n            \n            while (!stack.isEmpty() && h < heights[stack.peek()]) {\n                int height = heights[stack.pop()];\n                int width = stack.isEmpty() ? i : (i - stack.peek() - 1);\n                maxArea = Math.max(maxArea, height * width);\n            }\n            \n            stack.push(i);\n        }\n        \n        return maxArea;\n    }\n}",
+        "python": "class Solution:\n    def largestRectangleArea(self, heights: List[int]) -> int:\n        stack = []\n        max_area = 0\n        n = len(heights)\n        \n        for i in range(n + 1):\n            h = 0 if i == n else heights[i]\n            \n            while stack and h < heights[stack[-1]]:\n                height = heights[stack.pop()]\n                width = i if not stack else (i - stack[-1] - 1)\n                max_area = max(max_area, height * width)\n            \n            stack.append(i)\n        \n        return max_area",
+        "javascript": "var largestRectangleArea = function(heights) {\n    const stack = [];\n    let maxArea = 0;\n    const n = heights.length;\n    \n    for (let i = 0; i <= n; i++) {\n        const h = (i === n) ? 0 : heights[i];\n        \n        while (stack.length > 0 && h < heights[stack[stack.length - 1]]) {\n            const height = heights[stack.pop()];\n            const width = stack.length === 0 ? i : (i - stack[stack.length - 1] - 1);\n            maxArea = Math.max(maxArea, height * width);\n        }\n        \n        stack.push(i);\n    }\n    \n    return maxArea;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not adding dummy bar at end (height 0) to force all bars to pop",
+    "Wrong width calculation: should be (i - stack.top() - 1) when stack not empty",
+    "Using < instead of <= when comparing heights (equal heights can extend)",
+    "Not handling empty stack case correctly in width calculation",
+    "Forgetting that popped bar extends from next element in stack to current position"
+  ],
+  "hints": [
+    "For each bar as height, find maximum width it can extend",
+    "Width is bounded by first smaller bar on left and right",
+    "Monotonic increasing stack naturally finds these boundaries",
+    "When popping, the popped element's rectangle is complete",
+    "Width = current_index - index_of_element_below_in_stack - 1"
+  ],
+  "followUp": [
+    "Can you solve Maximal Rectangle in Binary Matrix? (Apply histogram to each row)",
+    "What about finding second largest rectangle?",
+    "Can you find all rectangles above certain area threshold?",
+    "How to handle if heights can be negative?",
+    "What if bars have different widths?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple", "Bloomberg", "Uber", "Adobe"],
+  "tags": ["array", "stack", "monotonic-stack"],
+  "relatedProblems": [
+    "Maximal Rectangle",
+    "Trapping Rain Water",
+    "Sum of Subarray Minimums",
+    "Next Greater Element",
+    "Previous Smaller Element"
+  ]
+}

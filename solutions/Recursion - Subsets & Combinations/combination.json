@@ -1,0 +1,166 @@
+{
+  "questionId": "77",
+  "questionSlug": "combinations",
+  "title": "Combinations",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/combinations/",
+    "videos": [
+      {
+        "title": "Combinations - Backtracking",
+        "url": "https://www.youtube.com/watch?v=4ee3USAkYvY",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Generate All Combinations",
+        "url": "https://www.youtube.com/watch?v=SLpPd_LREvA",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Combinations - LeetCode Official",
+        "url": "https://leetcode.com/problems/combinations/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Generate all combinations of k elements",
+        "url": "https://www.geeksforgeeks.org/print-all-combinations-of-given-length/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/combinations/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/combinations-of-n-choose-k/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all k-length combinations from 1-n? Use backtracking with range constraint. Start from next number to avoid duplicates.",
+  "approaches": [
+    {
+      "name": "Recursive Backtracking - Build One at a Time",
+      "order": 1,
+      "intuition": "Build combinations recursively. At each step, pick a number and recurse for remaining positions with remaining numbers.",
+      "approach": "Use backtracking with a start pointer to avoid duplicates and reuse.",
+      "steps": [
+        "backtrack(start, current):",
+        "  If len(current) == k:",
+        "    Add current to result",
+        "    Return",
+        "  For i from start to n:",
+        "    current.add(i)",
+        "    backtrack(i+1, current)",
+        "    current.remove(i)  // backtrack"
+      ],
+      "complexity": {
+        "time": "O(C(n,k) × k)",
+        "space": "O(C(n,k))",
+        "timeExplanation": "C(n,k) combinations, each takes O(k) to create",
+        "spaceExplanation": "Storing all C(n,k) = n! / (k! * (n-k)!) combinations"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combine(int n, int k) {\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(1, n, k, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, int n, int k, vector<int>& current, vector<vector<int>>& result) {\n        if (current.size() == k) {\n            result.push_back(current);\n            return;\n        }\n        \n        for (int i = start; i <= n; i++) {\n            current.push_back(i);\n            backtrack(i + 1, n, k, current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combine(int n, int k) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(1, n, k, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, int n, int k, List<Integer> current, List<List<Integer>> result) {\n        if (current.size() == k) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        for (int i = start; i <= n; i++) {\n            current.add(i);\n            backtrack(i + 1, n, k, current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def combine(n, k):\n    result = []\n    \n    def backtrack(start, current):\n        if len(current) == k:\n            result.append(current[:])\n            return\n        \n        for i in range(start, n + 1):\n            current.append(i)\n            backtrack(i + 1, current)\n            current.pop()\n    \n    backtrack(1, [])\n    return result",
+        "javascript": "function combine(n, k) {\n    const result = [];\n    \n    function backtrack(start, current) {\n        if (current.length === k) {\n            result.push([...current]);\n            return;\n        }\n        \n        for (let i = start; i <= n; i++) {\n            current.push(i);\n            backtrack(i + 1, current);\n            current.pop();\n        }\n    }\n    \n    backtrack(1, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Pruning",
+      "order": 2,
+      "intuition": "Prune branches where not enough numbers remain to fill k slots.",
+      "approach": "If from position i to n there are fewer than k numbers left, skip.",
+      "steps": [
+        "backtrack(start, current):",
+        "  If len(current) == k:",
+        "    Add to result, return",
+        "  remaining = n - start + 1  // numbers left",
+        "  needed = k - len(current)   // slots to fill",
+        "  If remaining < needed: return (prune)",
+        "  For i from start to n:",
+        "    current.add(i)",
+        "    backtrack(i+1, current)",
+        "    current.remove(i)"
+      ],
+      "complexity": {
+        "time": "O(C(n,k) × k)",
+        "space": "O(k)",
+        "timeExplanation": "Same as above but with pruning to reduce branches",
+        "spaceExplanation": "Recursion depth is at most k"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combine(int n, int k) {\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(1, n, k, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, int n, int k, vector<int>& current, vector<vector<int>>& result) {\n        if (current.size() == k) {\n            result.push_back(current);\n            return;\n        }\n        \n        int remaining = n - start + 1;\n        int needed = k - current.size();\n        \n        if (remaining < needed) return; // Prune\n        \n        for (int i = start; i <= n; i++) {\n            current.push_back(i);\n            backtrack(i + 1, n, k, current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combine(int n, int k) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(1, n, k, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, int n, int k, List<Integer> current, List<List<Integer>> result) {\n        if (current.size() == k) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        int remaining = n - start + 1;\n        int needed = k - current.size();\n        \n        if (remaining < needed) return;\n        \n        for (int i = start; i <= n; i++) {\n            current.add(i);\n            backtrack(i + 1, n, k, current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def combine(n, k):\n    result = []\n    \n    def backtrack(start, current):\n        if len(current) == k:\n            result.append(current[:])\n            return\n        \n        remaining = n - start + 1\n        needed = k - len(current)\n        \n        if remaining < needed:\n            return\n        \n        for i in range(start, n + 1):\n            current.append(i)\n            backtrack(i + 1, current)\n            current.pop()\n    \n    backtrack(1, [])\n    return result",
+        "javascript": "function combine(n, k) {\n    const result = [];\n    \n    function backtrack(start, current) {\n        if (current.length === k) {\n            result.push([...current]);\n            return;\n        }\n        \n        const remaining = n - start + 1;\n        const needed = k - current.length;\n        \n        if (remaining < needed) return;\n        \n        for (let i = start; i <= n; i++) {\n            current.push(i);\n            backtrack(i + 1, current);\n            current.pop();\n        }\n    }\n    \n    backtrack(1, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Iterative - Two-Pointer Combination Generation - Optimal",
+      "order": 3,
+      "intuition": "Think of combinations as binary positions. Use iterative approach to generate lexicographically ordered combinations.",
+      "approach": "Build combinations using two pointers or index tracking, generating them level by level.",
+      "steps": [
+        "combination = [1, 2, ..., k]",
+        "result = []",
+        "While combination valid:",
+        "  Add combination to result",
+        "  Find rightmost element that can increment",
+        "  Increment it, reset elements to the right",
+        "  If no element can increment, done"
+      ],
+      "complexity": {
+        "time": "O(C(n,k) × k)",
+        "space": "O(1) (excluding output)",
+        "timeExplanation": "Generate C(n,k) combinations",
+        "spaceExplanation": "Only store current combination, not recursion stack"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combine(int n, int k) {\n        vector<vector<int>> result;\n        vector<int> comb(k);\n        \n        for (int i = 0; i < k; i++) {\n            comb[i] = i + 1;\n        }\n        \n        while (true) {\n            result.push_back(comb);\n            \n            int pos = k - 1;\n            while (pos >= 0 && comb[pos] == n - k + pos + 1) {\n                pos--;\n            }\n            \n            if (pos < 0) break;\n            \n            comb[pos]++;\n            for (int i = pos + 1; i < k; i++) {\n                comb[i] = comb[i - 1] + 1;\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combine(int n, int k) {\n        List<List<Integer>> result = new ArrayList<>();\n        int[] comb = new int[k];\n        \n        for (int i = 0; i < k; i++) {\n            comb[i] = i + 1;\n        }\n        \n        while (true) {\n            result.add(Arrays.stream(comb).boxed().collect(Collectors.toList()));\n            \n            int pos = k - 1;\n            while (pos >= 0 && comb[pos] == n - k + pos + 1) {\n                pos--;\n            }\n            \n            if (pos < 0) break;\n            \n            comb[pos]++;\n            for (int i = pos + 1; i < k; i++) {\n                comb[i] = comb[i - 1] + 1;\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "def combine(n, k):\n    result = []\n    comb = list(range(1, k + 1))\n    \n    while True:\n        result.append(comb[:])\n        \n        pos = k - 1\n        while pos >= 0 and comb[pos] == n - k + pos + 1:\n            pos -= 1\n        \n        if pos < 0:\n            break\n        \n        comb[pos] += 1\n        for i in range(pos + 1, k):\n            comb[i] = comb[i - 1] + 1\n    \n    return result",
+        "javascript": "function combine(n, k) {\n    const result = [];\n    const comb = Array.from({length: k}, (_, i) => i + 1);\n    \n    while (true) {\n        result.push([...comb]);\n        \n        let pos = k - 1;\n        while (pos >= 0 && comb[pos] === n - k + pos + 1) {\n            pos--;\n        }\n        \n        if (pos < 0) break;\n        \n        comb[pos]++;\n        for (let i = pos + 1; i < k; i++) {\n            comb[i] = comb[i - 1] + 1;\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to pass i+1 to avoid duplicates",
+    "Not checking if combinations can be completed before recursing",
+    "Modifying result before backtracking properly",
+    "Using 0-indexed range instead of 1-indexed",
+    "Not copying combinations before adding to result"
+  ],
+  "hints": [
+    "Order of combinations doesn't matter (1,2) = (2,1)",
+    "Each number used at most once",
+    "Need exactly k numbers from 1 to n",
+    "Use start pointer to avoid revisiting",
+    "Prune if not enough numbers left to fill k slots"
+  ],
+  "followUp": [
+    "Can you do it iteratively? (Yes, generate lexicographically)",
+    "What if k > n? (Return empty)",
+    "Generate combinations with replacement? (Don't increment start)",
+    "Generate k permutations instead? (Don't use start pointer)",
+    "Count combinations without storing? (Just count and return)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft"],
+  "tags": ["backtracking", "combination"],
+  "relatedProblems": [
+    "Combination Sum",
+    "Combination Sum III",
+    "Permutations",
+    "Letter Combinations of Phone Number"
+  ]
+}

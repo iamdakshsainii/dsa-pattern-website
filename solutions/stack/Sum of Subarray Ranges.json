@@ -1,0 +1,171 @@
+{
+  "questionId": "2104",
+  "questionSlug": "sum-of-subarray-ranges",
+  "title": "Sum of Subarray Ranges",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/sum-of-subarray-ranges/",
+    "videos": [
+      {
+        "title": "Sum of Subarray Ranges - Monotonic Stack",
+        "url": "https://www.youtube.com/watch?v=Ulb3ixSpE4Y",
+        "channel": "take U forward",
+        "duration": "21:35",
+        "language": "English"
+      },
+      {
+        "title": "Sum of Subarray Ranges Explained",
+        "url": "https://www.youtube.com/watch?v=9-TXIVEXX2w",
+        "channel": "Pepcoding",
+        "duration": "24:40",
+        "language": "English"
+      },
+      {
+        "title": "Stack Based Solution",
+        "url": "https://www.youtube.com/watch?v=HRQB7-D2bi0",
+        "channel": "NeetCode",
+        "duration": "18:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sum of Subarray Ranges - LeetCode Official",
+        "url": "https://leetcode.com/problems/sum-of-subarray-ranges/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Sum of Subarray Ranges Detailed",
+        "url": "https://takeuforward.org/data-structure/sum-of-subarray-ranges/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Sum of Subarray Ranges - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/sum-of-range-in-subarray/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/sum-of-subarray-ranges/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Range = max - min for subarray. Use contribution technique: Sum of Max - Sum of Min. Apply monotonic stack to find boundaries.",
+  "approaches": [
+    {
+      "name": "Brute Force - Generate All Subarrays",
+      "order": 1,
+      "intuition": "Generate all subarrays, find max and min of each, calculate range (max - min), and sum all ranges.",
+      "approach": "Use nested loops to generate subarrays, find max and min for each, compute range.",
+      "steps": [
+        "Initialize sum = 0",
+        "For i from 0 to n-1:",
+        "  For j from i to n-1:",
+        "    Find max and min in arr[i...j]",
+        "    range = max - min",
+        "    sum += range",
+        "Return sum"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(1)",
+        "timeExplanation": "Two loops for subarray, one loop to find max and min",
+        "spaceExplanation": "Only storing sum and temporary variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    long long subArrayRanges(vector<int>& nums) {\n        int n = nums.size();\n        long long sum = 0;\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i; j < n; j++) {\n                int maxVal = nums[i];\n                int minVal = nums[i];\n                for (int k = i; k <= j; k++) {\n                    maxVal = max(maxVal, nums[k]);\n                    minVal = min(minVal, nums[k]);\n                }\n                sum += (maxVal - minVal);\n            }\n        }\n        \n        return sum;\n    }\n};",
+        "java": "class Solution {\n    public long subArrayRanges(int[] nums) {\n        int n = nums.length;\n        long sum = 0;\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i; j < n; j++) {\n                int maxVal = nums[i];\n                int minVal = nums[i];\n                for (int k = i; k <= j; k++) {\n                    maxVal = Math.max(maxVal, nums[k]);\n                    minVal = Math.min(minVal, nums[k]);\n                }\n                sum += (maxVal - minVal);\n            }\n        }\n        \n        return sum;\n    }\n}",
+        "python": "class Solution:\n    def subArrayRanges(self, nums: List[int]) -> int:\n        n = len(nums)\n        total = 0\n        \n        for i in range(n):\n            for j in range(i, n):\n                max_val = max(nums[i:j+1])\n                min_val = min(nums[i:j+1])\n                total += (max_val - min_val)\n        \n        return total",
+        "javascript": "var subArrayRanges = function(nums) {\n    const n = nums.length;\n    let sum = 0;\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = i; j < n; j++) {\n            let maxVal = nums[i];\n            let minVal = nums[i];\n            for (let k = i; k <= j; k++) {\n                maxVal = Math.max(maxVal, nums[k]);\n                minVal = Math.min(minVal, nums[k]);\n            }\n            sum += (maxVal - minVal);\n        }\n    }\n    \n    return sum;\n};"
+      }
+    },
+    {
+      "name": "Optimized - Maintain Running Max/Min",
+      "order": 2,
+      "intuition": "Instead of recalculating max/min for each subarray, maintain running max and min as we extend subarray.",
+      "approach": "For each start position, extend subarray and update max/min incrementally.",
+      "steps": [
+        "Initialize sum = 0",
+        "For i from 0 to n-1:",
+        "  maxVal = nums[i], minVal = nums[i]",
+        "  For j from i to n-1:",
+        "    maxVal = max(maxVal, nums[j])",
+        "    minVal = min(minVal, nums[j])",
+        "    sum += (maxVal - minVal)",
+        "Return sum"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops, no inner loop needed",
+        "spaceExplanation": "Only storing sum and running max/min"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    long long subArrayRanges(vector<int>& nums) {\n        int n = nums.size();\n        long long sum = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int maxVal = nums[i];\n            int minVal = nums[i];\n            for (int j = i; j < n; j++) {\n                maxVal = max(maxVal, nums[j]);\n                minVal = min(minVal, nums[j]);\n                sum += (maxVal - minVal);\n            }\n        }\n        \n        return sum;\n    }\n};",
+        "java": "class Solution {\n    public long subArrayRanges(int[] nums) {\n        int n = nums.length;\n        long sum = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int maxVal = nums[i];\n            int minVal = nums[i];\n            for (int j = i; j < n; j++) {\n                maxVal = Math.max(maxVal, nums[j]);\n                minVal = Math.min(minVal, nums[j]);\n                sum += (maxVal - minVal);\n            }\n        }\n        \n        return sum;\n    }\n}",
+        "python": "class Solution:\n    def subArrayRanges(self, nums: List[int]) -> int:\n        n = len(nums)\n        total = 0\n        \n        for i in range(n):\n            max_val = nums[i]\n            min_val = nums[i]\n            for j in range(i, n):\n                max_val = max(max_val, nums[j])\n                min_val = min(min_val, nums[j])\n                total += (max_val - min_val)\n        \n        return total",
+        "javascript": "var subArrayRanges = function(nums) {\n    const n = nums.length;\n    let sum = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let maxVal = nums[i];\n        let minVal = nums[i];\n        for (let j = i; j < n; j++) {\n            maxVal = Math.max(maxVal, nums[j]);\n            minVal = Math.min(minVal, nums[j]);\n            sum += (maxVal - minVal);\n        }\n    }\n    \n    return sum;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Contributions - Optimal",
+      "order": 3,
+      "intuition": "Range sum = Sum of all maximums - Sum of all minimums. Use monotonic stack to find boundaries and calculate contributions separately.",
+      "approach": "Calculate sum of subarray maximums and sum of subarray minimums separately using contribution technique, then subtract.",
+      "steps": [
+        "Calculate sumMax: contribution of each element as maximum",
+        "  Find previous greater and next greater using monotonic stack",
+        "  For each i: contribution = nums[i] * left_count * right_count",
+        "Calculate sumMin: contribution of each element as minimum",
+        "  Find previous smaller and next smaller using monotonic stack",
+        "  For each i: contribution = nums[i] * left_count * right_count",
+        "Return sumMax - sumMin"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Four O(n) passes: 2 for max boundaries, 2 for min boundaries",
+        "spaceExplanation": "Arrays for boundaries and stacks"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    long long subArrayRanges(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Calculate sum of subarray maximums\n        long long sumMax = 0;\n        vector<int> prevGreater(n), nextGreater(n);\n        stack<int> st;\n        \n        for (int i = 0; i < n; i++) {\n            while (!st.empty() && nums[st.top()] <= nums[i]) st.pop();\n            prevGreater[i] = st.empty() ? -1 : st.top();\n            st.push(i);\n        }\n        \n        while (!st.empty()) st.pop();\n        for (int i = n - 1; i >= 0; i--) {\n            while (!st.empty() && nums[st.top()] < nums[i]) st.pop();\n            nextGreater[i] = st.empty() ? n : st.top();\n            st.push(i);\n        }\n        \n        for (int i = 0; i < n; i++) {\n            long long left = i - prevGreater[i];\n            long long right = nextGreater[i] - i;\n            sumMax += nums[i] * left * right;\n        }\n        \n        // Calculate sum of subarray minimums\n        long long sumMin = 0;\n        vector<int> prevSmaller(n), nextSmaller(n);\n        while (!st.empty()) st.pop();\n        \n        for (int i = 0; i < n; i++) {\n            while (!st.empty() && nums[st.top()] >= nums[i]) st.pop();\n            prevSmaller[i] = st.empty() ? -1 : st.top();\n            st.push(i);\n        }\n        \n        while (!st.empty()) st.pop();\n        for (int i = n - 1; i >= 0; i--) {\n            while (!st.empty() && nums[st.top()] > nums[i]) st.pop();\n            nextSmaller[i] = st.empty() ? n : st.top();\n            st.push(i);\n        }\n        \n        for (int i = 0; i < n; i++) {\n            long long left = i - prevSmaller[i];\n            long long right = nextSmaller[i] - i;\n            sumMin += nums[i] * left * right;\n        }\n        \n        return sumMax - sumMin;\n    }\n};",
+        "java": "class Solution {\n    public long subArrayRanges(int[] nums) {\n        int n = nums.length;\n        \n        // Sum of subarray maximums\n        long sumMax = 0;\n        int[] prevGreater = new int[n];\n        int[] nextGreater = new int[n];\n        Stack<Integer> stack = new Stack<>();\n        \n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && nums[stack.peek()] <= nums[i]) stack.pop();\n            prevGreater[i] = stack.isEmpty() ? -1 : stack.peek();\n            stack.push(i);\n        }\n        \n        stack.clear();\n        for (int i = n - 1; i >= 0; i--) {\n            while (!stack.isEmpty() && nums[stack.peek()] < nums[i]) stack.pop();\n            nextGreater[i] = stack.isEmpty() ? n : stack.peek();\n            stack.push(i);\n        }\n        \n        for (int i = 0; i < n; i++) {\n            long left = i - prevGreater[i];\n            long right = nextGreater[i] - i;\n            sumMax += nums[i] * left * right;\n        }\n        \n        // Sum of subarray minimums\n        long sumMin = 0;\n        int[] prevSmaller = new int[n];\n        int[] nextSmaller = new int[n];\n        stack.clear();\n        \n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && nums[stack.peek()] >= nums[i]) stack.pop();\n            prevSmaller[i] = stack.isEmpty() ? -1 : stack.peek();\n            stack.push(i);\n        }\n        \n        stack.clear();\n        for (int i = n - 1; i >= 0; i--) {\n            while (!stack.isEmpty() && nums[stack.peek()] > nums[i]) stack.pop();\n            nextSmaller[i] = stack.isEmpty() ? n : stack.peek();\n            stack.push(i);\n        }\n        \n        for (int i = 0; i < n; i++) {\n            long left = i - prevSmaller[i];\n            long right = nextSmaller[i] - i;\n            sumMin += nums[i] * left * right;\n        }\n        \n        return sumMax - sumMin;\n    }\n}",
+        "python": "class Solution:\n    def subArrayRanges(self, nums: List[int]) -> int:\n        n = len(nums)\n        \n        # Sum of subarray maximums\n        sum_max = 0\n        prev_greater = [-1] * n\n        next_greater = [n] * n\n        stack = []\n        \n        for i in range(n):\n            while stack and nums[stack[-1]] <= nums[i]:\n                stack.pop()\n            prev_greater[i] = stack[-1] if stack else -1\n            stack.append(i)\n        \n        stack = []\n        for i in range(n - 1, -1, -1):\n            while stack and nums[stack[-1]] < nums[i]:\n                stack.pop()\n            next_greater[i] = stack[-1] if stack else n\n            stack.append(i)\n        \n        for i in range(n):\n            left = i - prev_greater[i]\n            right = next_greater[i] - i\n            sum_max += nums[i] * left * right\n        \n        # Sum of subarray minimums\n        sum_min = 0\n        prev_smaller = [-1] * n\n        next_smaller = [n] * n\n        stack = []\n        \n        for i in range(n):\n            while stack and nums[stack[-1]] >= nums[i]:\n                stack.pop()\n            prev_smaller[i] = stack[-1] if stack else -1\n            stack.append(i)\n        \n        stack = []\n        for i in range(n - 1, -1, -1):\n            while stack and nums[stack[-1]] > nums[i]:\n                stack.pop()\n            next_smaller[i] = stack[-1] if stack else n\n            stack.append(i)\n        \n        for i in range(n):\n            left = i - prev_smaller[i]\n            right = next_smaller[i] - i\n            sum_min += nums[i] * left * right\n        \n        return sum_max - sum_min",
+        "javascript": "var subArrayRanges = function(nums) {\n    const n = nums.length;\n    \n    // Sum of subarray maximums\n    let sumMax = 0;\n    const prevGreater = new Array(n);\n    const nextGreater = new Array(n);\n    let stack = [];\n    \n    for (let i = 0; i < n; i++) {\n        while (stack.length > 0 && nums[stack[stack.length - 1]] <= nums[i]) {\n            stack.pop();\n        }\n        prevGreater[i] = stack.length === 0 ? -1 : stack[stack.length - 1];\n        stack.push(i);\n    }\n    \n    stack = [];\n    for (let i = n - 1; i >= 0; i--) {\n        while (stack.length > 0 && nums[stack[stack.length - 1]] < nums[i]) {\n            stack.pop();\n        }\n        nextGreater[i] = stack.length === 0 ? n : stack[stack.length - 1];\n        stack.push(i);\n    }\n    \n    for (let i = 0; i < n; i++) {\n        const left = i - prevGreater[i];\n        const right = nextGreater[i] - i;\n        sumMax += nums[i] * left * right;\n    }\n    \n    // Sum of subarray minimums\n    let sumMin = 0;\n    const prevSmaller = new Array(n);\n    const nextSmaller = new Array(n);\n    stack = [];\n    \n    for (let i = 0; i < n; i++) {\n        while (stack.length > 0 && nums[stack[stack.length - 1]] >= nums[i]) {\n            stack.pop();\n        }\n        prevSmaller[i] = stack.length === 0 ? -1 : stack[stack.length - 1];\n        stack.push(i);\n    }\n    \n    stack = [];\n    for (let i = n - 1; i >= 0; i--) {\n        while (stack.length > 0 && nums[stack[stack.length - 1]] > nums[i]) {\n            stack.pop();\n        }\n        nextSmaller[i] = stack.length === 0 ? n : stack[stack.length - 1];\n        stack.push(i);\n    }\n    \n    for (let i = 0; i < n; i++) {\n        const left = i - prevSmaller[i];\n        const right = nextSmaller[i] - i;\n        sumMin += nums[i] * left * right;\n    }\n    \n    return sumMax - sumMin;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling duplicates correctly (use <= for one side, < for other)",
+    "Trying to track both max and min in single pass (separate calculations are cleaner)",
+    "Confusing previous/next greater with smaller logic",
+    "Integer overflow with large arrays",
+    "Not initializing boundary arrays correctly"
+  ],
+  "hints": [
+    "Range = max - min, so sum of ranges = sum of all max - sum of all min",
+    "Break problem into two subproblems: sum of subarray maximums and sum of subarray minimums",
+    "Use contribution technique: count how many subarrays have element as max/min",
+    "Monotonic decreasing stack for finding greater elements",
+    "Monotonic increasing stack for finding smaller elements"
+  ],
+  "followUp": [
+    "Can you solve for sum of (max + min) instead of (max - min)?",
+    "What if we need sum of (max * min)?",
+    "Can you find kth largest range?",
+    "How to optimize for very large arrays?",
+    "What about circular array variant?"
+  ],
+  "companies": ["Google", "Microsoft", "Amazon", "Apple"],
+  "tags": ["stack", "array", "monotonic-stack"],
+  "relatedProblems": [
+    "Sum of Subarray Minimums",
+    "Largest Rectangle in Histogram",
+    "Maximum Width Ramp",
+    "Next Greater Element",
+    "Previous Smaller Element"
+  ]
+}

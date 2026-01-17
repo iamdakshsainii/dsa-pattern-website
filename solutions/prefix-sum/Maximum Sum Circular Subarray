@@ -1,0 +1,174 @@
+{
+  "questionId": "918",
+  "questionSlug": "maximum-sum-circular-subarray",
+  "title": "Maximum Sum Circular Subarray",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
+    "videos": [
+      {
+        "title": "Maximum Sum Circular Subarray",
+        "url": "https://www.youtube.com/watch?v=Q1TYVUEr-wY",
+        "channel": "NeetCode",
+        "duration": "14:20",
+        "language": "English"
+      },
+      {
+        "title": "Kadane's Circular Array",
+        "url": "https://www.youtube.com/watch?v=fxT9KjakYPM",
+        "channel": "take U forward",
+        "duration": "18:35",
+        "language": "English"
+      },
+      {
+        "title": "Circular Kadane",
+        "url": "https://www.youtube.com/watch?v=Q1TYVUEr-wY",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "12:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Sum Circular Subarray - LeetCode Official",
+        "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Circular Array Maximum Sum",
+        "url": "https://takeuforward.org/data-structure/kadanes-algorithm-maximum-subarray-sum-in-an-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Maximum Circular Subarray - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/maximum-contiguous-circular-sum/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/max-circular-subarray-sum/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Circular array maximum sum? Two cases: max in middle (normal Kadane) OR wraps around (total - min subarray).",
+  "approaches": [
+    {
+      "name": "Brute Force - All Subarrays with Wrapping",
+      "order": 1,
+      "intuition": "Consider all possible subarrays including those that wrap around the circular array. Check all starting and ending points.",
+      "approach": "For each starting position, calculate sum of subarrays of all possible lengths (considering wrapping).",
+      "steps": [
+        "maxSum = INT_MIN",
+        "For each start i from 0 to n-1:",
+        "  sum = 0",
+        "  For each length from 1 to n:",
+        "    index = (i + length - 1) % n",
+        "    sum += arr[index]",
+        "    maxSum = max(maxSum, sum)",
+        "Return maxSum"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops to check all subarrays",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "int maxSubarraySumCircular(vector<int>& nums) {\n    int n = nums.size();\n    int maxSum = INT_MIN;\n    \n    for (int i = 0; i < n; i++) {\n        int sum = 0;\n        for (int len = 1; len <= n; len++) {\n            int index = (i + len - 1) % n;\n            sum += nums[index];\n            maxSum = max(maxSum, sum);\n        }\n    }\n    \n    return maxSum;\n}",
+        "java": "public int maxSubarraySumCircular(int[] nums) {\n    int n = nums.length;\n    int maxSum = Integer.MIN_VALUE;\n    \n    for (int i = 0; i < n; i++) {\n        int sum = 0;\n        for (int len = 1; len <= n; len++) {\n            int index = (i + len - 1) % n;\n            sum += nums[index];\n            maxSum = Math.max(maxSum, sum);\n        }\n    }\n    \n    return maxSum;\n}",
+        "python": "def maxSubarraySumCircular(nums):\n    n = len(nums)\n    max_sum = float('-inf')\n    \n    for i in range(n):\n        sum_val = 0\n        for length in range(1, n + 1):\n            index = (i + length - 1) % n\n            sum_val += nums[index]\n            max_sum = max(max_sum, sum_val)\n    \n    return max_sum",
+        "javascript": "function maxSubarraySumCircular(nums) {\n    const n = nums.length;\n    let maxSum = -Infinity;\n    \n    for (let i = 0; i < n; i++) {\n        let sum = 0;\n        for (let len = 1; len <= n; len++) {\n            const index = (i + len - 1) % n;\n            sum += nums[index];\n            maxSum = Math.max(maxSum, sum);\n        }\n    }\n    \n    return maxSum;\n}"
+      }
+    },
+    {
+      "name": "Kadane with Prefix/Suffix Arrays",
+      "order": 2,
+      "intuition": "Max circular sum either doesn't wrap (normal Kadane) or wraps (best prefix + best suffix). Precompute max prefix and suffix sums.",
+      "approach": "Calculate normal max with Kadane. Also calculate max sum ending at each position from left and starting from right. Combine prefix[i] + suffix[i+1].",
+      "steps": [
+        "normalMax = Kadane's algorithm",
+        "Calculate prefix max array (max sum ending at i)",
+        "Calculate suffix max array (max sum starting at i)",
+        "For each split point i:",
+        "  circularMax = max(circularMax, prefix[i] + suffix[i+1])",
+        "Return max(normalMax, circularMax)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Multiple O(n) passes",
+        "spaceExplanation": "Prefix and suffix arrays"
+      },
+      "code": {
+        "cpp": "int maxSubarraySumCircular(vector<int>& nums) {\n    int n = nums.size();\n    \n    // Normal Kadane's\n    int normalMax = nums[0];\n    int currMax = nums[0];\n    for (int i = 1; i < n; i++) {\n        currMax = max(nums[i], currMax + nums[i]);\n        normalMax = max(normalMax, currMax);\n    }\n    \n    // Prefix max array\n    vector<int> prefixSum(n);\n    vector<int> prefixMax(n);\n    prefixSum[0] = nums[0];\n    prefixMax[0] = nums[0];\n    for (int i = 1; i < n; i++) {\n        prefixSum[i] = prefixSum[i-1] + nums[i];\n        prefixMax[i] = max(prefixMax[i-1], prefixSum[i]);\n    }\n    \n    // Suffix max\n    int circularMax = INT_MIN;\n    int suffixSum = 0;\n    for (int i = n - 1; i > 0; i--) {\n        suffixSum += nums[i];\n        circularMax = max(circularMax, prefixMax[i-1] + suffixSum);\n    }\n    \n    return max(normalMax, circularMax);\n}",
+        "java": "public int maxSubarraySumCircular(int[] nums) {\n    int n = nums.length;\n    \n    int normalMax = nums[0];\n    int currMax = nums[0];\n    for (int i = 1; i < n; i++) {\n        currMax = Math.max(nums[i], currMax + nums[i]);\n        normalMax = Math.max(normalMax, currMax);\n    }\n    \n    int[] prefixSum = new int[n];\n    int[] prefixMax = new int[n];\n    prefixSum[0] = nums[0];\n    prefixMax[0] = nums[0];\n    for (int i = 1; i < n; i++) {\n        prefixSum[i] = prefixSum[i-1] + nums[i];\n        prefixMax[i] = Math.max(prefixMax[i-1], prefixSum[i]);\n    }\n    \n    int circularMax = Integer.MIN_VALUE;\n    int suffixSum = 0;\n    for (int i = n - 1; i > 0; i--) {\n        suffixSum += nums[i];\n        circularMax = Math.max(circularMax, prefixMax[i-1] + suffixSum);\n    }\n    \n    return Math.max(normalMax, circularMax);\n}",
+        "python": "def maxSubarraySumCircular(nums):\n    n = len(nums)\n    \n    normal_max = nums[0]\n    curr_max = nums[0]\n    for i in range(1, n):\n        curr_max = max(nums[i], curr_max + nums[i])\n        normal_max = max(normal_max, curr_max)\n    \n    prefix_sum = [0] * n\n    prefix_max = [0] * n\n    prefix_sum[0] = nums[0]\n    prefix_max[0] = nums[0]\n    for i in range(1, n):\n        prefix_sum[i] = prefix_sum[i-1] + nums[i]\n        prefix_max[i] = max(prefix_max[i-1], prefix_sum[i])\n    \n    circular_max = float('-inf')\n    suffix_sum = 0\n    for i in range(n - 1, 0, -1):\n        suffix_sum += nums[i]\n        circular_max = max(circular_max, prefix_max[i-1] + suffix_sum)\n    \n    return max(normal_max, circular_max)",
+        "javascript": "function maxSubarraySumCircular(nums) {\n    const n = nums.length;\n    \n    let normalMax = nums[0];\n    let currMax = nums[0];\n    for (let i = 1; i < n; i++) {\n        currMax = Math.max(nums[i], currMax + nums[i]);\n        normalMax = Math.max(normalMax, currMax);\n    }\n    \n    const prefixSum = new Array(n);\n    const prefixMax = new Array(n);\n    prefixSum[0] = nums[0];\n    prefixMax[0] = nums[0];\n    for (let i = 1; i < n; i++) {\n        prefixSum[i] = prefixSum[i-1] + nums[i];\n        prefixMax[i] = Math.max(prefixMax[i-1], prefixSum[i]);\n    }\n    \n    let circularMax = -Infinity;\n    let suffixSum = 0;\n    for (let i = n - 1; i > 0; i--) {\n        suffixSum += nums[i];\n        circularMax = Math.max(circularMax, prefixMax[i-1] + suffixSum);\n    }\n    \n    return Math.max(normalMax, circularMax);\n}"
+      }
+    },
+    {
+      "name": "Total Sum - Min Subarray - Optimal",
+      "order": 3,
+      "intuition": "Two cases: (1) Max doesn't wrap: normal Kadane. (2) Max wraps: total_sum - min_subarray. Answer is max of both. Edge case: all negative.",
+      "approach": "Run Kadane for max, run inverted Kadane for min. If all elements used in min (all negative), return max. Else return max(normalMax, total - min).",
+      "steps": [
+        "normalMax = Kadane's for maximum subarray",
+        "minSubarray = Kadane's for minimum subarray (invert signs or logic)",
+        "total = sum of all elements",
+        "If minSubarray == total:",
+        "  Return normalMax (all elements negative)",
+        "Return max(normalMax, total - minSubarray)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Three O(n) passes: max Kadane, min Kadane, total sum",
+        "spaceExplanation": "Only constant variables"
+      },
+      "code": {
+        "cpp": "int maxSubarraySumCircular(vector<int>& nums) {\n    int n = nums.size();\n    \n    // Kadane for maximum subarray\n    int maxKadane = nums[0];\n    int currMax = nums[0];\n    \n    // Kadane for minimum subarray\n    int minKadane = nums[0];\n    int currMin = nums[0];\n    \n    int total = nums[0];\n    \n    for (int i = 1; i < n; i++) {\n        currMax = max(nums[i], currMax + nums[i]);\n        maxKadane = max(maxKadane, currMax);\n        \n        currMin = min(nums[i], currMin + nums[i]);\n        minKadane = min(minKadane, currMin);\n        \n        total += nums[i];\n    }\n    \n    // If all elements are negative, minKadane == total\n    if (minKadane == total) {\n        return maxKadane;\n    }\n    \n    // Max circular = total - minimum subarray\n    return max(maxKadane, total - minKadane);\n}",
+        "java": "public int maxSubarraySumCircular(int[] nums) {\n    int n = nums.length;\n    \n    int maxKadane = nums[0];\n    int currMax = nums[0];\n    \n    int minKadane = nums[0];\n    int currMin = nums[0];\n    \n    int total = nums[0];\n    \n    for (int i = 1; i < n; i++) {\n        currMax = Math.max(nums[i], currMax + nums[i]);\n        maxKadane = Math.max(maxKadane, currMax);\n        \n        currMin = Math.min(nums[i], currMin + nums[i]);\n        minKadane = Math.min(minKadane, currMin);\n        \n        total += nums[i];\n    }\n    \n    if (minKadane == total) {\n        return maxKadane;\n    }\n    \n    return Math.max(maxKadane, total - minKadane);\n}",
+        "python": "def maxSubarraySumCircular(nums):\n    n = len(nums)\n    \n    max_kadane = nums[0]\n    curr_max = nums[0]\n    \n    min_kadane = nums[0]\n    curr_min = nums[0]\n    \n    total = nums[0]\n    \n    for i in range(1, n):\n        curr_max = max(nums[i], curr_max + nums[i])\n        max_kadane = max(max_kadane, curr_max)\n        \n        curr_min = min(nums[i], curr_min + nums[i])\n        min_kadane = min(min_kadane, curr_min)\n        \n        total += nums[i]\n    \n    if min_kadane == total:\n        return max_kadane\n    \n    return max(max_kadane, total - min_kadane)",
+        "javascript": "function maxSubarraySumCircular(nums) {\n    const n = nums.length;\n    \n    let maxKadane = nums[0];\n    let currMax = nums[0];\n    \n    let minKadane = nums[0];\n    let currMin = nums[0];\n    \n    let total = nums[0];\n    \n    for (let i = 1; i < n; i++) {\n        currMax = Math.max(nums[i], currMax + nums[i]);\n        maxKadane = Math.max(maxKadane, currMax);\n        \n        currMin = Math.min(nums[i], currMin + nums[i]);\n        minKadane = Math.min(minKadane, currMin);\n        \n        total += nums[i];\n    }\n    \n    if (minKadane === total) {\n        return maxKadane;\n    }\n    \n    return Math.max(maxKadane, total - minKadane);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling all negative numbers case (would return 0 instead of max element)",
+    "Forgetting that circular max = total - min subarray",
+    "Not understanding why we need both max and min Kadane",
+    "Comparing minKadane to 0 instead of total for edge case",
+    "Only considering one case (either wrapped or not wrapped)"
+  ],
+  "hints": [
+    "Two cases: max subarray in middle OR wraps around edges",
+    "If wraps around, it's total_sum - (minimum subarray in middle)",
+    "Use Kadane's algorithm twice: once for max, once for min",
+    "Edge case: what if all numbers are negative?",
+    "The minimum subarray that gives maximum when subtracted must be in the middle"
+  ],
+  "followUp": [
+    "What if array can be split at most K times for circular consideration?",
+    "Find minimum sum circular subarray?",
+    "Can you extend this to 2D circular array?",
+    "What if we want length of the maximum sum circular subarray?",
+    "How to handle very large arrays (streaming)??"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Uber"],
+  "tags": ["array", "divide-and-conquer", "dynamic-programming", "queue", "monotonic-queue"],
+  "relatedProblems": [
+    "Maximum Subarray",
+    "Maximum Product Subarray",
+    "Degree of an Array",
+    "Longest Turbulent Subarray",
+    "Maximum Absolute Sum of Any Subarray"
+  ]
+}

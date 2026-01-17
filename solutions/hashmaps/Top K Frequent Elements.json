@@ -1,0 +1,171 @@
+{
+  "questionId": "347",
+  "questionSlug": "top-k-frequent-elements",
+  "title": "Top K Frequent Elements",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/top-k-frequent-elements/",
+    "videos": [
+      {
+        "title": "Top K Frequent Elements - Bucket Sort",
+        "url": "https://www.youtube.com/watch?v=YPTqKIgVk-k",
+        "channel": "NeetCode",
+        "duration": "11:40",
+        "language": "English"
+      },
+      {
+        "title": "Top K Frequent Elements Explained",
+        "url": "https://www.youtube.com/watch?v=Wh3A29psE_Y",
+        "channel": "take U forward",
+        "duration": "14:20",
+        "language": "English"
+      },
+      {
+        "title": "Top K Elements Problem",
+        "url": "https://www.youtube.com/watch?v=EBNPu0GgM64",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Top K Frequent Elements - LeetCode Official",
+        "url": "https://leetcode.com/problems/top-k-frequent-elements/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find k numbers with most occurrences",
+        "url": "https://www.geeksforgeeks.org/find-k-numbers-occurrences-given-array/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/top-k-frequent-elements-in-array/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find top K frequent? Count frequencies with HashMap, then either: heap (O(n log k)), bucket sort (O(n)), or quickselect (O(n) average).",
+  "approaches": [
+    {
+      "name": "Brute Force - Count and Sort All",
+      "order": 1,
+      "intuition": "Count frequency of each element, sort by frequency, take top k.",
+      "approach": "Build frequency map, convert to list, sort by frequency descending, return first k.",
+      "steps": [
+        "Count frequencies using hash map",
+        "Create list of (element, frequency) pairs",
+        "Sort list by frequency (descending)",
+        "Return first k elements"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Counting is O(n), sorting is O(n log n)",
+        "spaceExplanation": "Frequency map and list store n elements"
+      },
+      "code": {
+        "cpp": "vector<int> topKFrequent(vector<int>& nums, int k) {\n    unordered_map<int, int> freq;\n    for (int num : nums) {\n        freq[num]++;\n    }\n    \n    vector<pair<int, int>> freqList;\n    for (auto& p : freq) {\n        freqList.push_back({p.second, p.first});\n    }\n    \n    sort(freqList.begin(), freqList.end(), greater<pair<int, int>>());\n    \n    vector<int> result;\n    for (int i = 0; i < k; i++) {\n        result.push_back(freqList[i].second);\n    }\n    \n    return result;\n}",
+        "java": "public int[] topKFrequent(int[] nums, int k) {\n    Map<Integer, Integer> freq = new HashMap<>();\n    for (int num : nums) {\n        freq.put(num, freq.getOrDefault(num, 0) + 1);\n    }\n    \n    List<Map.Entry<Integer, Integer>> freqList = new ArrayList<>(freq.entrySet());\n    freqList.sort((a, b) -> b.getValue() - a.getValue());\n    \n    int[] result = new int[k];\n    for (int i = 0; i < k; i++) {\n        result[i] = freqList.get(i).getKey();\n    }\n    \n    return result;\n}",
+        "python": "def topKFrequent(nums, k):\n    from collections import Counter\n    \n    freq = Counter(nums)\n    \n    freq_list = [(count, num) for num, count in freq.items()]\n    freq_list.sort(reverse=True)\n    \n    return [num for count, num in freq_list[:k]]",
+        "javascript": "function topKFrequent(nums, k) {\n    const freq = new Map();\n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    const freqList = Array.from(freq.entries());\n    freqList.sort((a, b) => b[1] - a[1]);\n    \n    const result = [];\n    for (let i = 0; i < k; i++) {\n        result.push(freqList[i][0]);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Min Heap (Priority Queue) - O(n log k)",
+      "order": 2,
+      "intuition": "Maintain a min heap of size k with most frequent elements. Less frequent elements get removed.",
+      "approach": "Count frequencies, use min heap to keep track of k most frequent elements.",
+      "steps": [
+        "Count frequencies using hash map",
+        "Create min heap (priority queue)",
+        "For each (element, freq) pair:",
+        "  If heap.size < k:",
+        "    Add to heap",
+        "  Else if freq > heap.top().freq:",
+        "    Remove heap top",
+        "    Add current element",
+        "Extract all elements from heap"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(n)",
+        "timeExplanation": "Counting O(n), heap operations O(log k) for n elements",
+        "spaceExplanation": "Frequency map O(n), heap O(k)"
+      },
+      "code": {
+        "cpp": "vector<int> topKFrequent(vector<int>& nums, int k) {\n    unordered_map<int, int> freq;\n    for (int num : nums) {\n        freq[num]++;\n    }\n    \n    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> minHeap;\n    \n    for (auto& p : freq) {\n        minHeap.push({p.second, p.first});\n        if (minHeap.size() > k) {\n            minHeap.pop();\n        }\n    }\n    \n    vector<int> result;\n    while (!minHeap.empty()) {\n        result.push_back(minHeap.top().second);\n        minHeap.pop();\n    }\n    \n    return result;\n}",
+        "java": "public int[] topKFrequent(int[] nums, int k) {\n    Map<Integer, Integer> freq = new HashMap<>();\n    for (int num : nums) {\n        freq.put(num, freq.getOrDefault(num, 0) + 1);\n    }\n    \n    PriorityQueue<Map.Entry<Integer, Integer>> minHeap = new PriorityQueue<>(\n        (a, b) -> a.getValue() - b.getValue()\n    );\n    \n    for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {\n        minHeap.offer(entry);\n        if (minHeap.size() > k) {\n            minHeap.poll();\n        }\n    }\n    \n    int[] result = new int[k];\n    int i = 0;\n    while (!minHeap.isEmpty()) {\n        result[i++] = minHeap.poll().getKey();\n    }\n    \n    return result;\n}",
+        "python": "def topKFrequent(nums, k):\n    from collections import Counter\n    import heapq\n    \n    freq = Counter(nums)\n    \n    return heapq.nlargest(k, freq.keys(), key=freq.get)",
+        "javascript": "function topKFrequent(nums, k) {\n    const freq = new Map();\n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    // JavaScript doesn't have built-in min heap, using array sort\n    const freqArray = Array.from(freq.entries());\n    freqArray.sort((a, b) => b[1] - a[1]);\n    \n    return freqArray.slice(0, k).map(entry => entry[0]);\n}"
+      }
+    },
+    {
+      "name": "Bucket Sort - O(n) - Optimal",
+      "order": 3,
+      "intuition": "Max frequency is at most n. Create buckets for each frequency (0 to n). Place elements in their frequency bucket, then collect from high to low.",
+      "approach": "Create array of buckets where bucket[i] contains elements with frequency i. Iterate from n to 1 collecting k elements.",
+      "steps": [
+        "Count frequencies using hash map",
+        "Create buckets array of size n+1",
+        "For each (element, freq):",
+        "  Add element to bucket[freq]",
+        "result = []",
+        "For freq from n down to 1:",
+        "  Add all elements from bucket[freq] to result",
+        "  If result.size >= k, return first k elements",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Counting O(n), bucketing O(n), collecting O(n)",
+        "spaceExplanation": "Frequency map O(n), buckets array O(n)"
+      },
+      "code": {
+        "cpp": "vector<int> topKFrequent(vector<int>& nums, int k) {\n    unordered_map<int, int> freq;\n    for (int num : nums) {\n        freq[num]++;\n    }\n    \n    int n = nums.size();\n    vector<vector<int>> buckets(n + 1);\n    \n    for (auto& p : freq) {\n        buckets[p.second].push_back(p.first);\n    }\n    \n    vector<int> result;\n    for (int i = n; i >= 0 && result.size() < k; i--) {\n        for (int num : buckets[i]) {\n            result.push_back(num);\n            if (result.size() == k) {\n                return result;\n            }\n        }\n    }\n    \n    return result;\n}",
+        "java": "public int[] topKFrequent(int[] nums, int k) {\n    Map<Integer, Integer> freq = new HashMap<>();\n    for (int num : nums) {\n        freq.put(num, freq.getOrDefault(num, 0) + 1);\n    }\n    \n    int n = nums.length;\n    List<Integer>[] buckets = new ArrayList[n + 1];\n    for (int i = 0; i <= n; i++) {\n        buckets[i] = new ArrayList<>();\n    }\n    \n    for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {\n        buckets[entry.getValue()].add(entry.getKey());\n    }\n    \n    int[] result = new int[k];\n    int idx = 0;\n    \n    for (int i = n; i >= 0 && idx < k; i--) {\n        for (int num : buckets[i]) {\n            result[idx++] = num;\n            if (idx == k) {\n                return result;\n            }\n        }\n    }\n    \n    return result;\n}",
+        "python": "def topKFrequent(nums, k):\n    from collections import Counter\n    \n    freq = Counter(nums)\n    \n    n = len(nums)\n    buckets = [[] for _ in range(n + 1)]\n    \n    for num, count in freq.items():\n        buckets[count].append(num)\n    \n    result = []\n    for i in range(n, -1, -1):\n        result.extend(buckets[i])\n        if len(result) >= k:\n            return result[:k]\n    \n    return result",
+        "javascript": "function topKFrequent(nums, k) {\n    const freq = new Map();\n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    const n = nums.length;\n    const buckets = Array.from({ length: n + 1 }, () => []);\n    \n    for (const [num, count] of freq.entries()) {\n        buckets[count].push(num);\n    }\n    \n    const result = [];\n    for (let i = n; i >= 0 && result.length < k; i--) {\n        result.push(...buckets[i]);\n    }\n    \n    return result.slice(0, k);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using max heap instead of min heap (less efficient)",
+    "Not handling case where multiple elements have same frequency",
+    "Sorting all n elements when only k needed",
+    "Off-by-one errors in bucket indices",
+    "Not stopping after collecting k elements"
+  ],
+  "hints": [
+    "First count frequencies using hash map",
+    "For O(n log k): use min heap of size k",
+    "For O(n): use bucket sort with frequency as index",
+    "Max frequency is at most n (array length)",
+    "Bucket sort is optimal for this problem"
+  ],
+  "followUp": [
+    "What if k > number of unique elements? (Return all unique elements)",
+    "Can you solve in O(n) time? (Yes, bucket sort)",
+    "What if we need elements in sorted order by frequency? (Bucket sort naturally gives this)",
+    "How to handle streaming data? (Use heap, update frequencies)",
+    "What if k is very large compared to n? (Bucket sort still O(n))"
+  ],
+  "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Uber", "Oracle"],
+  "tags": ["array", "hash-table", "divide-and-conquer", "sorting", "heap", "bucket-sort", "counting", "quickselect"],
+  "relatedProblems": [
+    "Word Frequency",
+    "Kth Largest Element in an Array",
+    "Sort Characters By Frequency",
+    "Split Array into Consecutive Subsequences",
+    "Top K Frequent Words"
+  ]
+}

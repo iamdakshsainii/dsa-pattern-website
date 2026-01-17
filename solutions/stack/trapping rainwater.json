@@ -1,0 +1,177 @@
+{
+  "questionId": "42",
+  "questionSlug": "trapping-rain-water",
+  "title": "Trapping Rain Water",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/trapping-rain-water/",
+    "videos": [
+      {
+        "title": "Trapping Rain Water - Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=m18Hntz4go8",
+        "channel": "NeetCode",
+        "duration": "14:35",
+        "language": "English"
+      },
+      {
+        "title": "Trapping Rainwater Problem",
+        "url": "https://www.youtube.com/watch?v=UZG3-vZlFM4",
+        "channel": "take U forward",
+        "duration": "18:45",
+        "language": "English"
+      },
+      {
+        "title": "Stack Based Solution - Trapping Rain Water",
+        "url": "https://www.youtube.com/watch?v=FbGG2qpNXQs",
+        "channel": "Aditya Verma",
+        "duration": "20:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Trapping Rain Water - LeetCode Official",
+        "url": "https://leetcode.com/problems/trapping-rain-water/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Trapping Rain Water Complete Guide",
+        "url": "https://takeuforward.org/data-structure/trapping-rainwater/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Trapping Rain Water - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/trapping-rain-water/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/trapping-rain-water/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/trapping-rain-water/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Water trapped at position depends on max height on left and right. Use prefix/suffix max arrays or two pointers or monotonic stack.",
+  "approaches": [
+    {
+      "name": "Brute Force - Find Left & Right Max for Each Position",
+      "order": 1,
+      "intuition": "For each position, water trapped = min(leftMax, rightMax) - height[i]. Find left and right max for each position separately.",
+      "approach": "For each bar, scan left to find max height, scan right to find max height, then calculate water.",
+      "steps": [
+        "Initialize water = 0",
+        "For each index i:",
+        "  Find leftMax: max height from 0 to i",
+        "  Find rightMax: max height from i to n-1",
+        "  water += max(0, min(leftMax, rightMax) - height[i])",
+        "Return water"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "For each position, scan entire left and right sides",
+        "spaceExplanation": "Only storing water count"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int trap(vector<int>& height) {\n        int n = height.size();\n        int water = 0;\n        \n        for (int i = 0; i < n; i++) {\n            // Find max height on left\n            int leftMax = 0;\n            for (int j = 0; j <= i; j++) {\n                leftMax = max(leftMax, height[j]);\n            }\n            \n            // Find max height on right\n            int rightMax = 0;\n            for (int j = i; j < n; j++) {\n                rightMax = max(rightMax, height[j]);\n            }\n            \n            // Calculate water at current position\n            water += min(leftMax, rightMax) - height[i];\n        }\n        \n        return water;\n    }\n};",
+        "java": "class Solution {\n    public int trap(int[] height) {\n        int n = height.length;\n        int water = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int leftMax = 0;\n            for (int j = 0; j <= i; j++) {\n                leftMax = Math.max(leftMax, height[j]);\n            }\n            \n            int rightMax = 0;\n            for (int j = i; j < n; j++) {\n                rightMax = Math.max(rightMax, height[j]);\n            }\n            \n            water += Math.min(leftMax, rightMax) - height[i];\n        }\n        \n        return water;\n    }\n}",
+        "python": "class Solution:\n    def trap(self, height: List[int]) -> int:\n        n = len(height)\n        water = 0\n        \n        for i in range(n):\n            left_max = max(height[:i+1])\n            right_max = max(height[i:])\n            water += min(left_max, right_max) - height[i]\n        \n        return water",
+        "javascript": "var trap = function(height) {\n    const n = height.length;\n    let water = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let leftMax = 0;\n        for (let j = 0; j <= i; j++) {\n            leftMax = Math.max(leftMax, height[j]);\n        }\n        \n        let rightMax = 0;\n        for (let j = i; j < n; j++) {\n            rightMax = Math.max(rightMax, height[j]);\n        }\n        \n        water += Math.min(leftMax, rightMax) - height[i];\n    }\n    \n    return water;\n};"
+      }
+    },
+    {
+      "name": "Prefix & Suffix Arrays - Better",
+      "order": 2,
+      "intuition": "Precompute left max and right max for all positions to avoid repeated calculations.",
+      "approach": "Build prefix max array (leftMax) and suffix max array (rightMax), then calculate water in single pass.",
+      "steps": [
+        "Create leftMax array: leftMax[i] = max height from 0 to i",
+        "Create rightMax array: rightMax[i] = max height from i to n-1",
+        "For each i:",
+        "  water += min(leftMax[i], rightMax[i]) - height[i]",
+        "Return water"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Three O(n) passes: leftMax, rightMax, water calculation",
+        "spaceExplanation": "Two arrays of size n for leftMax and rightMax"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int trap(vector<int>& height) {\n        int n = height.size();\n        if (n == 0) return 0;\n        \n        // Build leftMax array\n        vector<int> leftMax(n);\n        leftMax[0] = height[0];\n        for (int i = 1; i < n; i++) {\n            leftMax[i] = max(leftMax[i-1], height[i]);\n        }\n        \n        // Build rightMax array\n        vector<int> rightMax(n);\n        rightMax[n-1] = height[n-1];\n        for (int i = n-2; i >= 0; i--) {\n            rightMax[i] = max(rightMax[i+1], height[i]);\n        }\n        \n        // Calculate water\n        int water = 0;\n        for (int i = 0; i < n; i++) {\n            water += min(leftMax[i], rightMax[i]) - height[i];\n        }\n        \n        return water;\n    }\n};",
+        "java": "class Solution {\n    public int trap(int[] height) {\n        int n = height.length;\n        if (n == 0) return 0;\n        \n        int[] leftMax = new int[n];\n        leftMax[0] = height[0];\n        for (int i = 1; i < n; i++) {\n            leftMax[i] = Math.max(leftMax[i-1], height[i]);\n        }\n        \n        int[] rightMax = new int[n];\n        rightMax[n-1] = height[n-1];\n        for (int i = n-2; i >= 0; i--) {\n            rightMax[i] = Math.max(rightMax[i+1], height[i]);\n        }\n        \n        int water = 0;\n        for (int i = 0; i < n; i++) {\n            water += Math.min(leftMax[i], rightMax[i]) - height[i];\n        }\n        \n        return water;\n    }\n}",
+        "python": "class Solution:\n    def trap(self, height: List[int]) -> int:\n        n = len(height)\n        if n == 0:\n            return 0\n        \n        left_max = [0] * n\n        left_max[0] = height[0]\n        for i in range(1, n):\n            left_max[i] = max(left_max[i-1], height[i])\n        \n        right_max = [0] * n\n        right_max[n-1] = height[n-1]\n        for i in range(n-2, -1, -1):\n            right_max[i] = max(right_max[i+1], height[i])\n        \n        water = 0\n        for i in range(n):\n            water += min(left_max[i], right_max[i]) - height[i]\n        \n        return water",
+        "javascript": "var trap = function(height) {\n    const n = height.length;\n    if (n === 0) return 0;\n    \n    const leftMax = new Array(n);\n    leftMax[0] = height[0];\n    for (let i = 1; i < n; i++) {\n        leftMax[i] = Math.max(leftMax[i-1], height[i]);\n    }\n    \n    const rightMax = new Array(n);\n    rightMax[n-1] = height[n-1];\n    for (let i = n-2; i >= 0; i--) {\n        rightMax[i] = Math.max(rightMax[i+1], height[i]);\n    }\n    \n    let water = 0;\n    for (let i = 0; i < n; i++) {\n        water += Math.min(leftMax[i], rightMax[i]) - height[i];\n    }\n    \n    return water;\n};"
+      }
+    },
+    {
+      "name": "Two Pointers - Optimal O(1) Space",
+      "order": 3,
+      "intuition": "Water at position depends on min(leftMax, rightMax). Use two pointers to track maxes dynamically. Move pointer with smaller max.",
+      "approach": "Use left and right pointers with leftMax and rightMax variables. Process side with smaller max height.",
+      "steps": [
+        "left = 0, right = n-1",
+        "leftMax = 0, rightMax = 0",
+        "While left <= right:",
+        "  If height[left] < height[right]:",
+        "    If height[left] >= leftMax: leftMax = height[left]",
+        "    Else: water += leftMax - height[left]",
+        "    left++",
+        "  Else:",
+        "    If height[right] >= rightMax: rightMax = height[right]",
+        "    Else: water += rightMax - height[right]",
+        "    right--",
+        "Return water"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass with two pointers",
+        "spaceExplanation": "Only constant variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int trap(vector<int>& height) {\n        int left = 0, right = height.size() - 1;\n        int leftMax = 0, rightMax = 0;\n        int water = 0;\n        \n        while (left <= right) {\n            if (height[left] < height[right]) {\n                if (height[left] >= leftMax) {\n                    leftMax = height[left];\n                } else {\n                    water += leftMax - height[left];\n                }\n                left++;\n            } else {\n                if (height[right] >= rightMax) {\n                    rightMax = height[right];\n                } else {\n                    water += rightMax - height[right];\n                }\n                right--;\n            }\n        }\n        \n        return water;\n    }\n};",
+        "java": "class Solution {\n    public int trap(int[] height) {\n        int left = 0, right = height.length - 1;\n        int leftMax = 0, rightMax = 0;\n        int water = 0;\n        \n        while (left <= right) {\n            if (height[left] < height[right]) {\n                if (height[left] >= leftMax) {\n                    leftMax = height[left];\n                } else {\n                    water += leftMax - height[left];\n                }\n                left++;\n            } else {\n                if (height[right] >= rightMax) {\n                    rightMax = height[right];\n                } else {\n                    water += rightMax - height[right];\n                }\n                right--;\n            }\n        }\n        \n        return water;\n    }\n}",
+        "python": "class Solution:\n    def trap(self, height: List[int]) -> int:\n        left, right = 0, len(height) - 1\n        left_max, right_max = 0, 0\n        water = 0\n        \n        while left <= right:\n            if height[left] < height[right]:\n                if height[left] >= left_max:\n                    left_max = height[left]\n                else:\n                    water += left_max - height[left]\n                left += 1\n            else:\n                if height[right] >= right_max:\n                    right_max = height[right]\n                else:\n                    water += right_max - height[right]\n                right -= 1\n        \n        return water",
+        "javascript": "var trap = function(height) {\n    let left = 0, right = height.length - 1;\n    let leftMax = 0, rightMax = 0;\n    let water = 0;\n    \n    while (left <= right) {\n        if (height[left] < height[right]) {\n            if (height[left] >= leftMax) {\n                leftMax = height[left];\n            } else {\n                water += leftMax - height[left];\n            }\n            left++;\n        } else {\n            if (height[right] >= rightMax) {\n                rightMax = height[right];\n            } else {\n                water += rightMax - height[right];\n            }\n            right--;\n        }\n    }\n    \n    return water;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling edge cases (empty array, single element)",
+    "In two pointers: comparing height[left] with leftMax instead of comparing heights at left and right",
+    "Forgetting to update leftMax/rightMax when current height is higher",
+    "In prefix/suffix approach: not initializing arrays correctly",
+    "Integer overflow with very large arrays"
+  ],
+  "hints": [
+    "Water at position i = min(leftMax, rightMax) - height[i]",
+    "Two pointers: move pointer with smaller height (that side limits water level)",
+    "Prefix/suffix arrays avoid repeated max calculations",
+    "Stack approach: think about filling water level by level",
+    "Two pointer is most elegant: O(n) time, O(1) space"
+  ],
+  "followUp": [
+    "Can you solve using stack? (Process bars that can trap water)",
+    "What about 3D version (Container With Most Water II)?",
+    "Can you handle negative heights (underground)?",
+    "What if bars have different widths?",
+    "How to visualize the solution step by step?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple", "Bloomberg", "Uber"],
+  "tags": ["array", "two-pointers", "stack", "monotonic-stack", "dynamic-programming"],
+  "relatedProblems": [
+    "Container With Most Water",
+    "Product of Array Except Self",
+    "Candy",
+    "Maximal Rectangle",
+    "Pour Water"
+  ]
+}

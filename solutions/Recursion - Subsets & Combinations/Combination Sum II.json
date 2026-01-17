@@ -1,0 +1,169 @@
+{
+  "questionId": "40",
+  "questionSlug": "combination-sum-ii",
+  "title": "Combination Sum II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/combination-sum-ii/",
+    "videos": [
+      {
+        "title": "Combination Sum II - Backtracking",
+        "url": "https://www.youtube.com/watch?v=rSA3t6BDDwg",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Combination Sum with Duplicates",
+        "url": "https://www.youtube.com/watch?v=FC0r-JxOhTw",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Combination Sum II - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/combination-sum-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Combinations with given sum",
+        "url": "https://www.geeksforgeeks.org/combinations-with-given-sum/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/combination-sum-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/combination-sum-ii/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find combinations that sum to target with no reuse from unsorted array? Sort first. Skip duplicates at same level. Move to next index.",
+  "approaches": [
+    {
+      "name": "Backtracking with Duplicate Skipping",
+      "order": 1,
+      "intuition": "Like Combination Sum but elements used at most once. Sort array, skip duplicates at same recursion level.",
+      "approach": "Use backtracking with start pointer. Sort to group duplicates. Skip duplicate at same level.",
+      "steps": [
+        "Sort array",
+        "backtrack(start, currentSum, current):",
+        "  If currentSum == target: add to result",
+        "  If currentSum > target: return (prune)",
+        "  For i from start to n:",
+        "    If i > start AND nums[i] == nums[i-1]: continue (skip)",
+        "    current.add(nums[i])",
+        "    backtrack(i+1, currentSum+nums[i], current)",
+        "    current.remove()"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "Worst case explore all subsets, each addition is O(1)",
+        "spaceExplanation": "Recursion depth at most n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        sort(candidates.begin(), candidates.end());\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(0, candidates, target, 0, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, vector<int>& candidates, int target, int currentSum, vector<int>& current, vector<vector<int>>& result) {\n        if (currentSum == target) {\n            result.push_back(current);\n            return;\n        }\n        \n        if (currentSum > target) return; // Prune\n        \n        for (int i = start; i < candidates.size(); i++) {\n            if (i > start && candidates[i] == candidates[i - 1]) continue; // Skip duplicates\n            \n            current.push_back(candidates[i]);\n            backtrack(i + 1, candidates, target, currentSum + candidates[i], current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n        Arrays.sort(candidates);\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(0, candidates, target, 0, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, int[] candidates, int target, int currentSum, List<Integer> current, List<List<Integer>> result) {\n        if (currentSum == target) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        if (currentSum > target) return;\n        \n        for (int i = start; i < candidates.length; i++) {\n            if (i > start && candidates[i] == candidates[i - 1]) continue;\n            \n            current.add(candidates[i]);\n            backtrack(i + 1, candidates, target, currentSum + candidates[i], current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def combinationSum2(candidates, target):\n    candidates.sort()\n    result = []\n    \n    def backtrack(start, currentSum, current):\n        if currentSum == target:\n            result.append(current[:])\n            return\n        \n        if currentSum > target:\n            return\n        \n        for i in range(start, len(candidates)):\n            if i > start and candidates[i] == candidates[i - 1]:\n                continue\n            \n            current.append(candidates[i])\n            backtrack(i + 1, currentSum + candidates[i], current)\n            current.pop()\n    \n    backtrack(0, 0, [])\n    return result",
+        "javascript": "function combinationSum2(candidates, target) {\n    candidates.sort((a, b) => a - b);\n    const result = [];\n    \n    function backtrack(start, currentSum, current) {\n        if (currentSum === target) {\n            result.push([...current]);\n            return;\n        }\n        \n        if (currentSum > target) return;\n        \n        for (let i = start; i < candidates.length; i++) {\n            if (i > start && candidates[i] === candidates[i - 1]) continue;\n            \n            current.push(candidates[i]);\n            backtrack(i + 1, currentSum + candidates[i], current);\n            current.pop();\n        }\n    }\n    \n    backtrack(0, 0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Remaining Sum Optimization",
+      "order": 2,
+      "intuition": "Similar to above but pass remaining sum instead of current sum. Better for pruning.",
+      "approach": "Track remaining sum. Stop early if can't reach target.",
+      "steps": [
+        "Sort array",
+        "backtrack(start, remainingSum, current):",
+        "  If remainingSum == 0: add to result",
+        "  If remainingSum < 0: return (prune)",
+        "  For i from start to n:",
+        "    If i > start AND nums[i] == nums[i-1]: continue",
+        "    If nums[i] > remainingSum: break (prune early)",
+        "    current.add(nums[i])",
+        "    backtrack(i+1, remainingSum-nums[i], current)",
+        "    current.remove()"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "With better pruning, explore fewer branches",
+        "spaceExplanation": "Recursion depth is at most n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        sort(candidates.begin(), candidates.end());\n        vector<vector<int>> result;\n        vector<int> current;\n        backtrack(0, candidates, target, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, vector<int>& candidates, int remainingSum, vector<int>& current, vector<vector<int>>& result) {\n        if (remainingSum == 0) {\n            result.push_back(current);\n            return;\n        }\n        \n        if (remainingSum < 0) return;\n        \n        for (int i = start; i < candidates.size(); i++) {\n            if (i > start && candidates[i] == candidates[i - 1]) continue;\n            if (candidates[i] > remainingSum) break; // Prune early\n            \n            current.push_back(candidates[i]);\n            backtrack(i + 1, candidates, remainingSum - candidates[i], current, result);\n            current.pop_back();\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n        Arrays.sort(candidates);\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(0, candidates, target, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int start, int[] candidates, int remainingSum, List<Integer> current, List<List<Integer>> result) {\n        if (remainingSum == 0) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        if (remainingSum < 0) return;\n        \n        for (int i = start; i < candidates.length; i++) {\n            if (i > start && candidates[i] == candidates[i - 1]) continue;\n            if (candidates[i] > remainingSum) break;\n            \n            current.add(candidates[i]);\n            backtrack(i + 1, candidates, remainingSum - candidates[i], current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}",
+        "python": "def combinationSum2(candidates, target):\n    candidates.sort()\n    result = []\n    \n    def backtrack(start, remainingSum, current):\n        if remainingSum == 0:\n            result.append(current[:])\n            return\n        \n        if remainingSum < 0:\n            return\n        \n        for i in range(start, len(candidates)):\n            if i > start and candidates[i] == candidates[i - 1]:\n                continue\n            if candidates[i] > remainingSum:\n                break\n            \n            current.append(candidates[i])\n            backtrack(i + 1, remainingSum - candidates[i], current)\n            current.pop()\n    \n    backtrack(0, target, [])\n    return result",
+        "javascript": "function combinationSum2(candidates, target) {\n    candidates.sort((a, b) => a - b);\n    const result = [];\n    \n    function backtrack(start, remainingSum, current) {\n        if (remainingSum === 0) {\n            result.push([...current]);\n            return;\n        }\n        \n        if (remainingSum < 0) return;\n        \n        for (let i = start; i < candidates.length; i++) {\n            if (i > start && candidates[i] === candidates[i - 1]) continue;\n            if (candidates[i] > remainingSum) break;\n            \n            current.push(candidates[i]);\n            backtrack(i + 1, remainingSum - candidates[i], current);\n            current.pop();\n        }\n    }\n    \n    backtrack(0, target, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Frequency Map - Optimal",
+      "order": 3,
+      "intuition": "Use frequency map to handle duplicates elegantly. Process unique values, decide how many of each to use.",
+      "approach": "Count frequency of each unique element, then decide how many times to use it.",
+      "steps": [
+        "Create frequency map from candidates",
+        "backtrack(sorted unique keys, index, remainingSum, current):",
+        "  If remainingSum == 0: add to result",
+        "  If remainingSum < 0 or index >= unique.size(): return",
+        "  num = unique[index], freq = frequency[num]",
+        "  For count from 0 to freq:",
+        "    For _ in range(count): current.add(num)",
+        "    backtrack(index+1, remainingSum-(num*count), current)",
+        "    For _ in range(count): current.remove()"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "Process unique elements, better handling of duplicates",
+        "spaceExplanation": "Frequency map and recursion"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        sort(candidates.begin(), candidates.end());\n        vector<vector<int>> result;\n        vector<int> current;\n        map<int, int> freq;\n        \n        for (int num : candidates) {\n            freq[num]++;\n        }\n        \n        vector<int> uniqueNums;\n        for (auto& p : freq) {\n            uniqueNums.push_back(p.first);\n        }\n        \n        backtrack(0, uniqueNums, freq, target, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int index, vector<int>& uniqueNums, map<int, int>& freq, int remainingSum, vector<int>& current, vector<vector<int>>& result) {\n        if (remainingSum == 0) {\n            result.push_back(current);\n            return;\n        }\n        \n        if (remainingSum < 0 || index >= uniqueNums.size()) return;\n        \n        int num = uniqueNums[index];\n        int maxCount = freq[num];\n        \n        for (int count = 0; count <= maxCount && count * num <= remainingSum; count++) {\n            for (int i = 0; i < count; i++) {\n                current.push_back(num);\n            }\n            \n            backtrack(index + 1, uniqueNums, freq, remainingSum - count * num, current, result);\n            \n            for (int i = 0; i < count; i++) {\n                current.pop_back();\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n        Arrays.sort(candidates);\n        List<List<Integer>> result = new ArrayList<>();\n        Map<Integer, Integer> freq = new HashMap<>();\n        \n        for (int num : candidates) {\n            freq.put(num, freq.getOrDefault(num, 0) + 1);\n        }\n        \n        List<Integer> uniqueNums = new ArrayList<>(freq.keySet());\n        backtrack(0, uniqueNums, freq, target, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(int index, List<Integer> uniqueNums, Map<Integer, Integer> freq, int remainingSum, List<Integer> current, List<List<Integer>> result) {\n        if (remainingSum == 0) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        if (remainingSum < 0 || index >= uniqueNums.size()) return;\n        \n        int num = uniqueNums.get(index);\n        int maxCount = freq.get(num);\n        \n        for (int count = 0; count <= maxCount && count * num <= remainingSum; count++) {\n            for (int i = 0; i < count; i++) {\n                current.add(num);\n            }\n            \n            backtrack(index + 1, uniqueNums, freq, remainingSum - count * num, current, result);\n            \n            for (int i = 0; i < count; i++) {\n                current.remove(current.size() - 1);\n            }\n        }\n    }\n}",
+        "python": "def combinationSum2(candidates, target):\n    candidates.sort()\n    result = []\n    from collections import Counter\n    freq = Counter(candidates)\n    uniqueNums = sorted(freq.keys())\n    \n    def backtrack(index, remainingSum, current):\n        if remainingSum == 0:\n            result.append(current[:])\n            return\n        \n        if remainingSum < 0 or index >= len(uniqueNums):\n            return\n        \n        num = uniqueNums[index]\n        maxCount = freq[num]\n        \n        for count in range(maxCount + 1):\n            if count * num > remainingSum:\n                break\n            \n            for _ in range(count):\n                current.append(num)\n            \n            backtrack(index + 1, remainingSum - count * num, current)\n            \n            for _ in range(count):\n                current.pop()\n    \n    backtrack(0, target, [])\n    return result",
+        "javascript": "function combinationSum2(candidates, target) {\n    candidates.sort((a, b) => a - b);\n    const result = [];\n    const freq = {};\n    \n    for (const num of candidates) {\n        freq[num] = (freq[num] || 0) + 1;\n    }\n    \n    const uniqueNums = Object.keys(freq).map(Number).sort((a, b) => a - b);\n    \n    function backtrack(index, remainingSum, current) {\n        if (remainingSum === 0) {\n            result.push([...current]);\n            return;\n        }\n        \n        if (remainingSum < 0 || index >= uniqueNums.length) return;\n        \n        const num = uniqueNums[index];\n        const maxCount = freq[num];\n        \n        for (let count = 0; count <= maxCount && count * num <= remainingSum; count++) {\n            for (let i = 0; i < count; i++) {\n                current.push(num);\n            }\n            \n            backtrack(index + 1, remainingSum - count * num, current);\n            \n            for (let i = 0; i < count; i++) {\n                current.pop();\n            }\n        }\n    }\n    \n    backtrack(0, target, []);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting the array first",
+    "Forgetting to skip duplicates at same recursion level",
+    "Using nums[i-1] without checking i > start",
+    "Incrementing to i+1 when should allow reuse (here we shouldn't)",
+    "Not handling the 'no reuse' constraint properly"
+  ],
+  "hints": [
+    "Each element used at most once (unlike Combination Sum I)",
+    "Sort array to group duplicates",
+    "Skip duplicate at same level: if i > start AND nums[i] == nums[i-1], skip",
+    "Move to i+1 in recursion (not start+1)",
+    "Prune when currentSum > target or remaining < 0"
+  ],
+  "followUp": [
+    "Can you use elements unlimited times? (Use Combination Sum I approach)",
+    "Find only unique combinations? (Add deduplication logic)",
+    "Return count instead of combinations? (Backtrack and count)",
+    "Return lexicographically sorted? (Already is)",
+    "Find combinations with specific length? (Add length constraint)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft"],
+  "tags": ["backtracking", "array"],
+  "relatedProblems": [
+    "Combination Sum",
+    "Combination Sum III",
+    "Subsets II",
+    "Letter Combinations of Phone Number"
+  ]
+}

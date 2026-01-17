@@ -1,0 +1,172 @@
+{
+  "questionId": "71",
+  "questionSlug": "simplify-path",
+  "title": "Simplify Path",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/simplify-path/",
+    "videos": [
+      {
+        "title": "Simplify Path - Stack Solution",
+        "url": "https://www.youtube.com/watch?v=qYlHrAKJfyA",
+        "channel": "NeetCode",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Simplify Unix Path using Stack",
+        "url": "https://www.youtube.com/watch?v=fSQReuRbfT8",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Stack Based Path Simplification",
+        "url": "https://www.youtube.com/watch?v=2908LYW_3_M",
+        "channel": "Pepcoding",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Simplify Path - LeetCode Official",
+        "url": "https://leetcode.com/problems/simplify-path/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Simplify Path Solution",
+        "url": "https://takeuforward.org/data-structure/simplify-path/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Simplify Path - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/simplify-directory-path-unix-like/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/simplify-path/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Path navigation with .. (go back) = Stack. Split by /, ignore . and empty, pop for .., push valid directories.",
+  "approaches": [
+    {
+      "name": "String Manipulation - Build Result Directly",
+      "order": 1,
+      "intuition": "Build result path by tracking position. When '..' found, backtrack in result string.",
+      "approach": "Split by /, process each component, build result string with backtracking logic.",
+      "steps": [
+        "Split path by '/'",
+        "result = '/'",
+        "For each component:",
+        "  If empty or '.': skip",
+        "  If '..': remove last directory from result",
+        "  Else: append '/' + component",
+        "Return result or '/' if empty"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Split and process each component once",
+        "spaceExplanation": "Store split components and result"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string simplifyPath(string path) {\n        vector<string> components;\n        stringstream ss(path);\n        string component;\n        \n        // Split by '/'\n        while (getline(ss, component, '/')) {\n            if (!component.empty() && component != \".\") {\n                components.push_back(component);\n            }\n        }\n        \n        // Build result\n        vector<string> result;\n        for (const string& comp : components) {\n            if (comp == \"..\") {\n                if (!result.empty()) {\n                    result.pop_back();\n                }\n            } else {\n                result.push_back(comp);\n            }\n        }\n        \n        // Construct path\n        string simplified = \"/\";\n        for (int i = 0; i < result.size(); i++) {\n            simplified += result[i];\n            if (i < result.size() - 1) {\n                simplified += \"/\";\n            }\n        }\n        \n        return simplified;\n    }\n};",
+        "java": "class Solution {\n    public String simplifyPath(String path) {\n        String[] components = path.split(\"/\");\n        List<String> result = new ArrayList<>();\n        \n        for (String comp : components) {\n            if (comp.isEmpty() || comp.equals(\".\")) {\n                continue;\n            } else if (comp.equals(\"..\")) {\n                if (!result.isEmpty()) {\n                    result.remove(result.size() - 1);\n                }\n            } else {\n                result.add(comp);\n            }\n        }\n        \n        return \"/\" + String.join(\"/\", result);\n    }\n}",
+        "python": "class Solution:\n    def simplifyPath(self, path: str) -> str:\n        components = path.split('/')\n        result = []\n        \n        for comp in components:\n            if comp == '' or comp == '.':\n                continue\n            elif comp == '..':\n                if result:\n                    result.pop()\n            else:\n                result.append(comp)\n        \n        return '/' + '/'.join(result)",
+        "javascript": "var simplifyPath = function(path) {\n    const components = path.split('/');\n    const result = [];\n    \n    for (const comp of components) {\n        if (comp === '' || comp === '.') {\n            continue;\n        } else if (comp === '..') {\n            if (result.length > 0) {\n                result.pop();\n            }\n        } else {\n            result.push(comp);\n        }\n    }\n    \n    return '/' + result.join('/');\n};"
+      }
+    },
+    {
+      "name": "Stack - Explicit Stack Data Structure",
+      "order": 2,
+      "intuition": "Use actual stack to track directory levels. Push valid names, pop for '..', ignore '.' and empty.",
+      "approach": "Split path, use stack for directory navigation. '..' pops, valid names push.",
+      "steps": [
+        "Split path by '/'",
+        "Create stack",
+        "For each component:",
+        "  If '..' and stack not empty: pop",
+        "  Else if valid (not empty, not '.', not '..'): push",
+        "Build path from stack contents",
+        "Return '/' + joined components"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Process each component once",
+        "spaceExplanation": "Stack and result storage"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string simplifyPath(string path) {\n        stack<string> st;\n        stringstream ss(path);\n        string component;\n        \n        // Process each component\n        while (getline(ss, component, '/')) {\n            if (component == \"..\" && !st.empty()) {\n                st.pop();\n            } else if (!component.empty() && component != \".\" && component != \"..\") {\n                st.push(component);\n            }\n        }\n        \n        // Build result from stack\n        string result = \"\";\n        while (!st.empty()) {\n            result = \"/\" + st.top() + result;\n            st.pop();\n        }\n        \n        return result.empty() ? \"/\" : result;\n    }\n};",
+        "java": "class Solution {\n    public String simplifyPath(String path) {\n        Stack<String> stack = new Stack<>();\n        String[] components = path.split(\"/\");\n        \n        for (String comp : components) {\n            if (comp.equals(\"..\") && !stack.isEmpty()) {\n                stack.pop();\n            } else if (!comp.isEmpty() && !comp.equals(\".\") && !comp.equals(\"..\")) {\n                stack.push(comp);\n            }\n        }\n        \n        StringBuilder result = new StringBuilder();\n        for (String dir : stack) {\n            result.append(\"/\").append(dir);\n        }\n        \n        return result.length() == 0 ? \"/\" : result.toString();\n    }\n}",
+        "python": "class Solution:\n    def simplifyPath(self, path: str) -> str:\n        stack = []\n        components = path.split('/')\n        \n        for comp in components:\n            if comp == '..' and stack:\n                stack.pop()\n            elif comp and comp != '.' and comp != '..':\n                stack.append(comp)\n        \n        return '/' + '/'.join(stack)",
+        "javascript": "var simplifyPath = function(path) {\n    const stack = [];\n    const components = path.split('/');\n    \n    for (const comp of components) {\n        if (comp === '..' && stack.length > 0) {\n            stack.pop();\n        } else if (comp && comp !== '.' && comp !== '..') {\n            stack.push(comp);\n        }\n    }\n    \n    return '/' + stack.join('/');\n};"
+      }
+    },
+    {
+      "name": "Deque - Bidirectional Processing - Optimal",
+      "order": 3,
+      "intuition": "Use deque (double-ended queue) for more efficient path building. Can append to front or back.",
+      "approach": "Same logic as stack but use deque for easier result construction without reversal.",
+      "steps": [
+        "Split path by '/'",
+        "Create deque",
+        "For each component:",
+        "  If '..' and deque not empty: pop_back",
+        "  Else if valid: push_back",
+        "Join deque with '/'",
+        "Return '/' + result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Linear processing of components",
+        "spaceExplanation": "Deque stores directory names"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    string simplifyPath(string path) {\n        deque<string> dq;\n        stringstream ss(path);\n        string component;\n        \n        // Process components\n        while (getline(ss, component, '/')) {\n            if (component == \"..\" && !dq.empty()) {\n                dq.pop_back();\n            } else if (!component.empty() && component != \".\" && component != \"..\") {\n                dq.push_back(component);\n            }\n        }\n        \n        // Build result\n        if (dq.empty()) return \"/\";\n        \n        string result = \"\";\n        for (const string& dir : dq) {\n            result += \"/\" + dir;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public String simplifyPath(String path) {\n        Deque<String> deque = new ArrayDeque<>();\n        String[] components = path.split(\"/\");\n        \n        for (String comp : components) {\n            if (comp.equals(\"..\") && !deque.isEmpty()) {\n                deque.pollLast();\n            } else if (!comp.isEmpty() && !comp.equals(\".\") && !comp.equals(\"..\")) {\n                deque.offerLast(comp);\n            }\n        }\n        \n        if (deque.isEmpty()) return \"/\";\n        \n        StringBuilder result = new StringBuilder();\n        for (String dir : deque) {\n            result.append(\"/\").append(dir);\n        }\n        \n        return result.toString();\n    }\n}",
+        "python": "from collections import deque\n\nclass Solution:\n    def simplifyPath(self, path: str) -> str:\n        dq = deque()\n        components = path.split('/')\n        \n        for comp in components:\n            if comp == '..' and dq:\n                dq.pop()\n            elif comp and comp != '.' and comp != '..':\n                dq.append(comp)\n        \n        return '/' + '/'.join(dq) if dq else '/'",
+        "javascript": "var simplifyPath = function(path) {\n    const deque = [];\n    const components = path.split('/');\n    \n    for (const comp of components) {\n        if (comp === '..' && deque.length > 0) {\n            deque.pop();\n        } else if (comp && comp !== '.' && comp !== '..') {\n            deque.push(comp);\n        }\n    }\n    \n    return '/' + deque.join('/');\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling '..' at root level (should not go above root)",
+    "Not filtering out empty strings from split (consecutive slashes)",
+    "Forgetting to handle '.' (current directory, should be ignored)",
+    "Not returning '/' for empty result",
+    "Treating '...' as special (it's a valid directory name, not '..')",
+    "Not handling trailing slashes correctly"
+  ],
+  "hints": [
+    "Split path by '/' to get individual components",
+    "Use stack/deque to track directory levels",
+    "'..' means go up one level (pop from stack)",
+    "'.' means current directory (ignore)",
+    "Empty strings and '.' should be ignored",
+    "Directory names can be anything except '.' and '..'"
+  ],
+  "followUp": [
+    "What if path can have symbolic links?",
+    "How to handle Windows paths (backslashes, drive letters)?",
+    "Can you validate if path is valid?",
+    "What about relative paths without leading slash?",
+    "How to compute relative path between two absolute paths?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple", "Oracle"],
+  "tags": ["string", "stack"],
+  "relatedProblems": [
+    "Remove All Adjacent Duplicates In String",
+    "Build Array With Stack Operations",
+    "Crawl Log Folder",
+    "Minimum Number of Operations to Make Array Empty",
+    "Decoded String at Index"
+  ]
+}

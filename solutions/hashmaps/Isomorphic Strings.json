@@ -1,0 +1,171 @@
+{
+  "questionId": "205",
+  "questionSlug": "isomorphic-strings",
+  "title": "Isomorphic Strings",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/isomorphic-strings/",
+    "videos": [
+      {
+        "title": "Isomorphic Strings - Hash Map",
+        "url": "https://www.youtube.com/watch?v=7yF-U1hLEqQ",
+        "channel": "NeetCode",
+        "duration": "7:50",
+        "language": "English"
+      },
+      {
+        "title": "Isomorphic Strings Explained",
+        "url": "https://www.youtube.com/watch?v=hQ32K3OuV7U",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:35",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Isomorphic Strings - LeetCode Official",
+        "url": "https://leetcode.com/problems/isomorphic-strings/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Check if two strings are isomorphic",
+        "url": "https://www.geeksforgeeks.org/check-if-two-given-strings-are-isomorphic-to-each-other/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/isomorphic-strings/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/isomorphic-strings/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Check if strings are isomorphic (bijection mapping)? Use TWO HashMaps - one for s->t and one for t->s. Very similar to Word Pattern problem.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Mappings",
+      "order": 1,
+      "intuition": "For each character in s, verify that its mapping to t is consistent throughout both strings.",
+      "approach": "For each position, check previous positions to verify consistent mapping in both directions.",
+      "steps": [
+        "If lengths differ, return false",
+        "For each position i:",
+        "  char1 = s[i], char2 = t[i]",
+        "  For each position j < i:",
+        "    If s[j] == char1 and t[j] != char2:",
+        "      Return false",
+        "    If t[j] == char2 and s[j] != char1:",
+        "      Return false",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "For each character, checking previous positions takes O(n)",
+        "spaceExplanation": "No extra space needed"
+      },
+      "code": {
+        "cpp": "bool isIsomorphic(string s, string t) {\n    if (s.length() != t.length()) {\n        return false;\n    }\n    \n    int n = s.length();\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < i; j++) {\n            if ((s[j] == s[i] && t[j] != t[i]) || \n                (t[j] == t[i] && s[j] != s[i])) {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n}",
+        "java": "public boolean isIsomorphic(String s, String t) {\n    if (s.length() != t.length()) {\n        return false;\n    }\n    \n    int n = s.length();\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < i; j++) {\n            if ((s.charAt(j) == s.charAt(i) && t.charAt(j) != t.charAt(i)) ||\n                (t.charAt(j) == t.charAt(i) && s.charAt(j) != s.charAt(i))) {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n}",
+        "python": "def isIsomorphic(s, t):\n    if len(s) != len(t):\n        return False\n    \n    n = len(s)\n    for i in range(n):\n        for j in range(i):\n            if (s[j] == s[i] and t[j] != t[i]) or \\\n               (t[j] == t[i] and s[j] != s[i]):\n                return False\n    \n    return True",
+        "javascript": "function isIsomorphic(s, t) {\n    if (s.length !== t.length) {\n        return false;\n    }\n    \n    const n = s.length;\n    for (let i = 0; i < n; i++) {\n        for (let j = 0; j < i; j++) {\n            if ((s[j] === s[i] && t[j] !== t[i]) ||\n                (t[j] === t[i] && s[j] !== s[i])) {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n}"
+      }
+    },
+    {
+      "name": "Single Hash Map (Incorrect)",
+      "order": 2,
+      "intuition": "Use one hash map to track s->t mapping. However, this fails when two different characters in s map to same character in t.",
+      "approach": "Map each character in s to corresponding character in t. INCOMPLETE - shown for learning.",
+      "steps": [
+        "If lengths differ, return false",
+        "Create map: s_char -> t_char",
+        "For each position i:",
+        "  If s[i] in map:",
+        "    If map[s[i]] != t[i], return false",
+        "  Else:",
+        "    map[s[i]] = t[i]",
+        "Return true",
+        "❌ PROBLEM: Doesn't check if two chars in s map to same char in t!"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(k)",
+        "timeExplanation": "Single pass through strings",
+        "spaceExplanation": "k is number of unique characters"
+      },
+      "code": {
+        "cpp": "// ⚠️ INCORRECT - Shown for learning purposes\nbool isIsomorphic(string s, string t) {\n    if (s.length() != t.length()) {\n        return false;\n    }\n    \n    unordered_map<char, char> map;\n    \n    for (int i = 0; i < s.length(); i++) {\n        if (map.count(s[i])) {\n            if (map[s[i]] != t[i]) {\n                return false;\n            }\n        } else {\n            map[s[i]] = t[i];\n        }\n    }\n    \n    return true;\n    // Fails for: s=\"badc\", t=\"baba\"\n}",
+        "java": "// ⚠️ INCORRECT - Shown for learning purposes\npublic boolean isIsomorphic(String s, String t) {\n    if (s.length() != t.length()) {\n        return false;\n    }\n    \n    Map<Character, Character> map = new HashMap<>();\n    \n    for (int i = 0; i < s.length(); i++) {\n        char c1 = s.charAt(i);\n        char c2 = t.charAt(i);\n        \n        if (map.containsKey(c1)) {\n            if (map.get(c1) != c2) {\n                return false;\n            }\n        } else {\n            map.put(c1, c2);\n        }\n    }\n    \n    return true;\n    // Fails for: s=\"badc\", t=\"baba\"\n}",
+        "python": "# ⚠️ INCORRECT - Shown for learning purposes\ndef isIsomorphic(s, t):\n    if len(s) != len(t):\n        return False\n    \n    s_to_t = {}\n    \n    for c1, c2 in zip(s, t):\n        if c1 in s_to_t:\n            if s_to_t[c1] != c2:\n                return False\n        else:\n            s_to_t[c1] = c2\n    \n    return True\n    # Fails for: s=\"badc\", t=\"baba\"",
+        "javascript": "// ⚠️ INCORRECT - Shown for learning purposes\nfunction isIsomorphic(s, t) {\n    if (s.length !== t.length) {\n        return false;\n    }\n    \n    const map = new Map();\n    \n    for (let i = 0; i < s.length; i++) {\n        if (map.has(s[i])) {\n            if (map.get(s[i]) !== t[i]) {\n                return false;\n            }\n        } else {\n            map.set(s[i], t[i]);\n        }\n    }\n    \n    return true;\n    // Fails for: s=\"badc\", t=\"baba\"\n}"
+      }
+    },
+    {
+      "name": "Two Hash Maps - Bijection - Optimal",
+      "order": 3,
+      "intuition": "Need bijection (one-to-one mapping). Use two maps: s->t AND t->s. Both must be consistent for isomorphism.",
+      "approach": "Maintain two hash maps to ensure one-to-one correspondence in both directions.",
+      "steps": [
+        "If lengths differ, return false",
+        "Create sToT map and tToS map",
+        "For each position i:",
+        "  char1 = s[i], char2 = t[i]",
+        "  If char1 in sToT:",
+        "    If sToT[char1] != char2, return false",
+        "  Else:",
+        "    sToT[char1] = char2",
+        "  If char2 in tToS:",
+        "    If tToS[char2] != char1, return false",
+        "  Else:",
+        "    tToS[char2] = char1",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(k)",
+        "timeExplanation": "Single pass through strings",
+        "spaceExplanation": "Two maps storing k unique characters each"
+      },
+      "code": {
+        "cpp": "bool isIsomorphic(string s, string t) {\n    if (s.length() != t.length()) {\n        return false;\n    }\n    \n    unordered_map<char, char> sToT;\n    unordered_map<char, char> tToS;\n    \n    for (int i = 0; i < s.length(); i++) {\n        char c1 = s[i];\n        char c2 = t[i];\n        \n        if (sToT.count(c1)) {\n            if (sToT[c1] != c2) {\n                return false;\n            }\n        } else {\n            sToT[c1] = c2;\n        }\n        \n        if (tToS.count(c2)) {\n            if (tToS[c2] != c1) {\n                return false;\n            }\n        } else {\n            tToS[c2] = c1;\n        }\n    }\n    \n    return true;\n}",
+        "java": "public boolean isIsomorphic(String s, String t) {\n    if (s.length() != t.length()) {\n        return false;\n    }\n    \n    Map<Character, Character> sToT = new HashMap<>();\n    Map<Character, Character> tToS = new HashMap<>();\n    \n    for (int i = 0; i < s.length(); i++) {\n        char c1 = s.charAt(i);\n        char c2 = t.charAt(i);\n        \n        if (sToT.containsKey(c1)) {\n            if (sToT.get(c1) != c2) {\n                return false;\n            }\n        } else {\n            sToT.put(c1, c2);\n        }\n        \n        if (tToS.containsKey(c2)) {\n            if (tToS.get(c2) != c1) {\n                return false;\n            }\n        } else {\n            tToS.put(c2, c1);\n        }\n    }\n    \n    return true;\n}",
+        "python": "def isIsomorphic(s, t):\n    if len(s) != len(t):\n        return False\n    \n    s_to_t = {}\n    t_to_s = {}\n    \n    for c1, c2 in zip(s, t):\n        if c1 in s_to_t:\n            if s_to_t[c1] != c2:\n                return False\n        else:\n            s_to_t[c1] = c2\n        \n        if c2 in t_to_s:\n            if t_to_s[c2] != c1:\n                return False\n        else:\n            t_to_s[c2] = c1\n    \n    return True",
+        "javascript": "function isIsomorphic(s, t) {\n    if (s.length !== t.length) {\n        return false;\n    }\n    \n    const sToT = new Map();\n    const tToS = new Map();\n    \n    for (let i = 0; i < s.length; i++) {\n        const c1 = s[i];\n        const c2 = t[i];\n        \n        if (sToT.has(c1)) {\n            if (sToT.get(c1) !== c2) {\n                return false;\n            }\n        } else {\n            sToT.set(c1, c2);\n        }\n        \n        if (tToS.has(c2)) {\n            if (tToS.get(c2) !== c1) {\n                return false;\n            }\n        } else {\n            tToS.set(c2, c1);\n        }\n    }\n    \n    return true;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using only one hash map (fails when two chars in s map to same char in t)",
+    "Not checking t->s mapping (only checking s->t)",
+    "Forgetting to check if lengths are equal",
+    "Example that breaks single map: s='badc', t='baba' (a and c both map to a)",
+    "Not handling empty strings"
+  ],
+  "hints": [
+    "This requires bijection - one-to-one mapping in both directions",
+    "One hash map is NOT sufficient",
+    "Need to verify both: s->t AND t->s mappings",
+    "Similar to Word Pattern problem",
+    "Two characters in s cannot map to the same character in t"
+  ],
+  "followUp": [
+    "What if we can transform one string to another with character replacements?",
+    "How to count number of isomorphic string pairs in a list?",
+    "Can you solve with one data structure? (Use combined key in single map)",
+    "What about case sensitivity? (Convert to same case first)",
+    "How to group all isomorphic strings together? (Use transformation pattern as key)"
+  ],
+  "companies": ["LinkedIn", "Google", "Microsoft", "Amazon", "Facebook"],
+  "tags": ["hash-table", "string"],
+  "relatedProblems": [
+    "Word Pattern",
+    "Count Items Matching a Rule",
+    "Find and Replace Pattern"
+  ]
+}

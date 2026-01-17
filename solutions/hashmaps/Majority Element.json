@@ -1,0 +1,176 @@
+{
+  "questionId": "169",
+  "questionSlug": "majority-element",
+  "title": "Majority Element",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/majority-element/",
+    "videos": [
+      {
+        "title": "Majority Element - Boyer-Moore Voting",
+        "url": "https://www.youtube.com/watch?v=7pnhv842keE",
+        "channel": "NeetCode",
+        "duration": "8:20",
+        "language": "English"
+      },
+      {
+        "title": "Majority Element Explained",
+        "url": "https://www.youtube.com/watch?v=AoX3BPWNnoE",
+        "channel": "take U forward",
+        "duration": "15:40",
+        "language": "English"
+      },
+      {
+        "title": "Moore's Voting Algorithm",
+        "url": "https://www.youtube.com/watch?v=n5QY3x_GNDg",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Majority Element - LeetCode Official",
+        "url": "https://leetcode.com/problems/majority-element/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Majority Element - Boyer Moore",
+        "url": "https://takeuforward.org/data-structure/find-the-majority-element-that-occurs-more-than-n-2-times/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Majority Element",
+        "url": "https://www.geeksforgeeks.org/majority-element/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/majority-element/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/majority-element/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find element appearing >n/2 times? Boyer-Moore Voting Algorithm O(n) time O(1) space. Or use HashMap to count frequencies.",
+  "approaches": [
+    {
+      "name": "Brute Force - Count Each Element",
+      "order": 1,
+      "intuition": "For each element, count its occurrences. Return element with count > n/2.",
+      "approach": "For each unique element, count how many times it appears.",
+      "steps": [
+        "For each index i:",
+        "  count = 0",
+        "  For each index j:",
+        "    If nums[j] == nums[i]:",
+        "      count++",
+        "  If count > n/2:",
+        "    Return nums[i]"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "For each element, counting takes O(n)",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "int majorityElement(vector<int>& nums) {\n    int n = nums.size();\n    \n    for (int i = 0; i < n; i++) {\n        int count = 0;\n        for (int j = 0; j < n; j++) {\n            if (nums[j] == nums[i]) {\n                count++;\n            }\n        }\n        if (count > n / 2) {\n            return nums[i];\n        }\n    }\n    \n    return -1;\n}",
+        "java": "public int majorityElement(int[] nums) {\n    int n = nums.length;\n    \n    for (int i = 0; i < n; i++) {\n        int count = 0;\n        for (int j = 0; j < n; j++) {\n            if (nums[j] == nums[i]) {\n                count++;\n            }\n        }\n        if (count > n / 2) {\n            return nums[i];\n        }\n    }\n    \n    return -1;\n}",
+        "python": "def majorityElement(nums):\n    n = len(nums)\n    \n    for i in range(n):\n        count = 0\n        for j in range(n):\n            if nums[j] == nums[i]:\n                count += 1\n        if count > n // 2:\n            return nums[i]\n    \n    return -1",
+        "javascript": "function majorityElement(nums) {\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        let count = 0;\n        for (let j = 0; j < n; j++) {\n            if (nums[j] === nums[i]) {\n                count++;\n            }\n        }\n        if (count > Math.floor(n / 2)) {\n            return nums[i];\n        }\n    }\n    \n    return -1;\n}"
+      }
+    },
+    {
+      "name": "Hash Map - Count Frequencies",
+      "order": 2,
+      "intuition": "Count frequency of each element using hash map. Return element with count > n/2.",
+      "approach": "Build frequency map, then find element with frequency > n/2.",
+      "steps": [
+        "Create hash map for frequencies",
+        "For each element:",
+        "  Increment count in map",
+        "  If count > n/2:",
+        "    Return element",
+        "Return -1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Hash map stores up to n elements"
+      },
+      "code": {
+        "cpp": "int majorityElement(vector<int>& nums) {\n    unordered_map<int, int> freq;\n    int n = nums.size();\n    \n    for (int num : nums) {\n        freq[num]++;\n        if (freq[num] > n / 2) {\n            return num;\n        }\n    }\n    \n    return -1;\n}",
+        "java": "public int majorityElement(int[] nums) {\n    Map<Integer, Integer> freq = new HashMap<>();\n    int n = nums.length;\n    \n    for (int num : nums) {\n        freq.put(num, freq.getOrDefault(num, 0) + 1);\n        if (freq.get(num) > n / 2) {\n            return num;\n        }\n    }\n    \n    return -1;\n}",
+        "python": "def majorityElement(nums):\n    from collections import Counter\n    \n    freq = Counter(nums)\n    n = len(nums)\n    \n    for num, count in freq.items():\n        if count > n // 2:\n            return num\n    \n    return -1",
+        "javascript": "function majorityElement(nums) {\n    const freq = new Map();\n    const n = nums.length;\n    \n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n        if (freq.get(num) > Math.floor(n / 2)) {\n            return num;\n        }\n    }\n    \n    return -1;\n}"
+      }
+    },
+    {
+      "name": "Boyer-Moore Voting Algorithm - Optimal",
+      "order": 3,
+      "intuition": "Majority element appears >n/2 times, so if we cancel out pairs of different elements, majority element will remain. Keep a candidate and count.",
+      "approach": "Maintain candidate and count. When count=0, pick new candidate. When same element, increment count. When different, decrement count.",
+      "steps": [
+        "candidate = nums[0], count = 0",
+        "For each num in nums:",
+        "  If count == 0:",
+        "    candidate = num",
+        "    count = 1",
+        "  Else if num == candidate:",
+        "    count++",
+        "  Else:",
+        "    count--",
+        "Return candidate",
+        "(Problem guarantees majority exists, so no verification needed)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only two variables: candidate and count"
+      },
+      "code": {
+        "cpp": "int majorityElement(vector<int>& nums) {\n    int candidate = 0;\n    int count = 0;\n    \n    for (int num : nums) {\n        if (count == 0) {\n            candidate = num;\n        }\n        count += (num == candidate) ? 1 : -1;\n    }\n    \n    return candidate;\n}",
+        "java": "public int majorityElement(int[] nums) {\n    int candidate = 0;\n    int count = 0;\n    \n    for (int num : nums) {\n        if (count == 0) {\n            candidate = num;\n        }\n        count += (num == candidate) ? 1 : -1;\n    }\n    \n    return candidate;\n}",
+        "python": "def majorityElement(nums):\n    candidate = 0\n    count = 0\n    \n    for num in nums:\n        if count == 0:\n            candidate = num\n        count += 1 if num == candidate else -1\n    \n    return candidate",
+        "javascript": "function majorityElement(nums) {\n    let candidate = 0;\n    let count = 0;\n    \n    for (const num of nums) {\n        if (count === 0) {\n            candidate = num;\n        }\n        count += (num === candidate) ? 1 : -1;\n    }\n    \n    return candidate;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding Boyer-Moore: it works because majority > n/2",
+    "Trying to verify candidate when problem guarantees majority exists",
+    "Using >= n/2 instead of > n/2 for majority definition",
+    "Forgetting to reset candidate when count reaches 0",
+    "Not handling edge case of single element array"
+  ],
+  "hints": [
+    "Majority element appears MORE than n/2 times",
+    "If we pair each majority element with a different element and remove both, majority still remains",
+    "Boyer-Moore: track candidate and count, cancel out different elements",
+    "When count reaches 0, pick new candidate",
+    "Hash map works but uses O(n) space; Boyer-Moore uses O(1)"
+  ],
+  "followUp": [
+    "What if majority might not exist? (Need second pass to verify)",
+    "Find all elements appearing > n/3 times? (Majority Element II)",
+    "Can you do it without modifying array? (Yes, all approaches preserve array)",
+    "What if array is too large for memory? (Streaming Boyer-Moore)",
+    "How to prove Boyer-Moore correctness? (Pigeonhole principle)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Adobe", "Oracle"],
+  "tags": ["array", "hash-table", "divide-and-conquer", "sorting", "counting"],
+  "relatedProblems": [
+    "Majority Element II",
+    "Check If a Number Is Majority Element in a Sorted Array",
+    "Find the Celebrity"
+  ]
+}

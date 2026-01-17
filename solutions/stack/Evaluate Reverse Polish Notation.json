@@ -1,0 +1,179 @@
+{
+  "questionId": "150",
+  "questionSlug": "evaluate-reverse-polish-notation",
+  "title": "Evaluate Reverse Polish Notation",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/evaluate-reverse-polish-notation/",
+    "videos": [
+      {
+        "title": "Evaluate Reverse Polish Notation - Stack",
+        "url": "https://www.youtube.com/watch?v=iu0082c4HDE",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "RPN Evaluation using Stack",
+        "url": "https://www.youtube.com/watch?v=qN8LPIcY6K4",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Postfix Expression Evaluation",
+        "url": "https://www.youtube.com/watch?v=MeRb_1bddWg",
+        "channel": "Aditya Verma",
+        "duration": "12:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Evaluate RPN - LeetCode Official",
+        "url": "https://leetcode.com/problems/evaluate-reverse-polish-notation/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Reverse Polish Notation",
+        "url": "https://takeuforward.org/data-structure/evaluate-reverse-polish-notation/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Postfix Evaluation - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/stack-set-4-evaluation-postfix-expression/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/evaluate-reverse-polish-notation/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/evaluation-of-postfix-expression/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Postfix/RPN evaluation = Stack. Push operands, pop two operands when operator found, apply operation, push result.",
+  "approaches": [
+    {
+      "name": "Recursion - Process from End",
+      "order": 1,
+      "intuition": "Process tokens recursively from right to left. When operator found, recursively evaluate operands.",
+      "approach": "Recursive helper that processes tokens. Operators consume two recursive calls for operands.",
+      "steps": [
+        "Define helper(index):",
+        "  If current is number: return (number, index-1)",
+        "  If operator:",
+        "    (right, index) = helper(index-1)",
+        "    (left, index) = helper(index)",
+        "    return (left op right, index)",
+        "Return helper(n-1)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each token processed once",
+        "spaceExplanation": "Recursion stack depth proportional to expression depth"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int index;\n    \n    int helper(vector<string>& tokens) {\n        string token = tokens[index--];\n        \n        if (token == \"+\" || token == \"-\" || token == \"*\" || token == \"/\") {\n            int right = helper(tokens);\n            int left = helper(tokens);\n            \n            if (token == \"+\") return left + right;\n            if (token == \"-\") return left - right;\n            if (token == \"*\") return left * right;\n            return left / right;\n        } else {\n            return stoi(token);\n        }\n    }\n    \npublic:\n    int evalRPN(vector<string>& tokens) {\n        index = tokens.size() - 1;\n        return helper(tokens);\n    }\n};",
+        "java": "class Solution {\n    private int index;\n    \n    public int evalRPN(String[] tokens) {\n        index = tokens.length - 1;\n        return helper(tokens);\n    }\n    \n    private int helper(String[] tokens) {\n        String token = tokens[index--];\n        \n        if (token.equals(\"+\") || token.equals(\"-\") || \n            token.equals(\"*\") || token.equals(\"/\")) {\n            int right = helper(tokens);\n            int left = helper(tokens);\n            \n            switch (token) {\n                case \"+\": return left + right;\n                case \"-\": return left - right;\n                case \"*\": return left * right;\n                case \"/\": return left / right;\n            }\n        }\n        \n        return Integer.parseInt(token);\n    }\n}",
+        "python": "class Solution:\n    def evalRPN(self, tokens: List[str]) -> int:\n        self.index = len(tokens) - 1\n        return self.helper(tokens)\n    \n    def helper(self, tokens: List[str]) -> int:\n        token = tokens[self.index]\n        self.index -= 1\n        \n        if token in ['+', '-', '*', '/']:\n            right = self.helper(tokens)\n            left = self.helper(tokens)\n            \n            if token == '+':\n                return left + right\n            elif token == '-':\n                return left - right\n            elif token == '*':\n                return left * right\n            else:\n                return int(left / right)  # Truncate toward zero\n        else:\n            return int(token)",
+        "javascript": "var evalRPN = function(tokens) {\n    let index = tokens.length - 1;\n    \n    function helper() {\n        const token = tokens[index--];\n        \n        if (['+', '-', '*', '/'].includes(token)) {\n            const right = helper();\n            const left = helper();\n            \n            switch (token) {\n                case '+': return left + right;\n                case '-': return left - right;\n                case '*': return left * right;\n                case '/': return Math.trunc(left / right);\n            }\n        }\n        \n        return parseInt(token);\n    }\n    \n    return helper();\n};"
+      }
+    },
+    {
+      "name": "Stack - Iterative Simple",
+      "order": 2,
+      "intuition": "Classic stack-based RPN evaluation. Scan left to right, push numbers, pop and apply operators.",
+      "approach": "Use stack. For each token: if number push, if operator pop two, apply, push result.",
+      "steps": [
+        "Create stack",
+        "For each token:",
+        "  If number: push to stack",
+        "  If operator:",
+        "    Pop right operand",
+        "    Pop left operand",
+        "    Apply operator",
+        "    Push result",
+        "Return stack.top()"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through tokens",
+        "spaceExplanation": "Stack stores operands"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int evalRPN(vector<string>& tokens) {\n        stack<int> st;\n        \n        for (const string& token : tokens) {\n            if (token == \"+\" || token == \"-\" || token == \"*\" || token == \"/\") {\n                int right = st.top(); st.pop();\n                int left = st.top(); st.pop();\n                \n                int result;\n                if (token == \"+\") result = left + right;\n                else if (token == \"-\") result = left - right;\n                else if (token == \"*\") result = left * right;\n                else result = left / right;\n                \n                st.push(result);\n            } else {\n                st.push(stoi(token));\n            }\n        }\n        \n        return st.top();\n    }\n};",
+        "java": "class Solution {\n    public int evalRPN(String[] tokens) {\n        Stack<Integer> stack = new Stack<>();\n        \n        for (String token : tokens) {\n            if (token.equals(\"+\") || token.equals(\"-\") || \n                token.equals(\"*\") || token.equals(\"/\")) {\n                int right = stack.pop();\n                int left = stack.pop();\n                \n                int result = 0;\n                switch (token) {\n                    case \"+\": result = left + right; break;\n                    case \"-\": result = left - right; break;\n                    case \"*\": result = left * right; break;\n                    case \"/\": result = left / right; break;\n                }\n                \n                stack.push(result);\n            } else {\n                stack.push(Integer.parseInt(token));\n            }\n        }\n        \n        return stack.pop();\n    }\n}",
+        "python": "class Solution:\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        \n        for token in tokens:\n            if token in ['+', '-', '*', '/']:\n                right = stack.pop()\n                left = stack.pop()\n                \n                if token == '+':\n                    result = left + right\n                elif token == '-':\n                    result = left - right\n                elif token == '*':\n                    result = left * right\n                else:\n                    result = int(left / right)  # Truncate toward zero\n                \n                stack.append(result)\n            else:\n                stack.append(int(token))\n        \n        return stack[-1]",
+        "javascript": "var evalRPN = function(tokens) {\n    const stack = [];\n    \n    for (const token of tokens) {\n        if (['+', '-', '*', '/'].includes(token)) {\n            const right = stack.pop();\n            const left = stack.pop();\n            \n            let result;\n            switch (token) {\n                case '+': result = left + right; break;\n                case '-': result = left - right; break;\n                case '*': result = left * right; break;\n                case '/': result = Math.trunc(left / right); break;\n            }\n            \n            stack.push(result);\n        } else {\n            stack.push(parseInt(token));\n        }\n    }\n    \n    return stack[0];\n};"
+      }
+    },
+    {
+      "name": "Stack - Using Lambda/Map - Optimal",
+      "order": 3,
+      "intuition": "Cleaner code using map/dictionary to store operations. More extensible for additional operators.",
+      "approach": "Define operations in map. Same stack logic but cleaner operator handling.",
+      "steps": [
+        "Create operations map",
+        "Create stack",
+        "For each token:",
+        "  If in operations map:",
+        "    Pop two operands",
+        "    Apply operation from map",
+        "    Push result",
+        "  Else: push number",
+        "Return stack.top()"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through tokens",
+        "spaceExplanation": "Stack stores intermediate results"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int evalRPN(vector<string>& tokens) {\n        stack<long long> st;\n        \n        unordered_map<string, function<long long(long long, long long)>> ops = {\n            {\"+\", [](long long a, long long b) { return a + b; }},\n            {\"-\", [](long long a, long long b) { return a - b; }},\n            {\"*\", [](long long a, long long b) { return a * b; }},\n            {\"/\", [](long long a, long long b) { return a / b; }}\n        };\n        \n        for (const string& token : tokens) {\n            if (ops.count(token)) {\n                long long right = st.top(); st.pop();\n                long long left = st.top(); st.pop();\n                st.push(ops[token](left, right));\n            } else {\n                st.push(stoll(token));\n            }\n        }\n        \n        return st.top();\n    }\n};",
+        "java": "class Solution {\n    public int evalRPN(String[] tokens) {\n        Stack<Integer> stack = new Stack<>();\n        \n        for (String token : tokens) {\n            switch (token) {\n                case \"+\":\n                    stack.push(stack.pop() + stack.pop());\n                    break;\n                case \"-\":\n                    int b = stack.pop();\n                    int a = stack.pop();\n                    stack.push(a - b);\n                    break;\n                case \"*\":\n                    stack.push(stack.pop() * stack.pop());\n                    break;\n                case \"/\":\n                    int divisor = stack.pop();\n                    int dividend = stack.pop();\n                    stack.push(dividend / divisor);\n                    break;\n                default:\n                    stack.push(Integer.parseInt(token));\n            }\n        }\n        \n        return stack.pop();\n    }\n}",
+        "python": "class Solution:\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        \n        ops = {\n            '+': lambda a, b: a + b,\n            '-': lambda a, b: a - b,\n            '*': lambda a, b: a * b,\n            '/': lambda a, b: int(a / b)\n        }\n        \n        for token in tokens:\n            if token in ops:\n                right = stack.pop()\n                left = stack.pop()\n                stack.append(ops[token](left, right))\n            else:\n                stack.append(int(token))\n        \n        return stack[0]",
+        "javascript": "var evalRPN = function(tokens) {\n    const stack = [];\n    \n    const ops = {\n        '+': (a, b) => a + b,\n        '-': (a, b) => a - b,\n        '*': (a, b) => a * b,\n        '/': (a, b) => Math.trunc(a / b)\n    };\n    \n    for (const token of tokens) {\n        if (token in ops) {\n            const right = stack.pop();\n            const left = stack.pop();\n            stack.push(ops[token](left, right));\n        } else {\n            stack.push(parseInt(token));\n        }\n    }\n    \n    return stack[0];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Popping operands in wrong order (right then left, not left then right)",
+    "Not handling negative numbers correctly",
+    "Division truncation: should truncate toward zero (use int() in Python, not //)",
+    "Not considering operator precedence (RPN doesn't need it, but beginners confuse with infix)",
+    "Forgetting that final stack has exactly one element (the result)"
+  ],
+  "hints": [
+    "RPN (Postfix) doesn't need operator precedence or parentheses",
+    "Stack is the natural data structure for RPN evaluation",
+    "Order matters when popping: second pop is left operand, first pop is right",
+    "For division, truncate toward zero (not floor division)",
+    "Valid RPN always leaves exactly one value in stack at end"
+  ],
+  "followUp": [
+    "Can you convert infix to postfix (Shunting Yard algorithm)?",
+    "What about evaluating infix expressions with parentheses?",
+    "Can you add support for more operators (^, %, etc.)?",
+    "How to handle invalid RPN expressions?",
+    "Can you build expression tree from RPN?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Bloomberg", "Oracle"],
+  "tags": ["array", "math", "stack"],
+  "relatedProblems": [
+    "Basic Calculator",
+    "Basic Calculator II",
+    "Expression Add Operators",
+    "Ternary Expression Parser",
+    "Parse Lisp Expression"
+  ]
+}

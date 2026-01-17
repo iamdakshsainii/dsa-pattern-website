@@ -1,0 +1,176 @@
+{
+  "questionId": "152",
+  "questionSlug": "maximum-product-subarray",
+  "title": "Maximum Product Subarray",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-product-subarray/",
+    "videos": [
+      {
+        "title": "Maximum Product Subarray - Dynamic Programming",
+        "url": "https://www.youtube.com/watch?v=lXVy6YWFcRM",
+        "channel": "NeetCode",
+        "duration": "12:15",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Product Subarray",
+        "url": "https://www.youtube.com/watch?v=hnswaLJvr6g",
+        "channel": "take U forward",
+        "duration": "15:40",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Product Subarray Explained",
+        "url": "https://www.youtube.com/watch?v=Y6B-7ZctiW8",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Product Subarray - LeetCode Official",
+        "url": "https://leetcode.com/problems/maximum-product-subarray/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Maximum Product Subarray",
+        "url": "https://takeuforward.org/data-structure/maximum-product-subarray-in-an-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Maximum Product Subarray - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/maximum-product-subarray/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/maximum-product-subarray/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/maximum-product-subarray3604/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Maximum product subarray? Track both max AND min (negative * negative = positive). Reset on 0.",
+  "approaches": [
+    {
+      "name": "Brute Force - All Subarrays",
+      "order": 1,
+      "intuition": "Generate all possible subarrays, calculate their product, track maximum product found.",
+      "approach": "Use two nested loops to generate all subarrays. Calculate product for each and update max.",
+      "steps": [
+        "Initialize maxProduct = INT_MIN",
+        "For each starting index i:",
+        "  product = 1",
+        "  For each ending index j from i:",
+        "    product *= arr[j]",
+        "    maxProduct = max(maxProduct, product)",
+        "Return maxProduct"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Two nested loops checking all subarrays",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "int maxProduct(vector<int>& nums) {\n    int n = nums.size();\n    int maxProduct = INT_MIN;\n    \n    for (int i = 0; i < n; i++) {\n        int product = 1;\n        for (int j = i; j < n; j++) {\n            product *= nums[j];\n            maxProduct = max(maxProduct, product);\n        }\n    }\n    \n    return maxProduct;\n}",
+        "java": "public int maxProduct(int[] nums) {\n    int n = nums.length;\n    int maxProduct = Integer.MIN_VALUE;\n    \n    for (int i = 0; i < n; i++) {\n        int product = 1;\n        for (int j = i; j < n; j++) {\n            product *= nums[j];\n            maxProduct = Math.max(maxProduct, product);\n        }\n    }\n    \n    return maxProduct;\n}",
+        "python": "def maxProduct(nums):\n    n = len(nums)\n    max_product = float('-inf')\n    \n    for i in range(n):\n        product = 1\n        for j in range(i, n):\n            product *= nums[j]\n            max_product = max(max_product, product)\n    \n    return max_product",
+        "javascript": "function maxProduct(nums) {\n    const n = nums.length;\n    let maxProduct = -Infinity;\n    \n    for (let i = 0; i < n; i++) {\n        let product = 1;\n        for (let j = i; j < n; j++) {\n            product *= nums[j];\n            maxProduct = Math.max(maxProduct, product);\n        }\n    }\n    \n    return maxProduct;\n}"
+      }
+    },
+    {
+      "name": "Dynamic Programming - Track Max and Min",
+      "order": 2,
+      "intuition": "Need to track both max and min because negative * negative = large positive. Zero resets both.",
+      "approach": "At each position, calculate new max/min using current element, current*prevMax, current*prevMin.",
+      "steps": [
+        "maxSoFar = minSoFar = result = arr[0]",
+        "For i from 1 to n-1:",
+        "  temp = maxSoFar",
+        "  maxSoFar = max(arr[i], maxSoFar * arr[i], minSoFar * arr[i])",
+        "  minSoFar = min(arr[i], temp * arr[i], minSoFar * arr[i])",
+        "  result = max(result, maxSoFar)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only constant variables"
+      },
+      "code": {
+        "cpp": "int maxProduct(vector<int>& nums) {\n    int n = nums.size();\n    int maxSoFar = nums[0];\n    int minSoFar = nums[0];\n    int result = nums[0];\n    \n    for (int i = 1; i < n; i++) {\n        int temp = maxSoFar;\n        \n        // Current max can be: current element, current * prevMax, current * prevMin\n        maxSoFar = max({nums[i], maxSoFar * nums[i], minSoFar * nums[i]});\n        \n        // Current min can be: current element, current * prevMax, current * prevMin\n        minSoFar = min({nums[i], temp * nums[i], minSoFar * nums[i]});\n        \n        result = max(result, maxSoFar);\n    }\n    \n    return result;\n}",
+        "java": "public int maxProduct(int[] nums) {\n    int n = nums.length;\n    int maxSoFar = nums[0];\n    int minSoFar = nums[0];\n    int result = nums[0];\n    \n    for (int i = 1; i < n; i++) {\n        int temp = maxSoFar;\n        \n        maxSoFar = Math.max(nums[i], \n                   Math.max(maxSoFar * nums[i], minSoFar * nums[i]));\n        \n        minSoFar = Math.min(nums[i], \n                   Math.min(temp * nums[i], minSoFar * nums[i]));\n        \n        result = Math.max(result, maxSoFar);\n    }\n    \n    return result;\n}",
+        "python": "def maxProduct(nums):\n    n = len(nums)\n    max_so_far = nums[0]\n    min_so_far = nums[0]\n    result = nums[0]\n    \n    for i in range(1, n):\n        temp = max_so_far\n        \n        max_so_far = max(nums[i], max_so_far * nums[i], min_so_far * nums[i])\n        min_so_far = min(nums[i], temp * nums[i], min_so_far * nums[i])\n        \n        result = max(result, max_so_far)\n    \n    return result",
+        "javascript": "function maxProduct(nums) {\n    const n = nums.length;\n    let maxSoFar = nums[0];\n    let minSoFar = nums[0];\n    let result = nums[0];\n    \n    for (let i = 1; i < n; i++) {\n        const temp = maxSoFar;\n        \n        maxSoFar = Math.max(nums[i], \n                   Math.max(maxSoFar * nums[i], minSoFar * nums[i]));\n        \n        minSoFar = Math.min(nums[i], \n                   Math.min(temp * nums[i], minSoFar * nums[i]));\n        \n        result = Math.max(result, maxSoFar);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Left-Right Pass - Most Elegant",
+      "order": 3,
+      "intuition": "Traverse left-to-right and right-to-left. Max product is either in left pass or right pass. Handles negatives naturally.",
+      "approach": "One pass left-to-right, one pass right-to-left. Reset product to 1 when hitting 0. Track overall max.",
+      "steps": [
+        "result = INT_MIN, product = 1",
+        "Left to right pass:",
+        "  For each element:",
+        "    product *= element",
+        "    result = max(result, product)",
+        "    If element == 0: product = 1",
+        "Right to left pass (same logic)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through array",
+        "spaceExplanation": "Only constant variables"
+      },
+      "code": {
+        "cpp": "int maxProduct(vector<int>& nums) {\n    int n = nums.size();\n    int result = INT_MIN;\n    int product = 1;\n    \n    // Left to right\n    for (int i = 0; i < n; i++) {\n        product *= nums[i];\n        result = max(result, product);\n        if (nums[i] == 0) product = 1;\n    }\n    \n    // Right to left\n    product = 1;\n    for (int i = n - 1; i >= 0; i--) {\n        product *= nums[i];\n        result = max(result, product);\n        if (nums[i] == 0) product = 1;\n    }\n    \n    return result;\n}",
+        "java": "public int maxProduct(int[] nums) {\n    int n = nums.length;\n    int result = Integer.MIN_VALUE;\n    int product = 1;\n    \n    // Left to right\n    for (int i = 0; i < n; i++) {\n        product *= nums[i];\n        result = Math.max(result, product);\n        if (nums[i] == 0) product = 1;\n    }\n    \n    // Right to left\n    product = 1;\n    for (int i = n - 1; i >= 0; i--) {\n        product *= nums[i];\n        result = Math.max(result, product);\n        if (nums[i] == 0) product = 1;\n    }\n    \n    return result;\n}",
+        "python": "def maxProduct(nums):\n    n = len(nums)\n    result = float('-inf')\n    product = 1\n    \n    # Left to right\n    for i in range(n):\n        product *= nums[i]\n        result = max(result, product)\n        if nums[i] == 0:\n            product = 1\n    \n    # Right to left\n    product = 1\n    for i in range(n - 1, -1, -1):\n        product *= nums[i]\n        result = max(result, product)\n        if nums[i] == 0:\n            product = 1\n    \n    return result",
+        "javascript": "function maxProduct(nums) {\n    const n = nums.length;\n    let result = -Infinity;\n    let product = 1;\n    \n    // Left to right\n    for (let i = 0; i < n; i++) {\n        product *= nums[i];\n        result = Math.max(result, product);\n        if (nums[i] === 0) product = 1;\n    }\n    \n    // Right to left\n    product = 1;\n    for (let i = n - 1; i >= 0; i--) {\n        product *= nums[i];\n        result = Math.max(result, product);\n        if (nums[i] === 0) product = 1;\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Only tracking maximum without minimum (miss negative * negative = large positive)",
+    "Not handling 0 properly (0 resets the product chain)",
+    "Forgetting to consider single element as subarray",
+    "Not using temp variable when swapping max/min (overwrites value needed)",
+    "Initializing result to 0 instead of first element or INT_MIN"
+  ],
+  "hints": [
+    "Why do we need to track minimum? Think about: [-2, 3, -4]",
+    "What happens when you encounter 0? (Breaks product chain)",
+    "Even number of negatives gives positive product",
+    "Odd number of negatives: exclude one from either end",
+    "Left-right pass captures one way, right-left captures the other"
+  ],
+  "followUp": [
+    "What if array can contain only positive numbers? (Don't need min tracking)",
+    "Find length of subarray with maximum product (not just the product)",
+    "Return the actual subarray with maximum product",
+    "What if we want K-th maximum product subarray?",
+    "How to handle very large products (overflow)?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "LinkedIn"],
+  "tags": ["array", "dynamic-programming"],
+  "relatedProblems": [
+    "Maximum Subarray",
+    "House Robber",
+    "Product of Array Except Self",
+    "Maximum Product of Three Numbers",
+    "Subarray Product Less Than K"
+  ]
+}

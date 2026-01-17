@@ -1,0 +1,173 @@
+{
+  "questionId": "739",
+  "questionSlug": "daily-temperatures",
+  "title": "Daily Temperatures",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/daily-temperatures/",
+    "videos": [
+      {
+        "title": "Daily Temperatures - Monotonic Stack",
+        "url": "https://www.youtube.com/watch?v=cTBiBSnjO3c",
+        "channel": "NeetCode",
+        "duration": "10:42",
+        "language": "English"
+      },
+      {
+        "title": "Daily Temperatures using Stack",
+        "url": "https://www.youtube.com/watch?v=WGm4Kj3lhRI",
+        "channel": "take U forward",
+        "duration": "13:25",
+        "language": "English"
+      },
+      {
+        "title": "Stack Based Solution - Daily Temperatures",
+        "url": "https://www.youtube.com/watch?v=NXOOYYwpbg4",
+        "channel": "Aditya Verma",
+        "duration": "12:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Daily Temperatures - LeetCode Official",
+        "url": "https://leetcode.com/problems/daily-temperatures/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Daily Temperatures Explained",
+        "url": "https://takeuforward.org/data-structure/daily-temperatures-using-stack/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Daily Temperatures - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/daily-temperatures/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/daily-temperatures/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Need number of days until warmer = Next greater element variant. Use monotonic decreasing stack with indices to track distance.",
+  "approaches": [
+    {
+      "name": "Brute Force - Nested Loops",
+      "order": 1,
+      "intuition": "For each day, scan forward to find the next warmer day and calculate the distance.",
+      "approach": "For each day i, iterate through days i+1 to n-1 until finding warmer temperature.",
+      "steps": [
+        "Initialize result array with 0",
+        "For i from 0 to n-1:",
+        "  For j from i+1 to n-1:",
+        "    If temperatures[j] > temperatures[i]:",
+        "      result[i] = j - i",
+        "      break",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1) excluding output",
+        "timeExplanation": "For each temperature, potentially scan all remaining days",
+        "spaceExplanation": "Only output array needed"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> dailyTemperatures(vector<int>& temperatures) {\n        int n = temperatures.size();\n        vector<int> result(n, 0);\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (temperatures[j] > temperatures[i]) {\n                    result[i] = j - i;\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int n = temperatures.length;\n        int[] result = new int[n];\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (temperatures[j] > temperatures[i]) {\n                    result[i] = j - i;\n                    break;\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        n = len(temperatures)\n        result = [0] * n\n        \n        for i in range(n):\n            for j in range(i + 1, n):\n                if temperatures[j] > temperatures[i]:\n                    result[i] = j - i\n                    break\n        \n        return result",
+        "javascript": "var dailyTemperatures = function(temperatures) {\n    const n = temperatures.length;\n    const result = new Array(n).fill(0);\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            if (temperatures[j] > temperatures[i]) {\n                result[i] = j - i;\n                break;\n            }\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Right to Left",
+      "order": 2,
+      "intuition": "Process from right to left. Stack stores indices of potential warmer days. Pop cooler days.",
+      "approach": "Traverse right to left, maintain monotonic decreasing stack (by temperature). Find next warmer in stack.",
+      "steps": [
+        "Initialize result with 0",
+        "Create stack (stores indices)",
+        "For i from n-1 to 0:",
+        "  While stack not empty and temperatures[stack.top()] <= temperatures[i]:",
+        "    Pop (these are not warmer)",
+        "  If stack not empty:",
+        "    result[i] = stack.top() - i",
+        "  Push i",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each index pushed and popped at most once",
+        "spaceExplanation": "Stack stores indices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> dailyTemperatures(vector<int>& temperatures) {\n        int n = temperatures.size();\n        vector<int> result(n, 0);\n        stack<int> st;  // Store indices\n        \n        // Traverse from right to left\n        for (int i = n - 1; i >= 0; i--) {\n            // Pop indices with cooler or equal temperatures\n            while (!st.empty() && temperatures[st.top()] <= temperatures[i]) {\n                st.pop();\n            }\n            \n            // Calculate days until warmer temperature\n            if (!st.empty()) {\n                result[i] = st.top() - i;\n            }\n            \n            // Push current index\n            st.push(i);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int n = temperatures.length;\n        int[] result = new int[n];\n        Stack<Integer> stack = new Stack<>();\n        \n        for (int i = n - 1; i >= 0; i--) {\n            while (!stack.isEmpty() && temperatures[stack.peek()] <= temperatures[i]) {\n                stack.pop();\n            }\n            \n            if (!stack.isEmpty()) {\n                result[i] = stack.peek() - i;\n            }\n            \n            stack.push(i);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        n = len(temperatures)\n        result = [0] * n\n        stack = []\n        \n        for i in range(n - 1, -1, -1):\n            while stack and temperatures[stack[-1]] <= temperatures[i]:\n                stack.pop()\n            \n            if stack:\n                result[i] = stack[-1] - i\n            \n            stack.append(i)\n        \n        return result",
+        "javascript": "var dailyTemperatures = function(temperatures) {\n    const n = temperatures.length;\n    const result = new Array(n).fill(0);\n    const stack = [];\n    \n    for (let i = n - 1; i >= 0; i--) {\n        while (stack.length > 0 && temperatures[stack[stack.length - 1]] <= temperatures[i]) {\n            stack.pop();\n        }\n        \n        if (stack.length > 0) {\n            result[i] = stack[stack.length - 1] - i;\n        }\n        \n        stack.push(i);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Monotonic Stack - Left to Right - Optimal",
+      "order": 3,
+      "intuition": "Process left to right. When we find warmer day, update all cooler previous days in stack. More intuitive.",
+      "approach": "Traverse left to right. For each day, pop and update all cooler days from stack. Push current day.",
+      "steps": [
+        "Initialize result with 0",
+        "Create stack (stores indices)",
+        "For i from 0 to n-1:",
+        "  While stack not empty and temperatures[i] > temperatures[stack.top()]:",
+        "    idx = Pop",
+        "    result[idx] = i - idx",
+        "  Push i",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Each index pushed and popped at most once",
+        "spaceExplanation": "Stack stores indices, worst case all indices"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> dailyTemperatures(vector<int>& temperatures) {\n        int n = temperatures.size();\n        vector<int> result(n, 0);\n        stack<int> st;  // Store indices\n        \n        // Traverse from left to right\n        for (int i = 0; i < n; i++) {\n            // Pop and update all cooler previous days\n            while (!st.empty() && temperatures[i] > temperatures[st.top()]) {\n                int idx = st.top();\n                st.pop();\n                result[idx] = i - idx;\n            }\n            \n            // Push current index\n            st.push(i);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int n = temperatures.length;\n        int[] result = new int[n];\n        Stack<Integer> stack = new Stack<>();\n        \n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {\n                int idx = stack.pop();\n                result[idx] = i - idx;\n            }\n            \n            stack.push(i);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        n = len(temperatures)\n        result = [0] * n\n        stack = []\n        \n        for i in range(n):\n            while stack and temperatures[i] > temperatures[stack[-1]]:\n                idx = stack.pop()\n                result[idx] = i - idx\n            \n            stack.append(i)\n        \n        return result",
+        "javascript": "var dailyTemperatures = function(temperatures) {\n    const n = temperatures.length;\n    const result = new Array(n).fill(0);\n    const stack = [];\n    \n    for (let i = 0; i < n; i++) {\n        while (stack.length > 0 && temperatures[i] > temperatures[stack[stack.length - 1]]) {\n            const idx = stack.pop();\n            result[idx] = i - idx;\n        }\n        \n        stack.push(i);\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Storing temperatures instead of indices in stack",
+    "Using <= instead of < when comparing temperatures",
+    "Not initializing result array with 0",
+    "Forgetting to calculate distance (j - i) instead of just storing j",
+    "Confusion about stack order (should maintain decreasing temperatures)"
+  ],
+  "hints": [
+    "This is a variant of Next Greater Element with distance calculation",
+    "Store indices in stack, not temperatures",
+    "Left to right approach is more intuitive - update results as you find answers",
+    "Stack maintains monotonic decreasing order of temperatures",
+    "When popping, calculate distance: current_index - popped_index"
+  ],
+  "followUp": [
+    "What if we need number of days until cooler temperature?",
+    "Can you solve with O(1) space? (Hint: work backwards, limited temperature range)",
+    "How to handle if temperatures can be any real number?",
+    "What if temperatures array is very large (billions)? Stream processing?",
+    "Can you find the furthest warmer day instead of nearest?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Apple", "Bloomberg"],
+  "tags": ["stack", "array", "monotonic-stack"],
+  "relatedProblems": [
+    "Next Greater Element I",
+    "Next Greater Element II",
+    "Online Stock Span",
+    "Sum of Subarray Minimums",
+    "Car Fleet"
+  ]
+}

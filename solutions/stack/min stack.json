@@ -1,0 +1,176 @@
+{
+  "questionId": "155",
+  "questionSlug": "min-stack",
+  "title": "Min Stack",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/min-stack/",
+    "videos": [
+      {
+        "title": "Min Stack - Design Problem",
+        "url": "https://www.youtube.com/watch?v=qkLl7nAwDPo",
+        "channel": "NeetCode",
+        "duration": "8:30",
+        "language": "English"
+      },
+      {
+        "title": "Implement Min Stack",
+        "url": "https://www.youtube.com/watch?v=8Ub73n5CClE",
+        "channel": "take U forward",
+        "duration": "15:45",
+        "language": "English"
+      },
+      {
+        "title": "Min Stack Design",
+        "url": "https://www.youtube.com/watch?v=ZvaRHYYI0-4",
+        "channel": "Aditya Verma",
+        "duration": "12:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Implement Min Stack",
+        "url": "https://takeuforward.org/data-structure/implement-min-stack-o2n-and-on-space-complexity/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Design a Stack with Min() - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/design-a-stack-that-supports-getmin-in-o1-time-and-o1-extra-space/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Min Stack - LeetCode Solution",
+        "url": "https://leetcode.com/problems/min-stack/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/min-stack/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/get-minimum-element-from-stack/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Get minimum in O(1) = Track minimum alongside each element. Use two stacks or stack of pairs.",
+  "approaches": [
+    {
+      "name": "Brute Force - Iterate on getMin()",
+      "order": 1,
+      "intuition": "Store elements normally, iterate through entire stack to find minimum each time getMin() called.",
+      "approach": "Standard stack operations, but getMin() requires O(n) time to scan all elements.",
+      "steps": [
+        "push(val): Standard stack push",
+        "pop(): Standard stack pop",
+        "top(): Return stack.top()",
+        "getMin(): Iterate through all elements to find minimum"
+      ],
+      "complexity": {
+        "time": "O(1) for push, pop, top. O(n) for getMin",
+        "space": "O(n)",
+        "timeExplanation": "getMin requires full scan of stack",
+        "spaceExplanation": "Only main stack needed"
+      },
+      "code": {
+        "cpp": "class MinStack {\nprivate:\n    stack<int> st;\n    \npublic:\n    MinStack() {}\n    \n    void push(int val) {\n        st.push(val);\n    }\n    \n    void pop() {\n        st.pop();\n    }\n    \n    int top() {\n        return st.top();\n    }\n    \n    int getMin() {\n        // O(n) operation - not optimal\n        stack<int> temp;\n        int minVal = INT_MAX;\n        \n        while (!st.empty()) {\n            int val = st.top();\n            minVal = min(minVal, val);\n            temp.push(val);\n            st.pop();\n        }\n        \n        // Restore original stack\n        while (!temp.empty()) {\n            st.push(temp.top());\n            temp.pop();\n        }\n        \n        return minVal;\n    }\n};",
+        "java": "class MinStack {\n    private Stack<Integer> stack;\n    \n    public MinStack() {\n        stack = new Stack<>();\n    }\n    \n    public void push(int val) {\n        stack.push(val);\n    }\n    \n    public void pop() {\n        stack.pop();\n    }\n    \n    public int top() {\n        return stack.peek();\n    }\n    \n    public int getMin() {\n        // O(n) operation - not optimal\n        Stack<Integer> temp = new Stack<>();\n        int minVal = Integer.MAX_VALUE;\n        \n        while (!stack.isEmpty()) {\n            int val = stack.peek();\n            minVal = Math.min(minVal, val);\n            temp.push(val);\n            stack.pop();\n        }\n        \n        // Restore original stack\n        while (!temp.isEmpty()) {\n            stack.push(temp.peek());\n            temp.pop();\n        }\n        \n        return minVal;\n    }\n}",
+        "python": "class MinStack:\n    def __init__(self):\n        self.stack = []\n    \n    def push(self, val: int) -> None:\n        self.stack.append(val)\n    \n    def pop(self) -> None:\n        self.stack.pop()\n    \n    def top(self) -> int:\n        return self.stack[-1]\n    \n    def getMin(self) -> int:\n        # O(n) operation - not optimal\n        return min(self.stack) if self.stack else None",
+        "javascript": "var MinStack = function() {\n    this.stack = [];\n};\n\nMinStack.prototype.push = function(val) {\n    this.stack.push(val);\n};\n\nMinStack.prototype.pop = function() {\n    this.stack.pop();\n};\n\nMinStack.prototype.top = function() {\n    return this.stack[this.stack.length - 1];\n};\n\nMinStack.prototype.getMin = function() {\n    // O(n) operation - not optimal\n    return Math.min(...this.stack);\n};"
+      }
+    },
+    {
+      "name": "Two Stacks Approach",
+      "order": 2,
+      "intuition": "Maintain second stack that tracks minimum at each level. When pushing, update min stack with current minimum.",
+      "approach": "Use two stacks: main stack and min stack. Min stack always has minimum value at each level.",
+      "steps": [
+        "Initialize main stack and min stack",
+        "push(val):",
+        "  Push val to main stack",
+        "  If min stack empty or val <= min stack top:",
+        "    Push val to min stack",
+        "pop():",
+        "  If main stack top == min stack top:",
+        "    Pop from min stack",
+        "  Pop from main stack",
+        "top(): Return main stack top",
+        "getMin(): Return min stack top"
+      ],
+      "complexity": {
+        "time": "O(1) for all operations",
+        "space": "O(n)",
+        "timeExplanation": "All operations are constant time",
+        "spaceExplanation": "Two stacks, worst case both have n elements"
+      },
+      "code": {
+        "cpp": "class MinStack {\nprivate:\n    stack<int> st;\n    stack<int> minSt;\n    \npublic:\n    MinStack() {}\n    \n    void push(int val) {\n        st.push(val);\n        \n        if (minSt.empty() || val <= minSt.top()) {\n            minSt.push(val);\n        }\n    }\n    \n    void pop() {\n        if (st.top() == minSt.top()) {\n            minSt.pop();\n        }\n        st.pop();\n    }\n    \n    int top() {\n        return st.top();\n    }\n    \n    int getMin() {\n        return minSt.top();\n    }\n};",
+        "java": "class MinStack {\n    private Stack<Integer> stack;\n    private Stack<Integer> minStack;\n    \n    public MinStack() {\n        stack = new Stack<>();\n        minStack = new Stack<>();\n    }\n    \n    public void push(int val) {\n        stack.push(val);\n        \n        if (minStack.isEmpty() || val <= minStack.peek()) {\n            minStack.push(val);\n        }\n    }\n    \n    public void pop() {\n        if (stack.peek().equals(minStack.peek())) {\n            minStack.pop();\n        }\n        stack.pop();\n    }\n    \n    public int top() {\n        return stack.peek();\n    }\n    \n    public int getMin() {\n        return minStack.peek();\n    }\n}",
+        "python": "class MinStack:\n    def __init__(self):\n        self.stack = []\n        self.min_stack = []\n    \n    def push(self, val: int) -> None:\n        self.stack.append(val)\n        \n        if not self.min_stack or val <= self.min_stack[-1]:\n            self.min_stack.append(val)\n    \n    def pop(self) -> None:\n        if self.stack[-1] == self.min_stack[-1]:\n            self.min_stack.pop()\n        self.stack.pop()\n    \n    def top(self) -> int:\n        return self.stack[-1]\n    \n    def getMin(self) -> int:\n        return self.min_stack[-1]",
+        "javascript": "var MinStack = function() {\n    this.stack = [];\n    this.minStack = [];\n};\n\nMinStack.prototype.push = function(val) {\n    this.stack.push(val);\n    \n    if (this.minStack.length === 0 || val <= this.minStack[this.minStack.length - 1]) {\n        this.minStack.push(val);\n    }\n};\n\nMinStack.prototype.pop = function() {\n    if (this.stack[this.stack.length - 1] === this.minStack[this.minStack.length - 1]) {\n        this.minStack.pop();\n    }\n    this.stack.pop();\n};\n\nMinStack.prototype.top = function() {\n    return this.stack[this.stack.length - 1];\n};\n\nMinStack.prototype.getMin = function() {\n    return this.minStack[this.minStack.length - 1];\n};"
+      }
+    },
+    {
+      "name": "Stack of Pairs - Optimal",
+      "order": 3,
+      "intuition": "Store both value and current minimum as pair in single stack. Each element knows minimum up to that point.",
+      "approach": "Each stack element is (value, min_so_far). More space efficient than two separate stacks.",
+      "steps": [
+        "Initialize stack of pairs",
+        "push(val):",
+        "  If stack empty: push (val, val)",
+        "  Else: push (val, min(val, current_min))",
+        "pop(): Pop pair from stack",
+        "top(): Return pair.first",
+        "getMin(): Return pair.second (min_so_far)"
+      ],
+      "complexity": {
+        "time": "O(1) for all operations",
+        "space": "O(n)",
+        "timeExplanation": "All operations are constant time",
+        "spaceExplanation": "Single stack with pairs, 2n space but better cache locality"
+      },
+      "code": {
+        "cpp": "class MinStack {\nprivate:\n    stack<pair<int, int>> st;  // {value, min_so_far}\n    \npublic:\n    MinStack() {}\n    \n    void push(int val) {\n        if (st.empty()) {\n            st.push({val, val});\n        } else {\n            int currentMin = min(val, st.top().second);\n            st.push({val, currentMin});\n        }\n    }\n    \n    void pop() {\n        st.pop();\n    }\n    \n    int top() {\n        return st.top().first;\n    }\n    \n    int getMin() {\n        return st.top().second;\n    }\n};",
+        "java": "class MinStack {\n    private Stack<int[]> stack;  // [value, min_so_far]\n    \n    public MinStack() {\n        stack = new Stack<>();\n    }\n    \n    public void push(int val) {\n        if (stack.isEmpty()) {\n            stack.push(new int[]{val, val});\n        } else {\n            int currentMin = Math.min(val, stack.peek()[1]);\n            stack.push(new int[]{val, currentMin});\n        }\n    }\n    \n    public void pop() {\n        stack.pop();\n    }\n    \n    public int top() {\n        return stack.peek()[0];\n    }\n    \n    public int getMin() {\n        return stack.peek()[1];\n    }\n}",
+        "python": "class MinStack:\n    def __init__(self):\n        self.stack = []  # [(value, min_so_far)]\n    \n    def push(self, val: int) -> None:\n        if not self.stack:\n            self.stack.append((val, val))\n        else:\n            current_min = min(val, self.stack[-1][1])\n            self.stack.append((val, current_min))\n    \n    def pop(self) -> None:\n        self.stack.pop()\n    \n    def top(self) -> int:\n        return self.stack[-1][0]\n    \n    def getMin(self) -> int:\n        return self.stack[-1][1]",
+        "javascript": "var MinStack = function() {\n    this.stack = [];  // [[value, min_so_far]]\n};\n\nMinStack.prototype.push = function(val) {\n    if (this.stack.length === 0) {\n        this.stack.push([val, val]);\n    } else {\n        const currentMin = Math.min(val, this.stack[this.stack.length - 1][1]);\n        this.stack.push([val, currentMin]);\n    }\n};\n\nMinStack.prototype.pop = function() {\n    this.stack.pop();\n};\n\nMinStack.prototype.top = function() {\n    return this.stack[this.stack.length - 1][0];\n};\n\nMinStack.prototype.getMin = function() {\n    return this.stack[this.stack.length - 1][1];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to update min stack on pop operation",
+    "Using < instead of <= when comparing with min (duplicates issue)",
+    "Not handling empty stack cases",
+    "Comparing objects instead of values in Java",
+    "Not maintaining min stack correctly after multiple pops"
+  ],
+  "hints": [
+    "Need to track minimum at each stack level",
+    "Can use auxiliary stack to store minimums",
+    "Alternative: store (value, min) pairs",
+    "getMin() should be O(1), not O(n)",
+    "Update min stack only when necessary"
+  ],
+  "followUp": [
+    "Can you do it with O(1) extra space? (using encoding)",
+    "How to implement max stack?",
+    "What if you need both min and max?",
+    "How to handle getMedian() in O(1)?",
+    "Can you implement using linked list instead of array?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Bloomberg", "Apple", "Adobe"],
+  "tags": ["stack", "design"],
+  "relatedProblems": [
+    "Max Stack",
+    "Sliding Window Maximum",
+    "Design a Stack With Increment Operation",
+    "Min Stack with O(1) Extra Space",
+    "Median Finder"
+  ]
+}

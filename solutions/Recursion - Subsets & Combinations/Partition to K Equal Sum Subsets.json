@@ -1,0 +1,177 @@
+{
+  "questionId": "698",
+  "questionSlug": "partition-to-k-equal-sum-subsets",
+  "title": "Partition to K Equal Sum Subsets",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/partition-to-k-equal-sum-subsets/",
+    "videos": [
+      {
+        "title": "Partition to K Equal Sum Subsets - Backtracking",
+        "url": "https://www.youtube.com/watch?v=IsbMB_TYYfE",
+        "channel": "NeetCode",
+        "duration": "12:45",
+        "language": "English"
+      },
+      {
+        "title": "K Equal Sum Subsets Explained",
+        "url": "https://www.youtube.com/watch?v=F7qnbAOuZOU",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Partition to K Equal Sum Subsets - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/partition-to-k-equal-sum-subsets/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Partition array into k subsets with equal sum",
+        "url": "https://www.geeksforgeeks.org/partition-array-into-k-subsets-with-equal-sum/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/partition-to-k-equal-sum-subsets/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/partition-array-into-k-subsets-with-equal-sum/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Partition array into k subsets with equal sum? Sort descending. Use backtracking. Try to fill k buckets.",
+  "approaches": [
+    {
+      "name": "Backtracking - Fill Buckets One by One",
+      "order": 1,
+      "intuition": "Create k buckets with target sum. Use backtracking to assign each element to a bucket. Try all possibilities.",
+      "approach": "Maintain k bucket sums. For each element, try to fit it in each bucket.",
+      "steps": [
+        "Calculate targetSum = sum / k",
+        "If sum not divisible by k: return False",
+        "buckets = [0] * k",
+        "Sort nums in descending order",
+        "backtrack(index):",
+        "  If index == len(nums): return True",
+        "  For bucket in range(k):",
+        "    If buckets[bucket] + nums[index] <= targetSum:",
+        "      buckets[bucket] += nums[index]",
+        "      If backtrack(index+1): return True",
+        "      buckets[bucket] -= nums[index]  // backtrack",
+        "    If buckets[bucket] == 0: break (prune)",
+        "  Return False"
+      ],
+      "complexity": {
+        "time": "O(k^n)",
+        "space": "O(n)",
+        "timeExplanation": "Worst case try all k assignments for each element",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool canPartitionKSubsets(vector<int>& nums, int k) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        \n        if (sum % k != 0) return false;\n        int target = sum / k;\n        \n        sort(nums.rbegin(), nums.rend());\n        \n        if (nums[0] > target) return false;\n        \n        vector<int> buckets(k, 0);\n        return backtrack(0, nums, buckets, target);\n    }\n    \nprivate:\n    bool backtrack(int index, vector<int>& nums, vector<int>& buckets, int target) {\n        if (index == nums.size()) {\n            return true;\n        }\n        \n        for (int i = 0; i < buckets.size(); i++) {\n            if (buckets[i] + nums[index] <= target) {\n                buckets[i] += nums[index];\n                if (backtrack(index + 1, nums, buckets, target)) return true;\n                buckets[i] -= nums[index];\n                \n                if (buckets[i] == 0) break; // Prune\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean canPartitionKSubsets(int[] nums, int k) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        \n        if (sum % k != 0) return false;\n        int target = sum / k;\n        \n        Integer[] numsObj = new Integer[nums.length];\n        for (int i = 0; i < nums.length; i++) numsObj[i] = nums[i];\n        Arrays.sort(numsObj, Collections.reverseOrder());\n        \n        if (numsObj[0] > target) return false;\n        \n        int[] buckets = new int[k];\n        return backtrack(0, numsObj, buckets, target);\n    }\n    \n    private boolean backtrack(int index, Integer[] nums, int[] buckets, int target) {\n        if (index == nums.length) return true;\n        \n        for (int i = 0; i < buckets.length; i++) {\n            if (buckets[i] + nums[index] <= target) {\n                buckets[i] += nums[index];\n                if (backtrack(index + 1, nums, buckets, target)) return true;\n                buckets[i] -= nums[index];\n                \n                if (buckets[i] == 0) break;\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "def canPartitionKSubsets(nums, k):\n    total_sum = sum(nums)\n    if total_sum % k != 0:\n        return False\n    \n    target = total_sum // k\n    nums.sort(reverse=True)\n    \n    if nums[0] > target:\n        return False\n    \n    buckets = [0] * k\n    \n    def backtrack(index):\n        if index == len(nums):\n            return True\n        \n        for i in range(k):\n            if buckets[i] + nums[index] <= target:\n                buckets[i] += nums[index]\n                if backtrack(index + 1):\n                    return True\n                buckets[i] -= nums[index]\n                \n                if buckets[i] == 0:\n                    break\n        \n        return False\n    \n    return backtrack(0)",
+        "javascript": "function canPartitionKSubsets(nums, k) {\n    const sum = nums.reduce((a, b) => a + b, 0);\n    if (sum % k !== 0) return false;\n    \n    const target = Math.floor(sum / k);\n    nums.sort((a, b) => b - a);\n    \n    if (nums[0] > target) return false;\n    \n    const buckets = Array(k).fill(0);\n    \n    function backtrack(index) {\n        if (index === nums.length) return true;\n        \n        for (let i = 0; i < k; i++) {\n            if (buckets[i] + nums[index] <= target) {\n                buckets[i] += nums[index];\n                if (backtrack(index + 1)) return true;\n                buckets[i] -= nums[index];\n                \n                if (buckets[i] === 0) break;\n            }\n        }\n        \n        return false;\n    }\n    \n    return backtrack(0);\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Bitmask - Memoization",
+      "order": 2,
+      "intuition": "Use bitmask to track which elements are used. Memoize on (mask, bucket_index).",
+      "approach": "Use bitmask to represent used elements, memoize to avoid recomputation.",
+      "steps": [
+        "memo = {}",
+        "Sort nums in descending order",
+        "backtrack(mask, bucket_idx):",
+        "  If mask == (1 << n) - 1: all used, return True",
+        "  If (mask, bucket_idx) in memo: return memo[mask][bucket_idx]",
+        "  For i in range(n):",
+        "    If not used nums[i] and current_sum + nums[i] <= target:",
+        "      Use nums[i], recurse",
+        "      If success: return True",
+        "  Return False"
+      ],
+      "complexity": {
+        "time": "O(2^n × k)",
+        "space": "O(2^n)",
+        "timeExplanation": "Memoize on 2^n masks, each takes O(k) time",
+        "spaceExplanation": "Memoization table size is O(2^n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool canPartitionKSubsets(vector<int>& nums, int k) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        \n        if (sum % k != 0) return false;\n        int target = sum / k;\n        \n        sort(nums.rbegin(), nums.rend());\n        if (nums[0] > target) return false;\n        \n        int n = nums.size();\n        map<pair<int, int>, bool> memo;\n        \n        function<bool(int, int, int)> backtrack = [&](int mask, int bucket_sum, int bucket_idx) {\n            if (mask == (1 << n) - 1) return true;\n            \n            if (bucket_sum == target) {\n                return backtrack(mask, 0, bucket_idx + 1);\n            }\n            \n            auto key = make_pair(mask, bucket_sum);\n            if (memo.count(key)) return memo[key];\n            \n            for (int i = 0; i < n; i++) {\n                if (!(mask & (1 << i)) && bucket_sum + nums[i] <= target) {\n                    if (backtrack(mask | (1 << i), bucket_sum + nums[i], bucket_idx)) {\n                        return memo[key] = true;\n                    }\n                }\n            }\n            \n            return memo[key] = false;\n        };\n        \n        return backtrack(0, 0, 0);\n    }\n};",
+        "java": "class Solution {\n    public boolean canPartitionKSubsets(int[] nums, int k) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        \n        if (sum % k != 0) return false;\n        int target = sum / k;\n        \n        Integer[] numsObj = new Integer[nums.length];\n        for (int i = 0; i < nums.length; i++) numsObj[i] = nums[i];\n        Arrays.sort(numsObj, Collections.reverseOrder());\n        \n        if (numsObj[0] > target) return false;\n        \n        int n = nums.length;\n        Map<Integer, Boolean> memo = new HashMap<>();\n        \n        return backtrack(0, 0, 0, numsObj, target, n, memo);\n    }\n    \n    private boolean backtrack(int mask, int bucket_sum, int bucket_idx, Integer[] nums, int target, int n, Map<Integer, Boolean> memo) {\n        if (mask == (1 << n) - 1) return true;\n        \n        if (bucket_sum == target) {\n            return backtrack(mask, 0, bucket_idx + 1, nums, target, n, memo);\n        }\n        \n        if (memo.containsKey(mask)) return memo.get(mask);\n        \n        for (int i = 0; i < n; i++) {\n            if ((mask & (1 << i)) == 0 && bucket_sum + nums[i] <= target) {\n                if (backtrack(mask | (1 << i), bucket_sum + nums[i], bucket_idx, nums, target, n, memo)) {\n                    return memo.put(mask, true) == true;\n                }\n            }\n        }\n        \n        return memo.put(mask, false) == false;\n    }\n}",
+        "python": "def canPartitionKSubsets(nums, k):\n    total_sum = sum(nums)\n    if total_sum % k != 0:\n        return False\n    \n    target = total_sum // k\n    nums.sort(reverse=True)\n    \n    if nums[0] > target:\n        return False\n    \n    n = len(nums)\n    memo = {}\n    \n    def backtrack(mask, bucket_sum):\n        if mask == (1 << n) - 1:\n            return True\n        \n        if bucket_sum == target:\n            return backtrack(mask, 0)\n        \n        if mask in memo:\n            return memo[mask]\n        \n        for i in range(n):\n            if not (mask & (1 << i)) and bucket_sum + nums[i] <= target:\n                if backtrack(mask | (1 << i), bucket_sum + nums[i]):\n                    return True\n        \n        memo[mask] = False\n        return False\n    \n    return backtrack(0, 0)",
+        "javascript": "function canPartitionKSubsets(nums, k) {\n    const sum = nums.reduce((a, b) => a + b, 0);\n    if (sum % k !== 0) return false;\n    \n    const target = Math.floor(sum / k);\n    nums.sort((a, b) => b - a);\n    \n    if (nums[0] > target) return false;\n    \n    const n = nums.length;\n    const memo = {};\n    \n    function backtrack(mask, bucket_sum) {\n        if (mask === (1 << n) - 1) return true;\n        \n        if (bucket_sum === target) {\n            return backtrack(mask, 0);\n        }\n        \n        if (mask in memo) return memo[mask];\n        \n        for (let i = 0; i < n; i++) {\n            if ((mask & (1 << i)) === 0 && bucket_sum + nums[i] <= target) {\n                if (backtrack(mask | (1 << i), bucket_sum + nums[i])) {\n                    return true;\n                }\n            }\n        }\n        \n        return memo[mask] = false;\n    }\n    \n    return backtrack(0, 0);\n}"
+      }
+    },
+    {
+      "name": "Optimized Backtracking with Pruning - Optimal",
+      "order": 3,
+      "intuition": "Fill buckets from largest elements first. Use early pruning and skip empty buckets.",
+      "approach": "Sort descending, fill buckets greedily, with smart pruning.",
+      "steps": [
+        "Sort descending (larger elements first)",
+        "If any element > target: impossible",
+        "If first element == target: it's already a subset",
+        "buckets = [0] * k",
+        "backtrack(index):",
+        "  If all buckets complete (each = target): return True",
+        "  current = nums[index]",
+        "  For i in range(k):",
+        "    If buckets[i] + current <= target:",
+        "      buckets[i] += current",
+        "      If backtrack(index+1): return True",
+        "      buckets[i] -= current",
+        "      If buckets[i] == 0: break (stop early)"
+      ],
+      "complexity": {
+        "time": "O(k^n) worst, but much better with pruning",
+        "space": "O(n)",
+        "timeExplanation": "Pruning significantly reduces branches in practice",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool canPartitionKSubsets(vector<int>& nums, int k) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        \n        if (sum % k != 0) return false;\n        int target = sum / k;\n        \n        sort(nums.rbegin(), nums.rend());\n        if (nums[0] > target) return false;\n        \n        vector<int> buckets(k, 0);\n        return backtrack(0, nums, buckets, target);\n    }\n    \nprivate:\n    bool backtrack(int index, vector<int>& nums, vector<int>& buckets, int target) {\n        if (index == nums.size()) {\n            for (int b : buckets) {\n                if (b != target) return false;\n            }\n            return true;\n        }\n        \n        for (int i = 0; i < buckets.size(); i++) {\n            if (buckets[i] + nums[index] <= target) {\n                buckets[i] += nums[index];\n                if (backtrack(index + 1, nums, buckets, target)) return true;\n                buckets[i] -= nums[index];\n                \n                if (buckets[i] == 0) break;\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean canPartitionKSubsets(int[] nums, int k) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        \n        if (sum % k != 0) return false;\n        int target = sum / k;\n        \n        Integer[] numsObj = new Integer[nums.length];\n        for (int i = 0; i < nums.length; i++) numsObj[i] = nums[i];\n        Arrays.sort(numsObj, Collections.reverseOrder());\n        \n        if (numsObj[0] > target) return false;\n        \n        int[] buckets = new int[k];\n        return backtrack(0, numsObj, buckets, target);\n    }\n    \n    private boolean backtrack(int index, Integer[] nums, int[] buckets, int target) {\n        if (index == nums.length) {\n            for (int b : buckets) {\n                if (b != target) return false;\n            }\n            return true;\n        }\n        \n        for (int i = 0; i < buckets.length; i++) {\n            if (buckets[i] + nums[index] <= target) {\n                buckets[i] += nums[index];\n                if (backtrack(index + 1, nums, buckets, target)) return true;\n                buckets[i] -= nums[index];\n                \n                if (buckets[i] == 0) break;\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "def canPartitionKSubsets(nums, k):\n    total_sum = sum(nums)\n    if total_sum % k != 0:\n        return False\n    \n    target = total_sum // k\n    nums.sort(reverse=True)\n    \n    if nums[0] > target:\n        return False\n    \n    buckets = [0] * k\n    \n    def backtrack(index):\n        if index == len(nums):\n            return all(b == target for b in buckets)\n        \n        for i in range(k):\n            if buckets[i] + nums[index] <= target:\n                buckets[i] += nums[index]\n                if backtrack(index + 1):\n                    return True\n                buckets[i] -= nums[index]\n                \n                if buckets[i] == 0:\n                    break\n        \n        return False\n    \n    return backtrack(0)",
+        "javascript": "function canPartitionKSubsets(nums, k) {\n    const sum = nums.reduce((a, b) => a + b, 0);\n    if (sum % k !== 0) return false;\n    \n    const target = Math.floor(sum / k);\n    nums.sort((a, b) => b - a);\n    \n    if (nums[0] > target) return false;\n    \n    const buckets = Array(k).fill(0);\n    \n    function backtrack(index) {\n        if (index === nums.length) {\n            return buckets.every(b => b === target);\n        }\n        \n        for (let i = 0; i < k; i++) {\n            if (buckets[i] + nums[index] <= target) {\n                buckets[i] += nums[index];\n                if (backtrack(index + 1)) return true;\n                buckets[i] -= nums[index];\n                \n                if (buckets[i] === 0) break;\n            }\n        }\n        \n        return false;\n    }\n    \n    return backtrack(0);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if sum divisible by k first",
+    "Forgetting to sort in descending order (large elements first)",
+    "Not pruning empty buckets (causes TLE)",
+    "Using ascending order instead of descending",
+    "Not checking if any single element exceeds target"
+  ],
+  "hints": [
+    "Calculate target = sum / k. If sum % k != 0, impossible.",
+    "Sort descending to try large elements first",
+    "If any element > target, impossible",
+    "Use k buckets, try to fill each to target sum",
+    "Prune: if bucket is empty after removal, break (no point trying again)"
+  ],
+  "followUp": [
+    "Can you partition into k subsets without checking equality? (Different problem)",
+    "Return the actual partitions? (Track indices in each bucket)",
+    "Minimum k needed for equal partition? (Different problem - min k)",
+    "Partition with other constraints? (Modify conditions)",
+    "Count number of ways to partition? (Count instead of boolean)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft"],
+  "tags": ["backtracking", "dynamic-programming", "bit-manipulation"],
+  "relatedProblems": [
+    "Partition Equal Subset Sum",
+    "4Sum",
+    "Palindrome Partitioning",
+    "Word Break II"
+  ]
+}

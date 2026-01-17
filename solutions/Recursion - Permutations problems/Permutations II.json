@@ -1,0 +1,174 @@
+{
+  "questionId": "47",
+  "questionSlug": "permutations-ii",
+  "title": "Permutations II (With Duplicates)",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/permutations-ii/",
+    "videos": [
+      {
+        "title": "Permutations II - Backtracking with Duplicates",
+        "url": "https://www.youtube.com/watch?v=qhBVWf6SXsE",
+        "channel": "NeetCode",
+        "duration": "11:45",
+        "language": "English"
+      },
+      {
+        "title": "Generate Permutations with Duplicate Elements",
+        "url": "https://www.youtube.com/watch?v=i0LBpABXAh4",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Permutations II - LeetCode Editorial",
+        "url": "https://leetcode.com/problems/permutations-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Generate permutations with duplicate elements",
+        "url": "https://www.geeksforgeeks.org/permutations-of-array-by-removing-an-element/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/permutations-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/permutations-with-duplicates/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate permutations with duplicates? Sort first. Skip duplicate at same level. Use used[] to track.",
+  "approaches": [
+    {
+      "name": "Backtracking with Sorting and Skip Duplicates",
+      "order": 1,
+      "intuition": "Sort array to group duplicates. Skip duplicate at same recursion level using conditions.",
+      "approach": "Use backtracking with used[] array and skip logic for duplicates.",
+      "steps": [
+        "Sort array to group duplicates",
+        "used = [False] * n",
+        "backtrack(current):",
+        "  If len(current) == n: add to result, return",
+        "  For i from 0 to n:",
+        "    If not used[i]:",
+        "      If i > 0 and nums[i] == nums[i-1] and not used[i-1]: continue",
+        "      used[i] = True",
+        "      current.add(nums[i])",
+        "      backtrack(current)",
+        "      current.remove()",
+        "      used[i] = False"
+      ],
+      "complexity": {
+        "time": "O(n! × n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting + n! permutations with n work each",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> permuteUnique(vector<int>& nums) {\n        vector<vector<int>> result;\n        vector<int> current;\n        vector<bool> used(nums.size(), false);\n        sort(nums.begin(), nums.end());\n        backtrack(nums, current, used, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(vector<int>& nums, vector<int>& current, vector<bool>& used, vector<vector<int>>& result) {\n        if (current.size() == nums.size()) {\n            result.push_back(current);\n            return;\n        }\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (!used[i]) {\n                if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) continue;\n                \n                used[i] = true;\n                current.push_back(nums[i]);\n                backtrack(nums, current, used, result);\n                current.pop_back();\n                used[i] = false;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> permuteUnique(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(nums);\n        backtrack(nums, new ArrayList<>(), new boolean[nums.length], result);\n        return result;\n    }\n    \n    private void backtrack(int[] nums, List<Integer> current, boolean[] used, List<List<Integer>> result) {\n        if (current.size() == nums.length) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        for (int i = 0; i < nums.length; i++) {\n            if (!used[i]) {\n                if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) continue;\n                \n                used[i] = true;\n                current.add(nums[i]);\n                backtrack(nums, current, used, result);\n                current.remove(current.size() - 1);\n                used[i] = false;\n            }\n        }\n    }\n}",
+        "python": "def permuteUnique(nums):\n    result = []\n    nums.sort()\n    used = [False] * len(nums)\n    \n    def backtrack(current):\n        if len(current) == len(nums):\n            result.append(current[:])\n            return\n        \n        for i in range(len(nums)):\n            if not used[i]:\n                if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:\n                    continue\n                \n                used[i] = True\n                current.append(nums[i])\n                backtrack(current)\n                current.pop()\n                used[i] = False\n    \n    backtrack([])\n    return result",
+        "javascript": "function permuteUnique(nums) {\n    const result = [];\n    nums.sort((a, b) => a - b);\n    const used = Array(nums.length).fill(false);\n    \n    function backtrack(current) {\n        if (current.length === nums.length) {\n            result.push([...current]);\n            return;\n        }\n        \n        for (let i = 0; i < nums.length; i++) {\n            if (!used[i]) {\n                if (i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) continue;\n                \n                used[i] = true;\n                current.push(nums[i]);\n                backtrack(current);\n                current.pop();\n                used[i] = false;\n            }\n        }\n    }\n    \n    backtrack([]);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Frequency Map",
+      "order": 2,
+      "intuition": "Count frequency of each unique number. Build permutations by choosing from available counts.",
+      "approach": "Use frequency map to track available elements instead of array indices.",
+      "steps": [
+        "freq = count(nums)",
+        "uniqueNums = sorted(freq.keys())",
+        "backtrack(current):",
+        "  If len(current) == n: add to result, return",
+        "  For num in uniqueNums:",
+        "    If freq[num] > 0:",
+        "      freq[num] -= 1",
+        "      current.add(num)",
+        "      backtrack(current)",
+        "      current.remove()",
+        "      freq[num] += 1"
+      ],
+      "complexity": {
+        "time": "O(n! × n)",
+        "space": "O(n)",
+        "timeExplanation": "Generate n! permutations with frequency map",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> permuteUnique(vector<int>& nums) {\n        vector<vector<int>> result;\n        map<int, int> freq;\n        for (int num : nums) freq[num]++;\n        \n        vector<int> current;\n        backtrack(freq, current, nums.size(), result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(map<int, int>& freq, vector<int>& current, int n, vector<vector<int>>& result) {\n        if (current.size() == n) {\n            result.push_back(current);\n            return;\n        }\n        \n        for (auto& [num, count] : freq) {\n            if (count > 0) {\n                freq[num]--;\n                current.push_back(num);\n                backtrack(freq, current, n, result);\n                current.pop_back();\n                freq[num]++;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> permuteUnique(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        Map<Integer, Integer> freq = new HashMap<>();\n        for (int num : nums) {\n            freq.put(num, freq.getOrDefault(num, 0) + 1);\n        }\n        \n        backtrack(freq, new ArrayList<>(), nums.length, result);\n        return result;\n    }\n    \n    private void backtrack(Map<Integer, Integer> freq, List<Integer> current, int n, List<List<Integer>> result) {\n        if (current.size() == n) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        \n        for (int num : freq.keySet()) {\n            if (freq.get(num) > 0) {\n                freq.put(num, freq.get(num) - 1);\n                current.add(num);\n                backtrack(freq, current, n, result);\n                current.remove(current.size() - 1);\n                freq.put(num, freq.get(num) + 1);\n            }\n        }\n    }\n}",
+        "python": "def permuteUnique(nums):\n    from collections import Counter\n    result = []\n    freq = Counter(nums)\n    \n    def backtrack(current):\n        if len(current) == len(nums):\n            result.append(current[:])\n            return\n        \n        for num in freq:\n            if freq[num] > 0:\n                freq[num] -= 1\n                current.append(num)\n                backtrack(current)\n                current.pop()\n                freq[num] += 1\n    \n    backtrack([])\n    return result",
+        "javascript": "function permuteUnique(nums) {\n    const result = [];\n    const freq = {};\n    for (const num of nums) {\n        freq[num] = (freq[num] || 0) + 1;\n    }\n    \n    function backtrack(current) {\n        if (current.length === nums.length) {\n            result.push([...current]);\n            return;\n        }\n        \n        for (const num in freq) {\n            if (freq[num] > 0) {\n                freq[num]--;\n                current.push(parseInt(num));\n                backtrack(current);\n                current.pop();\n                freq[num]++;\n            }\n        }\n    }\n    \n    backtrack([]);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Swap with Deduplication - Optimal",
+      "order": 3,
+      "intuition": "Use in-place swapping but track swapped values at each level to avoid duplicate swaps.",
+      "approach": "Swap approach with Set to track which values already swapped at current level.",
+      "steps": [
+        "Sort array",
+        "backtrack(start):",
+        "  If start == n: add to result, return",
+        "  swapped = Set()",
+        "  For i from start to n:",
+        "    If nums[i] in swapped: continue",
+        "    swapped.add(nums[i])",
+        "    Swap nums[start] with nums[i]",
+        "    backtrack(start + 1)",
+        "    Swap back"
+      ],
+      "complexity": {
+        "time": "O(n! × n)",
+        "space": "O(1) (excluding output)",
+        "timeExplanation": "In-place with deduplication",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> permuteUnique(vector<int>& nums) {\n        vector<vector<int>> result;\n        sort(nums.begin(), nums.end());\n        backtrack(0, nums, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(int start, vector<int>& nums, vector<vector<int>>& result) {\n        if (start == nums.size()) {\n            result.push_back(nums);\n            return;\n        }\n        \n        set<int> swapped;\n        for (int i = start; i < nums.size(); i++) {\n            if (swapped.count(nums[i])) continue;\n            swapped.insert(nums[i]);\n            \n            swap(nums[start], nums[i]);\n            backtrack(start + 1, nums, result);\n            swap(nums[start], nums[i]);\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> permuteUnique(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(nums);\n        backtrack(0, nums, result);\n        return result;\n    }\n    \n    private void backtrack(int start, int[] nums, List<List<Integer>> result) {\n        if (start == nums.length) {\n            List<Integer> perm = new ArrayList<>();\n            for (int num : nums) perm.add(num);\n            result.add(perm);\n            return;\n        }\n        \n        Set<Integer> swapped = new HashSet<>();\n        for (int i = start; i < nums.length; i++) {\n            if (swapped.contains(nums[i])) continue;\n            swapped.add(nums[i]);\n            \n            swap(nums, start, i);\n            backtrack(start + 1, nums, result);\n            swap(nums, start, i);\n        }\n    }\n    \n    private void swap(int[] nums, int i, int j) {\n        int temp = nums[i];\n        nums[i] = nums[j];\n        nums[j] = temp;\n    }\n}",
+        "python": "def permuteUnique(nums):\n    result = []\n    nums.sort()\n    \n    def backtrack(start):\n        if start == len(nums):\n            result.append(nums[:])\n            return\n        \n        swapped = set()\n        for i in range(start, len(nums)):\n            if nums[i] in swapped:\n                continue\n            swapped.add(nums[i])\n            \n            nums[start], nums[i] = nums[i], nums[start]\n            backtrack(start + 1)\n            nums[start], nums[i] = nums[i], nums[start]\n    \n    backtrack(0)\n    return result",
+        "javascript": "function permuteUnique(nums) {\n    const result = [];\n    nums.sort((a, b) => a - b);\n    \n    function backtrack(start) {\n        if (start === nums.length) {\n            result.push([...nums]);\n            return;\n        }\n        \n        const swapped = new Set();\n        for (let i = start; i < nums.length; i++) {\n            if (swapped.has(nums[i])) continue;\n            swapped.add(nums[i]);\n            \n            [nums[start], nums[i]] = [nums[i], nums[start]];\n            backtrack(start + 1);\n            [nums[start], nums[i]] = [nums[i], nums[start]];\n        }\n    }\n    \n    backtrack(0);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting the array first",
+    "Skipping duplicates incorrectly (should check !used[i-1])",
+    "Forgetting to backtrack properly",
+    "Using Set to deduplicate results instead of avoiding generation",
+    "Not understanding the duplicate skip condition"
+  ],
+  "hints": [
+    "Sort array to group duplicates together",
+    "Skip duplicate: if i > 0 and nums[i] == nums[i-1] and !used[i-1], skip",
+    "The condition ensures we use duplicates in order",
+    "Can use frequency map for cleaner code",
+    "Swap approach also works with deduplication"
+  ],
+  "followUp": [
+    "Generate k-length permutations with duplicates? (Modify length)",
+    "Print permutations instead of generate? (Just print)",
+    "Count permutations? (Return count, not list)",
+    "Return sorted? (Already sorted if done correctly)",
+    "Handle large inputs efficiently? (Use frequency map)"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft"],
+  "tags": ["backtracking", "array", "deduplication"],
+  "relatedProblems": [
+    "Permutations",
+    "Next Permutation",
+    "Permutation Sequence",
+    "Subsets II"
+  ]
+}
