@@ -1,0 +1,180 @@
+{
+  "questionId": "GFG-ROT",
+  "questionSlug": "count-number-of-rotations",
+  "title": "Count Number of Rotations",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/discuss/interview-question/2236091/",
+    "videos": [
+      {
+        "title": "Count Rotations in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=jtSiWTPLwd0",
+        "channel": "take U forward",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Find Number of Rotations",
+        "url": "https://www.youtube.com/watch?v=4WmTRFZilj8",
+        "channel": "Aditya Verma",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Rotation Count Binary Search",
+        "url": "https://www.youtube.com/watch?v=5cx0xerA8XY",
+        "channel": "Pepcoding",
+        "duration": "10:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Count Rotations in Sorted Array",
+        "url": "https://takeuforward.org/arrays/count-rotations-in-rotated-sorted-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Find Rotation Count - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/find-rotation-count-rotated-sorted-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Number of Rotations in Array",
+        "url": "https://www.codingninjas.com/studio/problems/rotation-count_8230663",
+        "source": "Coding Ninjas"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/rotation/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Practice on Coding Ninjas",
+        "url": "https://www.codingninjas.com/studio/problems/rotation-count_8230663",
+        "platform": "Coding Ninjas"
+      }
+    ]
+  },
+  "patternTriggers": "Rotated sorted array + count rotations = Find index of minimum element. Rotation count = index of minimum element.",
+  "approaches": [
+    {
+      "name": "Linear Search",
+      "order": 1,
+      "intuition": "Find minimum element's index by scanning array. That index equals rotation count.",
+      "approach": "Iterate to find index where element is smaller than previous (rotation point).",
+      "steps": [
+        "If arr[0] <= arr[n-1]: array not rotated, return 0",
+        "For i from 1 to n-1:",
+        "  If arr[i] < arr[i-1]:",
+        "    Return i (this is rotation count)",
+        "Return 0"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "May scan entire array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countRotations(vector<int>& arr) {\n        int n = arr.size();\n        \n        // Array not rotated\n        if (arr[0] <= arr[n - 1]) {\n            return 0;\n        }\n        \n        for (int i = 1; i < n; i++) {\n            if (arr[i] < arr[i - 1]) {\n                return i;\n            }\n        }\n        \n        return 0;\n    }\n};",
+        "java": "class Solution {\n    public int countRotations(int[] arr) {\n        int n = arr.length;\n        \n        // Array not rotated\n        if (arr[0] <= arr[n - 1]) {\n            return 0;\n        }\n        \n        for (int i = 1; i < n; i++) {\n            if (arr[i] < arr[i - 1]) {\n                return i;\n            }\n        }\n        \n        return 0;\n    }\n}",
+        "python": "class Solution:\n    def countRotations(self, arr: List[int]) -> int:\n        n = len(arr)\n        \n        # Array not rotated\n        if arr[0] <= arr[n - 1]:\n            return 0\n        \n        for i in range(1, n):\n            if arr[i] < arr[i - 1]:\n                return i\n        \n        return 0",
+        "javascript": "var countRotations = function(arr) {\n    const n = arr.length;\n    \n    // Array not rotated\n    if (arr[0] <= arr[n - 1]) {\n        return 0;\n    }\n    \n    for (let i = 1; i < n; i++) {\n        if (arr[i] < arr[i - 1]) {\n            return i;\n        }\n    }\n    \n    return 0;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Find Minimum Index",
+      "order": 2,
+      "intuition": "Rotation count = index of minimum element. Use binary search to find minimum, same as 'Find Minimum in Rotated Sorted Array'.",
+      "approach": "Binary search comparing mid with high to find minimum element's index.",
+      "steps": [
+        "Initialize low = 0, high = n - 1, minIndex = 0",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If arr[low] <= arr[high]:",
+        "    If arr[low] < arr[minIndex]: minIndex = low",
+        "    break (sorted range found)",
+        "  If arr[low] <= arr[mid]:",
+        "    If arr[low] < arr[minIndex]: minIndex = low",
+        "    low = mid + 1 (search right unsorted half)",
+        "  Else:",
+        "    If arr[mid] < arr[minIndex]: minIndex = mid",
+        "    high = mid - 1 (search left unsorted half)",
+        "Return minIndex"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countRotations(vector<int>& arr) {\n        int n = arr.size();\n        int low = 0, high = n - 1;\n        int minIndex = 0;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            // Entire range is sorted\n            if (arr[low] <= arr[high]) {\n                if (arr[low] < arr[minIndex]) {\n                    minIndex = low;\n                }\n                break;\n            }\n            \n            // Left half is sorted\n            if (arr[low] <= arr[mid]) {\n                if (arr[low] < arr[minIndex]) {\n                    minIndex = low;\n                }\n                low = mid + 1;  // Search right\n            }\n            // Right half is sorted\n            else {\n                if (arr[mid] < arr[minIndex]) {\n                    minIndex = mid;\n                }\n                high = mid - 1;  // Search left\n            }\n        }\n        \n        return minIndex;\n    }\n};",
+        "java": "class Solution {\n    public int countRotations(int[] arr) {\n        int n = arr.length;\n        int low = 0, high = n - 1;\n        int minIndex = 0;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            // Entire range is sorted\n            if (arr[low] <= arr[high]) {\n                if (arr[low] < arr[minIndex]) {\n                    minIndex = low;\n                }\n                break;\n            }\n            \n            // Left half is sorted\n            if (arr[low] <= arr[mid]) {\n                if (arr[low] < arr[minIndex]) {\n                    minIndex = low;\n                }\n                low = mid + 1;\n            }\n            // Right half is sorted\n            else {\n                if (arr[mid] < arr[minIndex]) {\n                    minIndex = mid;\n                }\n                high = mid - 1;\n            }\n        }\n        \n        return minIndex;\n    }\n}",
+        "python": "class Solution:\n    def countRotations(self, arr: List[int]) -> int:\n        n = len(arr)\n        low, high = 0, n - 1\n        min_index = 0\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            # Entire range is sorted\n            if arr[low] <= arr[high]:\n                if arr[low] < arr[min_index]:\n                    min_index = low\n                break\n            \n            # Left half is sorted\n            if arr[low] <= arr[mid]:\n                if arr[low] < arr[min_index]:\n                    min_index = low\n                low = mid + 1\n            # Right half is sorted\n            else:\n                if arr[mid] < arr[min_index]:\n                    min_index = mid\n                high = mid - 1\n        \n        return min_index",
+        "javascript": "var countRotations = function(arr) {\n    const n = arr.length;\n    let low = 0, high = n - 1;\n    let minIndex = 0;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        // Entire range is sorted\n        if (arr[low] <= arr[high]) {\n            if (arr[low] < arr[minIndex]) {\n                minIndex = low;\n            }\n            break;\n        }\n        \n        // Left half is sorted\n        if (arr[low] <= arr[mid]) {\n            if (arr[low] < arr[minIndex]) {\n                minIndex = low;\n            }\n            low = mid + 1;\n        }\n        // Right half is sorted\n        else {\n            if (arr[mid] < arr[minIndex]) {\n                minIndex = mid;\n            }\n            high = mid - 1;\n        }\n    }\n    \n    return minIndex;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Compare with High - Optimal",
+      "order": 3,
+      "intuition": "Simpler approach: compare mid with high element. The index where minimum occurs is the rotation count.",
+      "approach": "Binary search comparing arr[mid] with arr[high]. When arr[mid] > arr[high], minimum is in right half.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low < high:",
+        "  mid = (low + high) / 2",
+        "  If arr[mid] > arr[high]:",
+        "    Minimum is in right half: low = mid + 1",
+        "  Else:",
+        "    Minimum is in left half (including mid): high = mid",
+        "Return low (index of minimum = rotation count)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countRotations(vector<int>& arr) {\n        int n = arr.size();\n        int low = 0, high = n - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] > arr[high]) {\n                // Minimum is in right half\n                low = mid + 1;\n            } else {\n                // Minimum is in left half (including mid)\n                high = mid;\n            }\n        }\n        \n        // low now points to minimum element\n        // which is the rotation count\n        return low;\n    }\n};",
+        "java": "class Solution {\n    public int countRotations(int[] arr) {\n        int n = arr.length;\n        int low = 0, high = n - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] > arr[high]) {\n                // Minimum is in right half\n                low = mid + 1;\n            } else {\n                // Minimum is in left half (including mid)\n                high = mid;\n            }\n        }\n        \n        // low now points to minimum element\n        // which is the rotation count\n        return low;\n    }\n}",
+        "python": "class Solution:\n    def countRotations(self, arr: List[int]) -> int:\n        n = len(arr)\n        low, high = 0, n - 1\n        \n        while low < high:\n            mid = (low + high) // 2\n            \n            if arr[mid] > arr[high]:\n                # Minimum is in right half\n                low = mid + 1\n            else:\n                # Minimum is in left half (including mid)\n                high = mid\n        \n        # low now points to minimum element\n        # which is the rotation count\n        return low",
+        "javascript": "var countRotations = function(arr) {\n    const n = arr.length;\n    let low = 0, high = n - 1;\n    \n    while (low < high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (arr[mid] > arr[high]) {\n            // Minimum is in right half\n            low = mid + 1;\n        } else {\n            // Minimum is in left half (including mid)\n            high = mid;\n        }\n    }\n    \n    // low now points to minimum element\n    // which is the rotation count\n    return low;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding that rotation count = index of minimum element",
+    "Comparing mid with low instead of high in binary search",
+    "Not handling case when array is not rotated (rotation count = 0)",
+    "Using high = mid - 1 when arr[mid] <= arr[high] (might skip answer)",
+    "Confusing rotation count with number of times to rotate to make sorted"
+  ],
+  "hints": [
+    "Key insight: Rotation count = Index of minimum element",
+    "If array rotated k times, minimum element is at index k",
+    "Use same logic as 'Find Minimum in Rotated Sorted Array'",
+    "Compare arr[mid] with arr[high] to decide search direction",
+    "If arr[0] <= arr[n-1], array not rotated, return 0"
+  ],
+  "followUp": [
+    "What if array has duplicates?",
+    "How to find if array was rotated at all?",
+    "Can you restore original array?",
+    "What if you need to find rotation count for multiple arrays?",
+    "How many distinct rotation counts are possible for array of size n?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Adobe", "Flipkart"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Find Minimum in Rotated Sorted Array",
+    "Find Minimum in Rotated Sorted Array II",
+    "Search in Rotated Sorted Array",
+    "Search in Rotated Sorted Array II",
+    "Rotate Array"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "questionId": "154",
+  "questionSlug": "find-minimum-in-rotated-sorted-array-ii",
+  "title": "Find Minimum in Rotated Sorted Array II",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/",
+    "videos": [
+      {
+        "title": "Find Minimum in Rotated Sorted Array II",
+        "url": "https://www.youtube.com/watch?v=NH3y0c58EY8",
+        "channel": "take U forward",
+        "duration": "16:25",
+        "language": "English"
+      },
+      {
+        "title": "Find Minimum in Rotated Sorted Array II - LeetCode 154",
+        "url": "https://www.youtube.com/watch?v=r3BPi0AJRfI",
+        "channel": "NeetCode",
+        "duration": "11:40",
+        "language": "English"
+      },
+      {
+        "title": "Find Minimum in Rotated Sorted Array with Duplicates",
+        "url": "https://www.youtube.com/watch?v=d3eAzDwI8D0",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Minimum in Rotated Sorted Array II - LeetCode Solution",
+        "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/solution/",
+        "source": "LeetCode Official"
+      },
+      {
+        "title": "Find Minimum in Rotated Sorted Array II",
+        "url": "https://takeuforward.org/data-structure/find-minimum-in-rotated-sorted-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Search in Rotated Array with Duplicates - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/search-an-element-in-a-sorted-and-pivoted-array/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Rotated sorted array + Duplicates + Find minimum = Modified binary search with duplicate handling. When arr[mid] == arr[high], shrink search space by one.",
+  "approaches": [
+    {
+      "name": "Brute Force (Linear Search)",
+      "order": 1,
+      "intuition": "Simply iterate through the entire array to find the minimum element.",
+      "approach": "Scan the array from left to right and track the minimum element encountered.",
+      "steps": [
+        "Initialize min = nums[0]",
+        "Iterate through array from index 1 to n-1",
+        "Update min if current element is smaller",
+        "Return min"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int minVal = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            minVal = min(minVal, nums[i]);\n        }\n        \n        return minVal;\n    }\n};",
+        "java": "class Solution {\n    public int findMin(int[] nums) {\n        int minVal = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            minVal = Math.min(minVal, nums[i]);\n        }\n        \n        return minVal;\n    }\n}",
+        "python": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        return min(nums)",
+        "javascript": "var findMin = function(nums) {\n    let minVal = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        minVal = Math.min(minVal, nums[i]);\n    }\n    \n    return minVal;\n};"
+      }
+    },
+    {
+      "name": "Binary Search (Without Duplicate Handling)",
+      "order": 2,
+      "intuition": "Use binary search to find the pivot point where rotation occurred. Minimum is at the pivot. However, this approach struggles with duplicates.",
+      "approach": "Compare mid with right. If nums[mid] > nums[right], minimum is in right half. Otherwise, search left half. But duplicates cause issues.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low < high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] > nums[high]:",
+        "    Minimum in right: low = mid + 1",
+        "  Else:",
+        "    Minimum in left (including mid): high = mid",
+        "Return nums[low]",
+        "NOTE: This fails when nums[mid] == nums[high] with duplicates"
+      ],
+      "complexity": {
+        "time": "O(log n) average, O(n) worst case",
+        "space": "O(1)",
+        "timeExplanation": "Binary search but duplicates can degrade to linear",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int low = 0, high = nums.size() - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > nums[high]) {\n                low = mid + 1;\n            } else {\n                high = mid;\n            }\n        }\n        \n        return nums[low];\n    }\n};",
+        "java": "class Solution {\n    public int findMin(int[] nums) {\n        int low = 0, high = nums.length - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > nums[high]) {\n                low = mid + 1;\n            } else {\n                high = mid;\n            }\n        }\n        \n        return nums[low];\n    }\n}",
+        "python": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        low, high = 0, len(nums) - 1\n        \n        while low < high:\n            mid = (low + high) // 2\n            \n            if nums[mid] > nums[high]:\n                low = mid + 1\n            else:\n                high = mid\n        \n        return nums[low]",
+        "javascript": "var findMin = function(nums) {\n    let low = 0, high = nums.length - 1;\n    \n    while (low < high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (nums[mid] > nums[high]) {\n            low = mid + 1;\n        } else {\n            high = mid;\n        }\n    }\n    \n    return nums[low];\n};"
+      }
+    },
+    {
+      "name": "Binary Search with Duplicate Handling - Optimal",
+      "order": 3,
+      "intuition": "When nums[mid] == nums[high], we can't determine which half contains minimum. Solution: shrink search space by decrementing high. This handles duplicates correctly.",
+      "approach": "Modified binary search that handles three cases: nums[mid] > nums[high], nums[mid] < nums[high], and nums[mid] == nums[high].",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low < high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] > nums[high]:",
+        "    Minimum definitely in right half: low = mid + 1",
+        "  Else if nums[mid] < nums[high]:",
+        "    Minimum in left half (including mid): high = mid",
+        "  Else (nums[mid] == nums[high]):",
+        "    Can't determine, shrink from right: high--",
+        "Return nums[low]"
+      ],
+      "complexity": {
+        "time": "O(log n) average, O(n) worst case",
+        "space": "O(1)",
+        "timeExplanation": "Binary search, but all duplicates degrades to O(n)",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int low = 0, high = nums.size() - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > nums[high]) {\n                // Minimum is in right half\n                low = mid + 1;\n            } else if (nums[mid] < nums[high]) {\n                // Minimum is in left half (including mid)\n                high = mid;\n            } else {\n                // nums[mid] == nums[high], can't determine\n                // Shrink search space from right\n                high--;\n            }\n        }\n        \n        return nums[low];\n    }\n};",
+        "java": "class Solution {\n    public int findMin(int[] nums) {\n        int low = 0, high = nums.length - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > nums[high]) {\n                low = mid + 1;\n            } else if (nums[mid] < nums[high]) {\n                high = mid;\n            } else {\n                high--;\n            }\n        }\n        \n        return nums[low];\n    }\n}",
+        "python": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        low, high = 0, len(nums) - 1\n        \n        while low < high:\n            mid = (low + high) // 2\n            \n            if nums[mid] > nums[high]:\n                low = mid + 1\n            elif nums[mid] < nums[high]:\n                high = mid\n            else:\n                high -= 1\n        \n        return nums[low]",
+        "javascript": "var findMin = function(nums) {\n    let low = 0, high = nums.length - 1;\n    \n    while (low < high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (nums[mid] > nums[high]) {\n            low = mid + 1;\n        } else if (nums[mid] < nums[high]) {\n            high = mid;\n        } else {\n            high--;\n        }\n    }\n    \n    return nums[low];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the case when nums[mid] == nums[high]",
+    "Using low++ instead of high-- for duplicate case (both work but high-- is more common)",
+    "Comparing nums[mid] with nums[low] instead of nums[high]",
+    "Not understanding why we use high = mid instead of high = mid - 1",
+    "Forgetting that worst case is O(n) when all elements are duplicates"
+  ],
+  "hints": [
+    "Compare mid element with rightmost element",
+    "When nums[mid] == nums[high], we must handle duplicates",
+    "Shrinking high by 1 safely removes duplicates",
+    "The minimum is always at the rotation point",
+    "Why compare with high and not low? Because rotation affects right side comparison"
+  ],
+  "followUp": [
+    "What if duplicates are not allowed? (Find Minimum in Rotated Sorted Array I)",
+    "Can you find the rotation count?",
+    "How to search for a target in this array?",
+    "What if you need to find maximum instead?",
+    "Can you identify if array is rotated or not?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Bloomberg", "Apple"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Find Minimum in Rotated Sorted Array",
+    "Search in Rotated Sorted Array",
+    "Search in Rotated Sorted Array II",
+    "Find Peak Element",
+    "Find Pivot Index"
+  ]
+}

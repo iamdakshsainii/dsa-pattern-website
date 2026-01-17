@@ -1,0 +1,170 @@
+{
+  "questionId": "852",
+  "questionSlug": "peak-index-in-a-mountain-array",
+  "title": "Peak Index in a Mountain Array",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/peak-index-in-a-mountain-array/",
+    "videos": [
+      {
+        "title": "Peak Index in a Mountain Array - Leetcode 852",
+        "url": "https://www.youtube.com/watch?v=W9QJ8HaRvJQ",
+        "channel": "NeetCode",
+        "duration": "6:30",
+        "language": "English"
+      },
+      {
+        "title": "Peak Index in a Mountain Array",
+        "url": "https://www.youtube.com/watch?v=OINnBJTRrMU",
+        "channel": "take U forward",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Mountain Peak Binary Search",
+        "url": "https://www.youtube.com/watch?v=TIoCCYn7y_Y",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Peak Index in a Mountain Array",
+        "url": "https://takeuforward.org/arrays/peak-index-in-a-mountain-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Peak Index in a Mountain Array - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/peak-index-in-a-mountain-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Peak Index in a Mountain Array - LeetCode Solution",
+        "url": "https://leetcode.com/problems/peak-index-in-a-mountain-array/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/peak-index-in-a-mountain-array/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Mountain array (strictly increasing then decreasing) + find peak = Binary search. Compare mid with neighbors.",
+  "approaches": [
+    {
+      "name": "Linear Search",
+      "order": 1,
+      "intuition": "Scan array to find element where it starts decreasing.",
+      "approach": "Find index where arr[i] > arr[i+1] - that's the peak.",
+      "steps": [
+        "For i from 0 to n-2:",
+        "  If arr[i] > arr[i+1]:",
+        "    Return i",
+        "Return n-1 (shouldn't happen for valid mountain)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "May scan entire array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int peakIndexInMountainArray(vector<int>& arr) {\n        int n = arr.size();\n        \n        for (int i = 0; i < n - 1; i++) {\n            if (arr[i] > arr[i + 1]) {\n                return i;\n            }\n        }\n        \n        return n - 1;\n    }\n};",
+        "java": "class Solution {\n    public int peakIndexInMountainArray(int[] arr) {\n        int n = arr.length;\n        \n        for (int i = 0; i < n - 1; i++) {\n            if (arr[i] > arr[i + 1]) {\n                return i;\n            }\n        }\n        \n        return n - 1;\n    }\n}",
+        "python": "class Solution:\n    def peakIndexInMountainArray(self, arr: List[int]) -> int:\n        n = len(arr)\n        \n        for i in range(n - 1):\n            if arr[i] > arr[i + 1]:\n                return i\n        \n        return n - 1",
+        "javascript": "var peakIndexInMountainArray = function(arr) {\n    const n = arr.length;\n    \n    for (let i = 0; i < n - 1; i++) {\n        if (arr[i] > arr[i + 1]) {\n            return i;\n        }\n    }\n    \n    return n - 1;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Compare with Next",
+      "order": 2,
+      "intuition": "If arr[mid] < arr[mid+1], we're in increasing part, peak is right. Otherwise peak is mid or left.",
+      "approach": "Binary search comparing mid with mid+1 to find transition from increasing to decreasing.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low < high:",
+        "  mid = (low + high) / 2",
+        "  If arr[mid] < arr[mid+1]:",
+        "    Still increasing, peak is right: low = mid + 1",
+        "  Else:",
+        "    Decreasing started, peak is mid or left: high = mid",
+        "Return low"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int peakIndexInMountainArray(vector<int>& arr) {\n        int low = 0, high = arr.size() - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] < arr[mid + 1]) {\n                // Increasing part, peak is on right\n                low = mid + 1;\n            } else {\n                // Decreasing part, peak is mid or left\n                high = mid;\n            }\n        }\n        \n        return low;\n    }\n};",
+        "java": "class Solution {\n    public int peakIndexInMountainArray(int[] arr) {\n        int low = 0, high = arr.length - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] < arr[mid + 1]) {\n                // Increasing part, peak is on right\n                low = mid + 1;\n            } else {\n                // Decreasing part, peak is mid or left\n                high = mid;\n            }\n        }\n        \n        return low;\n    }\n}",
+        "python": "class Solution:\n    def peakIndexInMountainArray(self, arr: List[int]) -> int:\n        low, high = 0, len(arr) - 1\n        \n        while low < high:\n            mid = (low + high) // 2\n            \n            if arr[mid] < arr[mid + 1]:\n                # Increasing part, peak is on right\n                low = mid + 1\n            else:\n                # Decreasing part, peak is mid or left\n                high = mid\n        \n        return low",
+        "javascript": "var peakIndexInMountainArray = function(arr) {\n    let low = 0, high = arr.length - 1;\n    \n    while (low < high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (arr[mid] < arr[mid + 1]) {\n            // Increasing part, peak is on right\n            low = mid + 1;\n        } else {\n            // Decreasing part, peak is mid or left\n            high = mid;\n        }\n    }\n    \n    return low;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Check Both Neighbors - Optimal",
+      "order": 3,
+      "intuition": "Check if mid is peak by comparing with both neighbors. Mountain guarantees no edge case peaks.",
+      "approach": "Binary search checking if mid is peak (greater than both neighbors), else move towards increasing side.",
+      "steps": [
+        "Initialize low = 1, high = n - 2 (peak can't be at edges)",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If arr[mid] > arr[mid-1] and arr[mid] > arr[mid+1]:",
+        "    Return mid (found peak)",
+        "  Elif arr[mid] > arr[mid-1]:",
+        "    Still increasing: low = mid + 1",
+        "  Else:",
+        "    Decreasing: high = mid - 1"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int peakIndexInMountainArray(vector<int>& arr) {\n        int n = arr.size();\n        int low = 1, high = n - 2;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            // Check if mid is peak\n            if (arr[mid] > arr[mid - 1] && arr[mid] > arr[mid + 1]) {\n                return mid;\n            }\n            // Increasing part - move right\n            else if (arr[mid] > arr[mid - 1]) {\n                low = mid + 1;\n            }\n            // Decreasing part - move left\n            else {\n                high = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int peakIndexInMountainArray(int[] arr) {\n        int n = arr.length;\n        int low = 1, high = n - 2;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            // Check if mid is peak\n            if (arr[mid] > arr[mid - 1] && arr[mid] > arr[mid + 1]) {\n                return mid;\n            }\n            // Increasing part - move right\n            else if (arr[mid] > arr[mid - 1]) {\n                low = mid + 1;\n            }\n            // Decreasing part - move left\n            else {\n                high = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def peakIndexInMountainArray(self, arr: List[int]) -> int:\n        n = len(arr)\n        low, high = 1, n - 2\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            # Check if mid is peak\n            if arr[mid] > arr[mid - 1] and arr[mid] > arr[mid + 1]:\n                return mid\n            # Increasing part - move right\n            elif arr[mid] > arr[mid - 1]:\n                low = mid + 1\n            # Decreasing part - move left\n            else:\n                high = mid - 1\n        \n        return -1",
+        "javascript": "var peakIndexInMountainArray = function(arr) {\n    const n = arr.length;\n    let low = 1, high = n - 2;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        // Check if mid is peak\n        if (arr[mid] > arr[mid - 1] && arr[mid] > arr[mid + 1]) {\n            return mid;\n        }\n        // Increasing part - move right\n        else if (arr[mid] > arr[mid - 1]) {\n            low = mid + 1;\n        }\n        // Decreasing part - move left\n        else {\n            high = mid - 1;\n        }\n    }\n    \n    return -1;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding mountain array properties (strictly increasing then strictly decreasing)",
+    "Using wrong comparison in binary search",
+    "Not handling array bounds properly when checking neighbors",
+    "Confusing this with regular peak finding (mountain has only one peak)",
+    "Using <= in while loop when comparing with mid+1"
+  ],
+  "hints": [
+    "Mountain array has exactly one peak",
+    "Peak cannot be at first or last index",
+    "Compare mid element with its next element",
+    "If increasing, peak is on right; if decreasing, peak is on left or at mid",
+    "This is simpler than general peak finding due to mountain property"
+  ],
+  "followUp": [
+    "What if there could be plateaus (equal consecutive elements)?",
+    "How is this different from general Find Peak Element?",
+    "Can you find the longest increasing subarray?",
+    "What if mountain could have multiple peaks?",
+    "How to verify if an array is a valid mountain?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Find Peak Element",
+    "Find in Mountain Array",
+    "Valid Mountain Array",
+    "Longest Mountain in Array",
+    "Minimum Number of Removals to Make Mountain Array"
+  ]
+}

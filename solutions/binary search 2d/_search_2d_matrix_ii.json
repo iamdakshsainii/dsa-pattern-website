@@ -1,0 +1,169 @@
+{
+  "questionId": "240",
+  "questionSlug": "search-a-2d-matrix-ii",
+  "title": "Search a 2D Matrix II",
+  "difficulty": "Medium",
+  "leetcodeLink": "https://leetcode.com/problems/search-a-2d-matrix-ii/",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/search-a-2d-matrix-ii/",
+    "videos": [
+      {
+        "title": "Search a 2D Matrix II - Step Search",
+        "url": "https://www.youtube.com/watch?v=FOa55B9Ikfg",
+        "channel": "NeetCode",
+        "duration": "10:30",
+        "language": "English"
+      }
+    ]
+  },
+  "problemStatement": "Write an efficient algorithm that searches for a value target in an m x n integer matrix. This matrix has the following properties:\n- Integers in each row are sorted in ascending from left to right.\n- Integers in each column are sorted in ascending from top to bottom.\n\nReturn true if target is in matrix or false otherwise.",
+  "examples": [
+    {
+      "input": "matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5",
+      "output": "true",
+      "explanation": "5 is found in the matrix"
+    },
+    {
+      "input": "matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 20",
+      "output": "false",
+      "explanation": "20 is not in the matrix"
+    }
+  ],
+  "constraints": [
+    "m == matrix.length",
+    "n == matrix[i].length",
+    "1 <= n, m <= 300",
+    "-10^9 <= matrix[i][j] <= 10^9",
+    "All integers in each row are sorted in ascending order",
+    "All integers in each column are sorted in ascending order",
+    "-10^9 <= target <= 10^9"
+  ],
+  "patternTriggers": "2D matrix with rows AND columns sorted (but NOT fully sorted like 1D) = Start from corner (top-right or bottom-left) for O(m+n) solution",
+  "approaches": [
+    {
+      "name": "Brute Force - Check Every Element",
+      "order": 1,
+      "intuition": "Simply iterate through every element",
+      "approach": "Two nested loops to check all elements",
+      "steps": [
+        "For each row:",
+        "  For each column:",
+        "    If matrix[i][j] == target, return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(m*n)",
+        "space": "O(1)",
+        "timeExplanation": "Check all m*n elements",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool searchMatrix(vector<vector<int>>& matrix, int target) {\n        for (int i = 0; i < matrix.size(); i++) {\n            for (int j = 0; j < matrix[0].size(); j++) {\n                if (matrix[i][j] == target) return true;\n            }\n        }\n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean searchMatrix(int[][] matrix, int target) {\n        for (int i = 0; i < matrix.length; i++) {\n            for (int j = 0; j < matrix[0].length; j++) {\n                if (matrix[i][j] == target) return true;\n            }\n        }\n        return false;\n    }\n}",
+        "python": "class Solution:\n    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:\n        for row in matrix:\n            for val in row:\n                if val == target:\n                    return True\n        return False",
+        "javascript": "var searchMatrix = function(matrix, target) {\n    for (let i = 0; i < matrix.length; i++) {\n        for (let j = 0; j < matrix[0].length; j++) {\n            if (matrix[i][j] === target) return true;\n        }\n    }\n    return false;\n};"
+      }
+    },
+    {
+      "name": "Binary Search on Each Row",
+      "order": 2,
+      "intuition": "Each row is sorted, so binary search can be applied to each row",
+      "approach": "Apply binary search on every row",
+      "steps": [
+        "For each row:",
+        "  Apply binary search on the row",
+        "  If found, return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(m log n)",
+        "space": "O(1)",
+        "timeExplanation": "m rows, binary search O(log n) per row",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool searchMatrix(vector<vector<int>>& matrix, int target) {\n        for (auto& row : matrix) {\n            int left = 0, right = row.size() - 1;\n            while (left <= right) {\n                int mid = left + (right - left) / 2;\n                if (row[mid] == target) return true;\n                else if (row[mid] < target) left = mid + 1;\n                else right = mid - 1;\n            }\n        }\n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean searchMatrix(int[][] matrix, int target) {\n        for (int[] row : matrix) {\n            int left = 0, right = row.length - 1;\n            while (left <= right) {\n                int mid = left + (right - left) / 2;\n                if (row[mid] == target) return true;\n                else if (row[mid] < target) left = mid + 1;\n                else right = mid - 1;\n            }\n        }\n        return false;\n    }\n}",
+        "python": "class Solution:\n    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:\n        for row in matrix:\n            left, right = 0, len(row) - 1\n            while left <= right:\n                mid = (left + right) // 2\n                if row[mid] == target:\n                    return True\n                elif row[mid] < target:\n                    left = mid + 1\n                else:\n                    right = mid - 1\n        return False",
+        "javascript": "var searchMatrix = function(matrix, target) {\n    for (const row of matrix) {\n        let left = 0, right = row.length - 1;\n        while (left <= right) {\n            const mid = Math.floor((left + right) / 2);\n            if (row[mid] === target) return true;\n            else if (row[mid] < target) left = mid + 1;\n            else right = mid - 1;\n        }\n    }\n    return false;\n};"
+      }
+    },
+    {
+      "name": "Staircase Search from Top-Right (Optimal)",
+      "order": 3,
+      "intuition": "Start from top-right corner. If target < current, go left. If target > current, go down. This works because of sorted property.",
+      "approach": "Start at top-right, make decision based on comparison",
+      "steps": [
+        "Start at top-right corner (row=0, col=n-1)",
+        "While in bounds:",
+        "  If matrix[row][col] == target, return true",
+        "  If matrix[row][col] > target, go left (col--)",
+        "  If matrix[row][col] < target, go down (row++)",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "timeExplanation": "At most m+n steps (move down m times or left n times)",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool searchMatrix(vector<vector<int>>& matrix, int target) {\n        int m = matrix.size();\n        int n = matrix[0].size();\n        \n        int row = 0, col = n - 1;\n        \n        while (row < m && col >= 0) {\n            if (matrix[row][col] == target) {\n                return true;\n            }\n            else if (matrix[row][col] > target) {\n                col--;  // Go left\n            }\n            else {\n                row++;  // Go down\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean searchMatrix(int[][] matrix, int target) {\n        int m = matrix.length;\n        int n = matrix[0].length;\n        \n        int row = 0, col = n - 1;\n        \n        while (row < m && col >= 0) {\n            if (matrix[row][col] == target) {\n                return true;\n            }\n            else if (matrix[row][col] > target) {\n                col--;\n            }\n            else {\n                row++;\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:\n        m, n = len(matrix), len(matrix[0])\n        \n        row, col = 0, n - 1\n        \n        while row < m and col >= 0:\n            if matrix[row][col] == target:\n                return True\n            elif matrix[row][col] > target:\n                col -= 1\n            else:\n                row += 1\n        \n        return False",
+        "javascript": "var searchMatrix = function(matrix, target) {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    \n    let row = 0, col = n - 1;\n    \n    while (row < m && col >= 0) {\n        if (matrix[row][col] === target) {\n            return true;\n        }\n        else if (matrix[row][col] > target) {\n            col--;\n        }\n        else {\n            row++;\n        }\n    }\n    \n    return false;\n};"
+      }
+    },
+    {
+      "name": "Alternative: Start from Bottom-Left",
+      "order": 4,
+      "intuition": "Can also start from bottom-left corner with similar logic",
+      "approach": "Start at bottom-left, make decisions",
+      "steps": [
+        "Start at bottom-left (row=m-1, col=0)",
+        "While in bounds:",
+        "  If matrix[row][col] == target, return true",
+        "  If matrix[row][col] > target, go up (row--)",
+        "  If matrix[row][col] < target, go right (col++)",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "timeExplanation": "At most m+n steps",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool searchMatrix(vector<vector<int>>& matrix, int target) {\n        int m = matrix.size();\n        int n = matrix[0].size();\n        \n        int row = m - 1, col = 0;\n        \n        while (row >= 0 && col < n) {\n            if (matrix[row][col] == target) {\n                return true;\n            }\n            else if (matrix[row][col] > target) {\n                row--;  // Go up\n            }\n            else {\n                col++;  // Go right\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean searchMatrix(int[][] matrix, int target) {\n        int m = matrix.length;\n        int n = matrix[0].length;\n        \n        int row = m - 1, col = 0;\n        \n        while (row >= 0 && col < n) {\n            if (matrix[row][col] == target) {\n                return true;\n            }\n            else if (matrix[row][col] > target) {\n                row--;\n            }\n            else {\n                col++;\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:\n        m, n = len(matrix), len(matrix[0])\n        \n        row, col = m - 1, 0\n        \n        while row >= 0 and col < n:\n            if matrix[row][col] == target:\n                return True\n            elif matrix[row][col] > target:\n                row -= 1\n            else:\n                col += 1\n        \n        return False",
+        "javascript": "var searchMatrix = function(matrix, target) {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    \n    let row = m - 1, col = 0;\n    \n    while (row >= 0 && col < n) {\n        if (matrix[row][col] === target) {\n            return true;\n        }\n        else if (matrix[row][col] > target) {\n            row--;\n        }\n        else {\n            col++;\n        }\n    }\n    \n    return false;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Trying to use Search a 2D Matrix I approach (won't work - matrix not fully sorted)",
+    "Starting from top-left or bottom-right (doesn't allow elimination)",
+    "Forgetting bounds check in while loop",
+    "Not understanding why corners work but middle doesn't"
+  ],
+  "hints": [
+    "Key difference from Matrix I: not fully sorted (first of next row NOT > last of prev row)",
+    "Start from corner where you can make elimination decision",
+    "Top-right: smaller values to left, larger values below",
+    "Bottom-left: smaller values to right, larger values above",
+    "Each comparison eliminates one row OR one column"
+  ],
+  "followUp": [
+    "Why doesn't starting from top-left or bottom-right work?",
+    "Can you find the position of target, not just existence?",
+    "What if you need to count occurrences of target?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Apple", "Bloomberg"],
+  "tags": ["binary-search", "matrix", "array", "divide-and-conquer"],
+  "relatedProblems": [
+    "Search a 2D Matrix",
+    "Find Peak Element II",
+    "Kth Smallest Element in a Sorted Matrix"
+  ]
+}

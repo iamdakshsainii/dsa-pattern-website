@@ -1,0 +1,149 @@
+{
+  "questionId": "1901",
+  "questionSlug": "find-a-peak-element-ii",
+  "title": "Find a Peak Element II",
+  "difficulty": "Medium",
+  "leetcodeLink": "https://leetcode.com/problems/find-a-peak-element-ii/",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-a-peak-element-ii/",
+    "videos": [
+      {
+        "title": "Find Peak Element II - Binary Search",
+        "url": "https://www.youtube.com/watch?v=nGGp5XBzC4g",
+        "channel": "NeetCode",
+        "duration": "15:00",
+        "language": "English"
+      }
+    ]
+  },
+  "problemStatement": "A peak element in a 2D grid is an element that is strictly greater than all of its adjacent neighbors to the left, right, top, and bottom.\n\nGiven a 0-indexed m x n matrix mat where no two adjacent cells are equal, find any peak element mat[i][j] and return the length 2 array [i,j].\n\nYou may assume that the entire matrix is surrounded by an outer perimeter with the value -1 in each cell.\n\nYou must write an algorithm that runs in O(m log(n)) or O(n log(m)) time.",
+  "examples": [
+    {
+      "input": "mat = [[1,4],[3,2]]",
+      "output": "[0,1]",
+      "explanation": "Both 3 and 4 are peak elements so [1,0] and [0,1] are both acceptable answers."
+    },
+    {
+      "input": "mat = [[10,20,15],[21,30,14],[7,16,32]]",
+      "output": "[1,1]",
+      "explanation": "30 is a peak element. [2,2] is also acceptable (32 is peak)."
+    }
+  ],
+  "constraints": [
+    "m == mat.length",
+    "n == mat[i].length",
+    "1 <= m, n <= 500",
+    "1 <= mat[i][j] <= 10^5",
+    "No two adjacent cells are equal"
+  ],
+  "patternTriggers": "2D matrix peak finding + time constraint O(m log n) or O(n log m) = Binary search on columns, find max in column",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Elements",
+      "order": 1,
+      "intuition": "Check every element to see if it's a peak",
+      "approach": "Iterate through all cells, check if peak",
+      "steps": [
+        "For each cell (i, j):",
+        "  Check all 4 neighbors",
+        "  If current > all valid neighbors:",
+        "    Return [i, j]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(m*n)",
+        "space": "O(1)",
+        "timeExplanation": "Check all m*n cells",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findPeakGrid(vector<vector<int>>& mat) {\n        int m = mat.size(), n = mat[0].size();\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                bool isPeak = true;\n                \n                // Check left\n                if (j > 0 && mat[i][j] <= mat[i][j-1]) isPeak = false;\n                // Check right\n                if (j < n-1 && mat[i][j] <= mat[i][j+1]) isPeak = false;\n                // Check top\n                if (i > 0 && mat[i][j] <= mat[i-1][j]) isPeak = false;\n                // Check bottom\n                if (i < m-1 && mat[i][j] <= mat[i+1][j]) isPeak = false;\n                \n                if (isPeak) return {i, j};\n            }\n        }\n        \n        return {-1, -1};\n    }\n};",
+        "java": "class Solution {\n    public int[] findPeakGrid(int[][] mat) {\n        int m = mat.length, n = mat[0].length;\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                boolean isPeak = true;\n                \n                if (j > 0 && mat[i][j] <= mat[i][j-1]) isPeak = false;\n                if (j < n-1 && mat[i][j] <= mat[i][j+1]) isPeak = false;\n                if (i > 0 && mat[i][j] <= mat[i-1][j]) isPeak = false;\n                if (i < m-1 && mat[i][j] <= mat[i+1][j]) isPeak = false;\n                \n                if (isPeak) return new int[]{i, j};\n            }\n        }\n        \n        return new int[]{-1, -1};\n    }\n}",
+        "python": "class Solution:\n    def findPeakGrid(self, mat: List[List[int]]) -> List[int]:\n        m, n = len(mat), len(mat[0])\n        \n        for i in range(m):\n            for j in range(n):\n                is_peak = True\n                \n                if j > 0 and mat[i][j] <= mat[i][j-1]:\n                    is_peak = False\n                if j < n-1 and mat[i][j] <= mat[i][j+1]:\n                    is_peak = False\n                if i > 0 and mat[i][j] <= mat[i-1][j]:\n                    is_peak = False\n                if i < m-1 and mat[i][j] <= mat[i+1][j]:\n                    is_peak = False\n                \n                if is_peak:\n                    return [i, j]\n        \n        return [-1, -1]",
+        "javascript": "var findPeakGrid = function(mat) {\n    const m = mat.length, n = mat[0].length;\n    \n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            let isPeak = true;\n            \n            if (j > 0 && mat[i][j] <= mat[i][j-1]) isPeak = false;\n            if (j < n-1 && mat[i][j] <= mat[i][j+1]) isPeak = false;\n            if (i > 0 && mat[i][j] <= mat[i-1][j]) isPeak = false;\n            if (i < m-1 && mat[i][j] <= mat[i+1][j]) isPeak = false;\n            \n            if (isPeak) return [i, j];\n        }\n    }\n    \n    return [-1, -1];\n};"
+      }
+    },
+    {
+      "name": "Binary Search on Columns (Optimal)",
+      "order": 2,
+      "intuition": "Use binary search on columns. For middle column, find max element. If max element's left neighbor > max, search left half. If right neighbor > max, search right half. Otherwise, it's a peak.",
+      "approach": "Binary search on columns, find max in each column, navigate based on neighbors",
+      "steps": [
+        "Binary search on columns (left=0, right=n-1):",
+        "  mid = (left + right) / 2",
+        "  Find max element in column mid → (maxRow, mid)",
+        "  Check left and right neighbors:",
+        "    If mat[maxRow][mid-1] > mat[maxRow][mid]:",
+        "      Peak must be in left half, right = mid-1",
+        "    Else if mat[maxRow][mid+1] > mat[maxRow][mid]:",
+        "      Peak must be in right half, left = mid+1",
+        "    Else:",
+        "      mat[maxRow][mid] is a peak, return [maxRow, mid]",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(m log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search O(log n), finding max in column O(m) per iteration",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int findMaxRow(vector<vector<int>>& mat, int col) {\n        int maxRow = 0;\n        for (int i = 0; i < mat.size(); i++) {\n            if (mat[i][col] > mat[maxRow][col]) {\n                maxRow = i;\n            }\n        }\n        return maxRow;\n    }\n    \npublic:\n    vector<int> findPeakGrid(vector<vector<int>>& mat) {\n        int m = mat.size(), n = mat[0].size();\n        int left = 0, right = n - 1;\n        \n        while (left <= right) {\n            int midCol = left + (right - left) / 2;\n            int maxRow = findMaxRow(mat, midCol);\n            \n            int leftVal = (midCol > 0) ? mat[maxRow][midCol-1] : -1;\n            int rightVal = (midCol < n-1) ? mat[maxRow][midCol+1] : -1;\n            int currVal = mat[maxRow][midCol];\n            \n            if (currVal > leftVal && currVal > rightVal) {\n                return {maxRow, midCol};\n            }\n            else if (leftVal > currVal) {\n                right = midCol - 1;\n            }\n            else {\n                left = midCol + 1;\n            }\n        }\n        \n        return {-1, -1};\n    }\n};",
+        "java": "class Solution {\n    private int findMaxRow(int[][] mat, int col) {\n        int maxRow = 0;\n        for (int i = 0; i < mat.length; i++) {\n            if (mat[i][col] > mat[maxRow][col]) {\n                maxRow = i;\n            }\n        }\n        return maxRow;\n    }\n    \n    public int[] findPeakGrid(int[][] mat) {\n        int m = mat.length, n = mat[0].length;\n        int left = 0, right = n - 1;\n        \n        while (left <= right) {\n            int midCol = left + (right - left) / 2;\n            int maxRow = findMaxRow(mat, midCol);\n            \n            int leftVal = (midCol > 0) ? mat[maxRow][midCol-1] : -1;\n            int rightVal = (midCol < n-1) ? mat[maxRow][midCol+1] : -1;\n            int currVal = mat[maxRow][midCol];\n            \n            if (currVal > leftVal && currVal > rightVal) {\n                return new int[]{maxRow, midCol};\n            }\n            else if (leftVal > currVal) {\n                right = midCol - 1;\n            }\n            else {\n                left = midCol + 1;\n            }\n        }\n        \n        return new int[]{-1, -1};\n    }\n}",
+        "python": "class Solution:\n    def findPeakGrid(self, mat: List[List[int]]) -> List[int]:\n        def findMaxRow(col: int) -> int:\n            max_row = 0\n            for i in range(len(mat)):\n                if mat[i][col] > mat[max_row][col]:\n                    max_row = i\n            return max_row\n        \n        m, n = len(mat), len(mat[0])\n        left, right = 0, n - 1\n        \n        while left <= right:\n            mid_col = (left + right) // 2\n            max_row = findMaxRow(mid_col)\n            \n            left_val = mat[max_row][mid_col-1] if mid_col > 0 else -1\n            right_val = mat[max_row][mid_col+1] if mid_col < n-1 else -1\n            curr_val = mat[max_row][mid_col]\n            \n            if curr_val > left_val and curr_val > right_val:\n                return [max_row, mid_col]\n            elif left_val > curr_val:\n                right = mid_col - 1\n            else:\n                left = mid_col + 1\n        \n        return [-1, -1]",
+        "javascript": "var findPeakGrid = function(mat) {\n    const findMaxRow = (col) => {\n        let maxRow = 0;\n        for (let i = 0; i < mat.length; i++) {\n            if (mat[i][col] > mat[maxRow][col]) {\n                maxRow = i;\n            }\n        }\n        return maxRow;\n    };\n    \n    const m = mat.length, n = mat[0].length;\n    let left = 0, right = n - 1;\n    \n    while (left <= right) {\n        const midCol = Math.floor((left + right) / 2);\n        const maxRow = findMaxRow(midCol);\n        \n        const leftVal = midCol > 0 ? mat[maxRow][midCol-1] : -1;\n        const rightVal = midCol < n-1 ? mat[maxRow][midCol+1] : -1;\n        const currVal = mat[maxRow][midCol];\n        \n        if (currVal > leftVal && currVal > rightVal) {\n            return [maxRow, midCol];\n        }\n        else if (leftVal > currVal) {\n            right = midCol - 1;\n        }\n        else {\n            left = midCol + 1;\n        }\n    }\n    \n    return [-1, -1];\n};"
+      }
+    },
+    {
+      "name": "Alternative: Binary Search on Rows",
+      "order": 3,
+      "intuition": "Same logic but binary search on rows instead of columns",
+      "approach": "Binary search on rows, find max in each row",
+      "steps": [
+        "Binary search on rows (top=0, bottom=m-1):",
+        "  mid = (top + bottom) / 2",
+        "  Find max element in row mid → (mid, maxCol)",
+        "  Check top and bottom neighbors:",
+        "    Navigate based on comparison",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n log m)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search O(log m), finding max in row O(n) per iteration",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int findMaxCol(vector<vector<int>>& mat, int row) {\n        int maxCol = 0;\n        for (int j = 0; j < mat[0].size(); j++) {\n            if (mat[row][j] > mat[row][maxCol]) {\n                maxCol = j;\n            }\n        }\n        return maxCol;\n    }\n    \npublic:\n    vector<int> findPeakGrid(vector<vector<int>>& mat) {\n        int m = mat.size(), n = mat[0].size();\n        int top = 0, bottom = m - 1;\n        \n        while (top <= bottom) {\n            int midRow = top + (bottom - top) / 2;\n            int maxCol = findMaxCol(mat, midRow);\n            \n            int topVal = (midRow > 0) ? mat[midRow-1][maxCol] : -1;\n            int bottomVal = (midRow < m-1) ? mat[midRow+1][maxCol] : -1;\n            int currVal = mat[midRow][maxCol];\n            \n            if (currVal > topVal && currVal > bottomVal) {\n                return {midRow, maxCol};\n            }\n            else if (topVal > currVal) {\n                bottom = midRow - 1;\n            }\n            else {\n                top = midRow + 1;\n            }\n        }\n        \n        return {-1, -1};\n    }\n};",
+        "java": "class Solution {\n    private int findMaxCol(int[][] mat, int row) {\n        int maxCol = 0;\n        for (int j = 0; j < mat[0].length; j++) {\n            if (mat[row][j] > mat[row][maxCol]) {\n                maxCol = j;\n            }\n        }\n        return maxCol;\n    }\n    \n    public int[] findPeakGrid(int[][] mat) {\n        int m = mat.length, n = mat[0].length;\n        int top = 0, bottom = m - 1;\n        \n        while (top <= bottom) {\n            int midRow = top + (bottom - top) / 2;\n            int maxCol = findMaxCol(mat, midRow);\n            \n            int topVal = (midRow > 0) ? mat[midRow-1][maxCol] : -1;\n            int bottomVal = (midRow < m-1) ? mat[midRow+1][maxCol] : -1;\n            int currVal = mat[midRow][maxCol];\n            \n            if (currVal > topVal && currVal > bottomVal) {\n                return new int[]{midRow, maxCol};\n            }\n            else if (topVal > currVal) {\n                bottom = midRow - 1;\n            }\n            else {\n                top = midRow + 1;\n            }\n        }\n        \n        return new int[]{-1, -1};\n    }\n}",
+        "python": "class Solution:\n    def findPeakGrid(self, mat: List[List[int]]) -> List[int]:\n        def findMaxCol(row: int) -> int:\n            max_col = 0\n            for j in range(len(mat[0])):\n                if mat[row][j] > mat[row][max_col]:\n                    max_col = j\n            return max_col\n        \n        m, n = len(mat), len(mat[0])\n        top, bottom = 0, m - 1\n        \n        while top <= bottom:\n            mid_row = (top + bottom) // 2\n            max_col = findMaxCol(mid_row)\n            \n            top_val = mat[mid_row-1][max_col] if mid_row > 0 else -1\n            bottom_val = mat[mid_row+1][max_col] if mid_row < m-1 else -1\n            curr_val = mat[mid_row][max_col]\n            \n            if curr_val > top_val and curr_val > bottom_val:\n                return [mid_row, max_col]\n            elif top_val > curr_val:\n                bottom = mid_row - 1\n            else:\n                top = mid_row + 1\n        \n        return [-1, -1]",
+        "javascript": "var findPeakGrid = function(mat) {\n    const findMaxCol = (row) => {\n        let maxCol = 0;\n        for (let j = 0; j < mat[0].length; j++) {\n            if (mat[row][j] > mat[row][maxCol]) {\n                maxCol = j;\n            }\n        }\n        return maxCol;\n    };\n    \n    const m = mat.length, n = mat[0].length;\n    let top = 0, bottom = m - 1;\n    \n    while (top <= bottom) {\n        const midRow = Math.floor((top + bottom) / 2);\n        const maxCol = findMaxCol(midRow);\n        \n        const topVal = midRow > 0 ? mat[midRow-1][maxCol] : -1;\n        const bottomVal = midRow < m-1 ? mat[midRow+1][maxCol] : -1;\n        const currVal = mat[midRow][maxCol];\n        \n        if (currVal > topVal && currVal > bottomVal) {\n            return [midRow, maxCol];\n        }\n        else if (topVal > currVal) {\n            bottom = midRow - 1;\n        }\n        else {\n            top = midRow + 1;\n        }\n    }\n    \n    return [-1, -1];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling boundary conditions (edges of matrix)",
+    "Comparing with all 4 neighbors in binary search (only need 2)",
+    "Not finding max element in column/row before checking neighbors",
+    "Forgetting that perimeter has value -1"
+  ],
+  "hints": [
+    "Key insight: Maximum element in a column/row cannot have larger top/bottom or left/right neighbor in that column/row",
+    "Binary search eliminates half the search space each time",
+    "If max element's neighbor is larger, peak must be in that direction",
+    "Choose to binary search on smaller dimension for better time complexity",
+    "Guaranteed to find a peak because matrix surrounded by -1"
+  ],
+  "followUp": [
+    "Can you find all peak elements in the matrix?",
+    "What if matrix can have equal adjacent elements?",
+    "How would you solve in O(m + n) time?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook"],
+  "tags": ["binary-search", "matrix", "array", "divide-and-conquer"],
+  "relatedProblems": [
+    "Find Peak Element",
+    "Search a 2D Matrix II",
+    "Kth Smallest Element in a Sorted Matrix"
+  ]
+}

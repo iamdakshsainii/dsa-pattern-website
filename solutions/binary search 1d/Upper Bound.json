@@ -1,0 +1,169 @@
+{
+  "questionId": "upper-bound",
+  "questionSlug": "upper-bound-first-greater",
+  "title": "Upper Bound (First > target)",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://www.geeksforgeeks.org/problems/ceil-the-floor2802/1",
+    "videos": [
+      {
+        "title": "Lower Bound and Upper Bound",
+        "url": "https://www.youtube.com/watch?v=6zhGS79oQ4k",
+        "channel": "take U forward",
+        "duration": "15:30",
+        "language": "English"
+      },
+      {
+        "title": "Binary Search - Lower and Upper Bound",
+        "url": "https://www.youtube.com/watch?v=5cx0xerA8XY",
+        "channel": "Aditya Verma",
+        "duration": "12:45",
+        "language": "English"
+      },
+      {
+        "title": "Upper Bound Binary Search",
+        "url": "https://www.youtube.com/watch?v=1BvKLD77KXs",
+        "channel": "Pepcoding",
+        "duration": "11:10",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Implement Upper Bound",
+        "url": "https://takeuforward.org/arrays/implement-upper-bound/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Upper Bound in C++ STL",
+        "url": "https://www.geeksforgeeks.org/upper_bound-in-cpp/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Search Bounds",
+        "url": "https://www.topcoder.com/thrive/articles/Binary%20Search",
+        "source": "TopCoder"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/ceil-the-floor2802/1",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find first element > target in sorted array = Binary search variant. Similar to lower bound but with > instead of >=.",
+  "approaches": [
+    {
+      "name": "Linear Search",
+      "order": 1,
+      "intuition": "Scan array from left to right to find first element > target.",
+      "approach": "Iterate through array and return index of first element that is strictly greater than target.",
+      "steps": [
+        "Iterate i from 0 to n-1",
+        "If nums[i] > target: return i",
+        "If loop completes: return n (insertion point at end)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "May need to scan entire array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int upperBound(vector<int>& nums, int target) {\n        int n = nums.size();\n        \n        for (int i = 0; i < n; i++) {\n            if (nums[i] > target) {\n                return i;\n            }\n        }\n        \n        return n;\n    }\n};",
+        "java": "class Solution {\n    public int upperBound(int[] nums, int target) {\n        int n = nums.length;\n        \n        for (int i = 0; i < n; i++) {\n            if (nums[i] > target) {\n                return i;\n            }\n        }\n        \n        return n;\n    }\n}",
+        "python": "class Solution:\n    def upperBound(self, nums: List[int], target: int) -> int:\n        n = len(nums)\n        \n        for i in range(n):\n            if nums[i] > target:\n                return i\n        \n        return n",
+        "javascript": "var upperBound = function(nums, target) {\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        if (nums[i] > target) {\n            return i;\n        }\n    }\n    \n    return n;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Optimal",
+      "order": 2,
+      "intuition": "Use binary search to efficiently find first element > target. When nums[mid] > target, it's a potential answer - store it and search left for smaller index.",
+      "approach": "Binary search with modification: when nums[mid] > target, store answer and search left. When nums[mid] <= target, search right.",
+      "steps": [
+        "Initialize low = 0, high = n - 1, ans = n",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] > target:",
+        "    Update ans = mid (potential answer)",
+        "    Search left for smaller index: high = mid - 1",
+        "  Else (nums[mid] <= target):",
+        "    Search right: low = mid + 1",
+        "Return ans"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int upperBound(vector<int>& nums, int target) {\n        int low = 0, high = nums.size() - 1;\n        int ans = nums.size();\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > target) {\n                ans = mid;\n                high = mid - 1; // Look for smaller index\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ans;\n    }\n};",
+        "java": "class Solution {\n    public int upperBound(int[] nums, int target) {\n        int low = 0, high = nums.length - 1;\n        int ans = nums.length;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > target) {\n                ans = mid;\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ans;\n    }\n}",
+        "python": "class Solution:\n    def upperBound(self, nums: List[int], target: int) -> int:\n        low, high = 0, len(nums) - 1\n        ans = len(nums)\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if nums[mid] > target:\n                ans = mid\n                high = mid - 1\n            else:\n                low = mid + 1\n        \n        return ans",
+        "javascript": "var upperBound = function(nums, target) {\n    let low = 0, high = nums.length - 1;\n    let ans = nums.length;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (nums[mid] > target) {\n            ans = mid;\n            high = mid - 1;\n        } else {\n            low = mid + 1;\n        }\n    }\n    \n    return ans;\n};"
+      }
+    },
+    {
+      "name": "Binary Search (Alternative - Using low)",
+      "order": 3,
+      "intuition": "After binary search completes, low pointer will be at the upper bound position.",
+      "approach": "Standard binary search where low naturally points to first position > target.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] > target:",
+        "    high = mid - 1",
+        "  Else:",
+        "    low = mid + 1",
+        "Return low (it will be at upper bound position)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int upperBound(vector<int>& nums, int target) {\n        int low = 0, high = nums.size() - 1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > target) {\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return low; // low will be at upper bound position\n    }\n};",
+        "java": "class Solution {\n    public int upperBound(int[] nums, int target) {\n        int low = 0, high = nums.length - 1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > target) {\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return low;\n    }\n}",
+        "python": "class Solution:\n    def upperBound(self, nums: List[int], target: int) -> int:\n        low, high = 0, len(nums) - 1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if nums[mid] > target:\n                high = mid - 1\n            else:\n                low = mid + 1\n        \n        return low",
+        "javascript": "var upperBound = function(nums, target) {\n    let low = 0, high = nums.length - 1;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (nums[mid] > target) {\n            high = mid - 1;\n        } else {\n            low = mid + 1;\n        }\n    }\n    \n    return low;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Confusing upper bound (>) with lower bound (>=)",
+    "Returning -1 instead of n when no element found",
+    "Using >= instead of > in comparison",
+    "Not understanding difference between lower and upper bound",
+    "Forgetting to initialize ans = n for case when all elements <= target"
+  ],
+  "hints": [
+    "Upper bound finds first element > target (strictly greater)",
+    "Lower bound uses >=, upper bound uses >",
+    "If no such element exists, return n (array length)",
+    "When nums[mid] > target, search left for potentially smaller index",
+    "The 'low' pointer naturally ends up at upper bound position"
+  ],
+  "followUp": [
+    "What is the difference between lower and upper bound?",
+    "How to count occurrences using bounds? (upper_bound - lower_bound)",
+    "How to find floor and ceiling?",
+    "Can you find range of target element?",
+    "How does C++ STL upper_bound work?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Lower Bound",
+    "Search Insert Position",
+    "Find First and Last Position of Element",
+    "Count Occurrences in Sorted Array",
+    "Ceiling in Sorted Array"
+  ]
+}

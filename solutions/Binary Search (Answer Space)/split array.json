@@ -1,0 +1,171 @@
+{
+  "questionId": "410",
+  "questionSlug": "split-array-largest-sum",
+  "title": "Split Array Largest Sum",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/split-array-largest-sum/",
+    "videos": [
+      {
+        "title": "Split Array Largest Sum | Binary Search on Answer",
+        "url": "https://www.youtube.com/watch?v=thUd_WJn6wk",
+        "channel": "take U forward",
+        "duration": "21:45",
+        "language": "English"
+      },
+      {
+        "title": "Split Array - Largest Sum",
+        "url": "https://www.youtube.com/watch?v=YlRMsn5Ou_0",
+        "channel": "NeetCode",
+        "duration": "14:32",
+        "language": "English"
+      },
+      {
+        "title": "Split Array Largest Sum - Leetcode 410",
+        "url": "https://www.youtube.com/watch?v=hZgW8OZnF9s",
+        "channel": "Pepcoding",
+        "duration": "18:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Split Array Largest Sum - LeetCode Solution",
+        "url": "https://leetcode.com/problems/split-array-largest-sum/solution/",
+        "source": "LeetCode Official"
+      },
+      {
+        "title": "Split Array - Largest Sum using Binary Search",
+        "url": "https://takeuforward.org/arrays/split-array-largest-sum/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Split Array Largest Sum - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/split-array-largest-sum/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/split-array-largest-sum/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Minimize maximum + Split array = Binary Search on answer. Search space is [max(nums), sum(nums)].",
+  "approaches": [
+    {
+      "name": "Brute Force (Try All Splits)",
+      "order": 1,
+      "intuition": "Generate all possible ways to split array into k subarrays and find the split with minimum largest sum.",
+      "approach": "Use recursion to try all possible split positions. For each split configuration, calculate the maximum sum among all subarrays and track the minimum.",
+      "steps": [
+        "Use recursion with parameters: index, splits remaining",
+        "Try placing split at each position from current index",
+        "For each split configuration, calculate max sum of all subarrays",
+        "Return minimum of all possible maximum sums",
+        "Base case: when splits = 1, return sum of remaining elements"
+      ],
+      "complexity": {
+        "time": "O(2^n)",
+        "space": "O(n)",
+        "timeExplanation": "Exponential - trying all possible split combinations",
+        "spaceExplanation": "Recursion stack depth"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int solve(vector<int>& nums, int idx, int k, vector<int>& prefix) {\n        if (k == 1) {\n            return prefix.back() - (idx > 0 ? prefix[idx - 1] : 0);\n        }\n        \n        int result = INT_MAX;\n        for (int i = idx; i <= nums.size() - k; i++) {\n            int leftSum = prefix[i] - (idx > 0 ? prefix[idx - 1] : 0);\n            int rightMax = solve(nums, i + 1, k - 1, prefix);\n            result = min(result, max(leftSum, rightMax));\n        }\n        return result;\n    }\n    \n    int splitArray(vector<int>& nums, int k) {\n        int n = nums.size();\n        vector<int> prefix(n);\n        prefix[0] = nums[0];\n        for (int i = 1; i < n; i++) {\n            prefix[i] = prefix[i - 1] + nums[i];\n        }\n        return solve(nums, 0, k, prefix);\n    }\n};",
+        "java": "class Solution {\n    public int solve(int[] nums, int idx, int k, int[] prefix) {\n        if (k == 1) {\n            return prefix[nums.length - 1] - (idx > 0 ? prefix[idx - 1] : 0);\n        }\n        \n        int result = Integer.MAX_VALUE;\n        for (int i = idx; i <= nums.length - k; i++) {\n            int leftSum = prefix[i] - (idx > 0 ? prefix[idx - 1] : 0);\n            int rightMax = solve(nums, i + 1, k - 1, prefix);\n            result = Math.min(result, Math.max(leftSum, rightMax));\n        }\n        return result;\n    }\n    \n    public int splitArray(int[] nums, int k) {\n        int n = nums.length;\n        int[] prefix = new int[n];\n        prefix[0] = nums[0];\n        for (int i = 1; i < n; i++) {\n            prefix[i] = prefix[i - 1] + nums[i];\n        }\n        return solve(nums, 0, k, prefix);\n    }\n}",
+        "python": "class Solution:\n    def solve(self, nums: List[int], idx: int, k: int, prefix: List[int]) -> int:\n        if k == 1:\n            return prefix[-1] - (prefix[idx - 1] if idx > 0 else 0)\n        \n        result = float('inf')\n        for i in range(idx, len(nums) - k + 1):\n            left_sum = prefix[i] - (prefix[idx - 1] if idx > 0 else 0)\n            right_max = self.solve(nums, i + 1, k - 1, prefix)\n            result = min(result, max(left_sum, right_max))\n        return result\n    \n    def splitArray(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        prefix = [0] * n\n        prefix[0] = nums[0]\n        for i in range(1, n):\n            prefix[i] = prefix[i - 1] + nums[i]\n        return self.solve(nums, 0, k, prefix)",
+        "javascript": "var splitArray = function(nums, k) {\n    const solve = (idx, splits, prefix) => {\n        if (splits === 1) {\n            return prefix[nums.length - 1] - (idx > 0 ? prefix[idx - 1] : 0);\n        }\n        \n        let result = Infinity;\n        for (let i = idx; i <= nums.length - splits; i++) {\n            const leftSum = prefix[i] - (idx > 0 ? prefix[idx - 1] : 0);\n            const rightMax = solve(i + 1, splits - 1, prefix);\n            result = Math.min(result, Math.max(leftSum, rightMax));\n        }\n        return result;\n    };\n    \n    const n = nums.length;\n    const prefix = new Array(n);\n    prefix[0] = nums[0];\n    for (let i = 1; i < n; i++) {\n        prefix[i] = prefix[i - 1] + nums[i];\n    }\n    return solve(0, k, prefix);\n};"
+      }
+    },
+    {
+      "name": "Dynamic Programming",
+      "order": 2,
+      "intuition": "Use memoization to avoid recalculating same subproblems. dp[i][j] = minimum largest sum when splitting first i elements into j subarrays.",
+      "approach": "Build DP table where dp[i][j] represents minimum largest sum for first i elements split into j parts. Try all possible positions for the jth split.",
+      "steps": [
+        "Create dp[n+1][k+1] initialized to infinity",
+        "Base case: dp[0][0] = 0",
+        "For i from 1 to n:",
+        "  For j from 1 to min(i, k):",
+        "    Try all split positions p from j-1 to i-1:",
+        "      sum = sum of elements from p to i-1",
+        "      dp[i][j] = min(dp[i][j], max(dp[p][j-1], sum))",
+        "Return dp[n][k]"
+      ],
+      "complexity": {
+        "time": "O(n² * k)",
+        "space": "O(n * k)",
+        "timeExplanation": "Three nested loops: n elements, k splits, n positions",
+        "spaceExplanation": "DP table of size n * k"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int splitArray(vector<int>& nums, int k) {\n        int n = nums.size();\n        vector<vector<long long>> dp(n + 1, vector<long long>(k + 1, LLONG_MAX));\n        vector<long long> prefix(n + 1, 0);\n        \n        for (int i = 0; i < n; i++) {\n            prefix[i + 1] = prefix[i] + nums[i];\n        }\n        \n        dp[0][0] = 0;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= min(i, k); j++) {\n                for (int p = j - 1; p < i; p++) {\n                    long long sum = prefix[i] - prefix[p];\n                    dp[i][j] = min(dp[i][j], max(dp[p][j - 1], sum));\n                }\n            }\n        }\n        \n        return dp[n][k];\n    }\n};",
+        "java": "class Solution {\n    public int splitArray(int[] nums, int k) {\n        int n = nums.length;\n        long[][] dp = new long[n + 1][k + 1];\n        long[] prefix = new long[n + 1];\n        \n        for (int i = 0; i <= n; i++) {\n            Arrays.fill(dp[i], Long.MAX_VALUE);\n        }\n        \n        for (int i = 0; i < n; i++) {\n            prefix[i + 1] = prefix[i] + nums[i];\n        }\n        \n        dp[0][0] = 0;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= Math.min(i, k); j++) {\n                for (int p = j - 1; p < i; p++) {\n                    long sum = prefix[i] - prefix[p];\n                    dp[i][j] = Math.min(dp[i][j], Math.max(dp[p][j - 1], sum));\n                }\n            }\n        }\n        \n        return (int) dp[n][k];\n    }\n}",
+        "python": "class Solution:\n    def splitArray(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        dp = [[float('inf')] * (k + 1) for _ in range(n + 1)]\n        prefix = [0] * (n + 1)\n        \n        for i in range(n):\n            prefix[i + 1] = prefix[i] + nums[i]\n        \n        dp[0][0] = 0\n        \n        for i in range(1, n + 1):\n            for j in range(1, min(i, k) + 1):\n                for p in range(j - 1, i):\n                    sumval = prefix[i] - prefix[p]\n                    dp[i][j] = min(dp[i][j], max(dp[p][j - 1], sumval))\n        \n        return dp[n][k]",
+        "javascript": "var splitArray = function(nums, k) {\n    const n = nums.length;\n    const dp = Array(n + 1).fill(0).map(() => Array(k + 1).fill(Infinity));\n    const prefix = Array(n + 1).fill(0);\n    \n    for (let i = 0; i < n; i++) {\n        prefix[i + 1] = prefix[i] + nums[i];\n    }\n    \n    dp[0][0] = 0;\n    \n    for (let i = 1; i <= n; i++) {\n        for (let j = 1; j <= Math.min(i, k); j++) {\n            for (let p = j - 1; p < i; p++) {\n                const sum = prefix[i] - prefix[p];\n                dp[i][j] = Math.min(dp[i][j], Math.max(dp[p][j - 1], sum));\n            }\n        }\n    }\n    \n    return dp[n][k];\n};"
+      }
+    },
+    {
+      "name": "Binary Search on Answer - Optimal",
+      "order": 3,
+      "intuition": "If we can split array into k parts with max sum = mid, then we can also do it with max sum > mid. This monotonic property allows binary search on the answer.",
+      "approach": "Binary search on possible answer range [max element, sum of array]. For each mid value, check if we can split array into k subarrays where each sum ≤ mid.",
+      "steps": [
+        "Set low = max(nums), high = sum(nums)",
+        "Binary search on answer:",
+        "  mid = (low + high) / 2",
+        "  Check if possible to split into k parts with max sum ≤ mid:",
+        "    Use greedy: add elements to current subarray while sum ≤ mid",
+        "    Count number of subarrays needed",
+        "  If subarrays ≤ k: answer possible, try smaller (high = mid - 1)",
+        "  Else: need larger max sum (low = mid + 1)",
+        "Return low"
+      ],
+      "complexity": {
+        "time": "O(n * log(sum))",
+        "space": "O(1)",
+        "timeExplanation": "Binary search on sum range, each check takes O(n)",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool canSplit(vector<int>& nums, int k, int maxSum) {\n        int count = 1;\n        int currentSum = 0;\n        \n        for (int num : nums) {\n            if (currentSum + num <= maxSum) {\n                currentSum += num;\n            } else {\n                count++;\n                currentSum = num;\n                if (count > k) return false;\n            }\n        }\n        return true;\n    }\n    \n    int splitArray(vector<int>& nums, int k) {\n        int low = *max_element(nums.begin(), nums.end());\n        int high = accumulate(nums.begin(), nums.end(), 0);\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (canSplit(nums, k, mid)) {\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return low;\n    }\n};",
+        "java": "class Solution {\n    public boolean canSplit(int[] nums, int k, int maxSum) {\n        int count = 1;\n        int currentSum = 0;\n        \n        for (int num : nums) {\n            if (currentSum + num <= maxSum) {\n                currentSum += num;\n            } else {\n                count++;\n                currentSum = num;\n                if (count > k) return false;\n            }\n        }\n        return true;\n    }\n    \n    public int splitArray(int[] nums, int k) {\n        int low = 0, high = 0;\n        \n        for (int num : nums) {\n            low = Math.max(low, num);\n            high += num;\n        }\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (canSplit(nums, k, mid)) {\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return low;\n    }\n}",
+        "python": "class Solution:\n    def canSplit(self, nums: List[int], k: int, max_sum: int) -> bool:\n        count = 1\n        current_sum = 0\n        \n        for num in nums:\n            if current_sum + num <= max_sum:\n                current_sum += num\n            else:\n                count += 1\n                current_sum = num\n                if count > k:\n                    return False\n        return True\n    \n    def splitArray(self, nums: List[int], k: int) -> int:\n        low = max(nums)\n        high = sum(nums)\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if self.canSplit(nums, k, mid):\n                high = mid - 1\n            else:\n                low = mid + 1\n        \n        return low",
+        "javascript": "var splitArray = function(nums, k) {\n    const canSplit = (maxSum) => {\n        let count = 1;\n        let currentSum = 0;\n        \n        for (const num of nums) {\n            if (currentSum + num <= maxSum) {\n                currentSum += num;\n            } else {\n                count++;\n                currentSum = num;\n                if (count > k) return false;\n            }\n        }\n        return true;\n    };\n    \n    let low = Math.max(...nums);\n    let high = nums.reduce((a, b) => a + b, 0);\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (canSplit(mid)) {\n            high = mid - 1;\n        } else {\n            low = mid + 1;\n        }\n    }\n    \n    return low;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding that we need to minimize the maximum sum",
+    "Wrong binary search bounds (should be max element to sum)",
+    "Forgetting that subarrays must be contiguous",
+    "Not handling the greedy split correctly in canSplit function",
+    "Confusing between number of splits and number of subarrays"
+  ],
+  "hints": [
+    "Think about the range of possible answers: [max(nums), sum(nums)]",
+    "If you can achieve max sum = x, can you achieve max sum = x+1?",
+    "Use binary search on the answer",
+    "For a given max sum, greedily check if k splits are possible",
+    "The answer has monotonic property - key insight for binary search"
+  ],
+  "followUp": [
+    "What if we want to maximize the minimum sum instead?",
+    "Can you solve with different split constraints?",
+    "What if arrays can be rearranged before splitting?",
+    "How to handle negative numbers?",
+    "Can you solve the variation where we minimize sum of maximums?"
+  ],
+  "companies": ["Google", "Facebook", "Amazon", "Microsoft", "ByteDance", "Apple"],
+  "tags": ["binary-search", "array", "dynamic-programming", "greedy"],
+  "relatedProblems": [
+    "Capacity To Ship Packages Within D Days",
+    "Koko Eating Bananas",
+    "Minimize Maximum of Array",
+    "Divide Chocolate",
+    "Allocate Minimum Number of Pages"
+  ]
+}

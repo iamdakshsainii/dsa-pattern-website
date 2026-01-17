@@ -1,0 +1,154 @@
+{
+  "questionId": "PATTERN",
+  "questionSlug": "row-with-maximum-number-of-1s",
+  "title": "Row with Maximum Number of 1s",
+  "difficulty": "Medium",
+  "resources": {
+    "geeksforgeeks": "https://www.geeksforgeeks.org/find-the-row-with-maximum-number-1s/",
+    "videos": [
+      {
+        "title": "Row with Maximum 1s - Binary Search",
+        "url": "https://www.youtube.com/watch?v=example",
+        "channel": "takeUforward",
+        "duration": "12:00",
+        "language": "English"
+      }
+    ]
+  },
+  "problemStatement": "Given a boolean 2D array where each row is sorted. Find the row with the maximum number of 1s. If two rows have the same number of 1s, return the row with smaller index.",
+  "examples": [
+    {
+      "input": "matrix = [[0,1,1,1],[0,0,1,1],[1,1,1,1],[0,0,0,0]]",
+      "output": "2",
+      "explanation": "Row 2 has maximum 1s (four 1s)"
+    },
+    {
+      "input": "matrix = [[0,0],[1,1]]",
+      "output": "1",
+      "explanation": "Row 1 has maximum 1s (two 1s)"
+    },
+    {
+      "input": "matrix = [[0,0,0],[0,0,0]]",
+      "output": "0",
+      "explanation": "All rows have same count, return first row"
+    }
+  ],
+  "constraints": [
+    "1 <= m, n <= 1000",
+    "matrix[i][j] is either 0 or 1",
+    "Each row is sorted in non-decreasing order"
+  ],
+  "patternTriggers": "Sorted rows of 0s and 1s + find maximum count = Binary search to find first 1, track maximum",
+  "approaches": [
+    {
+      "name": "Brute Force - Count 1s in Each Row",
+      "order": 1,
+      "intuition": "Simply count 1s in each row and track maximum",
+      "approach": "Iterate through all rows, count 1s, track max",
+      "steps": [
+        "maxCount = 0, maxRow = 0",
+        "For each row:",
+        "  count = 0",
+        "  For each element:",
+        "    If element == 1, count++",
+        "  If count > maxCount:",
+        "    maxCount = count",
+        "    maxRow = current row index",
+        "Return maxRow"
+      ],
+      "complexity": {
+        "time": "O(m*n)",
+        "space": "O(1)",
+        "timeExplanation": "Visit every element in m×n matrix",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int rowWithMax1s(vector<vector<int>>& matrix) {\n        int m = matrix.size();\n        int n = matrix[0].size();\n        int maxCount = 0;\n        int maxRow = 0;\n        \n        for (int i = 0; i < m; i++) {\n            int count = 0;\n            for (int j = 0; j < n; j++) {\n                if (matrix[i][j] == 1) count++;\n            }\n            if (count > maxCount) {\n                maxCount = count;\n                maxRow = i;\n            }\n        }\n        \n        return maxRow;\n    }\n};",
+        "java": "class Solution {\n    public int rowWithMax1s(int[][] matrix) {\n        int m = matrix.length;\n        int n = matrix[0].length;\n        int maxCount = 0;\n        int maxRow = 0;\n        \n        for (int i = 0; i < m; i++) {\n            int count = 0;\n            for (int j = 0; j < n; j++) {\n                if (matrix[i][j] == 1) count++;\n            }\n            if (count > maxCount) {\n                maxCount = count;\n                maxRow = i;\n            }\n        }\n        \n        return maxRow;\n    }\n}",
+        "python": "class Solution:\n    def rowWithMax1s(self, matrix: List[List[int]]) -> int:\n        max_count = 0\n        max_row = 0\n        \n        for i, row in enumerate(matrix):\n            count = sum(row)\n            if count > max_count:\n                max_count = count\n                max_row = i\n        \n        return max_row",
+        "javascript": "var rowWithMax1s = function(matrix) {\n    let maxCount = 0;\n    let maxRow = 0;\n    \n    for (let i = 0; i < matrix.length; i++) {\n        let count = 0;\n        for (let j = 0; j < matrix[0].length; j++) {\n            if (matrix[i][j] === 1) count++;\n        }\n        if (count > maxCount) {\n            maxCount = count;\n            maxRow = i;\n        }\n    }\n    \n    return maxRow;\n};"
+      }
+    },
+    {
+      "name": "Binary Search on Each Row",
+      "order": 2,
+      "intuition": "Each row is sorted - use binary search to find first 1, then count = n - firstIndex",
+      "approach": "Binary search to find leftmost 1 in each row",
+      "steps": [
+        "For each row:",
+        "  Use binary search to find first occurrence of 1",
+        "  If found at index j, count = n - j",
+        "  If not found, count = 0",
+        "  Track row with maximum count",
+        "Return row index"
+      ],
+      "complexity": {
+        "time": "O(m log n)",
+        "space": "O(1)",
+        "timeExplanation": "m rows, binary search O(log n) per row",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int findFirstOne(vector<int>& row) {\n        int left = 0, right = row.size() - 1;\n        int firstIndex = row.size(); // default: no 1 found\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (row[mid] == 1) {\n                firstIndex = mid;\n                right = mid - 1; // look for earlier 1\n            } else {\n                left = mid + 1;\n            }\n        }\n        \n        return firstIndex;\n    }\n    \npublic:\n    int rowWithMax1s(vector<vector<int>>& matrix) {\n        int m = matrix.size();\n        int n = matrix[0].size();\n        int maxCount = 0;\n        int maxRow = 0;\n        \n        for (int i = 0; i < m; i++) {\n            int firstOne = findFirstOne(matrix[i]);\n            int count = n - firstOne;\n            \n            if (count > maxCount) {\n                maxCount = count;\n                maxRow = i;\n            }\n        }\n        \n        return maxRow;\n    }\n};",
+        "java": "class Solution {\n    private int findFirstOne(int[] row) {\n        int left = 0, right = row.length - 1;\n        int firstIndex = row.length;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (row[mid] == 1) {\n                firstIndex = mid;\n                right = mid - 1;\n            } else {\n                left = mid + 1;\n            }\n        }\n        \n        return firstIndex;\n    }\n    \n    public int rowWithMax1s(int[][] matrix) {\n        int m = matrix.length;\n        int n = matrix[0].length;\n        int maxCount = 0;\n        int maxRow = 0;\n        \n        for (int i = 0; i < m; i++) {\n            int firstOne = findFirstOne(matrix[i]);\n            int count = n - firstOne;\n            \n            if (count > maxCount) {\n                maxCount = count;\n                maxRow = i;\n            }\n        }\n        \n        return maxRow;\n    }\n}",
+        "python": "class Solution:\n    def findFirstOne(self, row: List[int]) -> int:\n        left, right = 0, len(row) - 1\n        first_index = len(row)\n        \n        while left <= right:\n            mid = (left + right) // 2\n            if row[mid] == 1:\n                first_index = mid\n                right = mid - 1\n            else:\n                left = mid + 1\n        \n        return first_index\n    \n    def rowWithMax1s(self, matrix: List[List[int]]) -> int:\n        m, n = len(matrix), len(matrix[0])\n        max_count = 0\n        max_row = 0\n        \n        for i in range(m):\n            first_one = self.findFirstOne(matrix[i])\n            count = n - first_one\n            \n            if count > max_count:\n                max_count = count\n                max_row = i\n        \n        return max_row",
+        "javascript": "var rowWithMax1s = function(matrix) {\n    const findFirstOne = (row) => {\n        let left = 0, right = row.length - 1;\n        let firstIndex = row.length;\n        \n        while (left <= right) {\n            const mid = Math.floor((left + right) / 2);\n            if (row[mid] === 1) {\n                firstIndex = mid;\n                right = mid - 1;\n            } else {\n                left = mid + 1;\n            }\n        }\n        \n        return firstIndex;\n    };\n    \n    const m = matrix.length;\n    const n = matrix[0].length;\n    let maxCount = 0;\n    let maxRow = 0;\n    \n    for (let i = 0; i < m; i++) {\n        const firstOne = findFirstOne(matrix[i]);\n        const count = n - firstOne;\n        \n        if (count > maxCount) {\n            maxCount = count;\n            maxRow = i;\n        }\n    }\n    \n    return maxRow;\n};"
+      }
+    },
+    {
+      "name": "Optimized Staircase Approach (Optimal)",
+      "order": 3,
+      "intuition": "Start from top-right. Move left when see 1 (potential for more 1s in this row), move down when see 0.",
+      "approach": "Track leftmost 1 position while traversing rows",
+      "steps": [
+        "Start at top-right corner (row=0, col=n-1)",
+        "maxRow = 0",
+        "While in bounds:",
+        "  If matrix[row][col] == 1:",
+        "    This row has at least (n-col) 1s",
+        "    maxRow = row",
+        "    col-- (check if more 1s to left)",
+        "  Else (matrix[row][col] == 0):",
+        "    row++ (move to next row)",
+        "Return maxRow"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "timeExplanation": "At most m+n steps (traverse m rows + n columns)",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int rowWithMax1s(vector<vector<int>>& matrix) {\n        int m = matrix.size();\n        int n = matrix[0].size();\n        \n        int row = 0, col = n - 1;\n        int maxRow = 0;\n        \n        while (row < m && col >= 0) {\n            if (matrix[row][col] == 1) {\n                maxRow = row;\n                col--;  // Move left to find more 1s\n            } else {\n                row++;  // Move down to next row\n            }\n        }\n        \n        return maxRow;\n    }\n};",
+        "java": "class Solution {\n    public int rowWithMax1s(int[][] matrix) {\n        int m = matrix.length;\n        int n = matrix[0].length;\n        \n        int row = 0, col = n - 1;\n        int maxRow = 0;\n        \n        while (row < m && col >= 0) {\n            if (matrix[row][col] == 1) {\n                maxRow = row;\n                col--;\n            } else {\n                row++;\n            }\n        }\n        \n        return maxRow;\n    }\n}",
+        "python": "class Solution:\n    def rowWithMax1s(self, matrix: List[List[int]]) -> int:\n        m, n = len(matrix), len(matrix[0])\n        \n        row, col = 0, n - 1\n        max_row = 0\n        \n        while row < m and col >= 0:\n            if matrix[row][col] == 1:\n                max_row = row\n                col -= 1\n            else:\n                row += 1\n        \n        return max_row",
+        "javascript": "var rowWithMax1s = function(matrix) {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    \n    let row = 0, col = n - 1;\n    let maxRow = 0;\n    \n    while (row < m && col >= 0) {\n        if (matrix[row][col] === 1) {\n            maxRow = row;\n            col--;\n        } else {\n            row++;\n        }\n    }\n    \n    return maxRow;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling case where all rows have 0 ones",
+    "In staircase approach, forgetting to update maxRow when finding 1",
+    "In binary search, searching for last 0 instead of first 1",
+    "Not considering tie-breaking rule (smaller index wins)"
+  ],
+  "hints": [
+    "Each row sorted means: all 0s first, then all 1s",
+    "Count of 1s in row = n - (index of first 1)",
+    "Staircase from top-right: similar to Search 2D Matrix II",
+    "When you see 1, current row might be answer, but check left for more 1s",
+    "When you see 0, no point checking left (all 0s), move to next row"
+  ],
+  "followUp": [
+    "What if matrix is not sorted? How would you solve it?",
+    "Can you return the actual count instead of row index?",
+    "What if you need to find row with minimum 1s?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Adobe", "Flipkart"],
+  "tags": ["binary-search", "matrix", "array"],
+  "relatedProblems": [
+    "Search a 2D Matrix II",
+    "First and Last Position in Sorted Array",
+    "Kth Smallest Element in a Sorted Matrix"
+  ]
+}

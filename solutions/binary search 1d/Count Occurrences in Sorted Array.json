@@ -1,0 +1,167 @@
+{
+  "questionId": "GFG",
+  "questionSlug": "count-occurrences-in-sorted-array",
+  "title": "Count Occurrences in Sorted Array",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
+    "videos": [
+      {
+        "title": "Count Occurrences in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=hjR1IYVx9lY",
+        "channel": "take U forward",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "First and Last Position - Binary Search",
+        "url": "https://www.youtube.com/watch?v=4sQL7R5ySUU",
+        "channel": "NeetCode",
+        "duration": "12:15",
+        "language": "English"
+      },
+      {
+        "title": "Count Element Occurrences Binary Search",
+        "url": "https://www.youtube.com/watch?v=pLT_9jwaPLs",
+        "channel": "Aditya Verma",
+        "duration": "9:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Count Occurrences in Sorted Array",
+        "url": "https://takeuforward.org/data-structure/count-occurrences-in-sorted-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Count Occurrences of a Number - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/count-number-of-occurrences-or-frequency-in-a-sorted-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Find First and Last Position",
+        "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/number-of-occurrence/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Practice on LeetCode (Related)",
+        "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Count occurrences in sorted array = Find first and last position using binary search, then count = last - first + 1.",
+  "approaches": [
+    {
+      "name": "Linear Search",
+      "order": 1,
+      "intuition": "Scan array and count occurrences of target.",
+      "approach": "Iterate through array and increment counter when target found.",
+      "steps": [
+        "Initialize count = 0",
+        "For each element in array:",
+        "  If element == target:",
+        "    count++",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Must scan entire array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int count(vector<int>& arr, int target) {\n        int cnt = 0;\n        \n        for (int num : arr) {\n            if (num == target) {\n                cnt++;\n            }\n        }\n        \n        return cnt;\n    }\n};",
+        "java": "class Solution {\n    public int count(int[] arr, int target) {\n        int cnt = 0;\n        \n        for (int num : arr) {\n            if (num == target) {\n                cnt++;\n            }\n        }\n        \n        return cnt;\n    }\n}",
+        "python": "class Solution:\n    def count(self, arr: List[int], target: int) -> int:\n        cnt = 0\n        \n        for num in arr:\n            if num == target:\n                cnt += 1\n        \n        return cnt",
+        "javascript": "var count = function(arr, target) {\n    let cnt = 0;\n    \n    for (const num of arr) {\n        if (num === target) {\n            cnt++;\n        }\n    }\n    \n    return cnt;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Find First and Last Separately",
+      "order": 2,
+      "intuition": "Use binary search to find first occurrence, then another binary search to find last occurrence. Count = last - first + 1.",
+      "approach": "Two binary searches: one for lower bound (first occurrence) and one for upper bound - 1 (last occurrence).",
+      "steps": [
+        "Find first occurrence using lower bound binary search",
+        "If target not found: return 0",
+        "Find last occurrence using upper bound - 1 binary search",
+        "Return last - first + 1"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Two binary searches: O(log n) + O(log n) = O(log n)",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findFirst(vector<int>& arr, int target) {\n        int low = 0, high = arr.size() - 1;\n        int first = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] == target) {\n                first = mid;\n                high = mid - 1;  // Search left\n            } else if (arr[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return first;\n    }\n    \n    int findLast(vector<int>& arr, int target) {\n        int low = 0, high = arr.size() - 1;\n        int last = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] == target) {\n                last = mid;\n                low = mid + 1;  // Search right\n            } else if (arr[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return last;\n    }\n    \n    int count(vector<int>& arr, int target) {\n        int first = findFirst(arr, target);\n        \n        if (first == -1) return 0;\n        \n        int last = findLast(arr, target);\n        \n        return last - first + 1;\n    }\n};",
+        "java": "class Solution {\n    public int findFirst(int[] arr, int target) {\n        int low = 0, high = arr.length - 1;\n        int first = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] == target) {\n                first = mid;\n                high = mid - 1;\n            } else if (arr[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return first;\n    }\n    \n    public int findLast(int[] arr, int target) {\n        int low = 0, high = arr.length - 1;\n        int last = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] == target) {\n                last = mid;\n                low = mid + 1;\n            } else if (arr[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return last;\n    }\n    \n    public int count(int[] arr, int target) {\n        int first = findFirst(arr, target);\n        \n        if (first == -1) return 0;\n        \n        int last = findLast(arr, target);\n        \n        return last - first + 1;\n    }\n}",
+        "python": "class Solution:\n    def findFirst(self, arr: List[int], target: int) -> int:\n        low, high = 0, len(arr) - 1\n        first = -1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if arr[mid] == target:\n                first = mid\n                high = mid - 1\n            elif arr[mid] < target:\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        return first\n    \n    def findLast(self, arr: List[int], target: int) -> int:\n        low, high = 0, len(arr) - 1\n        last = -1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if arr[mid] == target:\n                last = mid\n                low = mid + 1\n            elif arr[mid] < target:\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        return last\n    \n    def count(self, arr: List[int], target: int) -> int:\n        first = self.findFirst(arr, target)\n        \n        if first == -1:\n            return 0\n        \n        last = self.findLast(arr, target)\n        \n        return last - first + 1",
+        "javascript": "var count = function(arr, target) {\n    const findFirst = (arr, target) => {\n        let low = 0, high = arr.length - 1;\n        let first = -1;\n        \n        while (low <= high) {\n            const mid = Math.floor((low + high) / 2);\n            \n            if (arr[mid] === target) {\n                first = mid;\n                high = mid - 1;\n            } else if (arr[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return first;\n    };\n    \n    const findLast = (arr, target) => {\n        let low = 0, high = arr.length - 1;\n        let last = -1;\n        \n        while (low <= high) {\n            const mid = Math.floor((low + high) / 2);\n            \n            if (arr[mid] === target) {\n                last = mid;\n                low = mid + 1;\n            } else if (arr[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return last;\n    };\n    \n    const first = findFirst(arr, target);\n    \n    if (first === -1) return 0;\n    \n    const last = findLast(arr, target);\n    \n    return last - first + 1;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Using Lower and Upper Bound - Optimal",
+      "order": 3,
+      "intuition": "Find lower bound (first >= target) and upper bound (first > target). Count = upper_bound - lower_bound.",
+      "approach": "Use standard lower bound and upper bound binary search. If lower bound points to target, count = upper - lower.",
+      "steps": [
+        "Find lower bound: first index where arr[i] >= target",
+        "If arr[lower_bound] != target: return 0 (not found)",
+        "Find upper bound: first index where arr[i] > target",
+        "Return upper_bound - lower_bound"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Two binary searches: O(log n) + O(log n) = O(log n)",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int lowerBound(vector<int>& arr, int target) {\n        int low = 0, high = arr.size() - 1;\n        int ans = arr.size();\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] >= target) {\n                ans = mid;\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ans;\n    }\n    \n    int upperBound(vector<int>& arr, int target) {\n        int low = 0, high = arr.size() - 1;\n        int ans = arr.size();\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] > target) {\n                ans = mid;\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ans;\n    }\n    \n    int count(vector<int>& arr, int target) {\n        int lb = lowerBound(arr, target);\n        \n        // Target not found\n        if (lb == arr.size() || arr[lb] != target) {\n            return 0;\n        }\n        \n        int ub = upperBound(arr, target);\n        \n        return ub - lb;\n    }\n};",
+        "java": "class Solution {\n    public int lowerBound(int[] arr, int target) {\n        int low = 0, high = arr.length - 1;\n        int ans = arr.length;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] >= target) {\n                ans = mid;\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ans;\n    }\n    \n    public int upperBound(int[] arr, int target) {\n        int low = 0, high = arr.length - 1;\n        int ans = arr.length;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] > target) {\n                ans = mid;\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ans;\n    }\n    \n    public int count(int[] arr, int target) {\n        int lb = lowerBound(arr, target);\n        \n        if (lb == arr.length || arr[lb] != target) {\n            return 0;\n        }\n        \n        int ub = upperBound(arr, target);\n        \n        return ub - lb;\n    }\n}",
+        "python": "class Solution:\n    def lowerBound(self, arr: List[int], target: int) -> int:\n        low, high = 0, len(arr) - 1\n        ans = len(arr)\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if arr[mid] >= target:\n                ans = mid\n                high = mid - 1\n            else:\n                low = mid + 1\n        \n        return ans\n    \n    def upperBound(self, arr: List[int], target: int) -> int:\n        low, high = 0, len(arr) - 1\n        ans = len(arr)\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if arr[mid] > target:\n                ans = mid\n                high = mid - 1\n            else:\n                low = mid + 1\n        \n        return ans\n    \n    def count(self, arr: List[int], target: int) -> int:\n        lb = self.lowerBound(arr, target)\n        \n        if lb == len(arr) or arr[lb] != target:\n            return 0\n        \n        ub = self.upperBound(arr, target)\n        \n        return ub - lb",
+        "javascript": "var count = function(arr, target) {\n    const lowerBound = (arr, target) => {\n        let low = 0, high = arr.length - 1;\n        let ans = arr.length;\n        \n        while (low <= high) {\n            const mid = Math.floor((low + high) / 2);\n            \n            if (arr[mid] >= target) {\n                ans = mid;\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ans;\n    };\n    \n    const upperBound = (arr, target) => {\n        let low = 0, high = arr.length - 1;\n        let ans = arr.length;\n        \n        while (low <= high) {\n            const mid = Math.floor((low + high) / 2);\n            \n            if (arr[mid] > target) {\n                ans = mid;\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ans;\n    };\n    \n    const lb = lowerBound(arr, target);\n    \n    if (lb === arr.length || arr[lb] !== target) {\n        return 0;\n    }\n    \n    const ub = upperBound(arr, target);\n    \n    return ub - lb;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if target exists before calculating count",
+    "Wrong formula: using last - first instead of last - first + 1 in approach 2",
+    "Confusing lower bound and upper bound definitions",
+    "Not handling case when target doesn't exist",
+    "Off-by-one errors in binary search boundaries"
+  ],
+  "hints": [
+    "Count = position of last occurrence - position of first occurrence + 1",
+    "Can use lower bound (first >= target) and upper bound (first > target)",
+    "If using lower/upper bound: count = upper_bound - lower_bound",
+    "Verify target exists before calculating count",
+    "This is same as finding range [first, last] of target"
+  ],
+  "followUp": [
+    "What if array was not sorted?",
+    "How to find count of elements less than target?",
+    "Can you find count in O(1) space with O(n) preprocessing?",
+    "What if you need counts for multiple queries?",
+    "How to find element with maximum frequency?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Adobe"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Find First and Last Position of Element in Sorted Array",
+    "Lower Bound",
+    "Upper Bound",
+    "Search Insert Position",
+    "Single Element in Sorted Array"
+  ]
+}

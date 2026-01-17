@@ -1,0 +1,124 @@
+{
+  "questionId": "1283",
+  "questionSlug": "find-the-smallest-divisor-given-a-threshold",
+  "title": "Smallest Divisor Given a Threshold",
+  "difficulty": "Medium",
+  "leetcodeLink": "https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/",
+    "videos": [
+      {
+        "title": "Find Smallest Divisor - Binary Search",
+        "url": "https://www.youtube.com/watch?v=example",
+        "channel": "takeUforward",
+        "duration": "12:00",
+        "language": "English"
+      }
+    ]
+  },
+  "problemStatement": "Given an array of integers nums and an integer threshold, we will choose a positive integer divisor, divide all the array by it, and sum the division's result. Find the smallest divisor such that the result mentioned above is less than or equal to threshold.\n\nEach result of the division is rounded to the nearest integer greater than or equal to that element. (For example: 7/3 = 3 and 10/2 = 5).\n\nThe test cases are generated so that there will be an answer.",
+  "examples": [
+    {
+      "input": "nums = [1,2,5,9], threshold = 6",
+      "output": "5",
+      "explanation": "Divisor=1: 1+2+5+9=17 > 6\nDivisor=2: 1+1+3+5=10 > 6\nDivisor=3: 1+1+2+3=7 > 6\nDivisor=4: 1+1+2+3=7 > 6\nDivisor=5: 1+1+1+2=5 <= 6 ✓"
+    },
+    {
+      "input": "nums = [44,22,33,11,1], threshold = 5",
+      "output": "44",
+      "explanation": "Divisor=44: 1+1+1+1+1=5 <= 5"
+    }
+  ],
+  "constraints": [
+    "1 <= nums.length <= 5 * 10^4",
+    "1 <= nums[i] <= 10^6",
+    "nums.length <= threshold <= 10^6"
+  ],
+  "patternTriggers": "Find minimum divisor + sum of divisions <= threshold + monotonic = Binary search on divisor",
+  "approaches": [
+    {
+      "name": "Brute Force - Try All Divisors",
+      "order": 1,
+      "intuition": "Try every divisor from 1 to max(nums), find first that gives sum <= threshold",
+      "approach": "Linear search through all possible divisors",
+      "steps": [
+        "For divisor from 1 to max(nums):",
+        "  sum = 0",
+        "  For each num in nums:",
+        "    sum += ceil(num / divisor)",
+        "  If sum <= threshold, return divisor",
+        "Return max(nums)"
+      ],
+      "complexity": {
+        "time": "O(n * max(nums))",
+        "space": "O(1)",
+        "timeExplanation": "For each divisor up to max(nums), calculate sum in O(n)",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int calculateSum(vector<int>& nums, int divisor) {\n        int sum = 0;\n        for (int num : nums) {\n            sum += (num + divisor - 1) / divisor; // Ceiling\n        }\n        return sum;\n    }\n    \npublic:\n    int smallestDivisor(vector<int>& nums, int threshold) {\n        int maxNum = *max_element(nums.begin(), nums.end());\n        \n        for (int divisor = 1; divisor <= maxNum; divisor++) {\n            if (calculateSum(nums, divisor) <= threshold) {\n                return divisor;\n            }\n        }\n        \n        return maxNum;\n    }\n};",
+        "java": "class Solution {\n    private int calculateSum(int[] nums, int divisor) {\n        int sum = 0;\n        for (int num : nums) {\n            sum += (num + divisor - 1) / divisor;\n        }\n        return sum;\n    }\n    \n    public int smallestDivisor(int[] nums, int threshold) {\n        int maxNum = 0;\n        for (int num : nums) {\n            maxNum = Math.max(maxNum, num);\n        }\n        \n        for (int divisor = 1; divisor <= maxNum; divisor++) {\n            if (calculateSum(nums, divisor) <= threshold) {\n                return divisor;\n            }\n        }\n        \n        return maxNum;\n    }\n}",
+        "python": "class Solution:\n    def smallestDivisor(self, nums: List[int], threshold: int) -> int:\n        def calculateSum(divisor: int) -> int:\n            total = 0\n            for num in nums:\n                total += math.ceil(num / divisor)\n            return total\n        \n        max_num = max(nums)\n        \n        for divisor in range(1, max_num + 1):\n            if calculateSum(divisor) <= threshold:\n                return divisor\n        \n        return max_num",
+        "javascript": "var smallestDivisor = function(nums, threshold) {\n    const calculateSum = (divisor) => {\n        let sum = 0;\n        for (const num of nums) {\n            sum += Math.ceil(num / divisor);\n        }\n        return sum;\n    };\n    \n    const maxNum = Math.max(...nums);\n    \n    for (let divisor = 1; divisor <= maxNum; divisor++) {\n        if (calculateSum(divisor) <= threshold) {\n            return divisor;\n        }\n    }\n    \n    return maxNum;\n};"
+      }
+    },
+    {
+      "name": "Binary Search on Divisor (Optimal)",
+      "order": 2,
+      "intuition": "Answer space is monotonic: as divisor increases, sum decreases. Binary search to find minimum divisor where sum <= threshold.",
+      "approach": "Binary search on divisor range [1, max(nums)]",
+      "steps": [
+        "left = 1, right = max(nums)",
+        "While left < right:",
+        "  mid = (left + right) / 2",
+        "  sum = calculateSum(nums, mid)",
+        "  If sum <= threshold:",
+        "    Divisor works, try smaller: right = mid",
+        "  Else:",
+        "    Sum too large, need bigger divisor: left = mid + 1",
+        "Return left"
+      ],
+      "complexity": {
+        "time": "O(n log m)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search O(log m) where m=max(nums), each check O(n)",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int calculateSum(vector<int>& nums, int divisor) {\n        int sum = 0;\n        for (int num : nums) {\n            sum += (num + divisor - 1) / divisor; // Ceiling division\n        }\n        return sum;\n    }\n    \npublic:\n    int smallestDivisor(vector<int>& nums, int threshold) {\n        int left = 1;\n        int right = *max_element(nums.begin(), nums.end());\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            int sum = calculateSum(nums, mid);\n            \n            if (sum <= threshold) {\n                right = mid; // Works, try smaller divisor\n            } else {\n                left = mid + 1; // Sum too large, need bigger divisor\n            }\n        }\n        \n        return left;\n    }\n};",
+        "java": "class Solution {\n    private int calculateSum(int[] nums, int divisor) {\n        int sum = 0;\n        for (int num : nums) {\n            sum += (num + divisor - 1) / divisor;\n        }\n        return sum;\n    }\n    \n    public int smallestDivisor(int[] nums, int threshold) {\n        int left = 1;\n        int right = 0;\n        for (int num : nums) {\n            right = Math.max(right, num);\n        }\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            int sum = calculateSum(nums, mid);\n            \n            if (sum <= threshold) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        }\n        \n        return left;\n    }\n}",
+        "python": "class Solution:\n    def smallestDivisor(self, nums: List[int], threshold: int) -> int:\n        def calculateSum(divisor: int) -> int:\n            total = 0\n            for num in nums:\n                total += math.ceil(num / divisor)\n                # Or: total += (num + divisor - 1) // divisor\n            return total\n        \n        left, right = 1, max(nums)\n        \n        while left < right:\n            mid = (left + right) // 2\n            total = calculateSum(mid)\n            \n            if total <= threshold:\n                right = mid\n            else:\n                left = mid + 1\n        \n        return left",
+        "javascript": "var smallestDivisor = function(nums, threshold) {\n    const calculateSum = (divisor) => {\n        let sum = 0;\n        for (const num of nums) {\n            sum += Math.ceil(num / divisor);\n        }\n        return sum;\n    };\n    \n    let left = 1;\n    let right = Math.max(...nums);\n    \n    while (left < right) {\n        const mid = Math.floor((left + right) / 2);\n        const sum = calculateSum(mid);\n        \n        if (sum <= threshold) {\n            right = mid;\n        } else {\n            left = mid + 1;\n        }\n    }\n    \n    return left;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using floor division instead of ceiling (num/divisor vs ceil(num/divisor))",
+    "Wrong search space: using sum(nums) as right bound instead of max(nums)",
+    "Not understanding the inverse relationship: larger divisor → smaller sum",
+    "Integer overflow when calculating sum (though less likely with constraints)",
+    "Wrong condition in binary search (using sum >= threshold instead of sum <= threshold)"
+  ],
+  "hints": [
+    "Key insight: larger divisor → smaller division results → smaller sum",
+    "Answer space is monotonic and inverse: if divisor d works, all d' > d also work",
+    "Binary search on DIVISOR value, not on array",
+    "Minimum divisor is 1, maximum is max(nums)",
+    "Ceiling division: (a + b - 1) / b or math.ceil(a / b)",
+    "We're looking for minimum divisor where sum <= threshold"
+  ],
+  "followUp": [
+    "What if we want the largest divisor instead?",
+    "What if divisions are floored instead of ceiled?",
+    "Can you handle negative numbers?",
+    "What if threshold can be negative?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Koko Eating Bananas",
+    "Capacity To Ship Packages Within D Days",
+    "Minimum Number of Days to Make M Bouquets",
+    "Split Array Largest Sum"
+  ]
+}

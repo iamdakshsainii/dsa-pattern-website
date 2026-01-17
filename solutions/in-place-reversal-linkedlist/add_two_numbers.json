@@ -1,0 +1,158 @@
+{
+  "questionId": "2",
+  "questionSlug": "add-two-numbers",
+  "title": "Add Two Numbers",
+  "difficulty": "Medium",
+  "leetcodeLink": "https://leetcode.com/problems/add-two-numbers/",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/add-two-numbers/",
+    "videos": [
+      {
+        "title": "Add Two Numbers - Linked List",
+        "url": "https://www.youtube.com/watch?v=wgFPrzTjm7s",
+        "channel": "NeetCode",
+        "duration": "8:30",
+        "language": "English"
+      }
+    ]
+  },
+  "problemStatement": "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.\n\nYou may assume the two numbers do not contain any leading zero, except the number 0 itself.",
+  "examples": [
+    {
+      "input": "l1 = [2,4,3], l2 = [5,6,4]",
+      "output": "[7,0,8]",
+      "explanation": "342 + 465 = 807. Reversed: 7→0→8"
+    },
+    {
+      "input": "l1 = [0], l2 = [0]",
+      "output": "[0]"
+    },
+    {
+      "input": "l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]",
+      "output": "[8,9,9,9,0,0,0,1]",
+      "explanation": "9999999 + 9999 = 10009998. Reversed: 8→9→9→9→0→0→0→1"
+    }
+  ],
+  "constraints": [
+    "The number of nodes in each linked list is in the range [1, 100]",
+    "0 <= Node.val <= 9",
+    "It is guaranteed that the list represents a number that does not have leading zeros"
+  ],
+  "patternTriggers": "Two linked lists + digit-by-digit addition + reverse order = Simulate addition with carry",
+  "approaches": [
+    {
+      "name": "Iterative with Carry",
+      "order": 1,
+      "intuition": "Simulate grade-school addition: add corresponding digits with carry, create new nodes for result",
+      "approach": "Traverse both lists simultaneously, add digits with carry, build result list",
+      "steps": [
+        "Create dummy head for result list",
+        "Initialize carry = 0, current = dummy",
+        "While l1 or l2 or carry:",
+        "  val1 = l1.val if l1 else 0",
+        "  val2 = l2.val if l2 else 0",
+        "  sum = val1 + val2 + carry",
+        "  carry = sum / 10",
+        "  digit = sum % 10",
+        "  Create new node with digit",
+        "  Move l1, l2, current forward",
+        "Return dummy.next"
+      ],
+      "complexity": {
+        "time": "O(max(m, n))",
+        "space": "O(max(m, n))",
+        "timeExplanation": "Traverse longer list, m and n are lengths of l1 and l2",
+        "spaceExplanation": "Result list has at most max(m,n)+1 nodes"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {\n        ListNode* dummy = new ListNode(0);\n        ListNode* current = dummy;\n        int carry = 0;\n        \n        while (l1 || l2 || carry) {\n            int val1 = l1 ? l1->val : 0;\n            int val2 = l2 ? l2->val : 0;\n            \n            int sum = val1 + val2 + carry;\n            carry = sum / 10;\n            int digit = sum % 10;\n            \n            current->next = new ListNode(digit);\n            current = current->next;\n            \n            if (l1) l1 = l1->next;\n            if (l2) l2 = l2->next;\n        }\n        \n        return dummy->next;\n    }\n};",
+        "java": "class Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode dummy = new ListNode(0);\n        ListNode current = dummy;\n        int carry = 0;\n        \n        while (l1 != null || l2 != null || carry > 0) {\n            int val1 = (l1 != null) ? l1.val : 0;\n            int val2 = (l2 != null) ? l2.val : 0;\n            \n            int sum = val1 + val2 + carry;\n            carry = sum / 10;\n            int digit = sum % 10;\n            \n            current.next = new ListNode(digit);\n            current = current.next;\n            \n            if (l1 != null) l1 = l1.next;\n            if (l2 != null) l2 = l2.next;\n        }\n        \n        return dummy.next;\n    }\n}",
+        "python": "class Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:\n        dummy = ListNode(0)\n        current = dummy\n        carry = 0\n        \n        while l1 or l2 or carry:\n            val1 = l1.val if l1 else 0\n            val2 = l2.val if l2 else 0\n            \n            total = val1 + val2 + carry\n            carry = total // 10\n            digit = total % 10\n            \n            current.next = ListNode(digit)\n            current = current.next\n            \n            if l1:\n                l1 = l1.next\n            if l2:\n                l2 = l2.next\n        \n        return dummy.next",
+        "javascript": "var addTwoNumbers = function(l1, l2) {\n    const dummy = new ListNode(0);\n    let current = dummy;\n    let carry = 0;\n    \n    while (l1 || l2 || carry) {\n        const val1 = l1 ? l1.val : 0;\n        const val2 = l2 ? l2.val : 0;\n        \n        const sum = val1 + val2 + carry;\n        carry = Math.floor(sum / 10);\n        const digit = sum % 10;\n        \n        current.next = new ListNode(digit);\n        current = current.next;\n        \n        if (l1) l1 = l1.next;\n        if (l2) l2 = l2.next;\n    }\n    \n    return dummy.next;\n};"
+      }
+    },
+    {
+      "name": "Recursive",
+      "order": 2,
+      "intuition": "Recursively add digits, pass carry to next recursion",
+      "approach": "Base case when both lists end and no carry, recursive case adds current digits",
+      "steps": [
+        "Base case: if !l1 && !l2 && carry == 0, return null",
+        "If carry but no more digits, create node with carry",
+        "Calculate sum of current digits + carry",
+        "Create node with digit = sum % 10",
+        "Recursively call for next nodes with new carry",
+        "Return current node"
+      ],
+      "complexity": {
+        "time": "O(max(m, n))",
+        "space": "O(max(m, n))",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Recursion stack depth = length of result"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2, int carry = 0) {\n        if (!l1 && !l2 && carry == 0) return nullptr;\n        \n        int val1 = l1 ? l1->val : 0;\n        int val2 = l2 ? l2->val : 0;\n        int sum = val1 + val2 + carry;\n        \n        ListNode* result = new ListNode(sum % 10);\n        \n        ListNode* next1 = l1 ? l1->next : nullptr;\n        ListNode* next2 = l2 ? l2->next : nullptr;\n        \n        result->next = addTwoNumbers(next1, next2, sum / 10);\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        return addTwoNumbers(l1, l2, 0);\n    }\n    \n    private ListNode addTwoNumbers(ListNode l1, ListNode l2, int carry) {\n        if (l1 == null && l2 == null && carry == 0) return null;\n        \n        int val1 = (l1 != null) ? l1.val : 0;\n        int val2 = (l2 != null) ? l2.val : 0;\n        int sum = val1 + val2 + carry;\n        \n        ListNode result = new ListNode(sum % 10);\n        \n        ListNode next1 = (l1 != null) ? l1.next : null;\n        ListNode next2 = (l2 != null) ? l2.next : null;\n        \n        result.next = addTwoNumbers(next1, next2, sum / 10);\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode], carry: int = 0) -> Optional[ListNode]:\n        if not l1 and not l2 and carry == 0:\n            return None\n        \n        val1 = l1.val if l1 else 0\n        val2 = l2.val if l2 else 0\n        total = val1 + val2 + carry\n        \n        result = ListNode(total % 10)\n        \n        next1 = l1.next if l1 else None\n        next2 = l2.next if l2 else None\n        \n        result.next = self.addTwoNumbers(next1, next2, total // 10)\n        \n        return result",
+        "javascript": "var addTwoNumbers = function(l1, l2, carry = 0) {\n    if (!l1 && !l2 && carry === 0) return null;\n    \n    const val1 = l1 ? l1.val : 0;\n    const val2 = l2 ? l2.val : 0;\n    const sum = val1 + val2 + carry;\n    \n    const result = new ListNode(sum % 10);\n    \n    const next1 = l1 ? l1.next : null;\n    const next2 = l2 ? l2.next : null;\n    \n    result.next = addTwoNumbers(next1, next2, Math.floor(sum / 10));\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "In-place Modification (Reuse l1)",
+      "order": 3,
+      "intuition": "Reuse one of the input lists to save space (modifies input)",
+      "approach": "Modify l1 in-place, extend if needed",
+      "steps": [
+        "Use l1 as result, current = l1",
+        "Carry = 0, prev = null",
+        "While l1 or l2 or carry:",
+        "  If l1, add to its value",
+        "  Else create new node in l1",
+        "  Update carry",
+        "  Move forward",
+        "Return original l1 head"
+      ],
+      "complexity": {
+        "time": "O(max(m, n))",
+        "space": "O(1)",
+        "timeExplanation": "Traverse both lists",
+        "spaceExplanation": "No extra space, reuse input (excluding output)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {\n        ListNode* head = l1;\n        ListNode* prev = nullptr;\n        int carry = 0;\n        \n        while (l1 || l2 || carry) {\n            int val1 = l1 ? l1->val : 0;\n            int val2 = l2 ? l2->val : 0;\n            int sum = val1 + val2 + carry;\n            \n            if (l1) {\n                l1->val = sum % 10;\n                prev = l1;\n                l1 = l1->next;\n            } else {\n                prev->next = new ListNode(sum % 10);\n                prev = prev->next;\n            }\n            \n            carry = sum / 10;\n            if (l2) l2 = l2->next;\n        }\n        \n        return head;\n    }\n};",
+        "java": "class Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode head = l1;\n        ListNode prev = null;\n        int carry = 0;\n        \n        while (l1 != null || l2 != null || carry > 0) {\n            int val1 = (l1 != null) ? l1.val : 0;\n            int val2 = (l2 != null) ? l2.val : 0;\n            int sum = val1 + val2 + carry;\n            \n            if (l1 != null) {\n                l1.val = sum % 10;\n                prev = l1;\n                l1 = l1.next;\n            } else {\n                prev.next = new ListNode(sum % 10);\n                prev = prev.next;\n            }\n            \n            carry = sum / 10;\n            if (l2 != null) l2 = l2.next;\n        }\n        \n        return head;\n    }\n}",
+        "python": "class Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:\n        head = l1\n        prev = None\n        carry = 0\n        \n        while l1 or l2 or carry:\n            val1 = l1.val if l1 else 0\n            val2 = l2.val if l2 else 0\n            total = val1 + val2 + carry\n            \n            if l1:\n                l1.val = total % 10\n                prev = l1\n                l1 = l1.next\n            else:\n                prev.next = ListNode(total % 10)\n                prev = prev.next\n            \n            carry = total // 10\n            if l2:\n                l2 = l2.next\n        \n        return head",
+        "javascript": "var addTwoNumbers = function(l1, l2) {\n    const head = l1;\n    let prev = null;\n    let carry = 0;\n    \n    while (l1 || l2 || carry) {\n        const val1 = l1 ? l1.val : 0;\n        const val2 = l2 ? l2.val : 0;\n        const sum = val1 + val2 + carry;\n        \n        if (l1) {\n            l1.val = sum % 10;\n            prev = l1;\n            l1 = l1.next;\n        } else {\n            prev.next = new ListNode(sum % 10);\n            prev = prev.next;\n        }\n        \n        carry = Math.floor(sum / 10);\n        if (l2) l2 = l2.next;\n    }\n    \n    return head;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to handle carry after both lists are exhausted",
+    "Not handling lists of different lengths",
+    "Forgetting dummy node leads to complex head handling",
+    "Off-by-one errors when calculating carry and digit",
+    "Not considering edge case: [9,9,9] + [1] = [0,0,0,1]"
+  ],
+  "hints": [
+    "Numbers are already in reverse order - perfect for addition!",
+    "Use dummy node to simplify result list building",
+    "Remember: carry can be 0 or 1 (max digit is 9, so max sum is 9+9+1=19)",
+    "Continue loop while ANY of: l1, l2, or carry exists",
+    "Treat null nodes as having value 0",
+    "Division by 10 gives carry, modulo 10 gives digit"
+  ],
+  "followUp": [
+    "What if digits are stored in forward order? (See Add Two Numbers II - LC 445)",
+    "Can you solve it without creating new nodes?",
+    "What if numbers are very large (beyond integer range)?",
+    "How would you handle negative numbers?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Facebook", "Apple", "Google", "Bloomberg"],
+  "tags": ["linked-list", "math", "recursion"],
+  "relatedProblems": [
+    "Add Two Numbers II",
+    "Multiply Strings",
+    "Plus One",
+    "Add Binary"
+  ]
+}

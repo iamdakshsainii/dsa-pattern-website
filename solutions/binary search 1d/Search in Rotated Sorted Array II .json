@@ -1,0 +1,178 @@
+{
+  "questionId": "81",
+  "questionSlug": "search-in-rotated-sorted-array-ii",
+  "title": "Search in Rotated Sorted Array II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/",
+    "videos": [
+      {
+        "title": "Search in Rotated Sorted Array II",
+        "url": "https://www.youtube.com/watch?v=w2G2W8l__pc",
+        "channel": "take U forward",
+        "duration": "18:30",
+        "language": "English"
+      },
+      {
+        "title": "Search in Rotated Sorted Array II - Leetcode 81",
+        "url": "https://www.youtube.com/watch?v=FzvB9XE_DHA",
+        "channel": "NeetCode",
+        "duration": "12:15",
+        "language": "English"
+      },
+      {
+        "title": "Search in Rotated Array with Duplicates",
+        "url": "https://www.youtube.com/watch?v=dCN4gkyls1g",
+        "channel": "Pepcoding",
+        "duration": "15:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Search in Rotated Sorted Array II - LeetCode Solution",
+        "url": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/solution/",
+        "source": "LeetCode Official"
+      },
+      {
+        "title": "Search in Rotated Sorted Array II",
+        "url": "https://takeuforward.org/data-structure/search-element-in-rotated-sorted-array-ii/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Search in Rotated Array - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/search-an-element-in-a-sorted-and-rotated-array/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Rotated sorted array + Duplicates + Search target = Modified binary search. When can't identify sorted half due to duplicates, shrink search space.",
+  "approaches": [
+    {
+      "name": "Brute Force (Linear Search)",
+      "order": 1,
+      "intuition": "Simply iterate through array to find target.",
+      "approach": "Scan entire array and return true if target found.",
+      "steps": [
+        "Iterate through array",
+        "If nums[i] == target: return true",
+        "After loop completes: return false"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool search(vector<int>& nums, int target) {\n        for (int num : nums) {\n            if (num == target) {\n                return true;\n            }\n        }\n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean search(int[] nums, int target) {\n        for (int num : nums) {\n            if (num == target) {\n                return true;\n            }\n        }\n        return false;\n    }\n}",
+        "python": "class Solution:\n    def search(self, nums: List[int], target: int) -> bool:\n        return target in nums",
+        "javascript": "var search = function(nums, target) {\n    for (let num of nums) {\n        if (num === target) {\n            return true;\n        }\n    }\n    return false;\n};"
+      }
+    },
+    {
+      "name": "Binary Search (Without Duplicate Handling)",
+      "order": 2,
+      "intuition": "Identify which half is sorted, then check if target lies in that half. But this fails with duplicates when we can't identify sorted half.",
+      "approach": "Use binary search to identify sorted half. If target in sorted half, search there. Otherwise search other half. Duplicates cause ambiguity.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] == target: return true",
+        "  Check if left half is sorted (nums[low] <= nums[mid]):",
+        "    If target in left range: high = mid - 1",
+        "    Else: low = mid + 1",
+        "  Else right half is sorted:",
+        "    If target in right range: low = mid + 1",
+        "    Else: high = mid - 1",
+        "Return false",
+        "NOTE: Fails when nums[low] == nums[mid] == nums[high]"
+      ],
+      "complexity": {
+        "time": "O(log n) average, O(n) worst",
+        "space": "O(1)",
+        "timeExplanation": "Binary search but duplicates can make it linear",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool search(vector<int>& nums, int target) {\n        int low = 0, high = nums.size() - 1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] == target) {\n                return true;\n            }\n            \n            // Left half is sorted\n            if (nums[low] <= nums[mid]) {\n                if (nums[low] <= target && target < nums[mid]) {\n                    high = mid - 1;\n                } else {\n                    low = mid + 1;\n                }\n            }\n            // Right half is sorted\n            else {\n                if (nums[mid] < target && target <= nums[high]) {\n                    low = mid + 1;\n                } else {\n                    high = mid - 1;\n                }\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean search(int[] nums, int target) {\n        int low = 0, high = nums.length - 1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] == target) {\n                return true;\n            }\n            \n            if (nums[low] <= nums[mid]) {\n                if (nums[low] <= target && target < nums[mid]) {\n                    high = mid - 1;\n                } else {\n                    low = mid + 1;\n                }\n            } else {\n                if (nums[mid] < target && target <= nums[high]) {\n                    low = mid + 1;\n                } else {\n                    high = mid - 1;\n                }\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def search(self, nums: List[int], target: int) -> bool:\n        low, high = 0, len(nums) - 1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if nums[mid] == target:\n                return True\n            \n            if nums[low] <= nums[mid]:\n                if nums[low] <= target < nums[mid]:\n                    high = mid - 1\n                else:\n                    low = mid + 1\n            else:\n                if nums[mid] < target <= nums[high]:\n                    low = mid + 1\n                else:\n                    high = mid - 1\n        \n        return False",
+        "javascript": "var search = function(nums, target) {\n    let low = 0, high = nums.length - 1;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (nums[mid] === target) {\n            return true;\n        }\n        \n        if (nums[low] <= nums[mid]) {\n            if (nums[low] <= target && target < nums[mid]) {\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        } else {\n            if (nums[mid] < target && target <= nums[high]) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n    }\n    \n    return false;\n};"
+      }
+    },
+    {
+      "name": "Binary Search with Duplicate Handling - Optimal",
+      "order": 3,
+      "intuition": "When nums[low] == nums[mid] == nums[high], we can't determine which half is sorted. Solution: skip duplicates by incrementing low or decrementing high.",
+      "approach": "Modified binary search that handles duplicates. When unable to identify sorted half, shrink search space by removing duplicates.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] == target: return true",
+        "  Handle duplicates:",
+        "    If nums[low] == nums[mid] == nums[high]:",
+        "      low++, high-- (skip duplicates)",
+        "      continue",
+        "  Check if left half sorted (nums[low] <= nums[mid]):",
+        "    If target in left range: high = mid - 1",
+        "    Else: low = mid + 1",
+        "  Else right half sorted:",
+        "    If target in right range: low = mid + 1",
+        "    Else: high = mid - 1",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(log n) average, O(n) worst case",
+        "space": "O(1)",
+        "timeExplanation": "Binary search, but all duplicates degrades to O(n)",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool search(vector<int>& nums, int target) {\n        int low = 0, high = nums.size() - 1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] == target) {\n                return true;\n            }\n            \n            // Handle duplicates - can't determine which half is sorted\n            if (nums[low] == nums[mid] && nums[mid] == nums[high]) {\n                low++;\n                high--;\n                continue;\n            }\n            \n            // Left half is sorted\n            if (nums[low] <= nums[mid]) {\n                if (nums[low] <= target && target < nums[mid]) {\n                    high = mid - 1;\n                } else {\n                    low = mid + 1;\n                }\n            }\n            // Right half is sorted\n            else {\n                if (nums[mid] < target && target <= nums[high]) {\n                    low = mid + 1;\n                } else {\n                    high = mid - 1;\n                }\n            }\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public boolean search(int[] nums, int target) {\n        int low = 0, high = nums.length - 1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] == target) {\n                return true;\n            }\n            \n            if (nums[low] == nums[mid] && nums[mid] == nums[high]) {\n                low++;\n                high--;\n                continue;\n            }\n            \n            if (nums[low] <= nums[mid]) {\n                if (nums[low] <= target && target < nums[mid]) {\n                    high = mid - 1;\n                } else {\n                    low = mid + 1;\n                }\n            } else {\n                if (nums[mid] < target && target <= nums[high]) {\n                    low = mid + 1;\n                } else {\n                    high = mid - 1;\n                }\n            }\n        }\n        \n        return false;\n    }\n}",
+        "python": "class Solution:\n    def search(self, nums: List[int], target: int) -> bool:\n        low, high = 0, len(nums) - 1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if nums[mid] == target:\n                return True\n            \n            if nums[low] == nums[mid] == nums[high]:\n                low += 1\n                high -= 1\n                continue\n            \n            if nums[low] <= nums[mid]:\n                if nums[low] <= target < nums[mid]:\n                    high = mid - 1\n                else:\n                    low = mid + 1\n            else:\n                if nums[mid] < target <= nums[high]:\n                    low = mid + 1\n                else:\n                    high = mid - 1\n        \n        return False",
+        "javascript": "var search = function(nums, target) {\n    let low = 0, high = nums.length - 1;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (nums[mid] === target) {\n            return true;\n        }\n        \n        if (nums[low] === nums[mid] && nums[mid] === nums[high]) {\n            low++;\n            high--;\n            continue;\n        }\n        \n        if (nums[low] <= nums[mid]) {\n            if (nums[low] <= target && target < nums[mid]) {\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        } else {\n            if (nums[mid] < target && target <= nums[high]) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n    }\n    \n    return false;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling case when nums[low] == nums[mid] == nums[high]",
+    "Using wrong comparison operators (< vs <=) when checking if target in range",
+    "Not understanding which half to search when target equals boundary",
+    "Forgetting to check if left or right half is sorted first",
+    "Using incorrect boundary updates (mid vs mid±1)"
+  ],
+  "hints": [
+    "First identify which half is sorted",
+    "When duplicates prevent identification, skip them",
+    "Check if target lies within the sorted half's range",
+    "Use <= for identifying sorted half, not just <",
+    "Worst case O(n) when array is all duplicates like [1,1,1,1,1]"
+  ],
+  "followUp": [
+    "What if duplicates are not allowed? (Search in Rotated Sorted Array I)",
+    "How would you find the rotation count?",
+    "Can you find the minimum element?",
+    "What if you need to return the index instead of boolean?",
+    "How to optimize for the worst case of all duplicates?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Apple", "LinkedIn"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Search in Rotated Sorted Array",
+    "Find Minimum in Rotated Sorted Array II",
+    "Find Peak Element",
+    "Search Insert Position"
+  ]
+}

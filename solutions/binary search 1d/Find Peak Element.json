@@ -1,0 +1,178 @@
+{
+  "questionId": "162",
+  "questionSlug": "find-peak-element",
+  "title": "Find Peak Element",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-peak-element/",
+    "videos": [
+      {
+        "title": "Find Peak Element - Leetcode 162",
+        "url": "https://www.youtube.com/watch?v=kMzJy9es7Hc",
+        "channel": "NeetCode",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Find Peak Element",
+        "url": "https://www.youtube.com/watch?v=cXxmbemS6XM",
+        "channel": "take U forward",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Peak Element in Array",
+        "url": "https://www.youtube.com/watch?v=HtSuA80QTyo",
+        "channel": "Aditya Verma",
+        "duration": "11:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Peak Element",
+        "url": "https://takeuforward.org/data-structure/find-peak-element/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Find a Peak Element - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/find-a-peak-in-a-given-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Find Peak Element - LeetCode Solution",
+        "url": "https://leetcode.com/problems/find-peak-element/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/find-peak-element/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/peak-element/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find peak element + O(log n) = Binary search. If mid increasing, peak exists in right; if decreasing, peak exists in left.",
+  "approaches": [
+    {
+      "name": "Linear Search",
+      "order": 1,
+      "intuition": "Scan array to find element greater than both neighbors.",
+      "approach": "Check each element if it's greater than its neighbors. Handle edge cases for first and last elements.",
+      "steps": [
+        "If n == 1: return 0",
+        "If nums[0] > nums[1]: return 0",
+        "If nums[n-1] > nums[n-2]: return n-1",
+        "For i from 1 to n-2:",
+        "  If nums[i] > nums[i-1] and nums[i] > nums[i+1]:",
+        "    Return i"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "May scan entire array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findPeakElement(vector<int>& nums) {\n        int n = nums.size();\n        \n        if (n == 1) return 0;\n        if (nums[0] > nums[1]) return 0;\n        if (nums[n-1] > nums[n-2]) return n - 1;\n        \n        for (int i = 1; i < n - 1; i++) {\n            if (nums[i] > nums[i-1] && nums[i] > nums[i+1]) {\n                return i;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int findPeakElement(int[] nums) {\n        int n = nums.length;\n        \n        if (n == 1) return 0;\n        if (nums[0] > nums[1]) return 0;\n        if (nums[n-1] > nums[n-2]) return n - 1;\n        \n        for (int i = 1; i < n - 1; i++) {\n            if (nums[i] > nums[i-1] && nums[i] > nums[i+1]) {\n                return i;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def findPeakElement(self, nums: List[int]) -> int:\n        n = len(nums)\n        \n        if n == 1:\n            return 0\n        if nums[0] > nums[1]:\n            return 0\n        if nums[n-1] > nums[n-2]:\n            return n - 1\n        \n        for i in range(1, n - 1):\n            if nums[i] > nums[i-1] and nums[i] > nums[i+1]:\n                return i\n        \n        return -1",
+        "javascript": "var findPeakElement = function(nums) {\n    const n = nums.length;\n    \n    if (n === 1) return 0;\n    if (nums[0] > nums[1]) return 0;\n    if (nums[n-1] > nums[n-2]) return n - 1;\n    \n    for (let i = 1; i < n - 1; i++) {\n        if (nums[i] > nums[i-1] && nums[i] > nums[i+1]) {\n            return i;\n        }\n    }\n    \n    return -1;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Compare with Next",
+      "order": 2,
+      "intuition": "If nums[mid] < nums[mid+1], array is increasing, peak must be on right. Otherwise on left.",
+      "approach": "Binary search comparing mid with mid+1 to determine which half has peak.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low < high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] > nums[mid+1]:",
+        "    Peak is on left (including mid): high = mid",
+        "  Else:",
+        "    Peak is on right: low = mid + 1",
+        "Return low"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findPeakElement(vector<int>& nums) {\n        int low = 0, high = nums.size() - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > nums[mid + 1]) {\n                // Decreasing, peak on left (including mid)\n                high = mid;\n            } else {\n                // Increasing, peak on right\n                low = mid + 1;\n            }\n        }\n        \n        return low;\n    }\n};",
+        "java": "class Solution {\n    public int findPeakElement(int[] nums) {\n        int low = 0, high = nums.length - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > nums[mid + 1]) {\n                // Decreasing, peak on left (including mid)\n                high = mid;\n            } else {\n                // Increasing, peak on right\n                low = mid + 1;\n            }\n        }\n        \n        return low;\n    }\n}",
+        "python": "class Solution:\n    def findPeakElement(self, nums: List[int]) -> int:\n        low, high = 0, len(nums) - 1\n        \n        while low < high:\n            mid = (low + high) // 2\n            \n            if nums[mid] > nums[mid + 1]:\n                # Decreasing, peak on left (including mid)\n                high = mid\n            else:\n                # Increasing, peak on right\n                low = mid + 1\n        \n        return low",
+        "javascript": "var findPeakElement = function(nums) {\n    let low = 0, high = nums.length - 1;\n    \n    while (low < high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (nums[mid] > nums[mid + 1]) {\n            // Decreasing, peak on left (including mid)\n            high = mid;\n        } else {\n            // Increasing, peak on right\n            low = mid + 1;\n        }\n    }\n    \n    return low;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Check Both Neighbors - Optimal",
+      "order": 3,
+      "intuition": "Check if mid is peak by comparing with both neighbors. If not, move towards increasing side.",
+      "approach": "Binary search on trimmed array [1, n-2]. Check if mid is peak, else move towards increasing slope.",
+      "steps": [
+        "Handle edge cases: n == 1, nums[0] > nums[1], nums[n-1] > nums[n-2]",
+        "Set low = 1, high = n - 2",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] > nums[mid-1] and nums[mid] > nums[mid+1]:",
+        "    Return mid (found peak)",
+        "  Elif nums[mid] > nums[mid-1]:",
+        "    Increasing slope: low = mid + 1",
+        "  Else:",
+        "    Decreasing slope: high = mid - 1"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findPeakElement(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Edge cases\n        if (n == 1) return 0;\n        if (nums[0] > nums[1]) return 0;\n        if (nums[n-1] > nums[n-2]) return n - 1;\n        \n        int low = 1, high = n - 2;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            // Check if mid is peak\n            if (nums[mid] > nums[mid-1] && nums[mid] > nums[mid+1]) {\n                return mid;\n            }\n            // Increasing slope - move right\n            else if (nums[mid] > nums[mid-1]) {\n                low = mid + 1;\n            }\n            // Decreasing slope - move left\n            else {\n                high = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int findPeakElement(int[] nums) {\n        int n = nums.length;\n        \n        // Edge cases\n        if (n == 1) return 0;\n        if (nums[0] > nums[1]) return 0;\n        if (nums[n-1] > nums[n-2]) return n - 1;\n        \n        int low = 1, high = n - 2;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            // Check if mid is peak\n            if (nums[mid] > nums[mid-1] && nums[mid] > nums[mid+1]) {\n                return mid;\n            }\n            // Increasing slope - move right\n            else if (nums[mid] > nums[mid-1]) {\n                low = mid + 1;\n            }\n            // Decreasing slope - move left\n            else {\n                high = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def findPeakElement(self, nums: List[int]) -> int:\n        n = len(nums)\n        \n        # Edge cases\n        if n == 1:\n            return 0\n        if nums[0] > nums[1]:\n            return 0\n        if nums[n-1] > nums[n-2]:\n            return n - 1\n        \n        low, high = 1, n - 2\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            # Check if mid is peak\n            if nums[mid] > nums[mid-1] and nums[mid] > nums[mid+1]:\n                return mid\n            # Increasing slope - move right\n            elif nums[mid] > nums[mid-1]:\n                low = mid + 1\n            # Decreasing slope - move left\n            else:\n                high = mid - 1\n        \n        return -1",
+        "javascript": "var findPeakElement = function(nums) {\n    const n = nums.length;\n    \n    // Edge cases\n    if (n === 1) return 0;\n    if (nums[0] > nums[1]) return 0;\n    if (nums[n-1] > nums[n-2]) return n - 1;\n    \n    let low = 1, high = n - 2;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        // Check if mid is peak\n        if (nums[mid] > nums[mid-1] && nums[mid] > nums[mid+1]) {\n            return mid;\n        }\n        // Increasing slope - move right\n        else if (nums[mid] > nums[mid-1]) {\n            low = mid + 1;\n        }\n        // Decreasing slope - move left\n        else {\n            high = mid - 1;\n        }\n    }\n    \n    return -1;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling edge cases (peak at boundaries)",
+    "Using <= in while loop condition when comparing with mid+1 (causes array out of bounds)",
+    "Wrong elimination logic - not understanding increasing vs decreasing slope",
+    "Not reducing search space to [1, n-2] in 3rd approach",
+    "Assuming array must be sorted (it's not!)"
+  ],
+  "hints": [
+    "Array doesn't need to be sorted for this problem",
+    "There's always guaranteed to be a peak",
+    "If nums[mid] < nums[mid+1], peak must exist on right",
+    "If nums[mid] > nums[mid+1], peak could be mid or on left",
+    "Move towards increasing slope"
+  ],
+  "followUp": [
+    "Can there be multiple peaks? How to find all of them?",
+    "What if array was 2D? (Find peak in 2D array)",
+    "How does this differ from finding maximum element?",
+    "What if neighbors could be equal?",
+    "Can you solve for circular array?"
+  ],
+  "companies": ["Google", "Microsoft", "Amazon", "Facebook", "Apple", "Bloomberg"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Peak Index in a Mountain Array",
+    "Find Peak Element II",
+    "Find in Mountain Array",
+    "Single Element in Sorted Array",
+    "Search in Rotated Sorted Array"
+  ]
+}

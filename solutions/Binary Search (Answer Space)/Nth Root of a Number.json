@@ -1,0 +1,148 @@
+{
+  "questionId": "nth-root",
+  "questionSlug": "nth-root-of-a-number",
+  "title": "Nth Root of a Number",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://www.naukri.com/code360/problems/1062679",
+    "videos": [
+      {
+        "title": "Nth Root of a Number using Binary Search",
+        "url": "https://www.youtube.com/watch?v=WjpswYrS2nY",
+        "channel": "take U forward",
+        "duration": "18:42",
+        "language": "English"
+      },
+      {
+        "title": "Find Nth Root of M | Binary Search",
+        "url": "https://www.youtube.com/watch?v=rjEJeYCasHs",
+        "channel": "Aditya Verma",
+        "duration": "14:25",
+        "language": "English"
+      },
+      {
+        "title": "Nth Root Using Binary Search",
+        "url": "https://www.youtube.com/watch?v=5C4JBZl7T7c",
+        "channel": "Pepcoding",
+        "duration": "12:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Nth Root of M using Binary Search",
+        "url": "https://takeuforward.org/data-structure/nth-root-of-a-number-using-binary-search/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Nth Root of a Number - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/calculating-n-th-real-root-using-binary-search/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Binary Search - Find Nth Root",
+        "url": "https://www.codingninjas.com/studio/library/find-the-nth-root-of-m",
+        "source": "Coding Ninjas"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on Coding Ninjas",
+        "url": "https://www.naukri.com/code360/problems/1062679",
+        "platform": "Coding Ninjas"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/find-nth-root-of-m5843/1",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Finding root + Integer search space = Binary Search on answer. Search space is [1, m] where answer exists.",
+  "approaches": [
+    {
+      "name": "Brute Force (Linear Search)",
+      "order": 1,
+      "intuition": "Try all possible values from 1 to m and check if any number raised to power n equals m.",
+      "approach": "Iterate through all numbers from 1 to m, calculate each number raised to power n, and check if it equals m. Return the number if found, else return -1.",
+      "steps": [
+        "Iterate i from 1 to m",
+        "Calculate power = i^n",
+        "If power == m: return i",
+        "If power > m: break (optimization)",
+        "Return -1 if no answer found"
+      ],
+      "complexity": {
+        "time": "O(m * log n)",
+        "space": "O(1)",
+        "timeExplanation": "Loop runs m times, each power calculation takes O(log n) time",
+        "spaceExplanation": "Only constant extra space used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    long long power(int base, int exp, int limit) {\n        long long result = 1;\n        for (int i = 0; i < exp; i++) {\n            result *= base;\n            if (result > limit) return limit + 1;\n        }\n        return result;\n    }\n    \n    int nthRoot(int n, int m) {\n        for (int i = 1; i <= m; i++) {\n            long long val = power(i, n, m);\n            if (val == m) return i;\n            if (val > m) break;\n        }\n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public long power(int base, int exp, int limit) {\n        long result = 1;\n        for (int i = 0; i < exp; i++) {\n            result *= base;\n            if (result > limit) return limit + 1;\n        }\n        return result;\n    }\n    \n    public int nthRoot(int n, int m) {\n        for (int i = 1; i <= m; i++) {\n            long val = power(i, n, m);\n            if (val == m) return i;\n            if (val > m) break;\n        }\n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def power(self, base: int, exp: int, limit: int) -> int:\n        result = 1\n        for _ in range(exp):\n            result *= base\n            if result > limit:\n                return limit + 1\n        return result\n    \n    def nthRoot(self, n: int, m: int) -> int:\n        for i in range(1, m + 1):\n            val = self.power(i, n, m)\n            if val == m:\n                return i\n            if val > m:\n                break\n        return -1",
+        "javascript": "var nthRoot = function(n, m) {\n    const power = (base, exp, limit) => {\n        let result = 1;\n        for (let i = 0; i < exp; i++) {\n            result *= base;\n            if (result > limit) return limit + 1;\n        }\n        return result;\n    };\n    \n    for (let i = 1; i <= m; i++) {\n        const val = power(i, n, m);\n        if (val === m) return i;\n        if (val > m) break;\n    }\n    return -1;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Optimal",
+      "order": 2,
+      "intuition": "Search space is sorted [1 to m]. Use binary search to find the number whose nth power equals m. Compare mid^n with m to adjust search space.",
+      "approach": "Apply binary search on range [1, m]. For each mid, calculate mid^n and compare with m. If equal return mid, if less search right half, if greater search left half.",
+      "steps": [
+        "Initialize low = 1, high = m",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  Calculate val = mid^n (with overflow check)",
+        "  If val == m: return mid",
+        "  If val < m: low = mid + 1",
+        "  Else: high = mid - 1",
+        "Return -1 if not found"
+      ],
+      "complexity": {
+        "time": "O(log m * log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search takes O(log m), each power calculation takes O(log n)",
+        "spaceExplanation": "Only constant extra space used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    // Helper function to calculate power with overflow check\n    // Returns: 0 if mid^n < m, 1 if mid^n == m, 2 if mid^n > m\n    int func(int mid, int n, int m) {\n        long long ans = 1;\n        for (int i = 0; i < n; i++) {\n            ans *= mid;\n            if (ans > m) return 2;\n        }\n        if (ans == m) return 1;\n        return 0;\n    }\n    \n    int nthRoot(int n, int m) {\n        int low = 1, high = m;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            int val = func(mid, n, m);\n            \n            if (val == 1) {\n                return mid;\n            } else if (val == 0) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    // Helper function to calculate power with overflow check\n    // Returns: 0 if mid^n < m, 1 if mid^n == m, 2 if mid^n > m\n    public int func(int mid, int n, int m) {\n        long ans = 1;\n        for (int i = 0; i < n; i++) {\n            ans *= mid;\n            if (ans > m) return 2;\n        }\n        if (ans == m) return 1;\n        return 0;\n    }\n    \n    public int nthRoot(int n, int m) {\n        int low = 1, high = m;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            int val = func(mid, n, m);\n            \n            if (val == 1) {\n                return mid;\n            } else if (val == 0) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def func(self, mid: int, n: int, m: int) -> int:\n        \"\"\"Helper function to calculate power with overflow check\n        Returns: 0 if mid^n < m, 1 if mid^n == m, 2 if mid^n > m\n        \"\"\"\n        ans = 1\n        for _ in range(n):\n            ans *= mid\n            if ans > m:\n                return 2\n        if ans == m:\n            return 1\n        return 0\n    \n    def nthRoot(self, n: int, m: int) -> int:\n        low, high = 1, m\n        \n        while low <= high:\n            mid = (low + high) // 2\n            val = self.func(mid, n, m)\n            \n            if val == 1:\n                return mid\n            elif val == 0:\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        return -1",
+        "javascript": "var nthRoot = function(n, m) {\n    // Helper function to calculate power with overflow check\n    // Returns: 0 if mid^n < m, 1 if mid^n == m, 2 if mid^n > m\n    const func = (mid, n, m) => {\n        let ans = 1;\n        for (let i = 0; i < n; i++) {\n            ans *= mid;\n            if (ans > m) return 2;\n        }\n        if (ans === m) return 1;\n        return 0;\n    };\n    \n    let low = 1, high = m;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        const val = func(mid, n, m);\n        \n        if (val === 1) {\n            return mid;\n        } else if (val === 0) {\n            low = mid + 1;\n        } else {\n            high = mid - 1;\n        }\n    }\n    \n    return -1;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Integer overflow when calculating mid^n directly",
+    "Not handling the case when no integer nth root exists",
+    "Using floating point arithmetic instead of integer comparison",
+    "Wrong binary search bounds (should be 1 to m, not 1 to m/n)",
+    "Not optimizing power calculation with early overflow detection"
+  ],
+  "hints": [
+    "Think about the search space: if answer exists, it's between 1 and m",
+    "The search space is monotonic - if x^n > m, then (x+1)^n will also be > m",
+    "Use binary search on the answer range",
+    "Handle overflow carefully when computing mid^n",
+    "You can optimize by returning early if mid^n exceeds m during calculation"
+  ],
+  "followUp": [
+    "What if we need to find the nth root with precision to k decimal places?",
+    "Can you solve this using Newton-Raphson method?",
+    "How would you handle very large values of m (beyond long long)?",
+    "What if n is also very large?",
+    "Can you generalize this to find kth root of nth power?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Adobe", "Flipkart"],
+  "tags": ["binary-search", "mathematics", "search-space"],
+  "relatedProblems": [
+    "Sqrt(x)",
+    "Valid Perfect Square",
+    "Pow(x, n)",
+    "Koko Eating Bananas",
+    "Capacity To Ship Packages Within D Days",
+    "Minimum Number of Days to Make m Bouquets"
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "questionId": "430",
+  "questionSlug": "flatten-a-multilevel-doubly-linked-list",
+  "title": "Flatten a Multilevel Doubly Linked List",
+  "difficulty": "Medium",
+  "leetcodeLink": "https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/",
+    "videos": [
+      {
+        "title": "Flatten a Multilevel Doubly Linked List",
+        "url": "https://www.youtube.com/watch?v=RIyChXW7GSQ",
+        "channel": "NeetCode",
+        "duration": "12:00",
+        "language": "English"
+      }
+    ]
+  },
+  "problemStatement": "You are given a doubly linked list, which contains nodes that have a next pointer, a previous pointer, and an additional child pointer. This child pointer may or may not point to a separate doubly linked list, also containing these special nodes. These child lists may have one or more children of their own, and so on, to produce a multilevel data structure as shown in the example below.\n\nGiven the head of the first level of the list, flatten the list so that all the nodes appear in a single-level, doubly linked list. Let curr be a node with a child list. The nodes in the child list should appear after curr and before curr.next in the flattened list.\n\nReturn the head of the flattened list. The nodes in the list must have all of their child pointers set to null.",
+  "examples": [
+    {
+      "input": "head = [1,2,3,4,5,6,null,null,null,7,8,9,10,null,null,11,12]",
+      "output": "[1,2,3,7,8,11,12,9,10,4,5,6]",
+      "explanation": "The multilevel linked list is flattened into a single level where child nodes are inserted after their parent."
+    },
+    {
+      "input": "head = [1,2,null,3]",
+      "output": "[1,3,2]",
+      "explanation": "Node 1 has child 3, which should be inserted between 1 and 2."
+    },
+    {
+      "input": "head = []",
+      "output": "[]"
+    }
+  ],
+  "constraints": [
+    "The number of Nodes will not exceed 1000",
+    "1 <= Node.val <= 10^5"
+  ],
+  "patternTriggers": "Multilevel doubly linked list + flatten = DFS traversal with child insertion OR iterative with stack",
+  "approaches": [
+    {
+      "name": "Iterative with Stack (DFS)",
+      "order": 1,
+      "intuition": "Use stack to handle child lists. When we encounter a child, push next node to stack, process child first, then continue with stack.",
+      "approach": "Iterate through list, use stack for next nodes when processing children",
+      "steps": [
+        "Use stack to store nodes to process later",
+        "current = head",
+        "While current or stack not empty:",
+        "  If current has child:",
+        "    If current has next, push next to stack",
+        "    Connect current to child",
+        "    Set child.prev = current",
+        "    Set current.child = null",
+        "  If current.next is null and stack not empty:",
+        "    Pop from stack and connect to current",
+        "  Move current = current.next",
+        "Return head"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Stack can hold up to n nodes in worst case"
+      },
+      "code": {
+        "cpp": "/*\nclass Node {\npublic:\n    int val;\n    Node* prev;\n    Node* next;\n    Node* child;\n};\n*/\n\nclass Solution {\npublic:\n    Node* flatten(Node* head) {\n        if (!head) return head;\n        \n        stack<Node*> stk;\n        Node* current = head;\n        \n        while (current) {\n            // If current has a child\n            if (current->child) {\n                // Save next node if exists\n                if (current->next) {\n                    stk.push(current->next);\n                }\n                \n                // Connect current to child\n                current->next = current->child;\n                current->child->prev = current;\n                current->child = nullptr;\n            }\n            \n            // If we're at the end of current level and stack has nodes\n            if (!current->next && !stk.empty()) {\n                Node* next = stk.top();\n                stk.pop();\n                \n                current->next = next;\n                next->prev = current;\n            }\n            \n            current = current->next;\n        }\n        \n        return head;\n    }\n};",
+        "java": "/*\nclass Node {\n    public int val;\n    public Node prev;\n    public Node next;\n    public Node child;\n}\n*/\n\nclass Solution {\n    public Node flatten(Node head) {\n        if (head == null) return head;\n        \n        Stack<Node> stack = new Stack<>();\n        Node current = head;\n        \n        while (current != null) {\n            if (current.child != null) {\n                if (current.next != null) {\n                    stack.push(current.next);\n                }\n                \n                current.next = current.child;\n                current.child.prev = current;\n                current.child = null;\n            }\n            \n            if (current.next == null && !stack.isEmpty()) {\n                Node next = stack.pop();\n                current.next = next;\n                next.prev = current;\n            }\n            \n            current = current.next;\n        }\n        \n        return head;\n    }\n}",
+        "python": "\"\"\"\nclass Node:\n    def __init__(self, val, prev, next, child):\n        self.val = val\n        self.prev = prev\n        self.next = next\n        self.child = child\n\"\"\"\n\nclass Solution:\n    def flatten(self, head: 'Optional[Node]') -> 'Optional[Node]':\n        if not head:\n            return head\n        \n        stack = []\n        current = head\n        \n        while current:\n            if current.child:\n                if current.next:\n                    stack.append(current.next)\n                \n                current.next = current.child\n                current.child.prev = current\n                current.child = None\n            \n            if not current.next and stack:\n                next_node = stack.pop()\n                current.next = next_node\n                next_node.prev = current\n            \n            current = current.next\n        \n        return head",
+        "javascript": "/**\n * function Node(val,prev,next,child) {\n *    this.val = val;\n *    this.prev = prev;\n *    this.next = next;\n *    this.child = child;\n * };\n */\n\nvar flatten = function(head) {\n    if (!head) return head;\n    \n    const stack = [];\n    let current = head;\n    \n    while (current) {\n        if (current.child) {\n            if (current.next) {\n                stack.push(current.next);\n            }\n            \n            current.next = current.child;\n            current.child.prev = current;\n            current.child = null;\n        }\n        \n        if (!current.next && stack.length > 0) {\n            const next = stack.pop();\n            current.next = next;\n            next.prev = current;\n        }\n        \n        current = current.next;\n    }\n    \n    return head;\n};"
+      }
+    },
+    {
+      "name": "Recursive DFS",
+      "order": 2,
+      "intuition": "Recursively flatten child lists, then connect them properly maintaining doubly linked structure.",
+      "approach": "DFS to flatten each child, return tail of flattened list",
+      "steps": [
+        "Base case: if head is null, return null",
+        "For each node:",
+        "  Save next node",
+        "  If node has child:",
+        "    Recursively flatten child",
+        "    Connect node to flattened child",
+        "    Find tail of child list",
+        "    Connect tail to saved next",
+        "  Set child to null",
+        "  Continue with next",
+        "Return head"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Recursion stack depth proportional to levels"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    Node* flattenDFS(Node* head) {\n        if (!head) return head;\n        \n        Node* current = head;\n        \n        while (current) {\n            // If no child, continue\n            if (!current->child) {\n                // If this is last node, return it\n                if (!current->next) return current;\n                current = current->next;\n                continue;\n            }\n            \n            // Node has a child\n            Node* child = current->child;\n            Node* next = current->next;\n            \n            // Flatten the child recursively, get tail\n            Node* childTail = flattenDFS(child);\n            \n            // Connect current to child\n            current->next = child;\n            child->prev = current;\n            current->child = nullptr;\n            \n            // Connect child tail to next\n            if (next) {\n                childTail->next = next;\n                next->prev = childTail;\n                current = next;\n            } else {\n                return childTail;\n            }\n        }\n        \n        return head;\n    }\n    \npublic:\n    Node* flatten(Node* head) {\n        flattenDFS(head);\n        return head;\n    }\n};",
+        "java": "class Solution {\n    private Node flattenDFS(Node head) {\n        if (head == null) return head;\n        \n        Node current = head;\n        \n        while (current != null) {\n            if (current.child == null) {\n                if (current.next == null) return current;\n                current = current.next;\n                continue;\n            }\n            \n            Node child = current.child;\n            Node next = current.next;\n            \n            Node childTail = flattenDFS(child);\n            \n            current.next = child;\n            child.prev = current;\n            current.child = null;\n            \n            if (next != null) {\n                childTail.next = next;\n                next.prev = childTail;\n                current = next;\n            } else {\n                return childTail;\n            }\n        }\n        \n        return head;\n    }\n    \n    public Node flatten(Node head) {\n        flattenDFS(head);\n        return head;\n    }\n}",
+        "python": "class Solution:\n    def flattenDFS(self, head: 'Optional[Node]') -> 'Optional[Node]':\n        if not head:\n            return head\n        \n        current = head\n        \n        while current:\n            if not current.child:\n                if not current.next:\n                    return current\n                current = current.next\n                continue\n            \n            child = current.child\n            next_node = current.next\n            \n            child_tail = self.flattenDFS(child)\n            \n            current.next = child\n            child.prev = current\n            current.child = None\n            \n            if next_node:\n                child_tail.next = next_node\n                next_node.prev = child_tail\n                current = next_node\n            else:\n                return child_tail\n        \n        return head\n    \n    def flatten(self, head: 'Optional[Node]') -> 'Optional[Node]':\n        self.flattenDFS(head)\n        return head",
+        "javascript": "var flatten = function(head) {\n    const flattenDFS = (node) => {\n        if (!node) return node;\n        \n        let current = node;\n        \n        while (current) {\n            if (!current.child) {\n                if (!current.next) return current;\n                current = current.next;\n                continue;\n            }\n            \n            const child = current.child;\n            const next = current.next;\n            \n            const childTail = flattenDFS(child);\n            \n            current.next = child;\n            child.prev = current;\n            current.child = null;\n            \n            if (next) {\n                childTail.next = next;\n                next.prev = childTail;\n                current = next;\n            } else {\n                return childTail;\n            }\n        }\n        \n        return node;\n    };\n    \n    flattenDFS(head);\n    return head;\n};"
+      }
+    },
+    {
+      "name": "Clean Recursive with Tail Return",
+      "order": 3,
+      "intuition": "Simpler recursive approach that returns tail of flattened portion",
+      "approach": "Process node, flatten child if exists, flatten rest, connect all parts",
+      "steps": [
+        "Helper function flattenAndReturnTail(node):",
+        "  Base: if !node, return null",
+        "  Save next",
+        "  If has child:",
+        "    childTail = flatten child",
+        "    Connect node → child",
+        "    If next exists, connect childTail → next",
+        "    Set child = null",
+        "  If next, recursively flatten next and return tail",
+        "  Else return current node (it's the tail)",
+        "Call helper(head), return head"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Recursion stack"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    Node* flattenAndReturnTail(Node* node) {\n        if (!node) return nullptr;\n        \n        Node* next = node->next;\n        Node* tail = node;\n        \n        if (node->child) {\n            Node* childTail = flattenAndReturnTail(node->child);\n            \n            // Connect node to child\n            node->next = node->child;\n            node->child->prev = node;\n            node->child = nullptr;\n            \n            tail = childTail;\n            \n            // Connect child tail to next\n            if (next) {\n                childTail->next = next;\n                next->prev = childTail;\n            }\n        }\n        \n        if (next) {\n            tail = flattenAndReturnTail(next);\n        }\n        \n        return tail;\n    }\n    \npublic:\n    Node* flatten(Node* head) {\n        if (head) flattenAndReturnTail(head);\n        return head;\n    }\n};",
+        "java": "class Solution {\n    private Node flattenAndReturnTail(Node node) {\n        if (node == null) return null;\n        \n        Node next = node.next;\n        Node tail = node;\n        \n        if (node.child != null) {\n            Node childTail = flattenAndReturnTail(node.child);\n            \n            node.next = node.child;\n            node.child.prev = node;\n            node.child = null;\n            \n            tail = childTail;\n            \n            if (next != null) {\n                childTail.next = next;\n                next.prev = childTail;\n            }\n        }\n        \n        if (next != null) {\n            tail = flattenAndReturnTail(next);\n        }\n        \n        return tail;\n    }\n    \n    public Node flatten(Node head) {\n        if (head != null) flattenAndReturnTail(head);\n        return head;\n    }\n}",
+        "python": "class Solution:\n    def flatten(self, head: 'Optional[Node]') -> 'Optional[Node]':\n        def flattenAndReturnTail(node: 'Optional[Node]') -> 'Optional[Node]':\n            if not node:\n                return None\n            \n            next_node = node.next\n            tail = node\n            \n            if node.child:\n                child_tail = flattenAndReturnTail(node.child)\n                \n                node.next = node.child\n                node.child.prev = node\n                node.child = None\n                \n                tail = child_tail\n                \n                if next_node:\n                    child_tail.next = next_node\n                    next_node.prev = child_tail\n            \n            if next_node:\n                tail = flattenAndReturnTail(next_node)\n            \n            return tail\n        \n        if head:\n            flattenAndReturnTail(head)\n        return head",
+        "javascript": "var flatten = function(head) {\n    const flattenAndReturnTail = (node) => {\n        if (!node) return null;\n        \n        const next = node.next;\n        let tail = node;\n        \n        if (node.child) {\n            const childTail = flattenAndReturnTail(node.child);\n            \n            node.next = node.child;\n            node.child.prev = node;\n            node.child = null;\n            \n            tail = childTail;\n            \n            if (next) {\n                childTail.next = next;\n                next.prev = childTail;\n            }\n        }\n        \n        if (next) {\n            tail = flattenAndReturnTail(next);\n        }\n        \n        return tail;\n    };\n    \n    if (head) flattenAndReturnTail(head);\n    return head;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to set child pointer to null after flattening",
+    "Not properly maintaining both prev and next pointers",
+    "Losing reference to next node when processing child",
+    "Not handling the case when child list is at the end (no next)",
+    "Incorrect order: should be current → child → next, not current → next → child"
+  ],
+  "hints": [
+    "Think of it as DFS: go deep into children before continuing horizontally",
+    "When you encounter a child, you need to insert the entire child list between current and current.next",
+    "Use stack to save 'next' nodes when diving into children",
+    "Remember to set all child pointers to null in the result",
+    "Maintain both prev and next pointers correctly (it's doubly linked)",
+    "Order matters: visit child before next"
+  ],
+  "followUp": [
+    "Can you do it iteratively without stack?",
+    "What if we want to unflatten the list back to multilevel?",
+    "How would you handle if the list could have cycles?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Apple"],
+  "tags": ["linked-list", "depth-first-search", "doubly-linked-list"],
+  "relatedProblems": [
+    "Flatten Binary Tree to Linked List",
+    "Clone Graph",
+    "Copy List with Random Pointer"
+  ]
+}

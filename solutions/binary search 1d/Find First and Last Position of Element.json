@@ -1,0 +1,168 @@
+{
+  "questionId": "34",
+  "questionSlug": "find-first-and-last-position-of-element-in-sorted-array",
+  "title": "Find First and Last Position of Element in Sorted Array",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
+    "videos": [
+      {
+        "title": "First and Last Position in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=zr_AoTxzn0Y",
+        "channel": "take U forward",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Find First and Last Position - Leetcode 34",
+        "url": "https://www.youtube.com/watch?v=4sQL7R5ySUU",
+        "channel": "NeetCode",
+        "duration": "9:20",
+        "language": "English"
+      },
+      {
+        "title": "First and Last Occurrence",
+        "url": "https://www.youtube.com/watch?v=bU-q1OJ0KWw",
+        "channel": "Pepcoding",
+        "duration": "11:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find First and Last Position - LeetCode Solution",
+        "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/solution/",
+        "source": "LeetCode Official"
+      },
+      {
+        "title": "First and Last Occurrence",
+        "url": "https://takeuforward.org/data-structure/first-and-last-occurrences-in-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Count Occurrences in Sorted Array - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/count-number-of-occurrences-or-frequency-in-a-sorted-array/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Find range of target in sorted array = Two binary searches. Find lower bound (first occurrence) and upper bound - 1 (last occurrence).",
+  "approaches": [
+    {
+      "name": "Linear Search",
+      "order": 1,
+      "intuition": "Scan array to find first and last occurrence of target.",
+      "approach": "Iterate to find first occurrence, then continue to find last occurrence.",
+      "steps": [
+        "Initialize first = -1, last = -1",
+        "Iterate through array:",
+        "  If nums[i] == target:",
+        "    If first == -1: first = i",
+        "    Update last = i",
+        "Return [first, last]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> searchRange(vector<int>& nums, int target) {\n        int first = -1, last = -1;\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (nums[i] == target) {\n                if (first == -1) {\n                    first = i;\n                }\n                last = i;\n            }\n        }\n        \n        return {first, last};\n    }\n};",
+        "java": "class Solution {\n    public int[] searchRange(int[] nums, int target) {\n        int first = -1, last = -1;\n        \n        for (int i = 0; i < nums.length; i++) {\n            if (nums[i] == target) {\n                if (first == -1) {\n                    first = i;\n                }\n                last = i;\n            }\n        }\n        \n        return new int[]{first, last};\n    }\n}",
+        "python": "class Solution:\n    def searchRange(self, nums: List[int], target: int) -> List[int]:\n        first, last = -1, -1\n        \n        for i in range(len(nums)):\n            if nums[i] == target:\n                if first == -1:\n                    first = i\n                last = i\n        \n        return [first, last]",
+        "javascript": "var searchRange = function(nums, target) {\n    let first = -1, last = -1;\n    \n    for (let i = 0; i < nums.length; i++) {\n        if (nums[i] === target) {\n            if (first === -1) {\n                first = i;\n            }\n            last = i;\n        }\n    }\n    \n    return [first, last];\n};"
+      }
+    },
+    {
+      "name": "Single Binary Search (Find then Expand)",
+      "order": 2,
+      "intuition": "Use binary search to find any occurrence of target, then expand left and right to find boundaries.",
+      "approach": "First find target using standard binary search, then linearly expand to find first and last positions.",
+      "steps": [
+        "Use binary search to find any occurrence of target",
+        "If not found: return [-1, -1]",
+        "From found position, expand left to find first occurrence",
+        "From found position, expand right to find last occurrence",
+        "Return [first, last]"
+      ],
+      "complexity": {
+        "time": "O(log n + k) where k is count of target",
+        "space": "O(1)",
+        "timeExplanation": "O(log n) for binary search + O(k) for expansion",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> searchRange(vector<int>& nums, int target) {\n        int n = nums.size();\n        if (n == 0) return {-1, -1};\n        \n        // Find any occurrence\n        int low = 0, high = n - 1, pos = -1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (nums[mid] == target) {\n                pos = mid;\n                break;\n            } else if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        if (pos == -1) return {-1, -1};\n        \n        // Expand to find first and last\n        int first = pos, last = pos;\n        while (first > 0 && nums[first - 1] == target) first--;\n        while (last < n - 1 && nums[last + 1] == target) last++;\n        \n        return {first, last};\n    }\n};",
+        "java": "class Solution {\n    public int[] searchRange(int[] nums, int target) {\n        int n = nums.length;\n        if (n == 0) return new int[]{-1, -1};\n        \n        int low = 0, high = n - 1, pos = -1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (nums[mid] == target) {\n                pos = mid;\n                break;\n            } else if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        if (pos == -1) return new int[]{-1, -1};\n        \n        int first = pos, last = pos;\n        while (first > 0 && nums[first - 1] == target) first--;\n        while (last < n - 1 && nums[last + 1] == target) last++;\n        \n        return new int[]{first, last};\n    }\n}",
+        "python": "class Solution:\n    def searchRange(self, nums: List[int], target: int) -> List[int]:\n        n = len(nums)\n        if n == 0:\n            return [-1, -1]\n        \n        low, high, pos = 0, n - 1, -1\n        while low <= high:\n            mid = (low + high) // 2\n            if nums[mid] == target:\n                pos = mid\n                break\n            elif nums[mid] < target:\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        if pos == -1:\n            return [-1, -1]\n        \n        first, last = pos, pos\n        while first > 0 and nums[first - 1] == target:\n            first -= 1\n        while last < n - 1 and nums[last + 1] == target:\n            last += 1\n        \n        return [first, last]",
+        "javascript": "var searchRange = function(nums, target) {\n    const n = nums.length;\n    if (n === 0) return [-1, -1];\n    \n    let low = 0, high = n - 1, pos = -1;\n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        if (nums[mid] === target) {\n            pos = mid;\n            break;\n        } else if (nums[mid] < target) {\n            low = mid + 1;\n        } else {\n            high = mid - 1;\n        }\n    }\n    \n    if (pos === -1) return [-1, -1];\n    \n    let first = pos, last = pos;\n    while (first > 0 && nums[first - 1] === target) first--;\n    while (last < n - 1 && nums[last + 1] === target) last++;\n    \n    return [first, last];\n};"
+      }
+    },
+    {
+      "name": "Two Binary Searches - Optimal",
+      "order": 3,
+      "intuition": "Use two separate binary searches: one to find first occurrence (lower bound of target), another to find last occurrence (upper bound of target - 1).",
+      "approach": "First binary search finds leftmost position of target. Second binary search finds rightmost position. Both run in O(log n).",
+      "steps": [
+        "Binary search for first occurrence:",
+        "  When nums[mid] >= target: search left",
+        "  Track potential answer",
+        "Binary search for last occurrence:",
+        "  When nums[mid] <= target: search right",
+        "  Track potential answer",
+        "Validate both positions found target",
+        "Return [first, last] or [-1, -1]"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Two independent binary searches",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findFirst(vector<int>& nums, int target) {\n        int low = 0, high = nums.size() - 1;\n        int first = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] == target) {\n                first = mid;\n                high = mid - 1; // Continue searching left\n            } else if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return first;\n    }\n    \n    int findLast(vector<int>& nums, int target) {\n        int low = 0, high = nums.size() - 1;\n        int last = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] == target) {\n                last = mid;\n                low = mid + 1; // Continue searching right\n            } else if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return last;\n    }\n    \n    vector<int> searchRange(vector<int>& nums, int target) {\n        int first = findFirst(nums, target);\n        if (first == -1) return {-1, -1};\n        \n        int last = findLast(nums, target);\n        return {first, last};\n    }\n};",
+        "java": "class Solution {\n    public int findFirst(int[] nums, int target) {\n        int low = 0, high = nums.length - 1;\n        int first = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] == target) {\n                first = mid;\n                high = mid - 1;\n            } else if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return first;\n    }\n    \n    public int findLast(int[] nums, int target) {\n        int low = 0, high = nums.length - 1;\n        int last = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] == target) {\n                last = mid;\n                low = mid + 1;\n            } else if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return last;\n    }\n    \n    public int[] searchRange(int[] nums, int target) {\n        int first = findFirst(nums, target);\n        if (first == -1) return new int[]{-1, -1};\n        \n        int last = findLast(nums, target);\n        return new int[]{first, last};\n    }\n}",
+        "python": "class Solution:\n    def findFirst(self, nums: List[int], target: int) -> int:\n        low, high = 0, len(nums) - 1\n        first = -1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if nums[mid] == target:\n                first = mid\n                high = mid - 1\n            elif nums[mid] < target:\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        return first\n    \n    def findLast(self, nums: List[int], target: int) -> int:\n        low, high = 0, len(nums) - 1\n        last = -1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if nums[mid] == target:\n                last = mid\n                low = mid + 1\n            elif nums[mid] < target:\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        return last\n    \n    def searchRange(self, nums: List[int], target: int) -> List[int]:\n        first = self.findFirst(nums, target)\n        if first == -1:\n            return [-1, -1]\n        \n        last = self.findLast(nums, target)\n        return [first, last]",
+        "javascript": "var searchRange = function(nums, target) {\n    const findFirst = () => {\n        let low = 0, high = nums.length - 1;\n        let first = -1;\n        \n        while (low <= high) {\n            const mid = Math.floor((low + high) / 2);\n            \n            if (nums[mid] === target) {\n                first = mid;\n                high = mid - 1;\n            } else if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return first;\n    };\n    \n    const findLast = () => {\n        let low = 0, high = nums.length - 1;\n        let last = -1;\n        \n        while (low <= high) {\n            const mid = Math.floor((low + high) / 2);\n            \n            if (nums[mid] === target) {\n                last = mid;\n                low = mid + 1;\n            } else if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return last;\n    };\n    \n    const first = findFirst();\n    if (first === -1) return [-1, -1];\n    \n    const last = findLast();\n    return [first, last];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not continuing search after finding target (need to find first/last)",
+    "Using single binary search and linear expansion (not O(log n))",
+    "Wrong boundary updates when target found",
+    "Not handling case when target doesn't exist",
+    "Confusing first occurrence logic with last occurrence logic"
+  ],
+  "hints": [
+    "You need TWO binary searches for true O(log n) solution",
+    "First search: find leftmost occurrence (continue searching left when found)",
+    "Second search: find rightmost occurrence (continue searching right when found)",
+    "Can also use lower_bound and upper_bound concepts",
+    "Count of target = last - first + 1"
+  ],
+  "followUp": [
+    "How to count occurrences of target? (last - first + 1)",
+    "Can you use lower_bound and upper_bound?",
+    "What if array is not sorted?",
+    "How to find all occurrences, not just range?",
+    "Can you solve with single binary search?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Apple", "LinkedIn"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Binary Search",
+    "Search Insert Position",
+    "Count Occurrences in Sorted Array",
+    "Lower Bound",
+    "Upper Bound"
+  ]
+}

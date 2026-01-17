@@ -1,0 +1,179 @@
+{
+  "questionId": "153",
+  "questionSlug": "find-minimum-in-rotated-sorted-array",
+  "title": "Find Minimum in Rotated Sorted Array",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+    "videos": [
+      {
+        "title": "Find Minimum in Rotated Sorted Array - Leetcode 153",
+        "url": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
+        "channel": "NeetCode",
+        "duration": "8:23",
+        "language": "English"
+      },
+      {
+        "title": "Minimum in Rotated Sorted Array",
+        "url": "https://www.youtube.com/watch?v=nhEMDKMB44g",
+        "channel": "take U forward",
+        "duration": "12:15",
+        "language": "English"
+      },
+      {
+        "title": "Find Minimum in Rotated Sorted Array",
+        "url": "https://www.youtube.com/watch?v=4WmTRFZilj8",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Find Minimum in Rotated Sorted Array",
+        "url": "https://takeuforward.org/data-structure/minimum-in-rotated-sorted-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Find Minimum in Rotated Sorted Array - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/find-minimum-element-in-a-sorted-and-rotated-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Find Minimum in Rotated Sorted Array - LeetCode Solution",
+        "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/minimum-element-in-a-sorted-and-rotated-array/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Rotated sorted array + find minimum = Binary search comparing mid with right boundary. Minimum is at rotation point.",
+  "approaches": [
+    {
+      "name": "Linear Search",
+      "order": 1,
+      "intuition": "Scan array to find minimum element. Simple but doesn't leverage sorted property.",
+      "approach": "Iterate through array keeping track of minimum element seen.",
+      "steps": [
+        "Initialize min = nums[0]",
+        "Iterate i from 1 to n-1",
+        "Update min = Math.min(min, nums[i])",
+        "Return min"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Scan entire array once",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int minVal = nums[0];\n        \n        for (int i = 1; i < nums.size(); i++) {\n            minVal = min(minVal, nums[i]);\n        }\n        \n        return minVal;\n    }\n};",
+        "java": "class Solution {\n    public int findMin(int[] nums) {\n        int minVal = nums[0];\n        \n        for (int i = 1; i < nums.length; i++) {\n            minVal = Math.min(minVal, nums[i]);\n        }\n        \n        return minVal;\n    }\n}",
+        "python": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        min_val = nums[0]\n        \n        for i in range(1, len(nums)):\n            min_val = min(min_val, nums[i])\n        \n        return min_val",
+        "javascript": "var findMin = function(nums) {\n    let minVal = nums[0];\n    \n    for (let i = 1; i < nums.length; i++) {\n        minVal = Math.min(minVal, nums[i]);\n    }\n    \n    return minVal;\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Compare with High",
+      "order": 2,
+      "intuition": "Use binary search by comparing mid with high element. If nums[mid] > nums[high], minimum is in right half; else in left half including mid.",
+      "approach": "Modified binary search that eliminates half of search space in each iteration by comparing mid with right boundary.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "While low < high:",
+        "  mid = (low + high) / 2",
+        "  If nums[mid] > nums[high]:",
+        "    Minimum is in right half: low = mid + 1",
+        "  Else:",
+        "    Minimum is in left half (including mid): high = mid",
+        "Return nums[low]"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space each iteration",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int low = 0, high = nums.size() - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > nums[high]) {\n                // Minimum is in right half\n                low = mid + 1;\n            } else {\n                // Minimum is in left half (including mid)\n                high = mid;\n            }\n        }\n        \n        return nums[low];\n    }\n};",
+        "java": "class Solution {\n    public int findMin(int[] nums) {\n        int low = 0, high = nums.length - 1;\n        \n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            \n            if (nums[mid] > nums[high]) {\n                // Minimum is in right half\n                low = mid + 1;\n            } else {\n                // Minimum is in left half (including mid)\n                high = mid;\n            }\n        }\n        \n        return nums[low];\n    }\n}",
+        "python": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        low, high = 0, len(nums) - 1\n        \n        while low < high:\n            mid = (low + high) // 2\n            \n            if nums[mid] > nums[high]:\n                # Minimum is in right half\n                low = mid + 1\n            else:\n                # Minimum is in left half (including mid)\n                high = mid\n        \n        return nums[low]",
+        "javascript": "var findMin = function(nums) {\n    let low = 0, high = nums.length - 1;\n    \n    while (low < high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (nums[mid] > nums[high]) {\n            // Minimum is in right half\n            low = mid + 1;\n        } else {\n            // Minimum is in left half (including mid)\n            high = mid;\n        }\n    }\n    \n    return nums[low];\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Track Answer - Optimal",
+      "order": 3,
+      "intuition": "Keep track of minimum seen so far. Check if left or right half is sorted, update answer and eliminate sorted half.",
+      "approach": "Binary search with answer tracking. Keep minimum value and search unsorted half.",
+      "steps": [
+        "Initialize low = 0, high = n - 1, ans = INT_MAX",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If nums[low] <= nums[high]: entire range sorted",
+        "    ans = min(ans, nums[low])",
+        "    break",
+        "  If left half sorted (nums[low] <= nums[mid]):",
+        "    ans = min(ans, nums[low])",
+        "    Search right: low = mid + 1",
+        "  Else (right half sorted):",
+        "    ans = min(ans, nums[mid])",
+        "    Search left: high = mid - 1",
+        "Return ans"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search halves search space each iteration",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int low = 0, high = nums.size() - 1;\n        int ans = INT_MAX;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            // If entire search space is sorted\n            if (nums[low] <= nums[high]) {\n                ans = min(ans, nums[low]);\n                break;\n            }\n            \n            // Left half is sorted\n            if (nums[low] <= nums[mid]) {\n                ans = min(ans, nums[low]);\n                low = mid + 1;  // Search right unsorted half\n            }\n            // Right half is sorted\n            else {\n                ans = min(ans, nums[mid]);\n                high = mid - 1;  // Search left unsorted half\n            }\n        }\n        \n        return ans;\n    }\n};",
+        "java": "class Solution {\n    public int findMin(int[] nums) {\n        int low = 0, high = nums.length - 1;\n        int ans = Integer.MAX_VALUE;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            // If entire search space is sorted\n            if (nums[low] <= nums[high]) {\n                ans = Math.min(ans, nums[low]);\n                break;\n            }\n            \n            // Left half is sorted\n            if (nums[low] <= nums[mid]) {\n                ans = Math.min(ans, nums[low]);\n                low = mid + 1;  // Search right unsorted half\n            }\n            // Right half is sorted\n            else {\n                ans = Math.min(ans, nums[mid]);\n                high = mid - 1;  // Search left unsorted half\n            }\n        }\n        \n        return ans;\n    }\n}",
+        "python": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        low, high = 0, len(nums) - 1\n        ans = float('inf')\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            # If entire search space is sorted\n            if nums[low] <= nums[high]:\n                ans = min(ans, nums[low])\n                break\n            \n            # Left half is sorted\n            if nums[low] <= nums[mid]:\n                ans = min(ans, nums[low])\n                low = mid + 1  # Search right unsorted half\n            # Right half is sorted\n            else:\n                ans = min(ans, nums[mid])\n                high = mid - 1  # Search left unsorted half\n        \n        return ans",
+        "javascript": "var findMin = function(nums) {\n    let low = 0, high = nums.length - 1;\n    let ans = Infinity;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        // If entire search space is sorted\n        if (nums[low] <= nums[high]) {\n            ans = Math.min(ans, nums[low]);\n            break;\n        }\n        \n        // Left half is sorted\n        if (nums[low] <= nums[mid]) {\n            ans = Math.min(ans, nums[low]);\n            low = mid + 1;  // Search right unsorted half\n        }\n        // Right half is sorted\n        else {\n            ans = Math.min(ans, nums[mid]);\n            high = mid - 1;  // Search left unsorted half\n        }\n    }\n    \n    return ans;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Comparing mid with low instead of high (leads to wrong elimination)",
+    "Using high = mid - 1 when nums[mid] <= nums[high] (might skip answer)",
+    "Not handling case when array is not rotated",
+    "Using low <= high in loop (should be low < high for cleaner solution)",
+    "Confusing this with Search in Rotated Sorted Array logic"
+  ],
+  "hints": [
+    "Minimum element is the only element smaller than its previous element",
+    "Compare nums[mid] with nums[high] to decide which half to search",
+    "If nums[mid] > nums[high], minimum must be in right half",
+    "If nums[mid] <= nums[high], minimum could be mid or in left half",
+    "The answer is at the rotation point where array transitions from large to small values"
+  ],
+  "followUp": [
+    "What if array contains duplicates? (See Find Minimum in Rotated Sorted Array II)",
+    "How many times was array rotated?",
+    "Can you find maximum element in rotated sorted array?",
+    "What if you need to search for a target in this array?",
+    "How does this relate to finding pivot point?"
+  ],
+  "companies": ["Microsoft", "Amazon", "Google", "Facebook", "Bloomberg", "Apple"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Find Minimum in Rotated Sorted Array II",
+    "Search in Rotated Sorted Array",
+    "Search in Rotated Sorted Array II",
+    "Find Peak Element",
+    "Binary Search"
+  ]
+}

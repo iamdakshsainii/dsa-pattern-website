@@ -1,0 +1,131 @@
+{
+  "questionId": "1482",
+  "questionSlug": "minimum-number-of-days-to-make-m-bouquets",
+  "title": "Minimum Number of Days to Make M Bouquets",
+  "difficulty": "Medium",
+  "leetcodeLink": "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/",
+    "videos": [
+      {
+        "title": "Minimum Days to Make M Bouquets",
+        "url": "https://www.youtube.com/watch?v=TXAuxeYBTdg",
+        "channel": "takeUforward",
+        "duration": "15:00",
+        "language": "English"
+      }
+    ]
+  },
+  "problemStatement": "You are given an integer array bloomDay, an integer m and an integer k.\n\nYou want to make m bouquets. To make a bouquet, you need to use k adjacent flowers from the garden.\n\nThe garden consists of n flowers, the ith flower will bloom in the bloomDay[i] and then can be used in exactly one bouquet.\n\nReturn the minimum number of days you need to wait to be able to make m bouquets from the garden. If it is impossible to make m bouquets return -1.",
+  "examples": [
+    {
+      "input": "bloomDay = [1,10,3,10,2], m = 3, k = 1",
+      "output": "3",
+      "explanation": "Day 1: [x,_,_,_,_] - 1 bouquet\nDay 2: [x,_,_,_,x] - 2 bouquets\nDay 3: [x,_,x,_,x] - 3 bouquets (need 3 bouquets with k=1 each)"
+    },
+    {
+      "input": "bloomDay = [1,10,3,10,2], m = 3, k = 2",
+      "output": "-1",
+      "explanation": "Need 3*2=6 flowers but only have 5"
+    },
+    {
+      "input": "bloomDay = [7,7,7,7,12,7,7], m = 2, k = 3",
+      "output": "12",
+      "explanation": "Day 7: [x,x,x,x,_,x,x] - can make 2 bouquets ([0-2] and [5-6])\nBut we need 2 bouquets of 3 adjacent. At day 12: all bloom, can make 2 bouquets"
+    }
+  ],
+  "constraints": [
+    "bloomDay.length == n",
+    "1 <= n <= 10^5",
+    "1 <= bloomDay[i] <= 10^9",
+    "1 <= m <= 10^6",
+    "1 <= k <= n"
+  ],
+  "patternTriggers": "Find minimum days + can we make m bouquets by day X + monotonic = Binary search on days",
+  "approaches": [
+    {
+      "name": "Brute Force - Try Each Day",
+      "order": 1,
+      "intuition": "Try each day from min to max bloom day, check if we can make m bouquets",
+      "approach": "For each day, count adjacent bloomed flowers to form bouquets",
+      "steps": [
+        "If m * k > n, return -1 (impossible)",
+        "For day from min(bloomDay) to max(bloomDay):",
+        "  Count bouquets we can make by this day",
+        "  If bouquets >= m, return day",
+        "Return -1"
+      ],
+      "complexity": {
+        "time": "O(n * (max - min))",
+        "space": "O(1)",
+        "timeExplanation": "For each day value, scan array O(n)",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int countBouquets(vector<int>& bloomDay, int day, int k) {\n        int bouquets = 0;\n        int flowers = 0;\n        \n        for (int bloom : bloomDay) {\n            if (bloom <= day) {\n                flowers++;\n                if (flowers == k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0;\n            }\n        }\n        \n        return bouquets;\n    }\n    \npublic:\n    int minDays(vector<int>& bloomDay, int m, int k) {\n        int n = bloomDay.size();\n        if ((long long)m * k > n) return -1;\n        \n        int minDay = *min_element(bloomDay.begin(), bloomDay.end());\n        int maxDay = *max_element(bloomDay.begin(), bloomDay.end());\n        \n        for (int day = minDay; day <= maxDay; day++) {\n            if (countBouquets(bloomDay, day, k) >= m) {\n                return day;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    private int countBouquets(int[] bloomDay, int day, int k) {\n        int bouquets = 0;\n        int flowers = 0;\n        \n        for (int bloom : bloomDay) {\n            if (bloom <= day) {\n                flowers++;\n                if (flowers == k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0;\n            }\n        }\n        \n        return bouquets;\n    }\n    \n    public int minDays(int[] bloomDay, int m, int k) {\n        int n = bloomDay.length;\n        if ((long)m * k > n) return -1;\n        \n        int minDay = Integer.MAX_VALUE, maxDay = 0;\n        for (int day : bloomDay) {\n            minDay = Math.min(minDay, day);\n            maxDay = Math.max(maxDay, day);\n        }\n        \n        for (int day = minDay; day <= maxDay; day++) {\n            if (countBouquets(bloomDay, day, k) >= m) {\n                return day;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def minDays(self, bloomDay: List[int], m: int, k: int) -> int:\n        def countBouquets(day: int) -> int:\n            bouquets = 0\n            flowers = 0\n            \n            for bloom in bloomDay:\n                if bloom <= day:\n                    flowers += 1\n                    if flowers == k:\n                        bouquets += 1\n                        flowers = 0\n                else:\n                    flowers = 0\n            \n            return bouquets\n        \n        n = len(bloomDay)\n        if m * k > n:\n            return -1\n        \n        min_day, max_day = min(bloomDay), max(bloomDay)\n        \n        for day in range(min_day, max_day + 1):\n            if countBouquets(day) >= m:\n                return day\n        \n        return -1",
+        "javascript": "var minDays = function(bloomDay, m, k) {\n    const countBouquets = (day) => {\n        let bouquets = 0;\n        let flowers = 0;\n        \n        for (const bloom of bloomDay) {\n            if (bloom <= day) {\n                flowers++;\n                if (flowers === k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0;\n            }\n        }\n        \n        return bouquets;\n    };\n    \n    const n = bloomDay.length;\n    if (m * k > n) return -1;\n    \n    const minDay = Math.min(...bloomDay);\n    const maxDay = Math.max(...bloomDay);\n    \n    for (let day = minDay; day <= maxDay; day++) {\n        if (countBouquets(day) >= m) {\n            return day;\n        }\n    }\n    \n    return -1;\n};"
+      }
+    },
+    {
+      "name": "Binary Search on Days (Optimal)",
+      "order": 2,
+      "intuition": "Answer space is monotonic: if we can make m bouquets by day X, we can also make them by day X+1. Binary search to find minimum day.",
+      "approach": "Binary search on days [min, max], for each day check if we can make m bouquets",
+      "steps": [
+        "Check if m * k > n, return -1 (impossible)",
+        "left = min(bloomDay), right = max(bloomDay)",
+        "While left < right:",
+        "  mid = (left + right) / 2",
+        "  Count bouquets possible by day mid",
+        "  If bouquets >= m:",
+        "    Possible, try earlier day: right = mid",
+        "  Else:",
+        "    Not enough, need later day: left = mid + 1",
+        "Return left"
+      ],
+      "complexity": {
+        "time": "O(n log(max - min))",
+        "space": "O(1)",
+        "timeExplanation": "Binary search O(log(max-min)), each check O(n)",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    int countBouquets(vector<int>& bloomDay, int day, int k) {\n        int bouquets = 0;\n        int flowers = 0;\n        \n        for (int bloom : bloomDay) {\n            if (bloom <= day) {\n                flowers++;\n                if (flowers == k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0; // Reset if not bloomed\n            }\n        }\n        \n        return bouquets;\n    }\n    \npublic:\n    int minDays(vector<int>& bloomDay, int m, int k) {\n        int n = bloomDay.size();\n        if ((long long)m * k > n) return -1;\n        \n        int left = *min_element(bloomDay.begin(), bloomDay.end());\n        int right = *max_element(bloomDay.begin(), bloomDay.end());\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            int bouquets = countBouquets(bloomDay, mid, k);\n            \n            if (bouquets >= m) {\n                right = mid; // Can make enough, try earlier\n            } else {\n                left = mid + 1; // Not enough, need later\n            }\n        }\n        \n        return left;\n    }\n};",
+        "java": "class Solution {\n    private int countBouquets(int[] bloomDay, int day, int k) {\n        int bouquets = 0;\n        int flowers = 0;\n        \n        for (int bloom : bloomDay) {\n            if (bloom <= day) {\n                flowers++;\n                if (flowers == k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0;\n            }\n        }\n        \n        return bouquets;\n    }\n    \n    public int minDays(int[] bloomDay, int m, int k) {\n        int n = bloomDay.length;\n        if ((long)m * k > n) return -1;\n        \n        int left = Integer.MAX_VALUE, right = 0;\n        for (int day : bloomDay) {\n            left = Math.min(left, day);\n            right = Math.max(right, day);\n        }\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            int bouquets = countBouquets(bloomDay, mid, k);\n            \n            if (bouquets >= m) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        }\n        \n        return left;\n    }\n}",
+        "python": "class Solution:\n    def minDays(self, bloomDay: List[int], m: int, k: int) -> int:\n        def countBouquets(day: int) -> int:\n            bouquets = 0\n            flowers = 0\n            \n            for bloom in bloomDay:\n                if bloom <= day:\n                    flowers += 1\n                    if flowers == k:\n                        bouquets += 1\n                        flowers = 0\n                else:\n                    flowers = 0\n            \n            return bouquets\n        \n        n = len(bloomDay)\n        if m * k > n:\n            return -1\n        \n        left, right = min(bloomDay), max(bloomDay)\n        \n        while left < right:\n            mid = (left + right) // 2\n            bouquets = countBouquets(mid)\n            \n            if bouquets >= m:\n                right = mid\n            else:\n                left = mid + 1\n        \n        return left",
+        "javascript": "var minDays = function(bloomDay, m, k) {\n    const countBouquets = (day) => {\n        let bouquets = 0;\n        let flowers = 0;\n        \n        for (const bloom of bloomDay) {\n            if (bloom <= day) {\n                flowers++;\n                if (flowers === k) {\n                    bouquets++;\n                    flowers = 0;\n                }\n            } else {\n                flowers = 0;\n            }\n        }\n        \n        return bouquets;\n    };\n    \n    const n = bloomDay.length;\n    if (m * k > n) return -1;\n    \n    let left = Math.min(...bloomDay);\n    let right = Math.max(...bloomDay);\n    \n    while (left < right) {\n        const mid = Math.floor((left + right) / 2);\n        const bouquets = countBouquets(mid);\n        \n        if (bouquets >= m) {\n            right = mid;\n        } else {\n            left = mid + 1;\n        }\n    }\n    \n    return left;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if m * k > n (impossible case)",
+    "Forgetting to reset flower count when encountering non-bloomed flower",
+    "Integer overflow when checking m * k > n (use long)",
+    "Not using adjacent flowers - counting all bloomed flowers instead",
+    "Wrong binary search template (left <= right can cause issues)"
+  ],
+  "hints": [
+    "Key constraint: need k ADJACENT flowers for each bouquet",
+    "Binary search on the answer (number of days), not on the array",
+    "For a given day, count consecutive bloomed flowers to form bouquets",
+    "Reset counter when you encounter a non-bloomed flower",
+    "If m*k > n, impossible to make m bouquets even if all flowers bloom",
+    "Answer space is monotonic: can make bouquets by day X → can make by day X+1"
+  ],
+  "followUp": [
+    "What if flowers can be reused in multiple bouquets?",
+    "What if we want to maximize the number of bouquets?",
+    "Can you solve it if flowers don't need to be adjacent?",
+    "What if each flower has different values and we want to maximize value?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Koko Eating Bananas",
+    "Capacity To Ship Packages Within D Days",
+    "Minimum Speed to Arrive on Time",
+    "Magnetic Force Between Two Balls"
+  ]
+}

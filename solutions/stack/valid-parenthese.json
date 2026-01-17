@@ -1,0 +1,180 @@
+{
+  "questionId": "20",
+  "questionSlug": "valid-parentheses",
+  "title": "Valid Parentheses",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/valid-parentheses/",
+    "videos": [
+      {
+        "title": "Valid Parentheses - Stack",
+        "url": "https://www.youtube.com/watch?v=WTzjTskDFMg",
+        "channel": "NeetCode",
+        "duration": "6:45",
+        "language": "English"
+      },
+      {
+        "title": "Valid Parentheses Problem",
+        "url": "https://www.youtube.com/watch?v=CCyIL0nfHjY",
+        "channel": "take U forward",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Check for Balanced Parentheses",
+        "url": "https://www.youtube.com/watch?v=QZOLb0xHB_Q",
+        "channel": "Aditya Verma",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Valid Parentheses",
+        "url": "https://takeuforward.org/data-structure/check-for-balanced-parentheses/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Check for Balanced Parentheses - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/check-for-balanced-parentheses-in-an-expression/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Valid Parentheses - LeetCode Solution",
+        "url": "https://leetcode.com/problems/valid-parentheses/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/valid-parentheses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/parenthesis-checker/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Check matching pairs + nested structure = Stack. Push opening brackets, pop and match with closing brackets.",
+  "approaches": [
+    {
+      "name": "Brute Force - Count Approach",
+      "order": 1,
+      "intuition": "Try to count opening and closing brackets. Won't work for nested cases like '([)]'.",
+      "approach": "Simple counting fails because order and nesting matter, not just counts.",
+      "steps": [
+        "Count opening brackets: (, [, {",
+        "Count closing brackets: ), ], }",
+        "Check if counts match",
+        "This approach FAILS for cases like '([)]' or ')('"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Scan string once",
+        "spaceExplanation": "Only counters needed"
+      },
+      "code": {
+        "cpp": "// THIS APPROACH DOESN'T WORK - shown for learning\nclass Solution {\npublic:\n    bool isValid(string s) {\n        // This approach fails for nested cases\n        int round = 0, square = 0, curly = 0;\n        \n        for (char c : s) {\n            if (c == '(') round++;\n            else if (c == ')') round--;\n            else if (c == '[') square++;\n            else if (c == ']') square--;\n            else if (c == '{') curly++;\n            else if (c == '}') curly--;\n            \n            // Early termination if negative\n            if (round < 0 || square < 0 || curly < 0) return false;\n        }\n        \n        return round == 0 && square == 0 && curly == 0;\n        // FAILS for: \"([)]\" - returns true but should be false\n    }\n};",
+        "java": "// THIS APPROACH DOESN'T WORK - shown for learning\nclass Solution {\n    public boolean isValid(String s) {\n        int round = 0, square = 0, curly = 0;\n        \n        for (char c : s.toCharArray()) {\n            if (c == '(') round++;\n            else if (c == ')') round--;\n            else if (c == '[') square++;\n            else if (c == ']') square--;\n            else if (c == '{') curly++;\n            else if (c == '}') curly--;\n            \n            if (round < 0 || square < 0 || curly < 0) return false;\n        }\n        \n        return round == 0 && square == 0 && curly == 0;\n        // FAILS for: \"([)]\" - returns true but should be false\n    }\n}",
+        "python": "# THIS APPROACH DOESN'T WORK - shown for learning\nclass Solution:\n    def isValid(self, s: str) -> bool:\n        round_count = square = curly = 0\n        \n        for c in s:\n            if c == '(':\n                round_count += 1\n            elif c == ')':\n                round_count -= 1\n            elif c == '[':\n                square += 1\n            elif c == ']':\n                square -= 1\n            elif c == '{':\n                curly += 1\n            elif c == '}':\n                curly -= 1\n            \n            if round_count < 0 or square < 0 or curly < 0:\n                return False\n        \n        return round_count == 0 and square == 0 and curly == 0\n        # FAILS for: \"([)]\" - returns True but should be False",
+        "javascript": "// THIS APPROACH DOESN'T WORK - shown for learning\nvar isValid = function(s) {\n    let round = 0, square = 0, curly = 0;\n    \n    for (const c of s) {\n        if (c === '(') round++;\n        else if (c === ')') round--;\n        else if (c === '[') square++;\n        else if (c === ']') square--;\n        else if (c === '{') curly++;\n        else if (c === '}') curly--;\n        \n        if (round < 0 || square < 0 || curly < 0) return false;\n    }\n    \n    return round === 0 && square === 0 && curly === 0;\n    // FAILS for: \"([)]\" - returns true but should be false\n};"
+      }
+    },
+    {
+      "name": "Stack with HashMap",
+      "order": 2,
+      "intuition": "Use stack to track opening brackets. Use HashMap to map closing to opening brackets for easy matching.",
+      "approach": "Push opening brackets to stack. For closing brackets, check if stack top matches using HashMap.",
+      "steps": [
+        "Create HashMap: ')' -> '(', ']' -> '[', '}' -> '{'",
+        "Create empty stack",
+        "For each character:",
+        "  If opening bracket: push to stack",
+        "  If closing bracket:",
+        "    If stack empty: return false",
+        "    If stack.top() != corresponding opening: return false",
+        "    Pop from stack",
+        "Return stack.isEmpty()"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Scan string once, O(1) for each operation",
+        "spaceExplanation": "Stack can grow up to n/2 in worst case"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isValid(string s) {\n        stack<char> st;\n        unordered_map<char, char> closeToOpen = {\n            {')', '('},\n            {']', '['},\n            {'}', '{'}\n        };\n        \n        for (char c : s) {\n            // If it's a closing bracket\n            if (closeToOpen.count(c)) {\n                if (st.empty() || st.top() != closeToOpen[c]) {\n                    return false;\n                }\n                st.pop();\n            }\n            // Opening bracket\n            else {\n                st.push(c);\n            }\n        }\n        \n        return st.empty();\n    }\n};",
+        "java": "class Solution {\n    public boolean isValid(String s) {\n        Stack<Character> stack = new Stack<>();\n        Map<Character, Character> closeToOpen = new HashMap<>();\n        closeToOpen.put(')', '(');\n        closeToOpen.put(']', '[');\n        closeToOpen.put('}', '{');\n        \n        for (char c : s.toCharArray()) {\n            // If it's a closing bracket\n            if (closeToOpen.containsKey(c)) {\n                if (stack.isEmpty() || stack.peek() != closeToOpen.get(c)) {\n                    return false;\n                }\n                stack.pop();\n            }\n            // Opening bracket\n            else {\n                stack.push(c);\n            }\n        }\n        \n        return stack.isEmpty();\n    }\n}",
+        "python": "class Solution:\n    def isValid(self, s: str) -> bool:\n        stack = []\n        close_to_open = {\n            ')': '(',\n            ']': '[',\n            '}': '{'\n        }\n        \n        for c in s:\n            # If it's a closing bracket\n            if c in close_to_open:\n                if not stack or stack[-1] != close_to_open[c]:\n                    return False\n                stack.pop()\n            # Opening bracket\n            else:\n                stack.append(c)\n        \n        return len(stack) == 0",
+        "javascript": "var isValid = function(s) {\n    const stack = [];\n    const closeToOpen = {\n        ')': '(',\n        ']': '[',\n        '}': '{'\n    };\n    \n    for (const c of s) {\n        // If it's a closing bracket\n        if (c in closeToOpen) {\n            if (stack.length === 0 || stack[stack.length - 1] !== closeToOpen[c]) {\n                return false;\n            }\n            stack.pop();\n        }\n        // Opening bracket\n        else {\n            stack.push(c);\n        }\n    }\n    \n    return stack.length === 0;\n};"
+      }
+    },
+    {
+      "name": "Stack with Direct Matching - Optimal",
+      "order": 3,
+      "intuition": "Cleaner approach without HashMap. Push opening brackets, directly check matching for closing brackets.",
+      "approach": "For opening brackets push to stack. For closing brackets check if top matches, otherwise invalid.",
+      "steps": [
+        "Create empty stack",
+        "For each character:",
+        "  If '(', '[', or '{': push to stack",
+        "  Else if ')':",
+        "    If stack empty or top != '(': return false",
+        "    Pop from stack",
+        "  Else if ']':",
+        "    If stack empty or top != '[': return false",
+        "    Pop from stack",
+        "  Else if '}':",
+        "    If stack empty or top != '{': return false",
+        "    Pop from stack",
+        "Return stack.isEmpty()"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through string",
+        "spaceExplanation": "Stack can grow up to n/2 in worst case"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isValid(string s) {\n        stack<char> st;\n        \n        for (char c : s) {\n            if (c == '(' || c == '[' || c == '{') {\n                st.push(c);\n            }\n            else if (c == ')') {\n                if (st.empty() || st.top() != '(') return false;\n                st.pop();\n            }\n            else if (c == ']') {\n                if (st.empty() || st.top() != '[') return false;\n                st.pop();\n            }\n            else if (c == '}') {\n                if (st.empty() || st.top() != '{') return false;\n                st.pop();\n            }\n        }\n        \n        return st.empty();\n    }\n};",
+        "java": "class Solution {\n    public boolean isValid(String s) {\n        Stack<Character> stack = new Stack<>();\n        \n        for (char c : s.toCharArray()) {\n            if (c == '(' || c == '[' || c == '{') {\n                stack.push(c);\n            }\n            else if (c == ')') {\n                if (stack.isEmpty() || stack.peek() != '(') return false;\n                stack.pop();\n            }\n            else if (c == ']') {\n                if (stack.isEmpty() || stack.peek() != '[') return false;\n                stack.pop();\n            }\n            else if (c == '}') {\n                if (stack.isEmpty() || stack.peek() != '{') return false;\n                stack.pop();\n            }\n        }\n        \n        return stack.isEmpty();\n    }\n}",
+        "python": "class Solution:\n    def isValid(self, s: str) -> bool:\n        stack = []\n        \n        for c in s:\n            if c in '([{':\n                stack.append(c)\n            elif c == ')':\n                if not stack or stack[-1] != '(':\n                    return False\n                stack.pop()\n            elif c == ']':\n                if not stack or stack[-1] != '[':\n                    return False\n                stack.pop()\n            elif c == '}':\n                if not stack or stack[-1] != '{':\n                    return False\n                stack.pop()\n        \n        return len(stack) == 0",
+        "javascript": "var isValid = function(s) {\n    const stack = [];\n    \n    for (const c of s) {\n        if (c === '(' || c === '[' || c === '{') {\n            stack.push(c);\n        }\n        else if (c === ')') {\n            if (stack.length === 0 || stack[stack.length - 1] !== '(') return false;\n            stack.pop();\n        }\n        else if (c === ']') {\n            if (stack.length === 0 || stack[stack.length - 1] !== '[') return false;\n            stack.pop();\n        }\n        else if (c === '}') {\n            if (stack.length === 0 || stack[stack.length - 1] !== '{') return false;\n            stack.pop();\n        }\n    }\n    \n    return stack.length === 0;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Trying to solve with just counting - doesn't handle nesting",
+    "Not checking if stack is empty before popping",
+    "Not checking if stack is empty at the end",
+    "Forgetting to pop after successful match",
+    "Not handling all three bracket types"
+  ],
+  "hints": [
+    "Think about what data structure is good for Last-In-First-Out",
+    "Opening brackets should be pushed, closing brackets should match top",
+    "Stack must be empty at end for valid string",
+    "Early return false if closing bracket found with empty stack",
+    "This is a fundamental stack problem"
+  ],
+  "followUp": [
+    "What if string can have other characters?",
+    "How to return index of first invalid bracket?",
+    "Can you solve without extra space?",
+    "What if there are more bracket types?",
+    "How to generate all valid parentheses of length n?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Bloomberg", "Adobe"],
+  "tags": ["stack", "string"],
+  "relatedProblems": [
+    "Generate Parentheses",
+    "Longest Valid Parentheses",
+    "Remove Invalid Parentheses",
+    "Minimum Add to Make Parentheses Valid",
+    "Minimum Remove to Make Valid Parentheses"
+  ]
+}

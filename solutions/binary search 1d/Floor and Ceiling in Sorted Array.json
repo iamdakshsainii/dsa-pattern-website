@@ -1,0 +1,180 @@
+{
+  "questionId": "GFG-FC",
+  "questionSlug": "floor-and-ceiling-in-sorted-array",
+  "title": "Floor and Ceiling in Sorted Array",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/discuss/general-discussion/1300891/",
+    "videos": [
+      {
+        "title": "Floor and Ceiling in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=5cx0xerA8XY",
+        "channel": "take U forward",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Floor and Ceiling Binary Search",
+        "url": "https://www.youtube.com/watch?v=5cx0xerA8XY",
+        "channel": "Aditya Verma",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Floor and Ceil in Sorted Array",
+        "url": "https://www.youtube.com/watch?v=WvU4JhyKph8",
+        "channel": "Pepcoding",
+        "duration": "10:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Floor and Ceiling in Sorted Array",
+        "url": "https://takeuforward.org/arrays/floor-and-ceil-in-sorted-array/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Floor and Ceiling - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/ceiling-in-a-sorted-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Find Floor and Ceil - Coding Ninjas",
+        "url": "https://www.codingninjas.com/studio/problems/floor-and-ceil-in-sorted-array_920457",
+        "source": "Coding Ninjas"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/ceil-the-floor/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Practice on Coding Ninjas",
+        "url": "https://www.codingninjas.com/studio/problems/floor-and-ceil-in-sorted-array_920457",
+        "platform": "Coding Ninjas"
+      }
+    ]
+  },
+  "patternTriggers": "Floor = largest element <= x (similar to upper_bound - 1). Ceiling = smallest element >= x (same as lower_bound). Use modified binary search.",
+  "approaches": [
+    {
+      "name": "Linear Search",
+      "order": 1,
+      "intuition": "Scan array to find floor (largest <= x) and ceiling (smallest >= x).",
+      "approach": "Iterate through array tracking floor and ceiling candidates.",
+      "steps": [
+        "Initialize floor = -1, ceiling = -1",
+        "For each element in array:",
+        "  If arr[i] <= x:",
+        "    floor = arr[i] (keep updating to get largest)",
+        "  If arr[i] >= x and ceiling == -1:",
+        "    ceiling = arr[i] (first element >= x)",
+        "Return {floor, ceiling}"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Must scan entire array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    pair<int, int> getFloorAndCeil(vector<int>& arr, int x) {\n        int floor = -1, ceiling = -1;\n        \n        for (int num : arr) {\n            // Update floor: largest element <= x\n            if (num <= x) {\n                floor = num;\n            }\n            \n            // Update ceiling: smallest element >= x\n            if (num >= x && ceiling == -1) {\n                ceiling = num;\n            }\n        }\n        \n        return {floor, ceiling};\n    }\n};",
+        "java": "class Solution {\n    public int[] getFloorAndCeil(int[] arr, int x) {\n        int floor = -1, ceiling = -1;\n        \n        for (int num : arr) {\n            // Update floor: largest element <= x\n            if (num <= x) {\n                floor = num;\n            }\n            \n            // Update ceiling: smallest element >= x\n            if (num >= x && ceiling == -1) {\n                ceiling = num;\n            }\n        }\n        \n        return new int[]{floor, ceiling};\n    }\n}",
+        "python": "class Solution:\n    def getFloorAndCeil(self, arr: List[int], x: int) -> Tuple[int, int]:\n        floor, ceiling = -1, -1\n        \n        for num in arr:\n            # Update floor: largest element <= x\n            if num <= x:\n                floor = num\n            \n            # Update ceiling: smallest element >= x\n            if num >= x and ceiling == -1:\n                ceiling = num\n        \n        return (floor, ceiling)",
+        "javascript": "var getFloorAndCeil = function(arr, x) {\n    let floor = -1, ceiling = -1;\n    \n    for (const num of arr) {\n        // Update floor: largest element <= x\n        if (num <= x) {\n            floor = num;\n        }\n        \n        // Update ceiling: smallest element >= x\n        if (num >= x && ceiling === -1) {\n            ceiling = num;\n        }\n    }\n    \n    return [floor, ceiling];\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Separate Searches",
+      "order": 2,
+      "intuition": "Find floor and ceiling separately using modified binary search. Floor is largest <= x, ceiling is smallest >= x.",
+      "approach": "Two binary searches: one for floor (track largest <= x) and one for ceiling (track smallest >= x).",
+      "steps": [
+        "Find floor:",
+        "  Binary search tracking answer when arr[mid] <= x",
+        "  Keep searching right for larger values",
+        "Find ceiling:",
+        "  Binary search tracking answer when arr[mid] >= x",
+        "  Keep searching left for smaller values",
+        "Return {floor, ceiling}"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Two binary searches: O(log n) + O(log n) = O(log n)",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findFloor(vector<int>& arr, int x) {\n        int low = 0, high = arr.size() - 1;\n        int floor = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] <= x) {\n                floor = arr[mid];\n                low = mid + 1;  // Try to find larger value\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return floor;\n    }\n    \n    int findCeiling(vector<int>& arr, int x) {\n        int low = 0, high = arr.size() - 1;\n        int ceiling = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] >= x) {\n                ceiling = arr[mid];\n                high = mid - 1;  // Try to find smaller value\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ceiling;\n    }\n    \n    pair<int, int> getFloorAndCeil(vector<int>& arr, int x) {\n        int floor = findFloor(arr, x);\n        int ceiling = findCeiling(arr, x);\n        return {floor, ceiling};\n    }\n};",
+        "java": "class Solution {\n    public int findFloor(int[] arr, int x) {\n        int low = 0, high = arr.length - 1;\n        int floor = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] <= x) {\n                floor = arr[mid];\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return floor;\n    }\n    \n    public int findCeiling(int[] arr, int x) {\n        int low = 0, high = arr.length - 1;\n        int ceiling = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] >= x) {\n                ceiling = arr[mid];\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ceiling;\n    }\n    \n    public int[] getFloorAndCeil(int[] arr, int x) {\n        int floor = findFloor(arr, x);\n        int ceiling = findCeiling(arr, x);\n        return new int[]{floor, ceiling};\n    }\n}",
+        "python": "class Solution:\n    def findFloor(self, arr: List[int], x: int) -> int:\n        low, high = 0, len(arr) - 1\n        floor = -1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if arr[mid] <= x:\n                floor = arr[mid]\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        return floor\n    \n    def findCeiling(self, arr: List[int], x: int) -> int:\n        low, high = 0, len(arr) - 1\n        ceiling = -1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if arr[mid] >= x:\n                ceiling = arr[mid]\n                high = mid - 1\n            else:\n                low = mid + 1\n        \n        return ceiling\n    \n    def getFloorAndCeil(self, arr: List[int], x: int) -> Tuple[int, int]:\n        floor = self.findFloor(arr, x)\n        ceiling = self.findCeiling(arr, x)\n        return (floor, ceiling)",
+        "javascript": "var getFloorAndCeil = function(arr, x) {\n    const findFloor = (arr, x) => {\n        let low = 0, high = arr.length - 1;\n        let floor = -1;\n        \n        while (low <= high) {\n            const mid = Math.floor((low + high) / 2);\n            \n            if (arr[mid] <= x) {\n                floor = arr[mid];\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        return floor;\n    };\n    \n    const findCeiling = (arr, x) => {\n        let low = 0, high = arr.length - 1;\n        let ceiling = -1;\n        \n        while (low <= high) {\n            const mid = Math.floor((low + high) / 2);\n            \n            if (arr[mid] >= x) {\n                ceiling = arr[mid];\n                high = mid - 1;\n            } else {\n                low = mid + 1;\n            }\n        }\n        \n        return ceiling;\n    };\n    \n    const floor = findFloor(arr, x);\n    const ceiling = findCeiling(arr, x);\n    return [floor, ceiling];\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Single Pass - Optimal",
+      "order": 3,
+      "intuition": "Find both floor and ceiling in single binary search by checking position of x relative to mid.",
+      "approach": "One binary search updating both floor and ceiling based on comparisons.",
+      "steps": [
+        "Initialize low = 0, high = n - 1, floor = -1, ceiling = -1",
+        "While low <= high:",
+        "  mid = (low + high) / 2",
+        "  If arr[mid] == x:",
+        "    Both floor and ceiling are x, return {x, x}",
+        "  If arr[mid] < x:",
+        "    floor = arr[mid] (potential floor)",
+        "    low = mid + 1",
+        "  Else (arr[mid] > x):",
+        "    ceiling = arr[mid] (potential ceiling)",
+        "    high = mid - 1",
+        "Return {floor, ceiling}"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Single binary search pass",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    pair<int, int> getFloorAndCeil(vector<int>& arr, int x) {\n        int n = arr.size();\n        int low = 0, high = n - 1;\n        int floor = -1, ceiling = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] == x) {\n                // x exists, both floor and ceiling are x\n                return {x, x};\n            } else if (arr[mid] < x) {\n                // arr[mid] could be floor\n                floor = arr[mid];\n                low = mid + 1;\n            } else {\n                // arr[mid] could be ceiling\n                ceiling = arr[mid];\n                high = mid - 1;\n            }\n        }\n        \n        return {floor, ceiling};\n    }\n};",
+        "java": "class Solution {\n    public int[] getFloorAndCeil(int[] arr, int x) {\n        int n = arr.length;\n        int low = 0, high = n - 1;\n        int floor = -1, ceiling = -1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            \n            if (arr[mid] == x) {\n                // x exists, both floor and ceiling are x\n                return new int[]{x, x};\n            } else if (arr[mid] < x) {\n                // arr[mid] could be floor\n                floor = arr[mid];\n                low = mid + 1;\n            } else {\n                // arr[mid] could be ceiling\n                ceiling = arr[mid];\n                high = mid - 1;\n            }\n        }\n        \n        return new int[]{floor, ceiling};\n    }\n}",
+        "python": "class Solution:\n    def getFloorAndCeil(self, arr: List[int], x: int) -> Tuple[int, int]:\n        n = len(arr)\n        low, high = 0, n - 1\n        floor, ceiling = -1, -1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            \n            if arr[mid] == x:\n                # x exists, both floor and ceiling are x\n                return (x, x)\n            elif arr[mid] < x:\n                # arr[mid] could be floor\n                floor = arr[mid]\n                low = mid + 1\n            else:\n                # arr[mid] could be ceiling\n                ceiling = arr[mid]\n                high = mid - 1\n        \n        return (floor, ceiling)",
+        "javascript": "var getFloorAndCeil = function(arr, x) {\n    const n = arr.length;\n    let low = 0, high = n - 1;\n    let floor = -1, ceiling = -1;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        \n        if (arr[mid] === x) {\n            // x exists, both floor and ceiling are x\n            return [x, x];\n        } else if (arr[mid] < x) {\n            // arr[mid] could be floor\n            floor = arr[mid];\n            low = mid + 1;\n        } else {\n            // arr[mid] could be ceiling\n            ceiling = arr[mid];\n            high = mid - 1;\n        }\n    }\n    \n    return [floor, ceiling];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Confusing floor and ceiling definitions",
+    "Not handling case when x doesn't exist in array",
+    "Wrong update logic: updating floor when arr[mid] > x",
+    "Not returning -1 when floor/ceiling doesn't exist",
+    "Confusing with lower bound and upper bound"
+  ],
+  "hints": [
+    "Floor = largest element <= x (like upper_bound - 1 but for value)",
+    "Ceiling = smallest element >= x (same as lower_bound)",
+    "If x exists in array, both floor and ceiling are x",
+    "Can find both in single binary search pass",
+    "When arr[mid] < x, it's a candidate for floor; when arr[mid] > x, it's a candidate for ceiling"
+  ],
+  "followUp": [
+    "What if array was not sorted?",
+    "How to find floor and ceiling for range of queries?",
+    "Can you find floor and ceiling in 2D matrix?",
+    "What if array has duplicates?",
+    "How is this related to lower and upper bound?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Adobe", "Flipkart"],
+  "tags": ["binary-search", "array"],
+  "relatedProblems": [
+    "Lower Bound",
+    "Upper Bound",
+    "Search Insert Position",
+    "Find First and Last Position of Element",
+    "Closest Binary Search Tree Value"
+  ]
+}

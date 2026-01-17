@@ -1,0 +1,132 @@
+{
+  "questionId": "PATTERN",
+  "questionSlug": "aggressive-cows",
+  "title": "Aggressive Cows",
+  "difficulty": "Medium",
+  "resources": {
+    "spoj": "https://www.spoj.com/problems/AGGRCOW/",
+    "codeforces": "https://codeforces.com/problemset/problem/1359/D",
+    "videos": [
+      {
+        "title": "Aggressive Cows - Binary Search",
+        "url": "https://www.youtube.com/watch?v=R_Mfw4ew-Vo",
+        "channel": "takeUforward",
+        "duration": "18:00",
+        "language": "English"
+      }
+    ]
+  },
+  "problemStatement": "Farmer John has built a new long barn with N stalls. The stalls are located along a straight line at positions x1, x2, ..., xN.\n\nHis C cows don't like this barn layout and become aggressive towards each other once put into a stall. To prevent the cows from hurting each other, FJ wants to assign the cows to the stalls, such that the minimum distance between any two of them is as large as possible. What is the largest minimum distance?",
+  "examples": [
+    {
+      "input": "stalls = [1,2,4,8,9], cows = 3",
+      "output": "3",
+      "explanation": "Place cows at positions 1, 4, and 8 (or 1, 4, 9). Minimum distance = 3"
+    },
+    {
+      "input": "stalls = [1,2,8,4,9], cows = 3",
+      "output": "3",
+      "explanation": "After sorting: [1,2,4,8,9]. Place at 1, 4, 8. Min distance = 3"
+    },
+    {
+      "input": "stalls = [5,1,7,10,15], cows = 3",
+      "output": "5",
+      "explanation": "Sorted: [1,5,7,10,15]. Place at 1, 7, 15 (or 5, 10, 15). Min distance = 5"
+    }
+  ],
+  "constraints": [
+    "2 <= N <= 10^5",
+    "2 <= C <= N",
+    "0 <= xi <= 10^9"
+  ],
+  "patternTriggers": "Maximize minimum distance + place C items with constraint = Binary search on distance",
+  "approaches": [
+    {
+      "name": "Brute Force - Try All Distances",
+      "order": 1,
+      "intuition": "Try every possible minimum distance from 1 to max_gap, find largest that allows placing C cows",
+      "approach": "For each distance, greedily check if can place C cows",
+      "steps": [
+        "Sort stalls",
+        "maxDistance = stalls[n-1] - stalls[0]",
+        "For distance from maxDistance down to 1:",
+        "  Try to place C cows with min distance = distance",
+        "  If successful, return distance",
+        "Return 1"
+      ],
+      "complexity": {
+        "time": "O(n log n + n * maxGap)",
+        "space": "O(1)",
+        "timeExplanation": "Sorting O(n log n), then for each distance check in O(n)",
+        "spaceExplanation": "No extra space (excluding sort space)"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    bool canPlaceCows(vector<int>& stalls, int cows, int minDist) {\n        int count = 1; // Place first cow at first stall\n        int lastPos = stalls[0];\n        \n        for (int i = 1; i < stalls.size(); i++) {\n            if (stalls[i] - lastPos >= minDist) {\n                count++;\n                lastPos = stalls[i];\n                if (count == cows) return true;\n            }\n        }\n        \n        return count >= cows;\n    }\n    \npublic:\n    int aggressiveCows(vector<int>& stalls, int cows) {\n        sort(stalls.begin(), stalls.end());\n        \n        int maxDist = stalls.back() - stalls[0];\n        \n        for (int dist = maxDist; dist >= 1; dist--) {\n            if (canPlaceCows(stalls, cows, dist)) {\n                return dist;\n            }\n        }\n        \n        return 1;\n    }\n};",
+        "java": "class Solution {\n    private boolean canPlaceCows(int[] stalls, int cows, int minDist) {\n        int count = 1;\n        int lastPos = stalls[0];\n        \n        for (int i = 1; i < stalls.length; i++) {\n            if (stalls[i] - lastPos >= minDist) {\n                count++;\n                lastPos = stalls[i];\n                if (count == cows) return true;\n            }\n        }\n        \n        return count >= cows;\n    }\n    \n    public int aggressiveCows(int[] stalls, int cows) {\n        Arrays.sort(stalls);\n        \n        int maxDist = stalls[stalls.length - 1] - stalls[0];\n        \n        for (int dist = maxDist; dist >= 1; dist--) {\n            if (canPlaceCows(stalls, cows, dist)) {\n                return dist;\n            }\n        }\n        \n        return 1;\n    }\n}",
+        "python": "class Solution:\n    def aggressiveCows(self, stalls: List[int], cows: int) -> int:\n        def canPlaceCows(min_dist: int) -> bool:\n            count = 1\n            last_pos = stalls[0]\n            \n            for i in range(1, len(stalls)):\n                if stalls[i] - last_pos >= min_dist:\n                    count += 1\n                    last_pos = stalls[i]\n                    if count == cows:\n                        return True\n            \n            return count >= cows\n        \n        stalls.sort()\n        max_dist = stalls[-1] - stalls[0]\n        \n        for dist in range(max_dist, 0, -1):\n            if canPlaceCows(dist):\n                return dist\n        \n        return 1",
+        "javascript": "var aggressiveCows = function(stalls, cows) {\n    const canPlaceCows = (minDist) => {\n        let count = 1;\n        let lastPos = stalls[0];\n        \n        for (let i = 1; i < stalls.length; i++) {\n            if (stalls[i] - lastPos >= minDist) {\n                count++;\n                lastPos = stalls[i];\n                if (count === cows) return true;\n            }\n        }\n        \n        return count >= cows;\n    };\n    \n    stalls.sort((a, b) => a - b);\n    const maxDist = stalls[stalls.length - 1] - stalls[0];\n    \n    for (let dist = maxDist; dist >= 1; dist--) {\n        if (canPlaceCows(dist)) {\n            return dist;\n        }\n    }\n    \n    return 1;\n};"
+      }
+    },
+    {
+      "name": "Binary Search on Distance (Optimal)",
+      "order": 2,
+      "intuition": "Answer space is monotonic: if we can place C cows with min distance D, we can also place them with distance < D. Binary search to find maximum distance.",
+      "approach": "Binary search on minimum distance, greedily check if placement possible",
+      "steps": [
+        "Sort stalls array",
+        "left = 1 (min possible distance)",
+        "right = stalls[n-1] - stalls[0] (max possible distance)",
+        "While left <= right:",
+        "  mid = (left + right) / 2",
+        "  If canPlaceCows(mid):",
+        "    Possible, try larger distance: left = mid + 1",
+        "    Update result = mid",
+        "  Else:",
+        "    Distance too large: right = mid - 1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n log n + n log(maxGap))",
+        "space": "O(1)",
+        "timeExplanation": "Sort O(n log n), binary search O(log maxGap) with O(n) checks",
+        "spaceExplanation": "No extra space (excluding sort space)"
+      },
+      "code": {
+        "cpp": "class Solution {\nprivate:\n    bool canPlaceCows(vector<int>& stalls, int cows, int minDist) {\n        int count = 1; // Place first cow\n        int lastPos = stalls[0];\n        \n        for (int i = 1; i < stalls.size(); i++) {\n            if (stalls[i] - lastPos >= minDist) {\n                count++;\n                lastPos = stalls[i];\n                if (count == cows) return true;\n            }\n        }\n        \n        return false;\n    }\n    \npublic:\n    int aggressiveCows(vector<int>& stalls, int cows) {\n        sort(stalls.begin(), stalls.end());\n        \n        int left = 1;\n        int right = stalls.back() - stalls[0];\n        int result = 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (canPlaceCows(stalls, cows, mid)) {\n                result = mid; // Possible, try larger\n                left = mid + 1;\n            } else {\n                right = mid - 1; // Too large, try smaller\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    private boolean canPlaceCows(int[] stalls, int cows, int minDist) {\n        int count = 1;\n        int lastPos = stalls[0];\n        \n        for (int i = 1; i < stalls.length; i++) {\n            if (stalls[i] - lastPos >= minDist) {\n                count++;\n                lastPos = stalls[i];\n                if (count == cows) return true;\n            }\n        }\n        \n        return false;\n    }\n    \n    public int aggressiveCows(int[] stalls, int cows) {\n        Arrays.sort(stalls);\n        \n        int left = 1;\n        int right = stalls[stalls.length - 1] - stalls[0];\n        int result = 1;\n        \n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            \n            if (canPlaceCows(stalls, cows, mid)) {\n                result = mid;\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def aggressiveCows(self, stalls: List[int], cows: int) -> int:\n        def canPlaceCows(min_dist: int) -> bool:\n            count = 1\n            last_pos = stalls[0]\n            \n            for i in range(1, len(stalls)):\n                if stalls[i] - last_pos >= min_dist:\n                    count += 1\n                    last_pos = stalls[i]\n                    if count == cows:\n                        return True\n            \n            return False\n        \n        stalls.sort()\n        \n        left = 1\n        right = stalls[-1] - stalls[0]\n        result = 1\n        \n        while left <= right:\n            mid = (left + right) // 2\n            \n            if canPlaceCows(mid):\n                result = mid\n                left = mid + 1\n            else:\n                right = mid - 1\n        \n        return result",
+        "javascript": "var aggressiveCows = function(stalls, cows) {\n    const canPlaceCows = (minDist) => {\n        let count = 1;\n        let lastPos = stalls[0];\n        \n        for (let i = 1; i < stalls.length; i++) {\n            if (stalls[i] - lastPos >= minDist) {\n                count++;\n                lastPos = stalls[i];\n                if (count === cows) return true;\n            }\n        }\n        \n        return false;\n    };\n    \n    stalls.sort((a, b) => a - b);\n    \n    let left = 1;\n    let right = stalls[stalls.length - 1] - stalls[0];\n    let result = 1;\n    \n    while (left <= right) {\n        const mid = Math.floor((left + right) / 2);\n        \n        if (canPlaceCows(mid)) {\n            result = mid;\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting the stalls array first",
+    "Greedy placement: always place cow at first available stall >= minDist",
+    "Wrong binary search bounds: left should be 1, right should be max-min",
+    "Using left < right instead of left <= right (may miss optimal answer)",
+    "Not updating result when condition is satisfied",
+    "Comparing distance with wrong positions"
+  ],
+  "hints": [
+    "Must sort stalls first to place cows optimally",
+    "Binary search on the ANSWER (minimum distance), not on array",
+    "Greedy strategy for checking: place first cow at first stall, then place next cow at first stall that's >= minDist away",
+    "Answer space is monotonic (inverse): if distance D works, all d < D also work",
+    "We're MAXIMIZING minimum distance, so use left = mid + 1 when possible",
+    "Minimum distance = 1, maximum distance = stalls[n-1] - stalls[0]"
+  ],
+  "followUp": [
+    "What if cows can be placed at any position (not just stalls)?",
+    "What if we want to minimize maximum distance instead?",
+    "Can you handle weighted cows (different aggression levels)?",
+    "What if stalls have capacities?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook"],
+  "tags": ["binary-search", "array", "greedy", "sorting"],
+  "relatedProblems": [
+    "Magnetic Force Between Two Balls",
+    "Maximize Distance to Closest Person",
+    "Exam Room",
+    "Divide Chocolate"
+  ]
+}

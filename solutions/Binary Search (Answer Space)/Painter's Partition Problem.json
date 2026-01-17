@@ -1,0 +1,176 @@
+{
+  "questionId": "1539",
+  "questionSlug": "kth-missing-positive-number",
+  "title": "Kth Missing Positive Number",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/kth-missing-positive-number/",
+    "videos": [
+      {
+        "title": "Kth Missing Positive Number",
+        "url": "https://www.youtube.com/watch?v=uZ0N_hZpyps",
+        "channel": "take U forward",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Kth Missing Positive Number - Leetcode 1539",
+        "url": "https://www.youtube.com/watch?v=4ja_w-6Yaic",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Find Kth Missing Positive Number",
+        "url": "https://www.youtube.com/watch?v=5xshZIRSqXk",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth Missing Positive Number - LeetCode Solution",
+        "url": "https://leetcode.com/problems/kth-missing-positive-number/solution/",
+        "source": "LeetCode Official"
+      },
+      {
+        "title": "Kth Missing Positive Number",
+        "url": "https://takeuforward.org/arrays/kth-missing-positive-number/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "K-th Missing Element - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/k-th-missing-element-increasing-sequence/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/kth-missing-positive-number/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Find kth missing element in sorted array = Binary search. Calculate missing count at each position and search for position where missing = k.",
+  "approaches": [
+    {
+      "name": "Brute Force (Linear Search)",
+      "order": 1,
+      "intuition": "Iterate through positive integers starting from 1, skip numbers present in array, and count missing numbers until we reach k.",
+      "approach": "Start from 1 and check each positive integer. If it's not in the array, increment missing count. When count reaches k, return that number.",
+      "steps": [
+        "Initialize current = 1, missing = 0, index = 0",
+        "While missing < k:",
+        "  If index < n and arr[index] == current:",
+        "    Move to next array element (index++)",
+        "  Else:",
+        "    Increment missing count",
+        "    If missing == k: return current",
+        "  Increment current",
+        "Return current - 1"
+      ],
+      "complexity": {
+        "time": "O(n + k)",
+        "space": "O(1)",
+        "timeExplanation": "May iterate through array elements and k missing numbers",
+        "spaceExplanation": "Only using constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findKthPositive(vector<int>& arr, int k) {\n        int current = 1, missing = 0, index = 0;\n        int n = arr.size();\n        \n        while (missing < k) {\n            if (index < n && arr[index] == current) {\n                index++;\n            } else {\n                missing++;\n                if (missing == k) {\n                    return current;\n                }\n            }\n            current++;\n        }\n        \n        return current - 1;\n    }\n};",
+        "java": "class Solution {\n    public int findKthPositive(int[] arr, int k) {\n        int current = 1, missing = 0, index = 0;\n        int n = arr.length;\n        \n        while (missing < k) {\n            if (index < n && arr[index] == current) {\n                index++;\n            } else {\n                missing++;\n                if (missing == k) {\n                    return current;\n                }\n            }\n            current++;\n        }\n        \n        return current - 1;\n    }\n}",
+        "python": "class Solution:\n    def findKthPositive(self, arr: List[int], k: int) -> int:\n        current, missing, index = 1, 0, 0\n        n = len(arr)\n        \n        while missing < k:\n            if index < n and arr[index] == current:\n                index += 1\n            else:\n                missing += 1\n                if missing == k:\n                    return current\n            current += 1\n        \n        return current - 1",
+        "javascript": "var findKthPositive = function(arr, k) {\n    let current = 1, missing = 0, index = 0;\n    const n = arr.length;\n    \n    while (missing < k) {\n        if (index < n && arr[index] === current) {\n            index++;\n        } else {\n            missing++;\n            if (missing === k) {\n                return current;\n            }\n        }\n        current++;\n    }\n    \n    return current - 1;\n};"
+      }
+    },
+    {
+      "name": "Better (Calculate Missing Count)",
+      "order": 2,
+      "intuition": "For each element arr[i], calculate how many numbers are missing before it. If missing count ≥ k at index i, answer is between arr[i-1] and arr[i].",
+      "approach": "Iterate through array calculating missing count at each position. When missing count becomes ≥ k, calculate the exact kth missing number.",
+      "steps": [
+        "Iterate through array with index i",
+        "Calculate missing before arr[i]: missing = arr[i] - (i + 1)",
+        "If missing >= k:",
+        "  Answer is in range before arr[i]",
+        "  Return arr[i-1] + (k - previous_missing)",
+        "If loop completes:",
+        "  Answer is beyond array",
+        "  Return arr[n-1] + (k - missing_at_end)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findKthPositive(vector<int>& arr, int k) {\n        int n = arr.size();\n        \n        for (int i = 0; i < n; i++) {\n            int missing = arr[i] - (i + 1);\n            \n            if (missing >= k) {\n                if (i == 0) {\n                    return k;\n                }\n                int prevMissing = arr[i - 1] - i;\n                return arr[i - 1] + (k - prevMissing);\n            }\n        }\n        \n        int missingAtEnd = arr[n - 1] - n;\n        return arr[n - 1] + (k - missingAtEnd);\n    }\n};",
+        "java": "class Solution {\n    public int findKthPositive(int[] arr, int k) {\n        int n = arr.length;\n        \n        for (int i = 0; i < n; i++) {\n            int missing = arr[i] - (i + 1);\n            \n            if (missing >= k) {\n                if (i == 0) {\n                    return k;\n                }\n                int prevMissing = arr[i - 1] - i;\n                return arr[i - 1] + (k - prevMissing);\n            }\n        }\n        \n        int missingAtEnd = arr[n - 1] - n;\n        return arr[n - 1] + (k - missingAtEnd);\n    }\n}",
+        "python": "class Solution:\n    def findKthPositive(self, arr: List[int], k: int) -> int:\n        n = len(arr)\n        \n        for i in range(n):\n            missing = arr[i] - (i + 1)\n            \n            if missing >= k:\n                if i == 0:\n                    return k\n                prev_missing = arr[i - 1] - i\n                return arr[i - 1] + (k - prev_missing)\n        \n        missing_at_end = arr[n - 1] - n\n        return arr[n - 1] + (k - missing_at_end)",
+        "javascript": "var findKthPositive = function(arr, k) {\n    const n = arr.length;\n    \n    for (let i = 0; i < n; i++) {\n        const missing = arr[i] - (i + 1);\n        \n        if (missing >= k) {\n            if (i === 0) {\n                return k;\n            }\n            const prevMissing = arr[i - 1] - i;\n            return arr[i - 1] + (k - prevMissing);\n        }\n    }\n    \n    const missingAtEnd = arr[n - 1] - n;\n    return arr[n - 1] + (k - missingAtEnd);\n};"
+      }
+    },
+    {
+      "name": "Binary Search - Optimal",
+      "order": 3,
+      "intuition": "Missing count at index i is arr[i] - (i + 1). Use binary search to find the rightmost index where missing count < k.",
+      "approach": "Binary search to find index where number of missing numbers transitions from < k to ≥ k. Calculate answer based on this position.",
+      "steps": [
+        "Initialize low = 0, high = n - 1",
+        "Binary search:",
+        "  mid = (low + high) / 2",
+        "  missing = arr[mid] - (mid + 1)",
+        "  If missing < k:",
+        "    Move right: low = mid + 1",
+        "  Else:",
+        "    Move left: high = mid - 1",
+        "After loop: low is the insertion point",
+        "Return low + k (or arr[high] + k - missing[high] if high >= 0)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Binary search on array",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findKthPositive(vector<int>& arr, int k) {\n        int low = 0, high = arr.size() - 1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            int missing = arr[mid] - (mid + 1);\n            \n            if (missing < k) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        // low is the insertion point\n        // If high < 0: all missing numbers are before arr[0]\n        // Otherwise: answer = arr[high] + (k - missing_at_high)\n        if (high < 0) {\n            return k;\n        }\n        \n        int missingAtHigh = arr[high] - (high + 1);\n        return arr[high] + (k - missingAtHigh);\n        \n        // Alternative simpler formula:\n        // return low + k;\n    }\n};",
+        "java": "class Solution {\n    public int findKthPositive(int[] arr, int k) {\n        int low = 0, high = arr.length - 1;\n        \n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            int missing = arr[mid] - (mid + 1);\n            \n            if (missing < k) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        \n        if (high < 0) {\n            return k;\n        }\n        \n        int missingAtHigh = arr[high] - (high + 1);\n        return arr[high] + (k - missingAtHigh);\n        \n        // Alternative: return low + k;\n    }\n}",
+        "python": "class Solution:\n    def findKthPositive(self, arr: List[int], k: int) -> int:\n        low, high = 0, len(arr) - 1\n        \n        while low <= high:\n            mid = (low + high) // 2\n            missing = arr[mid] - (mid + 1)\n            \n            if missing < k:\n                low = mid + 1\n            else:\n                high = mid - 1\n        \n        if high < 0:\n            return k\n        \n        missing_at_high = arr[high] - (high + 1)\n        return arr[high] + (k - missing_at_high)\n        \n        # Alternative: return low + k",
+        "javascript": "var findKthPositive = function(arr, k) {\n    let low = 0, high = arr.length - 1;\n    \n    while (low <= high) {\n        const mid = Math.floor((low + high) / 2);\n        const missing = arr[mid] - (mid + 1);\n        \n        if (missing < k) {\n            low = mid + 1;\n        } else {\n            high = mid - 1;\n        }\n    }\n    \n    if (high < 0) {\n        return k;\n    }\n    \n    const missingAtHigh = arr[high] - (high + 1);\n    return arr[high] + (k - missingAtHigh);\n    \n    // Alternative: return low + k;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling case when answer is before first element",
+    "Incorrect formula for calculating missing count: should be arr[i] - (i + 1)",
+    "Off-by-one errors in final answer calculation",
+    "Not understanding that low represents insertion point after binary search",
+    "Forgetting that array is 0-indexed but positive integers start from 1"
+  ],
+  "hints": [
+    "For each arr[i], missing count before it is arr[i] - (i + 1)",
+    "Binary search to find where missing count transitions from < k to ≥ k",
+    "After binary search, low is the position where kth missing would be inserted",
+    "Simple formula: answer = low + k",
+    "Alternative: answer = arr[high] + (k - missing_at_high)"
+  ],
+  "followUp": [
+    "What if array contains duplicates?",
+    "How to find kth missing in a range [L, R]?",
+    "Can you solve if array is not sorted?",
+    "What if we need to find all k missing numbers?",
+    "How to handle very large values of k efficiently?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Apple"],
+  "tags": ["binary-search", "array", "math"],
+  "relatedProblems": [
+    "Missing Number",
+    "Find All Numbers Disappeared in Array",
+    "Kth Missing Element",
+    "Missing Element in Sorted Array",
+    "First Missing Positive"
+  ]
+}
