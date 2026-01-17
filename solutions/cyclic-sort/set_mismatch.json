@@ -1,0 +1,123 @@
+{
+  "questionId": "645",
+  "questionSlug": "set-mismatch",
+  "title": "Find the Corrupt Pair (Set Mismatch)",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/set-mismatch/",
+    "videos": [
+      {
+        "title": "Set Mismatch - Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=VRZu8Ypx4jE",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:15",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Array [1,n] with one duplicate, one missing = Cyclic Sort or Marking",
+  "approaches": [
+    {
+      "name": "Sorting",
+      "order": 1,
+      "intuition": "Sort and find consecutive duplicates, missing is the gap",
+      "approach": "Sort then scan for anomalies",
+      "steps": [
+        "Sort the array",
+        "Find duplicate: consecutive equal elements",
+        "Find missing: check if nums[i] != i + 1",
+        "Return [duplicate, missing]"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "timeExplanation": "Sorting dominates",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findErrorNums(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        int duplicate = -1, missing = -1;\n        \n        // Find duplicate\n        for (int i = 0; i < n - 1; i++) {\n            if (nums[i] == nums[i + 1]) {\n                duplicate = nums[i];\n                break;\n            }\n        }\n        \n        // Find missing\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1 && nums[i] != duplicate) {\n                missing = i + 1;\n                break;\n            }\n        }\n        \n        // Edge case: missing is n\n        if (missing == -1) missing = n;\n        \n        return {duplicate, missing};\n    }\n};",
+        "java": "class Solution {\n    public int[] findErrorNums(int[] nums) {\n        Arrays.sort(nums);\n        int n = nums.length;\n        int duplicate = -1, missing = -1;\n        \n        // Find duplicate\n        for (int i = 0; i < n - 1; i++) {\n            if (nums[i] == nums[i + 1]) {\n                duplicate = nums[i];\n                break;\n            }\n        }\n        \n        // Find missing\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1 && nums[i] != duplicate) {\n                missing = i + 1;\n                break;\n            }\n        }\n        \n        if (missing == -1) missing = n;\n        \n        return new int[]{duplicate, missing};\n    }\n}",
+        "python": "class Solution:\n    def findErrorNums(self, nums: List[int]) -> List[int]:\n        nums.sort()\n        n = len(nums)\n        duplicate = -1\n        missing = -1\n        \n        # Find duplicate\n        for i in range(n - 1):\n            if nums[i] == nums[i + 1]:\n                duplicate = nums[i]\n                break\n        \n        # Find missing\n        for i in range(n):\n            if nums[i] != i + 1 and nums[i] != duplicate:\n                missing = i + 1\n                break\n        \n        if missing == -1:\n            missing = n\n        \n        return [duplicate, missing]",
+        "javascript": "var findErrorNums = function(nums) {\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    let duplicate = -1, missing = -1;\n    \n    // Find duplicate\n    for (let i = 0; i < n - 1; i++) {\n        if (nums[i] === nums[i + 1]) {\n            duplicate = nums[i];\n            break;\n        }\n    }\n    \n    // Find missing\n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== i + 1 && nums[i] !== duplicate) {\n            missing = i + 1;\n            break;\n        }\n    }\n    \n    if (missing === -1) missing = n;\n    \n    return [duplicate, missing];\n};"
+      }
+    },
+    {
+      "name": "Mark as Negative",
+      "order": 2,
+      "intuition": "Use indices as hash. Mark visited, find duplicate when already marked, missing when unmarked",
+      "approach": "Negate to mark presence",
+      "steps": [
+        "For each num:",
+        "  index = abs(num) - 1",
+        "  If nums[index] < 0: duplicate = abs(num)",
+        "  Else: mark nums[index] negative",
+        "Find positive index i: missing = i + 1",
+        "Return [duplicate, missing]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes",
+        "spaceExplanation": "In-place marking"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findErrorNums(vector<int>& nums) {\n        int n = nums.size();\n        int duplicate = -1, missing = -1;\n        \n        // Find duplicate\n        for (int i = 0; i < n; i++) {\n            int index = abs(nums[i]) - 1;\n            if (nums[index] < 0) {\n                duplicate = abs(nums[i]);\n            } else {\n                nums[index] = -nums[index];\n            }\n        }\n        \n        // Find missing\n        for (int i = 0; i < n; i++) {\n            if (nums[i] > 0) {\n                missing = i + 1;\n                break;\n            }\n        }\n        \n        return {duplicate, missing};\n    }\n};",
+        "java": "class Solution {\n    public int[] findErrorNums(int[] nums) {\n        int n = nums.length;\n        int duplicate = -1, missing = -1;\n        \n        // Find duplicate\n        for (int i = 0; i < n; i++) {\n            int index = Math.abs(nums[i]) - 1;\n            if (nums[index] < 0) {\n                duplicate = Math.abs(nums[i]);\n            } else {\n                nums[index] = -nums[index];\n            }\n        }\n        \n        // Find missing\n        for (int i = 0; i < n; i++) {\n            if (nums[i] > 0) {\n                missing = i + 1;\n                break;\n            }\n        }\n        \n        return new int[]{duplicate, missing};\n    }\n}",
+        "python": "class Solution:\n    def findErrorNums(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        duplicate = -1\n        missing = -1\n        \n        # Find duplicate\n        for i in range(n):\n            index = abs(nums[i]) - 1\n            if nums[index] < 0:\n                duplicate = abs(nums[i])\n            else:\n                nums[index] = -nums[index]\n        \n        # Find missing\n        for i in range(n):\n            if nums[i] > 0:\n                missing = i + 1\n                break\n        \n        return [duplicate, missing]",
+        "javascript": "var findErrorNums = function(nums) {\n    const n = nums.length;\n    let duplicate = -1, missing = -1;\n    \n    // Find duplicate\n    for (let i = 0; i < n; i++) {\n        const index = Math.abs(nums[i]) - 1;\n        if (nums[index] < 0) {\n            duplicate = Math.abs(nums[i]);\n        } else {\n            nums[index] = -nums[index];\n        }\n    }\n    \n    // Find missing\n    for (let i = 0; i < n; i++) {\n        if (nums[i] > 0) {\n            missing = i + 1;\n            break;\n        }\n    }\n    \n    return [duplicate, missing];\n};"
+      }
+    },
+    {
+      "name": "Cyclic Sort - Optimal",
+      "order": 3,
+      "intuition": "Place each at correct position. Number that can't be placed correctly is duplicate",
+      "approach": "Cyclic sort to find both in one pass",
+      "steps": [
+        "Cyclic sort:",
+        "  While i < n:",
+        "    correctPos = nums[i] - 1",
+        "    If nums[i] != nums[correctPos]: swap",
+        "    Else: i++",
+        "After sort:",
+        "  Find i where nums[i] != i + 1",
+        "  duplicate = nums[i], missing = i + 1",
+        "Return [duplicate, missing]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element swapped at most once",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findErrorNums(vector<int>& nums) {\n        int n = nums.size();\n        int i = 0;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            if (nums[i] != nums[correctPos]) {\n                swap(nums[i], nums[correctPos]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find duplicate and missing\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1) {\n                return {nums[i], i + 1};\n            }\n        }\n        \n        return {-1, -1};\n    }\n};",
+        "java": "class Solution {\n    public int[] findErrorNums(int[] nums) {\n        int n = nums.length;\n        int i = 0;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            if (nums[i] != nums[correctPos]) {\n                int temp = nums[i];\n                nums[i] = nums[correctPos];\n                nums[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find duplicate and missing\n        for (int j = 0; j < n; j++) {\n            if (nums[j] != j + 1) {\n                return new int[]{nums[j], j + 1};\n            }\n        }\n        \n        return new int[]{-1, -1};\n    }\n}",
+        "python": "class Solution:\n    def findErrorNums(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        i = 0\n        \n        # Cyclic sort\n        while i < n:\n            correct_pos = nums[i] - 1\n            if nums[i] != nums[correct_pos]:\n                nums[i], nums[correct_pos] = nums[correct_pos], nums[i]\n            else:\n                i += 1\n        \n        # Find duplicate and missing\n        for i in range(n):\n            if nums[i] != i + 1:\n                return [nums[i], i + 1]\n        \n        return [-1, -1]",
+        "javascript": "var findErrorNums = function(nums) {\n    const n = nums.length;\n    let i = 0;\n    \n    // Cyclic sort\n    while (i < n) {\n        const correctPos = nums[i] - 1;\n        if (nums[i] !== nums[correctPos]) {\n            [nums[i], nums[correctPos]] = [nums[correctPos], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find duplicate and missing\n    for (let j = 0; j < n; j++) {\n        if (nums[j] !== j + 1) {\n            return [nums[j], j + 1];\n        }\n    }\n    \n    return [-1, -1];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not using abs() when reading after marking negatives",
+    "Confusing order of return: [duplicate, missing] not [missing, duplicate]",
+    "Edge case: missing number is n (last number)"
+  ],
+  "hints": [
+    "This is same as Find Missing and Repeating",
+    "Use array indices as hash map",
+    "Cyclic sort: number k belongs at index k-1",
+    "After sorting, wrong position reveals both numbers"
+  ],
+  "followUp": [
+    "Can you solve without modifying array?",
+    "What if multiple numbers are duplicated?",
+    "Can you use XOR to solve this?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft"],
+  "tags": ["array", "hash-table", "math", "cyclic-sort"],
+  "relatedProblems": [
+    "Find Missing and Repeating",
+    "Missing Number",
+    "Find All Duplicates in an Array"
+  ]
+}

@@ -1,189 +1,125 @@
 {
-  "questionId": "694d4a3a98494915f3bc8eac",
-  "questionSlug": "find-all-duplicate-numbers",
-  "title": "Find All Duplicate Numbers",
+  "questionId": "442",
+  "questionSlug": "find-all-duplicates-in-an-array",
+  "title": "Find All Duplicates in an Array",
   "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/find-all-duplicates-in-an-array/",
     "videos": [
       {
-        "title": "Find All Duplicates in an Array - Leetcode 442",
-        "url": "https://www.youtube.com/watch?v=Y8x0iAVEIY0",
-        "channel": "NeetCode",
-        "duration": "7:28",
-        "language": "English"
-      },
-      {
-        "title": "Find Duplicates Using Cyclic Sort",
+        "title": "Find All Duplicates - In-Place Solution",
         "url": "https://www.youtube.com/watch?v=aMsSF1Il3IY",
-        "channel": "takeUforward",
-        "duration": "11:15",
+        "channel": "NeetCode",
+        "duration": "6:45",
         "language": "English"
       }
-    ],
-    "articles": [
-      {
-        "title": "Find All Duplicates in an Array",
-        "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/solution/",
-        "source": "LeetCode Editorial"
-      },
-      {
-        "title": "Finding Duplicates in O(n) time",
-        "url": "https://www.geeksforgeeks.org/find-duplicates-in-on-time-and-constant-extra-space/",
-        "source": "GeeksforGeeks"
-      }
-    ],
-    "practice": [
-      {
-        "title": "Find the Duplicate Number",
-        "url": "https://leetcode.com/problems/find-the-duplicate-number/",
-        "platform": "LeetCode"
-      },
-      {
-        "title": "Contains Duplicate",
-        "url": "https://leetcode.com/problems/contains-duplicate/",
-        "platform": "LeetCode"
-      }
-    ],
-    "discussions": []
+    ]
   },
-  "patternTriggers": "Use Cyclic Sort pattern when array has numbers in range [1,n], need to find duplicates in O(n) time and O(1) space. Key indicators: each number appears once or twice, in-place solution required, array size n with numbers from 1 to n.",
+  "patternTriggers": "Array [1,n], each appears once or twice, find duplicates = Marking or Cyclic Sort",
   "approaches": [
     {
-      "name": "Brute Force (Nested Loop)",
+      "name": "Hash Set",
       "order": 1,
-      "intuition": "Compare each element with every other element to find duplicates. If an element appears more than once, add it to result (making sure not to add same duplicate multiple times).",
-      "approach": "Use two nested loops to compare all pairs. Track which duplicates we've already found to avoid adding them multiple times.",
+      "intuition": "Track seen numbers, add duplicates to result",
+      "approach": "Use set to detect duplicates",
       "steps": [
-        "Create empty result list",
-        "Create set to track found duplicates",
-        "For each element at index i:",
-        "  For each element at index j where j > i:",
-        "    If nums[i] == nums[j]:",
-        "      If nums[i] not in found duplicates:",
-        "        Add nums[i] to result",
-        "        Add nums[i] to found set",
-        "Return result list"
-      ],
-      "complexity": {
-        "time": "O(n²)",
-        "space": "O(n)",
-        "timeExplanation": "Nested loops compare each element with all others: n*(n-1)/2 comparisons = O(n²)",
-        "spaceExplanation": "Set to track found duplicates can have up to n/2 elements in worst case"
-      },
-      "code": {
-        "cpp": "class Solution {\npublic:\n    vector<int> findDuplicates(vector<int>& nums) {\n        vector<int> result;\n        unordered_set<int> found;\n        int n = nums.size();\n        \n        // Compare each pair\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (nums[i] == nums[j]) {\n                    // Found duplicate, add if not already in result\n                    if (found.find(nums[i]) == found.end()) {\n                        result.push_back(nums[i]);\n                        found.insert(nums[i]);\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
-        "java": "class Solution {\n    public List<Integer> findDuplicates(int[] nums) {\n        List<Integer> result = new ArrayList<>();\n        Set<Integer> found = new HashSet<>();\n        int n = nums.length;\n        \n        // Compare each pair\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (nums[i] == nums[j]) {\n                    // Found duplicate, add if not already in result\n                    if (!found.contains(nums[i])) {\n                        result.add(nums[i]);\n                        found.add(nums[i]);\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
-        "python": "def find_duplicates(nums):\n    result = []\n    found = set()\n    n = len(nums)\n    \n    # Compare each pair\n    for i in range(n):\n        for j in range(i + 1, n):\n            if nums[i] == nums[j]:\n                # Found duplicate, add if not already in result\n                if nums[i] not in found:\n                    result.append(nums[i])\n                    found.add(nums[i])\n    \n    return result",
-        "javascript": "function findDuplicates(nums) {\n    const result = [];\n    const found = new Set();\n    const n = nums.length;\n    \n    // Compare each pair\n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            if (nums[i] === nums[j]) {\n                // Found duplicate, add if not already in result\n                if (!found.has(nums[i])) {\n                    result.push(nums[i]);\n                    found.add(nums[i]);\n                }\n            }\n        }\n    }\n    \n    return result;\n}"
-      }
-    },
-    {
-      "name": "Better (Hash Set/Frequency Map)",
-      "order": 2,
-      "intuition": "Use a hash set or frequency map to track which numbers we've seen. As we iterate through array, if we see a number that's already in our set, it's a duplicate. Add it to result.",
-      "approach": "Single pass through array using hash set to detect duplicates when we encounter them the second time.",
-      "steps": [
-        "Create empty hash set to track seen numbers",
-        "Create empty result list",
-        "For each number in array:",
-        "  If number already in set:",
-        "    Add to result (it's a duplicate)",
-        "  Else:",
-        "    Add number to set",
-        "Return result list"
+        "Create empty set",
+        "For each num:",
+        "  If num in set: add to result",
+        "  Else: add to set",
+        "Return result"
       ],
       "complexity": {
         "time": "O(n)",
         "space": "O(n)",
-        "timeExplanation": "Single pass through array with O(1) hash set operations",
-        "spaceExplanation": "Hash set stores up to n unique numbers in worst case (no duplicates)"
+        "timeExplanation": "Single pass with O(1) set operations",
+        "spaceExplanation": "Set stores up to n/2 elements"
       },
       "code": {
-        "cpp": "class Solution {\npublic:\n    vector<int> findDuplicates(vector<int>& nums) {\n        unordered_set<int> seen;\n        vector<int> result;\n        \n        // Track seen numbers\n        for (int num : nums) {\n            if (seen.find(num) != seen.end()) {\n                // Found duplicate\n                result.push_back(num);\n            } else {\n                // First occurrence\n                seen.insert(num);\n            }\n        }\n        \n        return result;\n    }\n};",
-        "java": "class Solution {\n    public List<Integer> findDuplicates(int[] nums) {\n        Set<Integer> seen = new HashSet<>();\n        List<Integer> result = new ArrayList<>();\n        \n        // Track seen numbers\n        for (int num : nums) {\n            if (seen.contains(num)) {\n                // Found duplicate\n                result.add(num);\n            } else {\n                // First occurrence\n                seen.add(num);\n            }\n        }\n        \n        return result;\n    }\n}",
-        "python": "def find_duplicates(nums):\n    seen = set()\n    result = []\n    \n    # Track seen numbers\n    for num in nums:\n        if num in seen:\n            # Found duplicate\n            result.append(num)\n        else:\n            # First occurrence\n            seen.add(num)\n    \n    return result",
-        "javascript": "function findDuplicates(nums) {\n    const seen = new Set();\n    const result = [];\n    \n    // Track seen numbers\n    for (const num of nums) {\n        if (seen.has(num)) {\n            // Found duplicate\n            result.push(num);\n        } else {\n            // First occurrence\n            seen.add(num);\n        }\n    }\n    \n    return result;\n}"
+        "cpp": "class Solution {\npublic:\n    vector<int> findDuplicates(vector<int>& nums) {\n        unordered_set<int> seen;\n        vector<int> result;\n        \n        for (int num : nums) {\n            if (seen.count(num)) {\n                result.push_back(num);\n            } else {\n                seen.insert(num);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDuplicates(int[] nums) {\n        Set<Integer> seen = new HashSet<>();\n        List<Integer> result = new ArrayList<>();\n        \n        for (int num : nums) {\n            if (seen.contains(num)) {\n                result.add(num);\n            } else {\n                seen.add(num);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findDuplicates(self, nums: List[int]) -> List[int]:\n        seen = set()\n        result = []\n        \n        for num in nums:\n            if num in seen:\n                result.append(num)\n            else:\n                seen.add(num)\n        \n        return result",
+        "javascript": "var findDuplicates = function(nums) {\n    const seen = new Set();\n    const result = [];\n    \n    for (const num of nums) {\n        if (seen.has(num)) {\n            result.push(num);\n        } else {\n            seen.add(num);\n        }\n    }\n    \n    return result;\n};"
       }
     },
     {
-      "name": "Optimal (Cyclic Sort Pattern)",
-      "order": 3,
-      "intuition": "Use cyclic sort to place each number at its correct index (number k at index k-1). After sorting, numbers that are not at their correct positions are duplicates. We can identify duplicates during the sorting process itself when we try to swap but find the number is already at target position.",
-      "approach": "Apply cyclic sort. When trying to place a number at its correct index, if that position already has the same number, it's a duplicate. After sorting, scan for positions where nums[i] != i+1.",
+      "name": "Mark as Negative - Optimal",
+      "order": 2,
+      "intuition": "Use indices as hash. When visiting num, mark nums[num-1] negative. If already negative, it's duplicate",
+      "approach": "Negate to mark first occurrence, detect duplicate on second",
       "steps": [
-        "Initialize i = 0",
-        "While i < n:",
-        "  Calculate correct index: correct_idx = nums[i] - 1",
-        "  If nums[i] at wrong position and target position has different number:",
-        "    Swap nums[i] with nums[correct_idx]",
+        "For each num in nums:",
+        "  index = abs(num) - 1",
+        "  If nums[index] < 0:",
+        "    num is duplicate, add to result",
         "  Else:",
-        "    Move to next position: i++",
-        "Create result list",
-        "Scan array again:",
-        "  If nums[i] != i + 1:",
-        "    nums[i] is a duplicate, add to result",
+        "    Mark nums[index] negative",
         "Return result"
       ],
       "complexity": {
         "time": "O(n)",
         "space": "O(1)",
-        "timeExplanation": "Cyclic sort takes O(n) as each number is swapped at most once, plus O(n) final scan = O(n)",
-        "spaceExplanation": "In-place sorting, only result array for output (not counted as extra space)"
+        "timeExplanation": "Single pass",
+        "spaceExplanation": "No extra space (output doesn't count)"
       },
       "code": {
-        "cpp": "class Solution {\npublic:\n    vector<int> findDuplicates(vector<int>& nums) {\n        int i = 0;\n        int n = nums.size();\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            if (nums[i] != nums[correctIndex]) {\n                swap(nums[i], nums[correctIndex]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find duplicates\n        vector<int> result;\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1) {\n                result.push_back(nums[i]);\n            }\n        }\n        \n        return result;\n    }\n};",
-        "java": "class Solution {\n    public List<Integer> findDuplicates(int[] nums) {\n        int i = 0;\n        int n = nums.length;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctIndex = nums[i] - 1;\n            \n            if (nums[i] != nums[correctIndex]) {\n                // Swap\n                int temp = nums[i];\n                nums[i] = nums[correctIndex];\n                nums[correctIndex] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find duplicates\n        List<Integer> result = new ArrayList<>();\n        for (int j = 0; j < n; j++) {\n            if (nums[j] != j + 1) {\n                result.add(nums[j]);\n            }\n        }\n        \n        return result;\n    }\n}",
-        "python": "def find_duplicates(nums):\n    i = 0\n    n = len(nums)\n    \n    # Cyclic sort\n    while i < n:\n        correct_index = nums[i] - 1\n        \n        if nums[i] != nums[correct_index]:\n            nums[i], nums[correct_index] = nums[correct_index], nums[i]\n        else:\n            i += 1\n    \n    # Find duplicates\n    result = []\n    for i in range(n):\n        if nums[i] != i + 1:\n            result.append(nums[i])\n    \n    return result",
-        "javascript": "function findDuplicates(nums) {\n    let i = 0;\n    const n = nums.length;\n    \n    // Cyclic sort\n    while (i < n) {\n        const correctIndex = nums[i] - 1;\n        \n        if (nums[i] !== nums[correctIndex]) {\n            [nums[i], nums[correctIndex]] = [nums[correctIndex], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find duplicates\n    const result = [];\n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== i + 1) {\n            result.push(nums[i]);\n        }\n    }\n    \n    return result;\n}"
+        "cpp": "class Solution {\npublic:\n    vector<int> findDuplicates(vector<int>& nums) {\n        vector<int> result;\n        \n        for (int i = 0; i < nums.size(); i++) {\n            int index = abs(nums[i]) - 1;\n            \n            // If already negative, this is a duplicate\n            if (nums[index] < 0) {\n                result.push_back(abs(nums[i]));\n            } else {\n                // Mark as seen by negating\n                nums[index] = -nums[index];\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDuplicates(int[] nums) {\n        List<Integer> result = new ArrayList<>();\n        \n        for (int i = 0; i < nums.length; i++) {\n            int index = Math.abs(nums[i]) - 1;\n            \n            // If already negative, this is a duplicate\n            if (nums[index] < 0) {\n                result.add(Math.abs(nums[i]));\n            } else {\n                // Mark as seen\n                nums[index] = -nums[index];\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findDuplicates(self, nums: List[int]) -> List[int]:\n        result = []\n        \n        for i in range(len(nums)):\n            index = abs(nums[i]) - 1\n            \n            # If already negative, this is a duplicate\n            if nums[index] < 0:\n                result.append(abs(nums[i]))\n            else:\n                # Mark as seen\n                nums[index] = -nums[index]\n        \n        return result",
+        "javascript": "var findDuplicates = function(nums) {\n    const result = [];\n    \n    for (let i = 0; i < nums.length; i++) {\n        const index = Math.abs(nums[i]) - 1;\n        \n        // If already negative, this is a duplicate\n        if (nums[index] < 0) {\n            result.push(Math.abs(nums[i]));\n        } else {\n            // Mark as seen\n            nums[index] = -nums[index];\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Cyclic Sort",
+      "order": 3,
+      "intuition": "Place each number at correct position. If position already has correct number, it's duplicate",
+      "approach": "Cyclic sort with duplicate detection",
+      "steps": [
+        "While i < n:",
+        "  correctPos = nums[i] - 1",
+        "  If nums[i] != nums[correctPos]:",
+        "    Swap to correct position",
+        "  Else if nums[i] != i + 1:",
+        "    Found duplicate, add to result and skip",
+        "  Else:",
+        "    i++",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element processed at most twice",
+        "spaceExplanation": "In-place (output doesn't count)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findDuplicates(vector<int>& nums) {\n        vector<int> result;\n        int n = nums.size();\n        int i = 0;\n        \n        // Cyclic sort with duplicate detection\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            \n            if (nums[i] != nums[correctPos]) {\n                swap(nums[i], nums[correctPos]);\n            } else if (nums[i] != i + 1) {\n                // Duplicate found\n                result.push_back(nums[i]);\n                i++;\n            } else {\n                i++;\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDuplicates(int[] nums) {\n        List<Integer> result = new ArrayList<>();\n        int n = nums.length;\n        int i = 0;\n        \n        // Cyclic sort with duplicate detection\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            \n            if (nums[i] != nums[correctPos]) {\n                int temp = nums[i];\n                nums[i] = nums[correctPos];\n                nums[correctPos] = temp;\n            } else if (nums[i] != i + 1) {\n                // Duplicate found\n                result.add(nums[i]);\n                i++;\n            } else {\n                i++;\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findDuplicates(self, nums: List[int]) -> List[int]:\n        result = []\n        n = len(nums)\n        i = 0\n        \n        # Cyclic sort with duplicate detection\n        while i < n:\n            correct_pos = nums[i] - 1\n            \n            if nums[i] != nums[correct_pos]:\n                nums[i], nums[correct_pos] = nums[correct_pos], nums[i]\n            elif nums[i] != i + 1:\n                # Duplicate found\n                result.append(nums[i])\n                i += 1\n            else:\n                i += 1\n        \n        return result",
+        "javascript": "var findDuplicates = function(nums) {\n    const result = [];\n    const n = nums.length;\n    let i = 0;\n    \n    // Cyclic sort with duplicate detection\n    while (i < n) {\n        const correctPos = nums[i] - 1;\n        \n        if (nums[i] !== nums[correctPos]) {\n            [nums[i], nums[correctPos]] = [nums[correctPos], nums[i]];\n        } else if (nums[i] !== i + 1) {\n            // Duplicate found\n            result.push(nums[i]);\n            i++;\n        } else {\n            i++;\n        }\n    }\n    \n    return result;\n};"
       }
     }
   ],
   "commonMistakes": [
-    "Not handling the case where number is already at correct position in cyclic sort",
-    "Forgetting that numbers are 1-indexed (range [1,n]) not 0-indexed",
-    "Adding same duplicate multiple times to result in brute force",
-    "Modifying array when problem requires returning original state",
-    "Off-by-one error in final scan: checking nums[i] != i instead of nums[i] != i+1",
-    "Infinite loop when nums[i] == nums[correct_idx] but not incrementing i"
+    "Using nums[i] instead of abs(nums[i]) after marking negatives",
+    "Not handling case where duplicate is already at correct position",
+    "In cyclic sort, infinite loop if not incrementing on duplicate detection"
   ],
   "hints": [
-    "If every number appears at most twice, how many duplicates can there be?",
-    "Can you use the fact that numbers are in range [1,n] to place them at specific indices?",
-    "After sorting with cyclic sort, where should number k be located?",
-    "If a number is not at its expected position after sorting, what does it mean?",
-    "Can you solve this without extra space by modifying the array?",
-    "Think about marking visited numbers by making them negative"
+    "Can you use array indices as a hash map?",
+    "Marking approach: use sign to indicate presence",
+    "When you see a number k, mark index k-1",
+    "If index k-1 is already marked, k is duplicate"
   ],
   "followUp": [
-    "What if numbers can appear more than twice?",
-    "How would you find count of each duplicate, not just which numbers are duplicated?",
-    "Can you solve without modifying the input array?",
-    "What if array has numbers in range [0,n-1] instead of [1,n]?",
-    "How would you handle negative numbers in the array?",
-    "Can you identify the first duplicate encountered in a single pass?"
+    "What if array can't be modified?",
+    "What if numbers appear 1, 2, or 3 times?",
+    "Can you return duplicates in ascending order without extra sorting?"
   ],
-  "companies": [
-    "Amazon",
-    "Microsoft",
-    "Google",
-    "Facebook",
-    "Apple",
-    "Adobe",
-    "Bloomberg"
-  ],
-  "tags": [
-    "Array",
-    "Cyclic Sort",
-    "Hash Table",
-    "In-Place"
-  ],
+  "companies": ["Amazon", "Microsoft", "Facebook", "Bloomberg"],
+  "tags": ["array", "hash-table", "cyclic-sort"],
   "relatedProblems": [
-    "Find the Duplicate Number",
     "Find All Numbers Disappeared in an Array",
-    "Contains Duplicate",
-    "Set Mismatch",
-    "Missing Number",
-    "First Missing Positive"
+    "Find the Duplicate Number",
+    "Set Mismatch"
   ]
 }

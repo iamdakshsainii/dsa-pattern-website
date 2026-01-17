@@ -1,0 +1,142 @@
+{
+  "questionId": "PATTERN",
+  "questionSlug": "cyclic-sort",
+  "title": "Cyclic Sort Implementation",
+  "difficulty": "Easy",
+  "resources": {
+    "educative": "https://www.educative.io/courses/grokking-the-coding-interview/B8qXVqVwDKY",
+    "videos": [
+      {
+        "title": "Cyclic Sort Pattern Explained",
+        "url": "https://www.youtube.com/watch?v=JfinxytTYFQ",
+        "channel": "Coding Decoded",
+        "duration": "10:15",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Array of numbers in range [1, n] or [0, n-1], need in-place sort = Cyclic Sort",
+  "approaches": [
+    {
+      "name": "Standard Cyclic Sort [1, n]",
+      "order": 1,
+      "intuition": "Place each number at its correct position: number k goes to index k-1",
+      "approach": "Keep swapping until current element is at correct position",
+      "steps": [
+        "Start from index i = 0",
+        "While i < n:",
+        "  Calculate correct position: correctPos = arr[i] - 1",
+        "  If arr[i] is at wrong position (arr[i] != arr[correctPos]):",
+        "    Swap arr[i] with arr[correctPos]",
+        "  Else:",
+        "    Move to next: i++",
+        "Array is now sorted"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element swapped at most once to its correct position",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void cyclicSort(vector<int>& arr) {\n        int n = arr.size();\n        int i = 0;\n        \n        while (i < n) {\n            // For numbers [1, n], correct position is arr[i] - 1\n            int correctPos = arr[i] - 1;\n            \n            // If number is not at correct position, swap\n            if (arr[i] != arr[correctPos]) {\n                swap(arr[i], arr[correctPos]);\n            } else {\n                // Number is at correct position, move to next\n                i++;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public void cyclicSort(int[] arr) {\n        int n = arr.length;\n        int i = 0;\n        \n        while (i < n) {\n            // For numbers [1, n], correct position is arr[i] - 1\n            int correctPos = arr[i] - 1;\n            \n            // If number is not at correct position, swap\n            if (arr[i] != arr[correctPos]) {\n                int temp = arr[i];\n                arr[i] = arr[correctPos];\n                arr[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n    }\n}",
+        "python": "class Solution:\n    def cyclicSort(self, arr):\n        n = len(arr)\n        i = 0\n        \n        while i < n:\n            # For numbers [1, n], correct position is arr[i] - 1\n            correct_pos = arr[i] - 1\n            \n            # If number is not at correct position, swap\n            if arr[i] != arr[correct_pos]:\n                arr[i], arr[correct_pos] = arr[correct_pos], arr[i]\n            else:\n                i += 1",
+        "javascript": "function cyclicSort(arr) {\n    const n = arr.length;\n    let i = 0;\n    \n    while (i < n) {\n        // For numbers [1, n], correct position is arr[i] - 1\n        const correctPos = arr[i] - 1;\n        \n        // If number is not at correct position, swap\n        if (arr[i] !== arr[correctPos]) {\n            [arr[i], arr[correctPos]] = [arr[correctPos], arr[i]];\n        } else {\n            i++;\n        }\n    }\n}"
+      }
+    },
+    {
+      "name": "Cyclic Sort [0, n-1]",
+      "order": 2,
+      "intuition": "For 0-indexed numbers, number k goes to index k",
+      "approach": "Similar to above but correctPos = arr[i]",
+      "steps": [
+        "Start from index i = 0",
+        "While i < n:",
+        "  Calculate correct position: correctPos = arr[i]",
+        "  If arr[i] != arr[correctPos]:",
+        "    Swap arr[i] with arr[correctPos]",
+        "  Else:",
+        "    i++",
+        "Array is now sorted"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element moved once",
+        "spaceExplanation": "In-place"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void cyclicSort(vector<int>& arr) {\n        int n = arr.size();\n        int i = 0;\n        \n        while (i < n) {\n            // For numbers [0, n-1], correct position is arr[i]\n            int correctPos = arr[i];\n            \n            // Swap if not at correct position\n            if (arr[i] != arr[correctPos]) {\n                swap(arr[i], arr[correctPos]);\n            } else {\n                i++;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public void cyclicSort(int[] arr) {\n        int n = arr.length;\n        int i = 0;\n        \n        while (i < n) {\n            int correctPos = arr[i];\n            \n            if (arr[i] != arr[correctPos]) {\n                int temp = arr[i];\n                arr[i] = arr[correctPos];\n                arr[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n    }\n}",
+        "python": "class Solution:\n    def cyclicSort(self, arr):\n        n = len(arr)\n        i = 0\n        \n        while i < n:\n            correct_pos = arr[i]\n            \n            if arr[i] != arr[correct_pos]:\n                arr[i], arr[correct_pos] = arr[correct_pos], arr[i]\n            else:\n                i += 1",
+        "javascript": "function cyclicSort(arr) {\n    const n = arr.length;\n    let i = 0;\n    \n    while (i < n) {\n        const correctPos = arr[i];\n        \n        if (arr[i] !== arr[correctPos]) {\n            [arr[i], arr[correctPos]] = [arr[correctPos], arr[i]];\n        } else {\n            i++;\n        }\n    }\n}"
+      }
+    },
+    {
+      "name": "Cyclic Sort with Bounds Check",
+      "order": 3,
+      "intuition": "Handle cases where numbers might be out of range or duplicates exist",
+      "approach": "Add bounds checking before swapping",
+      "steps": [
+        "While i < n:",
+        "  correctPos = arr[i] - 1 (or arr[i] for 0-indexed)",
+        "  Check if arr[i] is in valid range [1, n]",
+        "  Check if arr[i] != arr[correctPos]",
+        "  If both true: swap",
+        "  Else: i++",
+        "This version handles edge cases safely"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each valid element moved once",
+        "spaceExplanation": "In-place"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void cyclicSort(vector<int>& arr) {\n        int n = arr.size();\n        int i = 0;\n        \n        while (i < n) {\n            int correctPos = arr[i] - 1;\n            \n            // Bounds check + duplicate check\n            if (arr[i] >= 1 && arr[i] <= n && arr[i] != arr[correctPos]) {\n                swap(arr[i], arr[correctPos]);\n            } else {\n                i++;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public void cyclicSort(int[] arr) {\n        int n = arr.length;\n        int i = 0;\n        \n        while (i < n) {\n            int correctPos = arr[i] - 1;\n            \n            // Bounds check + duplicate check\n            if (arr[i] >= 1 && arr[i] <= n && arr[i] != arr[correctPos]) {\n                int temp = arr[i];\n                arr[i] = arr[correctPos];\n                arr[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n    }\n}",
+        "python": "class Solution:\n    def cyclicSort(self, arr):\n        n = len(arr)\n        i = 0\n        \n        while i < n:\n            correct_pos = arr[i] - 1\n            \n            # Bounds check + duplicate check\n            if 1 <= arr[i] <= n and arr[i] != arr[correct_pos]:\n                arr[i], arr[correct_pos] = arr[correct_pos], arr[i]\n            else:\n                i += 1",
+        "javascript": "function cyclicSort(arr) {\n    const n = arr.length;\n    let i = 0;\n    \n    while (i < n) {\n        const correctPos = arr[i] - 1;\n        \n        // Bounds check + duplicate check\n        if (arr[i] >= 1 && arr[i] <= n && arr[i] !== arr[correctPos]) {\n            [arr[i], arr[correctPos]] = [arr[correctPos], arr[i]];\n        } else {\n            i++;\n        }\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using arr[i] == i as swap condition instead of arr[i] != arr[correctPos] - causes infinite loop with duplicates",
+    "Not checking bounds when numbers can be out of range",
+    "Incrementing i inside the swap - should only increment when element is at correct position",
+    "Confusing 0-indexed vs 1-indexed number ranges"
+  ],
+  "hints": [
+    "Key insight: if number k should be at position k-1 (or k for 0-indexed), swap until it gets there",
+    "Don't increment i while swapping - only increment when current position is correct",
+    "Time is O(n) because each number is swapped at most once",
+    "Works because: when we swap arr[i] to its correct position, it stays there"
+  ],
+  "followUp": [
+    "How to detect if array has duplicates using cyclic sort?",
+    "How to find missing numbers using cyclic sort?",
+    "How to handle negative numbers?",
+    "Can we use cyclic sort for finding all duplicates?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft"],
+  "tags": ["sorting", "array", "cyclic-sort", "in-place"],
+  "relatedProblems": [
+    "Missing Number",
+    "Find All Duplicates in an Array",
+    "Find All Numbers Disappeared in Array",
+    "Set Mismatch",
+    "First Missing Positive"
+  ],
+  "keyPattern": {
+    "name": "Cyclic Sort",
+    "description": "Used when array contains numbers in a given range [1,n] or [0,n-1] and we need to sort in-place or find missing/duplicate numbers",
+    "whenToUse": [
+      "Numbers in specific range [1, n] or [0, n-1]",
+      "Need O(n) time and O(1) space",
+      "Finding missing/duplicate numbers",
+      "In-place sorting required"
+    ],
+    "template": "while (i < n) {\n  int correctPos = arr[i] - 1; // or arr[i] for 0-indexed\n  if (arr[i] != arr[correctPos]) {\n    swap(arr[i], arr[correctPos]);\n  } else {\n    i++;\n  }\n}"
+  }
+}

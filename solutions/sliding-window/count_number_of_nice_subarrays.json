@@ -1,0 +1,135 @@
+{
+  "questionId": "1248",
+  "questionSlug": "count-number-of-nice-subarrays",
+  "title": "Count Number of Nice Subarrays",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/count-number-of-nice-subarrays/",
+    "videos": [
+      {
+        "title": "Count Number of Nice Subarrays - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=atUJS7ArOY0",
+        "channel": "takeUforward",
+        "duration": "14:20",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Count subarrays with exactly K odd numbers = Transform to 'count subarrays with sum K' by converting odd→1, even→0. Use atMost(K) - atMost(K-1).",
+  "approaches": [
+    {
+      "name": "Brute Force (All Subarrays)",
+      "order": 1,
+      "intuition": "Try all subarrays, count odd numbers in each, check if count equals K.",
+      "approach": "Two nested loops to generate subarrays, count odds, increment result when count = K.",
+      "steps": [
+        "Initialize count = 0",
+        "For i from 0 to n-1:",
+        "  oddCount = 0",
+        "  For j from i to n-1:",
+        "    If nums[j] is odd:",
+        "      oddCount++",
+        "    If oddCount == K:",
+        "      count++",
+        "    If oddCount > K:",
+        "      Break",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops try all subarrays",
+        "spaceExplanation": "Only counter variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numberOfSubarrays(vector<int>& nums, int k) {\n        int n = nums.size();\n        int count = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int oddCount = 0;\n            for (int j = i; j < n; j++) {\n                if (nums[j] % 2 == 1) {\n                    oddCount++;\n                }\n                if (oddCount == k) {\n                    count++;\n                }\n                if (oddCount > k) {\n                    break;\n                }\n            }\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int numberOfSubarrays(int[] nums, int k) {\n        int n = nums.length;\n        int count = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int oddCount = 0;\n            for (int j = i; j < n; j++) {\n                if (nums[j] % 2 == 1) {\n                    oddCount++;\n                }\n                if (oddCount == k) {\n                    count++;\n                }\n                if (oddCount > k) {\n                    break;\n                }\n            }\n        }\n        \n        return count;\n    }\n}",
+        "python": "class Solution:\n    def numberOfSubarrays(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        count = 0\n        \n        for i in range(n):\n            odd_count = 0\n            for j in range(i, n):\n                if nums[j] % 2 == 1:\n                    odd_count += 1\n                if odd_count == k:\n                    count += 1\n                if odd_count > k:\n                    break\n        \n        return count",
+        "javascript": "var numberOfSubarrays = function(nums, k) {\n    const n = nums.length;\n    let count = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let oddCount = 0;\n        for (let j = i; j < n; j++) {\n            if (nums[j] % 2 === 1) {\n                oddCount++;\n            }\n            if (oddCount === k) {\n                count++;\n            }\n            if (oddCount > k) {\n                break;\n            }\n        }\n    }\n    \n    return count;\n};"
+      }
+    },
+    {
+      "name": "HashMap (Prefix Count)",
+      "order": 2,
+      "intuition": "Convert to prefix sum problem: odd→1, even→0. Use hashmap to count prefix sums. Find (currentOdds - K).",
+      "approach": "Track count of odd numbers as prefix. Store frequencies in map. Check for (prefixOdds - K).",
+      "steps": [
+        "Initialize map with {0: 1}, oddCount = 0, result = 0",
+        "For each num in nums:",
+        "  If num is odd:",
+        "    oddCount++",
+        "  If (oddCount - K) exists in map:",
+        "    result += map[oddCount - K]",
+        "  map[oddCount]++",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "HashMap stores odd counts"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numberOfSubarrays(vector<int>& nums, int k) {\n        unordered_map<int, int> prefixCount;\n        prefixCount[0] = 1;\n        int oddCount = 0;\n        int result = 0;\n        \n        for (int num : nums) {\n            if (num % 2 == 1) {\n                oddCount++;\n            }\n            if (prefixCount.find(oddCount - k) != prefixCount.end()) {\n                result += prefixCount[oddCount - k];\n            }\n            prefixCount[oddCount]++;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int numberOfSubarrays(int[] nums, int k) {\n        Map<Integer, Integer> prefixCount = new HashMap<>();\n        prefixCount.put(0, 1);\n        int oddCount = 0;\n        int result = 0;\n        \n        for (int num : nums) {\n            if (num % 2 == 1) {\n                oddCount++;\n            }\n            result += prefixCount.getOrDefault(oddCount - k, 0);\n            prefixCount.put(oddCount, prefixCount.getOrDefault(oddCount, 0) + 1);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def numberOfSubarrays(self, nums: List[int], k: int) -> int:\n        prefix_count = {0: 1}\n        odd_count = 0\n        result = 0\n        \n        for num in nums:\n            if num % 2 == 1:\n                odd_count += 1\n            if odd_count - k in prefix_count:\n                result += prefix_count[odd_count - k]\n            prefix_count[odd_count] = prefix_count.get(odd_count, 0) + 1\n        \n        return result",
+        "javascript": "var numberOfSubarrays = function(nums, k) {\n    const prefixCount = new Map([[0, 1]]);\n    let oddCount = 0;\n    let result = 0;\n    \n    for (const num of nums) {\n        if (num % 2 === 1) {\n            oddCount++;\n        }\n        result += prefixCount.get(oddCount - k) || 0;\n        prefixCount.set(oddCount, (prefixCount.get(oddCount) || 0) + 1);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Sliding Window - Optimal (At Most Technique)",
+      "order": 3,
+      "intuition": "Count(exactly K odds) = Count(at most K) - Count(at most K-1). Use sliding window for 'at most'.",
+      "approach": "Helper function counts subarrays with ≤ target odds. Return helper(K) - helper(K-1).",
+      "steps": [
+        "Define atMost(target):",
+        "  left = 0, oddCount = 0, count = 0",
+        "  For right from 0 to n-1:",
+        "    If nums[right] is odd:",
+        "      oddCount++",
+        "    While oddCount > target:",
+        "      If nums[left] is odd:",
+        "        oddCount--",
+        "      left++",
+        "    count += (right - left + 1)",
+        "  Return count",
+        "Return atMost(K) - atMost(K - 1)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes, each element visited at most twice",
+        "spaceExplanation": "Only pointer and counter variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int atMost(vector<int>& nums, int k) {\n        int left = 0, oddCount = 0, count = 0;\n        \n        for (int right = 0; right < nums.size(); right++) {\n            if (nums[right] % 2 == 1) {\n                oddCount++;\n            }\n            while (oddCount > k) {\n                if (nums[left] % 2 == 1) {\n                    oddCount--;\n                }\n                left++;\n            }\n            count += (right - left + 1);\n        }\n        return count;\n    }\n    \n    int numberOfSubarrays(vector<int>& nums, int k) {\n        return atMost(nums, k) - atMost(nums, k - 1);\n    }\n};",
+        "java": "class Solution {\n    private int atMost(int[] nums, int k) {\n        int left = 0, oddCount = 0, count = 0;\n        \n        for (int right = 0; right < nums.length; right++) {\n            if (nums[right] % 2 == 1) {\n                oddCount++;\n            }\n            while (oddCount > k) {\n                if (nums[left] % 2 == 1) {\n                    oddCount--;\n                }\n                left++;\n            }\n            count += (right - left + 1);\n        }\n        return count;\n    }\n    \n    public int numberOfSubarrays(int[] nums, int k) {\n        return atMost(nums, k) - atMost(nums, k - 1);\n    }\n}",
+        "python": "class Solution:\n    def atMost(self, nums: List[int], k: int) -> int:\n        left = odd_count = count = 0\n        \n        for right in range(len(nums)):\n            if nums[right] % 2 == 1:\n                odd_count += 1\n            while odd_count > k:\n                if nums[left] % 2 == 1:\n                    odd_count -= 1\n                left += 1\n            count += (right - left + 1)\n        \n        return count\n    \n    def numberOfSubarrays(self, nums: List[int], k: int) -> int:\n        return self.atMost(nums, k) - self.atMost(nums, k - 1)",
+        "javascript": "var numberOfSubarrays = function(nums, k) {\n    const atMost = (target) => {\n        let left = 0, oddCount = 0, count = 0;\n        \n        for (let right = 0; right < nums.length; right++) {\n            if (nums[right] % 2 === 1) {\n                oddCount++;\n            }\n            while (oddCount > target) {\n                if (nums[left] % 2 === 1) {\n                    oddCount--;\n                }\n                left++;\n            }\n            count += (right - left + 1);\n        }\n        return count;\n    };\n    \n    return atMost(k) - atMost(k - 1);\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to check nums[left] when shrinking window",
+    "Not using the atMost(K) - atMost(K-1) technique",
+    "Confusing odd count with array values",
+    "Not handling K = 0 edge case"
+  ],
+  "hints": [
+    "Transform problem: odd→1, even→0, then find subarrays with sum K",
+    "Use atMost technique: exactly K = atMost(K) - atMost(K-1)",
+    "In sliding window, count all subarrays ending at right"
+  ],
+  "followUp": [
+    "What if we need exactly K even numbers?",
+    "Find longest subarray with K odd numbers?",
+    "Count subarrays with at least K odd numbers?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft"],
+  "tags": ["array", "sliding-window", "hash-table", "prefix-sum"],
+  "relatedProblems": [
+    "Binary Subarrays with Sum",
+    "Subarray Sum Equals K",
+    "Subarrays with K Different Integers"
+  ]
+}

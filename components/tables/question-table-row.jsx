@@ -188,7 +188,7 @@ export default function QuestionTableRow({
                 )}
               </Button>
 
-              <Link href={`/questions/${question._id}`}>
+              <Link href={`/patterns/${patternSlug}/questions/${question.slug}`}>
                 <Button size="sm" className="h-8 px-3">
                   Solve
                 </Button>

@@ -1,0 +1,114 @@
+{
+  "questionId": "GFG-MaxSumK",
+  "questionSlug": "maximum-sum-subarray-of-size-k",
+  "title": "Maximum Sum Subarray of Size K",
+  "difficulty": "Easy",
+  "resources": {
+    "gfg": "https://practice.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1",
+    "videos": [
+      {
+        "title": "Maximum Sum Subarray - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=KtpqeN0Goro",
+        "channel": "Striver",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Fixed Size Sliding Window Pattern",
+        "url": "https://www.youtube.com/watch?v=MK-NZ4hN7rs",
+        "channel": "NeetCode",
+        "duration": "12:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sliding Window Technique",
+        "url": "https://www.geeksforgeeks.org/window-sliding-technique/",
+        "source": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Fixed size K + maximum/minimum = Fixed Sliding Window. Slide window of size K, track max/min sum.",
+  "approaches": [
+    {
+      "name": "Brute Force (All Subarrays)",
+      "order": 1,
+      "intuition": "Generate all subarrays of size K, calculate their sum, return maximum.",
+      "approach": "For each starting position i from 0 to n-k, calculate sum of K elements starting at i, track maximum sum.",
+      "steps": [
+        "Initialize maxSum = INT_MIN",
+        "For i from 0 to n-k:",
+        "  currentSum = 0",
+        "  For j from i to i+k-1:",
+        "    currentSum += arr[j]",
+        "  maxSum = max(maxSum, currentSum)",
+        "Return maxSum"
+      ],
+      "complexity": {
+        "time": "O(n*k)",
+        "space": "O(1)",
+        "timeExplanation": "Outer loop n-k iterations * inner loop k iterations",
+        "spaceExplanation": "Only using variables for sum tracking"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    long maximumSumSubarray(int K, vector<int> &Arr, int N) {\n        long maxSum = LONG_MIN;\n        \n        for (int i = 0; i <= N - K; i++) {\n            long currentSum = 0;\n            for (int j = i; j < i + K; j++) {\n                currentSum += Arr[j];\n            }\n            maxSum = max(maxSum, currentSum);\n        }\n        \n        return maxSum;\n    }\n};",
+        "java": "class Solution {\n    static long maximumSumSubarray(int K, ArrayList<Integer> Arr, int N) {\n        long maxSum = Long.MIN_VALUE;\n        \n        for (int i = 0; i <= N - K; i++) {\n            long currentSum = 0;\n            for (int j = i; j < i + K; j++) {\n                currentSum += Arr.get(j);\n            }\n            maxSum = Math.max(maxSum, currentSum);\n        }\n        \n        return maxSum;\n    }\n}",
+        "python": "def maximumSumSubarray(K, Arr, N):\n    max_sum = float('-inf')\n    \n    for i in range(N - K + 1):\n        current_sum = 0\n        for j in range(i, i + K):\n            current_sum += Arr[j]\n        max_sum = max(max_sum, current_sum)\n    \n    return max_sum",
+        "javascript": "function maximumSumSubarray(K, Arr, N) {\n    let maxSum = -Infinity;\n    \n    for (let i = 0; i <= N - K; i++) {\n        let currentSum = 0;\n        for (let j = i; j < i + K; j++) {\n            currentSum += Arr[j];\n        }\n        maxSum = Math.max(maxSum, currentSum);\n    }\n    \n    return maxSum;\n}"
+      }
+    },
+    {
+      "name": "Sliding Window - Optimal",
+      "order": 2,
+      "intuition": "Instead of recalculating sum for each window, slide window by removing leftmost element and adding rightmost element.",
+      "approach": "Calculate sum of first K elements. Then slide window: subtract arr[i-1], add arr[i+k-1], track maximum.",
+      "steps": [
+        "Calculate sum of first K elements (windowSum)",
+        "maxSum = windowSum",
+        "For i from K to N-1:",
+        "  windowSum = windowSum - arr[i-K] + arr[i]",
+        "  maxSum = max(maxSum, windowSum)",
+        "Return maxSum"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array after initial window calculation",
+        "spaceExplanation": "Only using variables for sum tracking"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    long maximumSumSubarray(int K, vector<int> &Arr, int N) {\n        // Calculate sum of first window\n        long windowSum = 0;\n        for (int i = 0; i < K; i++) {\n            windowSum += Arr[i];\n        }\n        \n        long maxSum = windowSum;\n        \n        // Slide the window\n        for (int i = K; i < N; i++) {\n            windowSum = windowSum - Arr[i - K] + Arr[i];\n            maxSum = max(maxSum, windowSum);\n        }\n        \n        return maxSum;\n    }\n};",
+        "java": "class Solution {\n    static long maximumSumSubarray(int K, ArrayList<Integer> Arr, int N) {\n        // Calculate sum of first window\n        long windowSum = 0;\n        for (int i = 0; i < K; i++) {\n            windowSum += Arr.get(i);\n        }\n        \n        long maxSum = windowSum;\n        \n        // Slide the window\n        for (int i = K; i < N; i++) {\n            windowSum = windowSum - Arr.get(i - K) + Arr.get(i);\n            maxSum = Math.max(maxSum, windowSum);\n        }\n        \n        return maxSum;\n    }\n}",
+        "python": "def maximumSumSubarray(K, Arr, N):\n    # Calculate sum of first window\n    window_sum = sum(Arr[:K])\n    max_sum = window_sum\n    \n    # Slide the window\n    for i in range(K, N):\n        window_sum = window_sum - Arr[i - K] + Arr[i]\n        max_sum = max(max_sum, window_sum)\n    \n    return max_sum",
+        "javascript": "function maximumSumSubarray(K, Arr, N) {\n    // Calculate sum of first window\n    let windowSum = 0;\n    for (let i = 0; i < K; i++) {\n        windowSum += Arr[i];\n    }\n    \n    let maxSum = windowSum;\n    \n    // Slide the window\n    for (let i = K; i < N; i++) {\n        windowSum = windowSum - Arr[i - K] + Arr[i];\n        maxSum = Math.max(maxSum, windowSum);\n    }\n    \n    return maxSum;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to initialize maxSum with first window sum",
+    "Off-by-one errors in loop boundaries",
+    "Not handling K > N case",
+    "Integer overflow for large sums (use long)",
+    "Recalculating entire window sum instead of sliding"
+  ],
+  "hints": [
+    "This is a FIXED size sliding window problem",
+    "Calculate first window, then slide by removing left and adding right",
+    "Only need to track current window sum and maximum sum",
+    "Time complexity should be O(n), not O(n*k)"
+  ],
+  "followUp": [
+    "What if we need minimum sum instead?",
+    "Find all subarrays with sum equal to target?",
+    "What if K can vary and we need to find best K?",
+    "Handle negative numbers?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Adobe"],
+  "tags": ["array", "sliding-window", "fixed-window"],
+  "relatedProblems": [
+    "Maximum Average Subarray I",
+    "Minimum Size Subarray Sum",
+    "Longest Substring with K Distinct Characters"
+  ]
+}

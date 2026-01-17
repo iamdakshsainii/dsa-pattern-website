@@ -19,7 +19,11 @@ import {
   Target,
   Brain,
   BookOpen,
-  ArrowLeft
+  ArrowLeft,
+  AlertTriangle,
+  HelpCircle,
+  Link2,
+  TrendingUp
 } from "lucide-react"
 import SolutionTabs from "@/components/solution-tabs"
 import NotesSection from "@/components/notes-section"
@@ -201,7 +205,157 @@ export default function QuestionDetailClient({
           )}
         </div>
 
-        {question.complexity && (
+        {/* HINTS SECTION - NEW */}
+        {question.hints && question.hints.length > 0 && (
+          <Card className="group p-6 border-2 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <HintIcon className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-2xl mb-1 flex items-center gap-2">
+                  💡 Hints to Solve
+                  <Badge variant="secondary" className="text-xs">
+                    {question.hints.length} hint{question.hints.length > 1 ? 's' : ''}
+                  </Badge>
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Progressive hints to guide you toward the solution
+                </p>
+              </div>
+            </div>
+            <div className="space-y-3 pl-1">
+              {question.hints.map((hint, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3 p-4 rounded-lg bg-white/60 dark:bg-slate-900/60 border border-blue-200 dark:border-blue-800 hover:shadow-md transition-all"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                    {index + 1}
+                  </div>
+                  <p className="flex-1 text-gray-700 dark:text-gray-300 leading-relaxed pt-0.5">
+                    {hint}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* COMMON MISTAKES SECTION - NEW */}
+        {question.commonMistakes && question.commonMistakes.length > 0 && (
+          <Card className="group p-6 border-2 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-red-950/20 dark:via-orange-950/20 dark:to-yellow-950/20 border-red-200 dark:border-red-800 shadow-lg hover:shadow-2xl hover:shadow-red-500/20 transition-all duration-300">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <AlertTriangle className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-2xl mb-1 flex items-center gap-2">
+                  ⚠️ Common Mistakes to Avoid
+                  <Badge variant="secondary" className="text-xs">
+                    {question.commonMistakes.length} mistake{question.commonMistakes.length > 1 ? 's' : ''}
+                  </Badge>
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Learn from these common pitfalls
+                </p>
+              </div>
+            </div>
+            <div className="space-y-3 pl-1">
+              {question.commonMistakes.map((mistake, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3 p-4 rounded-lg bg-white/60 dark:bg-slate-900/60 border border-red-200 dark:border-red-800 hover:shadow-md transition-all"
+                >
+                  <div className="flex-shrink-0">
+                    <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
+                  </div>
+                  <p className="flex-1 text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {mistake}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* FOLLOW-UP QUESTIONS SECTION - NEW */}
+        {question.followUp && question.followUp.length > 0 && (
+          <Card className="group p-6 border-2 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/20 dark:via-emerald-950/20 dark:to-teal-950/20 border-green-200 dark:border-green-800 shadow-lg hover:shadow-2xl hover:shadow-green-500/20 transition-all duration-300">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <HelpCircle className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-2xl mb-1 flex items-center gap-2">
+                  🤔 Follow-Up Questions
+                  <Badge variant="secondary" className="text-xs">
+                    {question.followUp.length} question{question.followUp.length > 1 ? 's' : ''}
+                  </Badge>
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Challenge yourself with these variations and extensions
+                </p>
+              </div>
+            </div>
+            <div className="space-y-3 pl-1">
+              {question.followUp.map((followUpQuestion, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3 p-4 rounded-lg bg-white/60 dark:bg-slate-900/60 border border-green-200 dark:border-green-800 hover:shadow-md transition-all"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                    {index + 1}
+                  </div>
+                  <p className="flex-1 text-gray-700 dark:text-gray-300 leading-relaxed pt-0.5">
+                    {followUpQuestion}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* RELATED PROBLEMS SECTION - NEW */}
+        {question.relatedProblems && question.relatedProblems.length > 0 && (
+          <Card className="group p-6 border-2 bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 dark:from-purple-950/20 dark:via-pink-950/20 dark:to-rose-950/20 border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <Link2 className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-2xl mb-1 flex items-center gap-2">
+                  🔗 Related Problems
+                  <Badge variant="secondary" className="text-xs">
+                    {question.relatedProblems.length} problem{question.relatedProblems.length > 1 ? 's' : ''}
+                  </Badge>
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Practice similar problems to strengthen your understanding
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-1">
+              {question.relatedProblems.map((relatedProblem, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-4 rounded-lg bg-white/60 dark:bg-slate-900/60 border border-purple-200 dark:border-purple-800 hover:shadow-md hover:scale-105 transition-all cursor-pointer group/item"
+                >
+                  <div className="flex-shrink-0">
+                    <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400 group-hover/item:scale-110 transition-transform" />
+                  </div>
+                  <p className="flex-1 text-gray-700 dark:text-gray-300 font-medium">
+                    {relatedProblem}
+                  </p>
+                  <ArrowRight className="h-4 w-4 text-purple-600 dark:text-purple-400 opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* COMPLEXITY SECTION - Only show if NOT in approaches (legacy support) */}
+        {question.complexity && !hasSolution && (
           <Card className="p-6 border-2 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50 shadow-lg hover:shadow-xl transition-all duration-300">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <div className="p-2 rounded-lg bg-indigo-500/10">

@@ -1,0 +1,124 @@
+{
+  "questionId": "253",
+  "questionSlug": "meeting-rooms-ii",
+  "title": "Meeting Rooms II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/meeting-rooms-ii/",
+    "videos": [
+      {
+        "title": "Meeting Rooms II - Min Heap",
+        "url": "https://www.youtube.com/watch?v=FdzJmTCVyJU",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Minimum conference rooms needed = Maximum overlapping intervals = Sort + Min Heap or Sweep Line.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Time Points",
+      "order": 1,
+      "intuition": "For every time point, count how many meetings are active. Maximum count is the answer.",
+      "approach": "Collect all time boundaries, check concurrent meetings at each.",
+      "steps": [
+        "Collect all start and end times",
+        "For each unique time point:",
+        "  Count meetings active at that time",
+        "  Update maximum",
+        "Return maximum"
+      ],
+      "complexity": {
+        "time": "O(n² * m)",
+        "space": "O(m)",
+        "timeExplanation": "m time points, check n meetings for each",
+        "spaceExplanation": "Store all time points"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minMeetingRooms(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return 0;\n        \n        // Collect all time points\n        set<int> times;\n        for (auto& interval : intervals) {\n            times.insert(interval[0]);\n            times.insert(interval[1]);\n        }\n        \n        int maxRooms = 0;\n        \n        // Check each time point\n        for (int time : times) {\n            int count = 0;\n            for (auto& interval : intervals) {\n                // Meeting is active if time is in [start, end)\n                if (interval[0] <= time && time < interval[1]) {\n                    count++;\n                }\n            }\n            maxRooms = max(maxRooms, count);\n        }\n        \n        return maxRooms;\n    }\n};",
+        "java": "class Solution {\n    public int minMeetingRooms(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        \n        // Collect all time points\n        Set<Integer> times = new TreeSet<>();\n        for (int[] interval : intervals) {\n            times.add(interval[0]);\n            times.add(interval[1]);\n        }\n        \n        int maxRooms = 0;\n        \n        // Check each time point\n        for (int time : times) {\n            int count = 0;\n            for (int[] interval : intervals) {\n                // Meeting is active if time is in [start, end)\n                if (interval[0] <= time && time < interval[1]) {\n                    count++;\n                }\n            }\n            maxRooms = Math.max(maxRooms, count);\n        }\n        \n        return maxRooms;\n    }\n}",
+        "python": "class Solution:\n    def minMeetingRooms(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        \n        # Collect all time points\n        times = set()\n        for start, end in intervals:\n            times.add(start)\n            times.add(end)\n        \n        max_rooms = 0\n        \n        # Check each time point\n        for time in sorted(times):\n            count = 0\n            for start, end in intervals:\n                # Meeting is active if time is in [start, end)\n                if start <= time < end:\n                    count += 1\n            max_rooms = max(max_rooms, count)\n        \n        return max_rooms",
+        "javascript": "var minMeetingRooms = function(intervals) {\n    if (intervals.length === 0) return 0;\n    \n    // Collect all time points\n    const times = new Set();\n    for (const [start, end] of intervals) {\n        times.add(start);\n        times.add(end);\n    }\n    \n    let maxRooms = 0;\n    \n    // Check each time point\n    for (const time of Array.from(times).sort((a, b) => a - b)) {\n        let count = 0;\n        for (const [start, end] of intervals) {\n            // Meeting is active if time is in [start, end)\n            if (start <= time && time < end) {\n                count++;\n            }\n        }\n        maxRooms = Math.max(maxRooms, count);\n    }\n    \n    return maxRooms;\n};"
+      }
+    },
+    {
+      "name": "Min Heap - Optimal",
+      "order": 2,
+      "intuition": "Sort meetings by start time. Use min heap to track end times of ongoing meetings. Heap size represents rooms needed.",
+      "approach": "Process meetings chronologically, remove finished meetings, track max heap size.",
+      "steps": [
+        "Sort intervals by start time",
+        "Use min heap to store end times of ongoing meetings",
+        "For each meeting:",
+        "  Remove meetings that have ended (end <= current.start)",
+        "  Add current meeting's end time to heap",
+        "  Update max rooms (heap size)",
+        "Return max rooms"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting + n heap operations",
+        "spaceExplanation": "Heap can store all meetings in worst case"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minMeetingRooms(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return 0;\n        \n        // Sort by start time\n        sort(intervals.begin(), intervals.end());\n        \n        // Min heap to track end times\n        priority_queue<int, vector<int>, greater<int>> minHeap;\n        \n        for (auto& interval : intervals) {\n            // Remove meetings that have ended\n            if (!minHeap.empty() && minHeap.top() <= interval[0]) {\n                minHeap.pop();\n            }\n            \n            // Add current meeting's end time\n            minHeap.push(interval[1]);\n        }\n        \n        // Heap size is the number of rooms needed\n        return minHeap.size();\n    }\n};",
+        "java": "class Solution {\n    public int minMeetingRooms(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        \n        // Sort by start time\n        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        // Min heap to track end times\n        PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n        \n        for (int[] interval : intervals) {\n            // Remove meetings that have ended\n            if (!minHeap.isEmpty() && minHeap.peek() <= interval[0]) {\n                minHeap.poll();\n            }\n            \n            // Add current meeting's end time\n            minHeap.offer(interval[1]);\n        }\n        \n        // Heap size is the number of rooms needed\n        return minHeap.size();\n    }\n}",
+        "python": "import heapq\n\nclass Solution:\n    def minMeetingRooms(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        \n        # Sort by start time\n        intervals.sort(key=lambda x: x[0])\n        \n        # Min heap to track end times\n        min_heap = []\n        \n        for start, end in intervals:\n            # Remove meetings that have ended\n            if min_heap and min_heap[0] <= start:\n                heapq.heappop(min_heap)\n            \n            # Add current meeting's end time\n            heapq.heappush(min_heap, end)\n        \n        # Heap size is the number of rooms needed\n        return len(min_heap)",
+        "javascript": "var minMeetingRooms = function(intervals) {\n    if (intervals.length === 0) return 0;\n    \n    // Sort by start time\n    intervals.sort((a, b) => a[0] - b[0]);\n    \n    // Min heap to track end times\n    const minHeap = new MinPriorityQueue();\n    \n    for (const [start, end] of intervals) {\n        // Remove meetings that have ended\n        if (!minHeap.isEmpty() && minHeap.front().element <= start) {\n            minHeap.dequeue();\n        }\n        \n        // Add current meeting's end time\n        minHeap.enqueue(end);\n    }\n    \n    // Heap size is the number of rooms needed\n    return minHeap.size();\n};"
+      }
+    },
+    {
+      "name": "Sweep Line with Events - Alternative Optimal",
+      "order": 3,
+      "intuition": "Create events for meeting start (+1 room) and end (-1 room). Sort and sweep to find maximum concurrent meetings.",
+      "approach": "Convert to events, sort, sweep tracking running count.",
+      "steps": [
+        "Create events: (time, +1 for start, -1 for end)",
+        "Sort events by time (ends before starts if same time)",
+        "Sweep through events:",
+        "  Update room count",
+        "  Track maximum",
+        "Return maximum"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting 2n events",
+        "spaceExplanation": "Store 2n events"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minMeetingRooms(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return 0;\n        \n        // Create events: {time, type} (1 for start, -1 for end)\n        vector<pair<int, int>> events;\n        for (auto& interval : intervals) {\n            events.push_back({interval[0], 1});  // Start\n            events.push_back({interval[1], -1}); // End\n        }\n        \n        // Sort events: by time, ends before starts if same time\n        sort(events.begin(), events.end(), [](auto& a, auto& b) {\n            if (a.first == b.first) {\n                return a.second < b.second; // End (-1) before start (1)\n            }\n            return a.first < b.first;\n        });\n        \n        int currentRooms = 0;\n        int maxRooms = 0;\n        \n        for (auto& [time, delta] : events) {\n            currentRooms += delta;\n            maxRooms = max(maxRooms, currentRooms);\n        }\n        \n        return maxRooms;\n    }\n};",
+        "java": "class Solution {\n    public int minMeetingRooms(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        \n        // Create events: {time, type} (1 for start, -1 for end)\n        List<int[]> events = new ArrayList<>();\n        for (int[] interval : intervals) {\n            events.add(new int[]{interval[0], 1});  // Start\n            events.add(new int[]{interval[1], -1}); // End\n        }\n        \n        // Sort events: by time, ends before starts if same time\n        Collections.sort(events, (a, b) -> {\n            if (a[0] == b[0]) {\n                return Integer.compare(a[1], b[1]); // End before start\n            }\n            return Integer.compare(a[0], b[0]);\n        });\n        \n        int currentRooms = 0;\n        int maxRooms = 0;\n        \n        for (int[] event : events) {\n            currentRooms += event[1];\n            maxRooms = Math.max(maxRooms, currentRooms);\n        }\n        \n        return maxRooms;\n    }\n}",
+        "python": "class Solution:\n    def minMeetingRooms(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        \n        # Create events: (time, type) (1 for start, -1 for end)\n        events = []\n        for start, end in intervals:\n            events.append((start, 1))   # Start\n            events.append((end, -1))    # End\n        \n        # Sort events: by time, ends before starts if same time\n        events.sort(key=lambda x: (x[0], x[1]))\n        \n        current_rooms = 0\n        max_rooms = 0\n        \n        for time, delta in events:\n            current_rooms += delta\n            max_rooms = max(max_rooms, current_rooms)\n        \n        return max_rooms",
+        "javascript": "var minMeetingRooms = function(intervals) {\n    if (intervals.length === 0) return 0;\n    \n    // Create events: [time, type] (1 for start, -1 for end)\n    const events = [];\n    for (const [start, end] of intervals) {\n        events.push([start, 1]);   // Start\n        events.push([end, -1]);    // End\n    }\n    \n    // Sort events: by time, ends before starts if same time\n    events.sort((a, b) => {\n        if (a[0] === b[0]) {\n            return a[1] - b[1]; // End before start\n        }\n        return a[0] - b[0];\n    });\n    \n    let currentRooms = 0;\n    let maxRooms = 0;\n    \n    for (const [time, delta] of events) {\n        currentRooms += delta;\n        maxRooms = Math.max(maxRooms, currentRooms);\n    }\n    \n    return maxRooms;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the case where one meeting ends exactly when another starts",
+    "In sweep line, processing start events before end events at same time",
+    "Forgetting to remove ended meetings from heap before adding new ones",
+    "Treating intervals as closed on both ends"
+  ],
+  "hints": [
+    "This is finding maximum overlapping intervals",
+    "Min heap tracks ongoing meetings by their end times",
+    "Heap size at any point = rooms needed at that point",
+    "Sweep line: +1 for start, -1 for end, track maximum"
+  ],
+  "followUp": [
+    "What if meetings have priorities?",
+    "How to return the actual room assignments?",
+    "Can you handle if some rooms have special equipment?"
+  ],
+  "companies": ["Facebook", "Amazon", "Google", "Microsoft", "Bloomberg"],
+  "tags": ["intervals", "heap", "sweep-line", "sorting"],
+  "relatedProblems": [
+    "Meeting Rooms",
+    "Maximum CPU Load",
+    "My Calendar III",
+    "Car Pooling"
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "questionId": "27",
+  "questionSlug": "remove-element",
+  "title": "Remove Element",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/remove-element/",
+    "videos": [
+      {
+        "title": "Remove Element - Leetcode 27",
+        "url": "https://www.youtube.com/watch?v=Pcd1ii9P9ZI",
+        "channel": "NeetCode",
+        "duration": "4:52",
+        "language": "English"
+      },
+      {
+        "title": "Remove Element Solution",
+        "url": "https://www.youtube.com/watch?v=Yhqlq6RKxGw",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "3:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Remove Element - LeetCode Solution",
+        "url": "https://leetcode.com/problems/remove-element/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/remove-element/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "In-place removal + any order = Two Pointers. Overwrite elements to remove with elements to keep.",
+  "approaches": [
+    {
+      "name": "Brute Force (Extra Space)",
+      "order": 1,
+      "intuition": "Create a new array to store elements that are not equal to val, then copy back to original.",
+      "approach": "Use temporary array to collect valid elements, count them, then copy back to original array.",
+      "steps": [
+        "Create temporary array or list",
+        "Iterate through nums:",
+        "  If nums[i] != val:",
+        "    Add to temporary array",
+        "Copy temporary array back to nums",
+        "Return count of valid elements"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Temporary array for storing valid elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int removeElement(vector<int>& nums, int val) {\n        vector<int> temp;\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (nums[i] != val) {\n                temp.push_back(nums[i]);\n            }\n        }\n        \n        for (int i = 0; i < temp.size(); i++) {\n            nums[i] = temp[i];\n        }\n        \n        return temp.size();\n    }\n};",
+        "java": "class Solution {\n    public int removeElement(int[] nums, int val) {\n        int[] temp = new int[nums.length];\n        int index = 0;\n        \n        for (int i = 0; i < nums.length; i++) {\n            if (nums[i] != val) {\n                temp[index++] = nums[i];\n            }\n        }\n        \n        for (int i = 0; i < index; i++) {\n            nums[i] = temp[i];\n        }\n        \n        return index;\n    }\n}",
+        "python": "class Solution:\n    def removeElement(self, nums: List[int], val: int) -> int:\n        temp = []\n        \n        for num in nums:\n            if num != val:\n                temp.append(num)\n        \n        for i in range(len(temp)):\n            nums[i] = temp[i]\n        \n        return len(temp)",
+        "javascript": "var removeElement = function(nums, val) {\n    const temp = [];\n    \n    for (let i = 0; i < nums.length; i++) {\n        if (nums[i] !== val) {\n            temp.push(nums[i]);\n        }\n    }\n    \n    for (let i = 0; i < temp.length; i++) {\n        nums[i] = temp[i];\n    }\n    \n    return temp.length;\n};"
+      }
+    },
+    {
+      "name": "Better (Single Pointer)",
+      "order": 2,
+      "intuition": "Use single pointer to track position for next valid element. Copy valid elements forward.",
+      "approach": "Maintain index for placement. When finding valid element, place at index and increment.",
+      "steps": [
+        "Initialize index = 0",
+        "Iterate i from 0 to n-1:",
+        "  If nums[i] != val:",
+        "    Copy nums[i] to nums[index]",
+        "    Increment index",
+        "Return index"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only using index variable"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int removeElement(vector<int>& nums, int val) {\n        int index = 0;\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (nums[i] != val) {\n                nums[index] = nums[i];\n                index++;\n            }\n        }\n        \n        return index;\n    }\n};",
+        "java": "class Solution {\n    public int removeElement(int[] nums, int val) {\n        int index = 0;\n        \n        for (int i = 0; i < nums.length; i++) {\n            if (nums[i] != val) {\n                nums[index] = nums[i];\n                index++;\n            }\n        }\n        \n        return index;\n    }\n}",
+        "python": "class Solution:\n    def removeElement(self, nums: List[int], val: int) -> int:\n        index = 0\n        \n        for i in range(len(nums)):\n            if nums[i] != val:\n                nums[index] = nums[i]\n                index += 1\n        \n        return index",
+        "javascript": "var removeElement = function(nums, val) {\n    let index = 0;\n    \n    for (let i = 0; i < nums.length; i++) {\n        if (nums[i] !== val) {\n            nums[index] = nums[i];\n            index++;\n        }\n    }\n    \n    return index;\n};"
+      }
+    },
+    {
+      "name": "Two Pointers - Optimal",
+      "order": 3,
+      "intuition": "Track position for next valid element with slow pointer. Fast pointer scans and copies non-val elements to slow position.",
+      "approach": "Slow marks insertion position. Fast finds elements != val and copies them to slow position.",
+      "steps": [
+        "Initialize slow = 0",
+        "Iterate fast from 0 to n-1:",
+        "  If nums[fast] != val:",
+        "    Copy nums[fast] to nums[slow]",
+        "    Increment slow",
+        "Return slow (count of elements != val)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only using two pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int removeElement(vector<int>& nums, int val) {\n        int slow = 0;\n        \n        for (int fast = 0; fast < nums.size(); fast++) {\n            if (nums[fast] != val) {\n                nums[slow] = nums[fast];\n                slow++;\n            }\n        }\n        \n        return slow;\n    }\n};",
+        "java": "class Solution {\n    public int removeElement(int[] nums, int val) {\n        int slow = 0;\n        \n        for (int fast = 0; fast < nums.length; fast++) {\n            if (nums[fast] != val) {\n                nums[slow] = nums[fast];\n                slow++;\n            }\n        }\n        \n        return slow;\n    }\n}",
+        "python": "class Solution:\n    def removeElement(self, nums: List[int], val: int) -> int:\n        slow = 0\n        \n        for fast in range(len(nums)):\n            if nums[fast] != val:\n                nums[slow] = nums[fast]\n                slow += 1\n        \n        return slow",
+        "javascript": "var removeElement = function(nums, val) {\n    let slow = 0;\n    \n    for (let fast = 0; fast < nums.length; fast++) {\n        if (nums[fast] !== val) {\n            nums[slow] = nums[fast];\n            slow++;\n        }\n    }\n    \n    return slow;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using extra space when in-place solution required",
+    "Not understanding in-place requirement",
+    "Worrying about elements after returned length",
+    "Trying to remove elements by shifting entire array"
+  ],
+  "hints": [
+    "Overwrite elements equal to val",
+    "Order doesn't matter",
+    "Slow pointer tracks result length",
+    "Don't need to worry about what's beyond the new length"
+  ],
+  "followUp": [
+    "Minimize number of operations when val is rare",
+    "What if val is very common?",
+    "Can you swap from end instead?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google"],
+  "tags": ["array", "two-pointers"],
+  "relatedProblems": [
+    "Remove Duplicates from Sorted Array",
+    "Move Zeroes",
+    "Remove Duplicates from Sorted Array II"
+  ]
+}

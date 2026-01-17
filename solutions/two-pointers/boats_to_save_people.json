@@ -1,0 +1,149 @@
+{
+  "questionId": "881",
+  "questionSlug": "boats-to-save-people",
+  "title": "Boats to Save People",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/boats-to-save-people/",
+    "videos": [
+      {
+        "title": "Boats to Save People - Leetcode 881",
+        "url": "https://www.youtube.com/watch?v=XbaxWuHIWUs",
+        "channel": "NeetCode",
+        "duration": "8:34",
+        "language": "English"
+      },
+      {
+        "title": "Boats to Save People Solution",
+        "url": "https://www.youtube.com/watch?v=m1L-ZNeW0SU",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Boats to Save People - LeetCode Solution",
+        "url": "https://leetcode.com/problems/boats-to-save-people/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/boats-to-save-people/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Pair lightest with heaviest = Two Pointers. Sort first, try to fit lightest person with heaviest person in each boat.",
+  "approaches": [
+    {
+      "name": "Brute Force (Try All Pairings)",
+      "order": 1,
+      "intuition": "Try all possible pairings of people, find minimum boats needed by exploring all combinations.",
+      "approach": "Use recursion or backtracking to try all possible ways to pair people, count boats in each configuration.",
+      "steps": [
+        "Sort people array",
+        "Use boolean array to track used people",
+        "Try all possible boat configurations recursively:",
+        "  Try single person in boat",
+        "  Try pairing with another unused person if weight <= limit",
+        "Count boats in each valid configuration",
+        "Return minimum boats needed"
+      ],
+      "complexity": {
+        "time": "O(2^n)",
+        "space": "O(n)",
+        "timeExplanation": "Exponential - trying all subsets/pairings",
+        "spaceExplanation": "Recursion stack and tracking array"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numRescueBoats(vector<int>& people, int limit) {\n        sort(people.begin(), people.end());\n        int n = people.size();\n        vector<bool> used(n, false);\n        int boats = 0;\n        \n        for (int i = 0; i < n; i++) {\n            if (used[i]) continue;\n            \n            boats++;\n            used[i] = true;\n            \n            for (int j = i + 1; j < n; j++) {\n                if (!used[j] && people[i] + people[j] <= limit) {\n                    used[j] = true;\n                    break;\n                }\n            }\n        }\n        \n        return boats;\n    }\n};",
+        "java": "class Solution {\n    public int numRescueBoats(int[] people, int limit) {\n        Arrays.sort(people);\n        int n = people.length;\n        boolean[] used = new boolean[n];\n        int boats = 0;\n        \n        for (int i = 0; i < n; i++) {\n            if (used[i]) continue;\n            \n            boats++;\n            used[i] = true;\n            \n            for (int j = i + 1; j < n; j++) {\n                if (!used[j] && people[i] + people[j] <= limit) {\n                    used[j] = true;\n                    break;\n                }\n            }\n        }\n        \n        return boats;\n    }\n}",
+        "python": "class Solution:\n    def numRescueBoats(self, people: List[int], limit: int) -> int:\n        people.sort()\n        n = len(people)\n        used = [False] * n\n        boats = 0\n        \n        for i in range(n):\n            if used[i]:\n                continue\n            \n            boats += 1\n            used[i] = True\n            \n            for j in range(i + 1, n):\n                if not used[j] and people[i] + people[j] <= limit:\n                    used[j] = True\n                    break\n        \n        return boats",
+        "javascript": "var numRescueBoats = function(people, limit) {\n    people.sort((a, b) => a - b);\n    const n = people.length;\n    const used = new Array(n).fill(false);\n    let boats = 0;\n    \n    for (let i = 0; i < n; i++) {\n        if (used[i]) continue;\n        \n        boats++;\n        used[i] = true;\n        \n        for (let j = i + 1; j < n; j++) {\n            if (!used[j] && people[i] + people[j] <= limit) {\n                used[j] = true;\n                break;\n            }\n        }\n    }\n    \n    return boats;\n};"
+      }
+    },
+    {
+      "name": "Better (Greedy - Pair Lightest Available)",
+      "order": 2,
+      "intuition": "Sort people. For each lightest unpaired person, try to pair with heaviest unpaired person that fits.",
+      "approach": "Use queue or index tracking. For each person, try to fit them with best available partner.",
+      "steps": [
+        "Sort people array",
+        "Use two pointers or indices",
+        "For each lightest person:",
+        "  Try to pair with heaviest available person",
+        "  If they fit together (sum <= limit), use one boat",
+        "  Otherwise, heavy person goes alone",
+        "Count boats used"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "timeExplanation": "Sorting dominates, then linear scan",
+        "spaceExplanation": "Only using pointers"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numRescueBoats(vector<int>& people, int limit) {\n        sort(people.begin(), people.end());\n        int left = 0, right = people.size() - 1;\n        int boats = 0;\n        \n        while (left <= right) {\n            boats++;\n            if (people[left] + people[right] <= limit) {\n                left++;\n            }\n            right--;\n        }\n        \n        return boats;\n    }\n};",
+        "java": "class Solution {\n    public int numRescueBoats(int[] people, int limit) {\n        Arrays.sort(people);\n        int left = 0, right = people.length - 1;\n        int boats = 0;\n        \n        while (left <= right) {\n            boats++;\n            if (people[left] + people[right] <= limit) {\n                left++;\n            }\n            right--;\n        }\n        \n        return boats;\n    }\n}",
+        "python": "class Solution:\n    def numRescueBoats(self, people: List[int], limit: int) -> int:\n        people.sort()\n        left, right = 0, len(people) - 1\n        boats = 0\n        \n        while left <= right:\n            boats += 1\n            if people[left] + people[right] <= limit:\n                left += 1\n            right -= 1\n        \n        return boats",
+        "javascript": "var numRescueBoats = function(people, limit) {\n    people.sort((a, b) => a - b);\n    let left = 0, right = people.length - 1;\n    let boats = 0;\n    \n    while (left <= right) {\n        boats++;\n        if (people[left] + people[right] <= limit) {\n            left++;\n        }\n        right--;\n    }\n    \n    return boats;\n};"
+      }
+    },
+    {
+      "name": "Two Pointers - Optimal",
+      "order": 3,
+      "intuition": "Greedy approach: always try to pair lightest person with heaviest. If they fit, both go; otherwise, heavy person goes alone.",
+      "approach": "Sort array. Use two pointers from both ends. Try to fit lightest with heaviest in each boat.",
+      "steps": [
+        "Sort people array in ascending order",
+        "Initialize left = 0, right = n-1, boats = 0",
+        "While left <= right:",
+        "  Increment boats (need at least one boat)",
+        "  If people[left] + people[right] <= limit:",
+        "    Both can fit, move left++",
+        "  Always move right-- (heaviest always goes)",
+        "Return boats"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "timeExplanation": "O(n log n) for sort + O(n) for two pointer traversal",
+        "spaceExplanation": "Only using two pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numRescueBoats(vector<int>& people, int limit) {\n        sort(people.begin(), people.end());\n        int left = 0, right = people.size() - 1;\n        int boats = 0;\n        \n        while (left <= right) {\n            boats++;\n            if (people[left] + people[right] <= limit) {\n                left++;\n            }\n            right--;\n        }\n        \n        return boats;\n    }\n};",
+        "java": "class Solution {\n    public int numRescueBoats(int[] people, int limit) {\n        Arrays.sort(people);\n        int left = 0, right = people.length - 1;\n        int boats = 0;\n        \n        while (left <= right) {\n            boats++;\n            if (people[left] + people[right] <= limit) {\n                left++;\n            }\n            right--;\n        }\n        \n        return boats;\n    }\n}",
+        "python": "class Solution:\n    def numRescueBoats(self, people: List[int], limit: int) -> int:\n        people.sort()\n        left, right = 0, len(people) - 1\n        boats = 0\n        \n        while left <= right:\n            boats += 1\n            if people[left] + people[right] <= limit:\n                left += 1\n            right -= 1\n        \n        return boats",
+        "javascript": "var numRescueBoats = function(people, limit) {\n    people.sort((a, b) => a - b);\n    let left = 0, right = people.length - 1;\n    let boats = 0;\n    \n    while (left <= right) {\n        boats++;\n        if (people[left] + people[right] <= limit) {\n            left++;\n        }\n        right--;\n    }\n    \n    return boats;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting the array first",
+    "Trying to fit more than 2 people per boat",
+    "Wrong greedy strategy (not pairing lightest with heaviest)",
+    "Forgetting that boat holds at most 2 people"
+  ],
+  "hints": [
+    "Each boat carries at most 2 people",
+    "Sort people by weight first",
+    "Greedy: try to pair lightest with heaviest",
+    "If they can't fit together, heaviest goes alone"
+  ],
+  "followUp": [
+    "What if boats can hold 3 people?",
+    "What if boats can hold k people?",
+    "What if people have different priorities?",
+    "Minimize total weight instead of boat count?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook"],
+  "tags": ["array", "two-pointers", "greedy", "sorting"],
+  "relatedProblems": [
+    "Two Sum",
+    "3Sum",
+    "Assign Cookies"
+  ]
+}

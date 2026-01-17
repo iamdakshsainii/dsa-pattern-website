@@ -1,0 +1,116 @@
+{
+  "questionId": "GFG",
+  "questionSlug": "find-two-missing-numbers",
+  "title": "Find Two Missing Numbers",
+  "difficulty": "Medium",
+  "resources": {
+    "gfg": "https://www.geeksforgeeks.org/find-two-missing-numbers-set-2-xor-based-solution/",
+    "videos": [
+      {
+        "title": "Find Two Missing Numbers",
+        "url": "https://www.youtube.com/watch?v=2lLE9CNHseQ",
+        "channel": "Pepcoding",
+        "duration": "12:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Array of size n-2 with numbers [1, n], two missing = XOR or Math approach",
+  "approaches": [
+    {
+      "name": "Hash Set",
+      "order": 1,
+      "intuition": "Store all numbers in set, check which two from [1, n] are missing",
+      "approach": "Use set for O(1) lookup",
+      "steps": [
+        "Create set from array",
+        "Iterate from 1 to n",
+        "Collect numbers not in set",
+        "Return the two missing numbers"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Build set + iterate [1, n]",
+        "spaceExplanation": "Set stores n-2 elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findTwoMissingNumbers(vector<int>& arr, int n) {\n        unordered_set<int> numSet(arr.begin(), arr.end());\n        vector<int> missing;\n        \n        for (int i = 1; i <= n; i++) {\n            if (numSet.find(i) == numSet.end()) {\n                missing.push_back(i);\n            }\n        }\n        \n        return missing;\n    }\n};",
+        "java": "class Solution {\n    public int[] findTwoMissingNumbers(int[] arr, int n) {\n        Set<Integer> numSet = new HashSet<>();\n        for (int num : arr) {\n            numSet.add(num);\n        }\n        \n        List<Integer> missing = new ArrayList<>();\n        for (int i = 1; i <= n; i++) {\n            if (!numSet.contains(i)) {\n                missing.add(i);\n            }\n        }\n        \n        return new int[]{missing.get(0), missing.get(1)};\n    }\n}",
+        "python": "class Solution:\n    def findTwoMissingNumbers(self, arr, n):\n        num_set = set(arr)\n        missing = []\n        \n        for i in range(1, n + 1):\n            if i not in num_set:\n                missing.append(i)\n        \n        return missing",
+        "javascript": "function findTwoMissingNumbers(arr, n) {\n    const numSet = new Set(arr);\n    const missing = [];\n    \n    for (let i = 1; i <= n; i++) {\n        if (!numSet.has(i)) {\n            missing.push(i);\n        }\n    }\n    \n    return missing;\n}"
+      }
+    },
+    {
+      "name": "Math - Sum and Product",
+      "order": 2,
+      "intuition": "Use sum and sum of squares to form two equations, solve for the two unknowns",
+      "approach": "Similar to finding one missing, but need two equations",
+      "steps": [
+        "Let x, y be the two missing numbers",
+        "Equation 1: sum(1 to n) - sum(arr) = x + y",
+        "Equation 2: sum_sq(1 to n) - sum_sq(arr) = x² + y²",
+        "From (x + y)² = x² + y² + 2xy, find xy",
+        "Solve quadratic: t² - (x+y)t + xy = 0"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass to calculate sums",
+        "spaceExplanation": "Only variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findTwoMissingNumbers(vector<int>& arr, int n) {\n        long long expectedSum = (long long)n * (n + 1) / 2;\n        long long expectedSumSq = (long long)n * (n + 1) * (2 * n + 1) / 6;\n        \n        long long actualSum = 0, actualSumSq = 0;\n        for (int num : arr) {\n            actualSum += num;\n            actualSumSq += (long long)num * num;\n        }\n        \n        // x + y\n        long long sum = expectedSum - actualSum;\n        \n        // x^2 + y^2\n        long long sumSq = expectedSumSq - actualSumSq;\n        \n        // (x + y)^2 = x^2 + y^2 + 2xy\n        // 2xy = (x + y)^2 - (x^2 + y^2)\n        long long product = (sum * sum - sumSq) / 2;\n        \n        // Solve quadratic: t^2 - sum*t + product = 0\n        // t = (sum ± sqrt(sum^2 - 4*product)) / 2\n        long long discriminant = sum * sum - 4 * product;\n        int x = (sum - sqrt(discriminant)) / 2;\n        int y = sum - x;\n        \n        return {x, y};\n    }\n};",
+        "java": "class Solution {\n    public int[] findTwoMissingNumbers(int[] arr, int n) {\n        long expectedSum = (long)n * (n + 1) / 2;\n        long expectedSumSq = (long)n * (n + 1) * (2 * n + 1) / 6;\n        \n        long actualSum = 0, actualSumSq = 0;\n        for (int num : arr) {\n            actualSum += num;\n            actualSumSq += (long)num * num;\n        }\n        \n        // x + y\n        long sum = expectedSum - actualSum;\n        \n        // x^2 + y^2\n        long sumSq = expectedSumSq - actualSumSq;\n        \n        // 2xy = (x + y)^2 - (x^2 + y^2)\n        long product = (sum * sum - sumSq) / 2;\n        \n        // Solve quadratic\n        long discriminant = sum * sum - 4 * product;\n        int x = (int)((sum - Math.sqrt(discriminant)) / 2);\n        int y = (int)(sum - x);\n        \n        return new int[]{x, y};\n    }\n}",
+        "python": "import math\n\nclass Solution:\n    def findTwoMissingNumbers(self, arr, n):\n        expected_sum = n * (n + 1) // 2\n        expected_sum_sq = n * (n + 1) * (2 * n + 1) // 6\n        \n        actual_sum = sum(arr)\n        actual_sum_sq = sum(num * num for num in arr)\n        \n        # x + y\n        sum_xy = expected_sum - actual_sum\n        \n        # x^2 + y^2\n        sum_sq = expected_sum_sq - actual_sum_sq\n        \n        # 2xy = (x + y)^2 - (x^2 + y^2)\n        product = (sum_xy * sum_xy - sum_sq) // 2\n        \n        # Solve quadratic\n        discriminant = sum_xy * sum_xy - 4 * product\n        x = (sum_xy - math.sqrt(discriminant)) // 2\n        y = sum_xy - x\n        \n        return [int(x), int(y)]",
+        "javascript": "function findTwoMissingNumbers(arr, n) {\n    const expectedSum = n * (n + 1) / 2;\n    const expectedSumSq = n * (n + 1) * (2 * n + 1) / 6;\n    \n    let actualSum = 0, actualSumSq = 0;\n    for (const num of arr) {\n        actualSum += num;\n        actualSumSq += num * num;\n    }\n    \n    // x + y\n    const sum = expectedSum - actualSum;\n    \n    // x^2 + y^2\n    const sumSq = expectedSumSq - actualSumSq;\n    \n    // 2xy = (x + y)^2 - (x^2 + y^2)\n    const product = (sum * sum - sumSq) / 2;\n    \n    // Solve quadratic\n    const discriminant = sum * sum - 4 * product;\n    const x = Math.floor((sum - Math.sqrt(discriminant)) / 2);\n    const y = sum - x;\n    \n    return [x, y];\n}"
+      }
+    },
+    {
+      "name": "XOR - Optimal",
+      "order": 3,
+      "intuition": "XOR all numbers [1, n] with array elements gives x ^ y. Use set bit to partition and find x and y",
+      "approach": "Use XOR properties to separate the two missing numbers",
+      "steps": [
+        "XOR all numbers [1, n] and array elements → xorResult = x ^ y",
+        "Find rightmost set bit in xorResult (bit where x and y differ)",
+        "Partition all numbers into two groups based on this bit",
+        "XOR each group separately to get x and y"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Three passes over the data",
+        "spaceExplanation": "Only variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findTwoMissingNumbers(vector<int>& arr, int n) {\n        // XOR of all numbers [1, n] and array elements\n        int xorResult = 0;\n        \n        // XOR [1, n]\n        for (int i = 1; i <= n; i++) {\n            xorResult ^= i;\n        }\n        \n        // XOR array elements\n        for (int num : arr) {\n            xorResult ^= num;\n        }\n        \n        // Now xorResult = x ^ y (the two missing numbers)\n        // Find rightmost set bit\n        int rightmostSetBit = xorResult & -xorResult;\n        \n        // Partition numbers based on this bit\n        int x = 0, y = 0;\n        \n        // Process [1, n]\n        for (int i = 1; i <= n; i++) {\n            if (i & rightmostSetBit) {\n                x ^= i;\n            } else {\n                y ^= i;\n            }\n        }\n        \n        // Process array\n        for (int num : arr) {\n            if (num & rightmostSetBit) {\n                x ^= num;\n            } else {\n                y ^= num;\n            }\n        }\n        \n        return {x, y};\n    }\n};",
+        "java": "class Solution {\n    public int[] findTwoMissingNumbers(int[] arr, int n) {\n        // XOR of all numbers [1, n] and array elements\n        int xorResult = 0;\n        \n        // XOR [1, n]\n        for (int i = 1; i <= n; i++) {\n            xorResult ^= i;\n        }\n        \n        // XOR array elements\n        for (int num : arr) {\n            xorResult ^= num;\n        }\n        \n        // Find rightmost set bit\n        int rightmostSetBit = xorResult & -xorResult;\n        \n        // Partition numbers\n        int x = 0, y = 0;\n        \n        // Process [1, n]\n        for (int i = 1; i <= n; i++) {\n            if ((i & rightmostSetBit) != 0) {\n                x ^= i;\n            } else {\n                y ^= i;\n            }\n        }\n        \n        // Process array\n        for (int num : arr) {\n            if ((num & rightmostSetBit) != 0) {\n                x ^= num;\n            } else {\n                y ^= num;\n            }\n        }\n        \n        return new int[]{x, y};\n    }\n}",
+        "python": "class Solution:\n    def findTwoMissingNumbers(self, arr, n):\n        # XOR of all numbers [1, n] and array elements\n        xor_result = 0\n        \n        # XOR [1, n]\n        for i in range(1, n + 1):\n            xor_result ^= i\n        \n        # XOR array elements\n        for num in arr:\n            xor_result ^= num\n        \n        # Find rightmost set bit\n        rightmost_set_bit = xor_result & -xor_result\n        \n        # Partition numbers\n        x, y = 0, 0\n        \n        # Process [1, n]\n        for i in range(1, n + 1):\n            if i & rightmost_set_bit:\n                x ^= i\n            else:\n                y ^= i\n        \n        # Process array\n        for num in arr:\n            if num & rightmost_set_bit:\n                x ^= num\n            else:\n                y ^= num\n        \n        return [x, y]",
+        "javascript": "function findTwoMissingNumbers(arr, n) {\n    // XOR of all numbers [1, n] and array elements\n    let xorResult = 0;\n    \n    // XOR [1, n]\n    for (let i = 1; i <= n; i++) {\n        xorResult ^= i;\n    }\n    \n    // XOR array elements\n    for (const num of arr) {\n        xorResult ^= num;\n    }\n    \n    // Find rightmost set bit\n    const rightmostSetBit = xorResult & -xorResult;\n    \n    // Partition numbers\n    let x = 0, y = 0;\n    \n    // Process [1, n]\n    for (let i = 1; i <= n; i++) {\n        if (i & rightmostSetBit) {\n            x ^= i;\n        } else {\n            y ^= i;\n        }\n    }\n    \n    // Process array\n    for (const num of arr) {\n        if (num & rightmostSetBit) {\n            x ^= num;\n        } else {\n            y ^= num;\n        }\n    }\n    \n    return [x, y];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding XOR partition logic - need to separate based on differing bit",
+    "Integer overflow in math approach",
+    "Forgetting that x & -x gives rightmost set bit"
+  ],
+  "hints": [
+    "XOR of all gives x ^ y, then partition based on any set bit",
+    "Math approach: use sum and sum of squares",
+    "The rightmost set bit divides numbers into two groups"
+  ],
+  "followUp": [
+    "Can you generalize to k missing numbers?",
+    "What if array elements can be negative?",
+    "How to do it without XOR or math?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft"],
+  "tags": ["array", "bit-manipulation", "math", "xor"],
+  "relatedProblems": [
+    "Missing Number",
+    "Find Missing and Repeating",
+    "Single Number III"
+  ]
+}

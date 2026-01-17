@@ -1,0 +1,127 @@
+{
+  "questionId": "729",
+  "questionSlug": "my-calendar-i",
+  "title": "My Calendar I",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/my-calendar-i/",
+    "videos": [
+      {
+        "title": "My Calendar I - Interval Overlap",
+        "url": "https://www.youtube.com/watch?v=VW1YHA535rU",
+        "channel": "NeetCode",
+        "duration": "8:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Prevent double booking = Check new interval against all existing for overlaps.",
+  "approaches": [
+    {
+      "name": "Brute Force - Linear Search",
+      "order": 1,
+      "intuition": "Store all bookings in a list. For each new booking, check against all existing bookings for overlaps.",
+      "approach": "Maintain list of bookings, check each new booking against all existing.",
+      "steps": [
+        "Maintain list of all bookings",
+        "For new booking [start, end):",
+        "  For each existing booking:",
+        "    Check if they overlap",
+        "    If overlap: return false",
+        "  No overlap found: add booking, return true"
+      ],
+      "complexity": {
+        "time": "O(n) per book",
+        "space": "O(n)",
+        "timeExplanation": "Check against n existing bookings",
+        "spaceExplanation": "Store all bookings"
+      },
+      "code": {
+        "cpp": "class MyCalendar {\nprivate:\n    vector<pair<int, int>> bookings;\n    \npublic:\n    MyCalendar() {}\n    \n    bool book(int start, int end) {\n        // Check against all existing bookings\n        for (auto& [s, e] : bookings) {\n            // Two intervals overlap if: max(start1, start2) < min(end1, end2)\n            if (max(start, s) < min(end, e)) {\n                return false; // Overlap found\n            }\n        }\n        \n        // No overlap, add booking\n        bookings.push_back({start, end});\n        return true;\n    }\n};",
+        "java": "class MyCalendar {\n    private List<int[]> bookings;\n    \n    public MyCalendar() {\n        bookings = new ArrayList<>();\n    }\n    \n    public boolean book(int start, int end) {\n        // Check against all existing bookings\n        for (int[] booking : bookings) {\n            // Two intervals overlap if: max(start1, start2) < min(end1, end2)\n            if (Math.max(start, booking[0]) < Math.min(end, booking[1])) {\n                return false; // Overlap found\n            }\n        }\n        \n        // No overlap, add booking\n        bookings.add(new int[]{start, end});\n        return true;\n    }\n}",
+        "python": "class MyCalendar:\n    def __init__(self):\n        self.bookings = []\n    \n    def book(self, start: int, end: int) -> bool:\n        # Check against all existing bookings\n        for s, e in self.bookings:\n            # Two intervals overlap if: max(start1, start2) < min(end1, end2)\n            if max(start, s) < min(end, e):\n                return False  # Overlap found\n        \n        # No overlap, add booking\n        self.bookings.append((start, end))\n        return True",
+        "javascript": "class MyCalendar {\n    constructor() {\n        this.bookings = [];\n    }\n    \n    book(start, end) {\n        // Check against all existing bookings\n        for (const [s, e] of this.bookings) {\n            // Two intervals overlap if: max(start1, start2) < min(end1, end2)\n            if (Math.max(start, s) < Math.min(end, e)) {\n                return false; // Overlap found\n            }\n        }\n        \n        // No overlap, add booking\n        this.bookings.push([start, end]);\n        return true;\n    }\n}"
+      }
+    },
+    {
+      "name": "Binary Search with Sorted List",
+      "order": 2,
+      "intuition": "Keep bookings sorted by start time. Use binary search to find insertion position, check only neighbors for overlap.",
+      "approach": "Maintain sorted bookings, binary search for position, check adjacent intervals.",
+      "steps": [
+        "Keep bookings sorted by start time",
+        "For new booking:",
+        "  Binary search for insertion position",
+        "  Check previous booking (if exists) for overlap",
+        "  Check next booking (if exists) for overlap",
+        "  If no overlap: insert at position, return true",
+        "  Else: return false"
+      ],
+      "complexity": {
+        "time": "O(n) per book",
+        "space": "O(n)",
+        "timeExplanation": "O(log n) search + O(n) insertion",
+        "spaceExplanation": "Store all bookings"
+      },
+      "code": {
+        "cpp": "class MyCalendar {\nprivate:\n    vector<pair<int, int>> bookings;\n    \npublic:\n    MyCalendar() {}\n    \n    bool book(int start, int end) {\n        // Binary search for insertion position\n        int left = 0, right = bookings.size();\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (bookings[mid].first < start) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        // Check previous booking\n        if (left > 0 && bookings[left - 1].second > start) {\n            return false;\n        }\n        \n        // Check next booking\n        if (left < bookings.size() && bookings[left].first < end) {\n            return false;\n        }\n        \n        // Insert booking\n        bookings.insert(bookings.begin() + left, {start, end});\n        return true;\n    }\n};",
+        "java": "class MyCalendar {\n    private List<int[]> bookings;\n    \n    public MyCalendar() {\n        bookings = new ArrayList<>();\n    }\n    \n    public boolean book(int start, int end) {\n        // Binary search for insertion position\n        int left = 0, right = bookings.size();\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (bookings.get(mid)[0] < start) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        // Check previous booking\n        if (left > 0 && bookings.get(left - 1)[1] > start) {\n            return false;\n        }\n        \n        // Check next booking\n        if (left < bookings.size() && bookings.get(left)[0] < end) {\n            return false;\n        }\n        \n        // Insert booking\n        bookings.add(left, new int[]{start, end});\n        return true;\n    }\n}",
+        "python": "import bisect\n\nclass MyCalendar:\n    def __init__(self):\n        self.bookings = []\n    \n    def book(self, start: int, end: int) -> bool:\n        # Binary search for insertion position\n        idx = bisect.bisect_left(self.bookings, (start, end))\n        \n        # Check previous booking\n        if idx > 0 and self.bookings[idx - 1][1] > start:\n            return False\n        \n        # Check next booking\n        if idx < len(self.bookings) and self.bookings[idx][0] < end:\n            return False\n        \n        # Insert booking\n        self.bookings.insert(idx, (start, end))\n        return True",
+        "javascript": "class MyCalendar {\n    constructor() {\n        this.bookings = [];\n    }\n    \n    book(start, end) {\n        // Binary search for insertion position\n        let left = 0, right = this.bookings.length;\n        while (left < right) {\n            const mid = Math.floor((left + right) / 2);\n            if (this.bookings[mid][0] < start) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        // Check previous booking\n        if (left > 0 && this.bookings[left - 1][1] > start) {\n            return false;\n        }\n        \n        // Check next booking\n        if (left < this.bookings.length && this.bookings[left][0] < end) {\n            return false;\n        }\n        \n        // Insert booking\n        this.bookings.splice(left, 0, [start, end]);\n        return true;\n    }\n}"
+      }
+    },
+    {
+      "name": "TreeMap/Balanced BST - Optimal",
+      "order": 3,
+      "intuition": "Use TreeMap to maintain sorted bookings with O(log n) search and insert. Find floor and ceiling, check for overlaps.",
+      "approach": "Use TreeMap, check floor and ceiling entries for overlap.",
+      "steps": [
+        "Use TreeMap: start -> end",
+        "For new booking [start, end):",
+        "  Find floor entry (largest start <= current start)",
+        "  Find ceiling entry (smallest start >= current start)",
+        "  Check if floor overlaps (floor.end > start)",
+        "  Check if ceiling overlaps (ceiling.start < end)",
+        "  If no overlap: add to map, return true",
+        "  Else: return false"
+      ],
+      "complexity": {
+        "time": "O(log n) per book",
+        "space": "O(n)",
+        "timeExplanation": "TreeMap operations are O(log n)",
+        "spaceExplanation": "Store all bookings"
+      },
+      "code": {
+        "cpp": "class MyCalendar {\nprivate:\n    map<int, int> bookings; // start -> end\n    \npublic:\n    MyCalendar() {}\n    \n    bool book(int start, int end) {\n        // Find floor entry (largest start <= current start)\n        auto it = bookings.upper_bound(start);\n        if (it != bookings.begin()) {\n            --it;\n            if (it->second > start) {\n                return false; // Floor overlaps\n            }\n        }\n        \n        // Find ceiling entry (smallest start >= current start)\n        it = bookings.lower_bound(start);\n        if (it != bookings.end() && it->first < end) {\n            return false; // Ceiling overlaps\n        }\n        \n        // No overlap, add booking\n        bookings[start] = end;\n        return true;\n    }\n};",
+        "java": "class MyCalendar {\n    private TreeMap<Integer, Integer> bookings;\n    \n    public MyCalendar() {\n        bookings = new TreeMap<>();\n    }\n    \n    public boolean book(int start, int end) {\n        // Find floor entry (largest start <= current start)\n        Integer floorKey = bookings.floorKey(start);\n        if (floorKey != null && bookings.get(floorKey) > start) {\n            return false; // Floor overlaps\n        }\n        \n        // Find ceiling entry (smallest start >= current start)\n        Integer ceilingKey = bookings.ceilingKey(start);\n        if (ceilingKey != null && ceilingKey < end) {\n            return false; // Ceiling overlaps\n        }\n        \n        // No overlap, add booking\n        bookings.put(start, end);\n        return true;\n    }\n}",
+        "python": "from sortedcontainers import SortedDict\n\nclass MyCalendar:\n    def __init__(self):\n        self.bookings = SortedDict()\n    \n    def book(self, start: int, end: int) -> bool:\n        # Find floor entry\n        idx = self.bookings.bisect_left(start)\n        if idx > 0:\n            prev_start = self.bookings.iloc[idx - 1]\n            if self.bookings[prev_start] > start:\n                return False  # Floor overlaps\n        \n        # Find ceiling entry\n        if idx < len(self.bookings):\n            next_start = self.bookings.iloc[idx]\n            if next_start < end:\n                return False  # Ceiling overlaps\n        \n        # No overlap, add booking\n        self.bookings[start] = end\n        return True",
+        "javascript": "class MyCalendar {\n    constructor() {\n        this.bookings = new Map(); // Not truly sorted, but simulates TreeMap\n        this.starts = [];\n    }\n    \n    book(start, end) {\n        // Find insertion point\n        let idx = this.binarySearch(start);\n        \n        // Check previous booking\n        if (idx > 0) {\n            const prevStart = this.starts[idx - 1];\n            if (this.bookings.get(prevStart) > start) {\n                return false;\n            }\n        }\n        \n        // Check next booking\n        if (idx < this.starts.length) {\n            const nextStart = this.starts[idx];\n            if (nextStart < end) {\n                return false;\n            }\n        }\n        \n        // Add booking\n        this.bookings.set(start, end);\n        this.starts.splice(idx, 0, start);\n        return true;\n    }\n    \n    binarySearch(target) {\n        let left = 0, right = this.starts.length;\n        while (left < right) {\n            const mid = Math.floor((left + right) / 2);\n            if (this.starts[mid] < target) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        return left;\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using <= instead of < for overlap check",
+    "Not checking both previous and next bookings",
+    "Treating intervals as closed instead of half-open [start, end)",
+    "In TreeMap approach, not checking both floor and ceiling"
+  ],
+  "hints": [
+    "Two intervals [a,b) and [c,d) overlap if max(a,c) < min(b,d)",
+    "After sorting, only need to check adjacent bookings",
+    "TreeMap gives O(log n) operations for insert and search",
+    "This is the foundation for My Calendar II and III"
+  ],
+  "followUp": [
+    "What if we need to allow double bookings? (See My Calendar II)",
+    "How to find maximum k-bookings? (See My Calendar III)",
+    "Can you support deletion of bookings?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft"],
+  "tags": ["intervals", "design", "binary-search", "ordered-map"],
+  "relatedProblems": [
+    "My Calendar II",
+    "My Calendar III",
+    "Meeting Rooms",
+    "Meeting Rooms II"
+  ]
+}

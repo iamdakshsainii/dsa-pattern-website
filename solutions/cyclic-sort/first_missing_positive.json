@@ -1,0 +1,122 @@
+{
+  "questionId": "41",
+  "questionSlug": "first-missing-positive",
+  "title": "First Missing Positive",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/first-missing-positive/",
+    "videos": [
+      {
+        "title": "First Missing Positive - In-Place Solution",
+        "url": "https://www.youtube.com/watch?v=8g78yfzMlao",
+        "channel": "NeetCode",
+        "duration": "11:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Find smallest missing positive in O(n) time, O(1) space = Modified Cyclic Sort",
+  "approaches": [
+    {
+      "name": "Hash Set",
+      "order": 1,
+      "intuition": "Store all numbers in set, check from 1 upward for missing",
+      "approach": "Use set for O(1) lookup",
+      "steps": [
+        "Create set from array",
+        "Start from i = 1",
+        "While i in set: i++",
+        "Return i (first missing positive)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Build set + check from 1",
+        "spaceExplanation": "Set stores n elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n        unordered_set<int> numSet(nums.begin(), nums.end());\n        \n        int i = 1;\n        while (numSet.count(i)) {\n            i++;\n        }\n        \n        return i;\n    }\n};",
+        "java": "class Solution {\n    public int firstMissingPositive(int[] nums) {\n        Set<Integer> numSet = new HashSet<>();\n        for (int num : nums) {\n            numSet.add(num);\n        }\n        \n        int i = 1;\n        while (numSet.contains(i)) {\n            i++;\n        }\n        \n        return i;\n    }\n}",
+        "python": "class Solution:\n    def firstMissingPositive(self, nums: List[int]) -> int:\n        num_set = set(nums)\n        \n        i = 1\n        while i in num_set:\n            i += 1\n        \n        return i",
+        "javascript": "var firstMissingPositive = function(nums) {\n    const numSet = new Set(nums);\n    \n    let i = 1;\n    while (numSet.has(i)) {\n        i++;\n    }\n    \n    return i;\n};"
+      }
+    },
+    {
+      "name": "Mark as Negative",
+      "order": 2,
+      "intuition": "Use indices [0, n-1] to represent numbers [1, n]. Mark presence by negating",
+      "approach": "Clean array, mark, then find first unmarked",
+      "steps": [
+        "Replace negatives and > n with n+1 (out of range)",
+        "For each abs(nums[i]) in [1, n]:",
+        "  Mark nums[abs(nums[i]) - 1] negative",
+        "Find first positive index i: return i + 1",
+        "If all negative: return n + 1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Three passes",
+        "spaceExplanation": "In-place marking"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Step 1: Replace invalid numbers with n+1\n        for (int i = 0; i < n; i++) {\n            if (nums[i] <= 0 || nums[i] > n) {\n                nums[i] = n + 1;\n            }\n        }\n        \n        // Step 2: Mark presence by negating\n        for (int i = 0; i < n; i++) {\n            int val = abs(nums[i]);\n            if (val <= n) {\n                nums[val - 1] = -abs(nums[val - 1]);\n            }\n        }\n        \n        // Step 3: Find first positive (missing)\n        for (int i = 0; i < n; i++) {\n            if (nums[i] > 0) {\n                return i + 1;\n            }\n        }\n        \n        return n + 1;\n    }\n};",
+        "java": "class Solution {\n    public int firstMissingPositive(int[] nums) {\n        int n = nums.length;\n        \n        // Step 1: Replace invalid numbers\n        for (int i = 0; i < n; i++) {\n            if (nums[i] <= 0 || nums[i] > n) {\n                nums[i] = n + 1;\n            }\n        }\n        \n        // Step 2: Mark presence\n        for (int i = 0; i < n; i++) {\n            int val = Math.abs(nums[i]);\n            if (val <= n) {\n                nums[val - 1] = -Math.abs(nums[val - 1]);\n            }\n        }\n        \n        // Step 3: Find first positive\n        for (int i = 0; i < n; i++) {\n            if (nums[i] > 0) {\n                return i + 1;\n            }\n        }\n        \n        return n + 1;\n    }\n}",
+        "python": "class Solution:\n    def firstMissingPositive(self, nums: List[int]) -> int:\n        n = len(nums)\n        \n        # Step 1: Replace invalid numbers\n        for i in range(n):\n            if nums[i] <= 0 or nums[i] > n:\n                nums[i] = n + 1\n        \n        # Step 2: Mark presence\n        for i in range(n):\n            val = abs(nums[i])\n            if val <= n:\n                nums[val - 1] = -abs(nums[val - 1])\n        \n        # Step 3: Find first positive\n        for i in range(n):\n            if nums[i] > 0:\n                return i + 1\n        \n        return n + 1",
+        "javascript": "var firstMissingPositive = function(nums) {\n    const n = nums.length;\n    \n    // Step 1: Replace invalid numbers\n    for (let i = 0; i < n; i++) {\n        if (nums[i] <= 0 || nums[i] > n) {\n            nums[i] = n + 1;\n        }\n    }\n    \n    // Step 2: Mark presence\n    for (let i = 0; i < n; i++) {\n        const val = Math.abs(nums[i]);\n        if (val <= n) {\n            nums[val - 1] = -Math.abs(nums[val - 1]);\n        }\n    }\n    \n    // Step 3: Find first positive\n    for (let i = 0; i < n; i++) {\n        if (nums[i] > 0) {\n            return i + 1;\n        }\n    }\n    \n    return n + 1;\n};"
+      }
+    },
+    {
+      "name": "Cyclic Sort - Optimal",
+      "order": 3,
+      "intuition": "Place positive numbers [1, n] at correct indices. First wrong position is answer",
+      "approach": "Modified cyclic sort for positive numbers only",
+      "steps": [
+        "While i < n:",
+        "  If nums[i] in [1, n] and nums[i] != nums[nums[i] - 1]:",
+        "    Swap nums[i] to correct position",
+        "  Else: i++",
+        "After sort:",
+        "  Find first i where nums[i] != i + 1",
+        "  Return i + 1",
+        "If all correct: return n + 1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each valid element swapped at most once",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n        int n = nums.size();\n        int i = 0;\n        \n        // Cyclic sort: only sort numbers in [1, n]\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            \n            // Only swap if in range [1, n] and not at correct position\n            if (nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctPos]) {\n                swap(nums[i], nums[correctPos]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find first missing positive\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1) {\n                return i + 1;\n            }\n        }\n        \n        return n + 1;\n    }\n};",
+        "java": "class Solution {\n    public int firstMissingPositive(int[] nums) {\n        int n = nums.length;\n        int i = 0;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            \n            if (nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctPos]) {\n                int temp = nums[i];\n                nums[i] = nums[correctPos];\n                nums[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find first missing\n        for (int j = 0; j < n; j++) {\n            if (nums[j] != j + 1) {\n                return j + 1;\n            }\n        }\n        \n        return n + 1;\n    }\n}",
+        "python": "class Solution:\n    def firstMissingPositive(self, nums: List[int]) -> int:\n        n = len(nums)\n        i = 0\n        \n        # Cyclic sort\n        while i < n:\n            correct_pos = nums[i] - 1\n            \n            if 0 < nums[i] <= n and nums[i] != nums[correct_pos]:\n                nums[i], nums[correct_pos] = nums[correct_pos], nums[i]\n            else:\n                i += 1\n        \n        # Find first missing\n        for i in range(n):\n            if nums[i] != i + 1:\n                return i + 1\n        \n        return n + 1",
+        "javascript": "var firstMissingPositive = function(nums) {\n    const n = nums.length;\n    let i = 0;\n    \n    // Cyclic sort\n    while (i < n) {\n        const correctPos = nums[i] - 1;\n        \n        if (nums[i] > 0 && nums[i] <= n && nums[i] !== nums[correctPos]) {\n            [nums[i], nums[correctPos]] = [nums[correctPos], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find first missing\n    for (let j = 0; j < n; j++) {\n        if (nums[j] !== j + 1) {\n            return j + 1;\n        }\n    }\n    \n    return n + 1;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling negative numbers and numbers > n",
+    "In marking approach, not using abs() when reading values",
+    "In cyclic sort, not checking bounds [1, n] before swapping",
+    "Forgetting that answer can be n+1 (when array is [1,2,3,...,n])"
+  ],
+  "hints": [
+    "Answer must be in range [1, n+1]",
+    "Use array indices [0, n-1] to represent presence of [1, n]",
+    "Only care about positive numbers in range [1, n]",
+    "Modified cyclic sort: only sort numbers in valid range"
+  ],
+  "followUp": [
+    "What if you need to find first k missing positives?",
+    "Can you solve if array can't be modified?",
+    "What's the mathematical reason answer is at most n+1?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Bloomberg"],
+  "tags": ["array", "hash-table", "cyclic-sort"],
+  "relatedProblems": [
+    "Missing Number",
+    "Find All Numbers Disappeared in an Array",
+    "Kth Missing Positive Number"
+  ]
+}

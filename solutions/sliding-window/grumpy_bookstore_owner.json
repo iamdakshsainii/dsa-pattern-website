@@ -1,0 +1,103 @@
+{
+  "questionId": "1052",
+  "questionSlug": "grumpy-bookstore-owner",
+  "title": "Grumpy Bookstore Owner",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/grumpy-bookstore-owner/",
+    "videos": [
+      {
+        "title": "Grumpy Bookstore Owner - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=c5RCsXKJJ3w",
+        "channel": "NeetCode",
+        "duration": "10:20",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Maximize satisfied customers using K minutes technique = Fixed window of size K. Find window that captures most unsatisfied customers to convert.",
+  "approaches": [
+    {
+      "name": "Brute Force (Try All Windows)",
+      "order": 1,
+      "intuition": "Try every possible K-minute window. For each window, calculate total satisfied customers (naturally satisfied + saved by technique).",
+      "approach": "For each starting position, use technique for K minutes, count total satisfied customers.",
+      "steps": [
+        "Initialize maxSatisfied = 0",
+        "For i from 0 to n - minutes:",
+        "  satisfied = 0",
+        "  For j from 0 to n-1:",
+        "    If grumpy[j] == 0:",
+        "      satisfied += customers[j]",
+        "    Else if j >= i and j < i + minutes:",
+        "      satisfied += customers[j] (saved by technique)",
+        "  maxSatisfied = max(maxSatisfied, satisfied)",
+        "Return maxSatisfied"
+      ],
+      "complexity": {
+        "time": "O(n * minutes)",
+        "space": "O(1)",
+        "timeExplanation": "For each of n positions, scan minutes elements",
+        "spaceExplanation": "Only counter variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int minutes) {\n        int n = customers.size();\n        int maxSatisfied = 0;\n        \n        for (int i = 0; i <= n - minutes; i++) {\n            int satisfied = 0;\n            \n            for (int j = 0; j < n; j++) {\n                if (grumpy[j] == 0) {\n                    satisfied += customers[j];\n                } else if (j >= i && j < i + minutes) {\n                    satisfied += customers[j];\n                }\n            }\n            \n            maxSatisfied = max(maxSatisfied, satisfied);\n        }\n        \n        return maxSatisfied;\n    }\n};",
+        "java": "class Solution {\n    public int maxSatisfied(int[] customers, int[] grumpy, int minutes) {\n        int n = customers.length;\n        int maxSatisfied = 0;\n        \n        for (int i = 0; i <= n - minutes; i++) {\n            int satisfied = 0;\n            \n            for (int j = 0; j < n; j++) {\n                if (grumpy[j] == 0) {\n                    satisfied += customers[j];\n                } else if (j >= i && j < i + minutes) {\n                    satisfied += customers[j];\n                }\n            }\n            \n            maxSatisfied = Math.max(maxSatisfied, satisfied);\n        }\n        \n        return maxSatisfied;\n    }\n}",
+        "python": "class Solution:\n    def maxSatisfied(self, customers: List[int], grumpy: List[int], minutes: int) -> int:\n        n = len(customers)\n        max_satisfied = 0\n        \n        for i in range(n - minutes + 1):\n            satisfied = 0\n            \n            for j in range(n):\n                if grumpy[j] == 0:\n                    satisfied += customers[j]\n                elif i <= j < i + minutes:\n                    satisfied += customers[j]\n            \n            max_satisfied = max(max_satisfied, satisfied)\n        \n        return max_satisfied",
+        "javascript": "var maxSatisfied = function(customers, grumpy, minutes) {\n    const n = customers.length;\n    let maxSatisfied = 0;\n    \n    for (let i = 0; i <= n - minutes; i++) {\n        let satisfied = 0;\n        \n        for (let j = 0; j < n; j++) {\n            if (grumpy[j] === 0) {\n                satisfied += customers[j];\n            } else if (j >= i && j < i + minutes) {\n                satisfied += customers[j];\n            }\n        }\n        \n        maxSatisfied = Math.max(maxSatisfied, satisfied);\n    }\n    \n    return maxSatisfied;\n};"
+      }
+    },
+    {
+      "name": "Fixed Sliding Window - Optimal",
+      "order": 2,
+      "intuition": "Split into two parts: base satisfied (always happy) + extra saved (from technique window). Find window with max extra customers to save.",
+      "approach": "Calculate base satisfied customers. Use fixed window to find max additional customers that can be saved.",
+      "steps": [
+        "Calculate baseSatisfied (customers when grumpy[i] == 0)",
+        "Calculate initial window's additional saved customers",
+        "maxAdditional = windowSaved",
+        "Slide window from minutes to n:",
+        "  Remove customers[i - minutes] if grumpy was 1",
+        "  Add customers[i] if grumpy is 1",
+        "  Update maxAdditional",
+        "Return baseSatisfied + maxAdditional"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes: one for base, one for sliding window",
+        "spaceExplanation": "Only counter variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int minutes) {\n        int n = customers.size();\n        int baseSatisfied = 0;\n        \n        // Calculate customers satisfied without technique\n        for (int i = 0; i < n; i++) {\n            if (grumpy[i] == 0) {\n                baseSatisfied += customers[i];\n            }\n        }\n        \n        // Calculate additional customers saved in first window\n        int windowSaved = 0;\n        for (int i = 0; i < minutes; i++) {\n            if (grumpy[i] == 1) {\n                windowSaved += customers[i];\n            }\n        }\n        \n        int maxAdditional = windowSaved;\n        \n        // Slide window to find maximum additional customers\n        for (int i = minutes; i < n; i++) {\n            // Add new element if grumpy\n            if (grumpy[i] == 1) {\n                windowSaved += customers[i];\n            }\n            // Remove old element if grumpy\n            if (grumpy[i - minutes] == 1) {\n                windowSaved -= customers[i - minutes];\n            }\n            \n            maxAdditional = max(maxAdditional, windowSaved);\n        }\n        \n        return baseSatisfied + maxAdditional;\n    }\n};",
+        "java": "class Solution {\n    public int maxSatisfied(int[] customers, int[] grumpy, int minutes) {\n        int n = customers.length;\n        int baseSatisfied = 0;\n        \n        for (int i = 0; i < n; i++) {\n            if (grumpy[i] == 0) {\n                baseSatisfied += customers[i];\n            }\n        }\n        \n        int windowSaved = 0;\n        for (int i = 0; i < minutes; i++) {\n            if (grumpy[i] == 1) {\n                windowSaved += customers[i];\n            }\n        }\n        \n        int maxAdditional = windowSaved;\n        \n        for (int i = minutes; i < n; i++) {\n            if (grumpy[i] == 1) {\n                windowSaved += customers[i];\n            }\n            if (grumpy[i - minutes] == 1) {\n                windowSaved -= customers[i - minutes];\n            }\n            \n            maxAdditional = Math.max(maxAdditional, windowSaved);\n        }\n        \n        return baseSatisfied + maxAdditional;\n    }\n}",
+        "python": "class Solution:\n    def maxSatisfied(self, customers: List[int], grumpy: List[int], minutes: int) -> int:\n        n = len(customers)\n        \n        # Base satisfied customers\n        base_satisfied = sum(customers[i] for i in range(n) if grumpy[i] == 0)\n        \n        # Additional customers saved in first window\n        window_saved = sum(customers[i] for i in range(minutes) if grumpy[i] == 1)\n        max_additional = window_saved\n        \n        # Slide window\n        for i in range(minutes, n):\n            if grumpy[i] == 1:\n                window_saved += customers[i]\n            if grumpy[i - minutes] == 1:\n                window_saved -= customers[i - minutes]\n            \n            max_additional = max(max_additional, window_saved)\n        \n        return base_satisfied + max_additional",
+        "javascript": "var maxSatisfied = function(customers, grumpy, minutes) {\n    const n = customers.length;\n    \n    let baseSatisfied = 0;\n    for (let i = 0; i < n; i++) {\n        if (grumpy[i] === 0) {\n            baseSatisfied += customers[i];\n        }\n    }\n    \n    let windowSaved = 0;\n    for (let i = 0; i < minutes; i++) {\n        if (grumpy[i] === 1) {\n            windowSaved += customers[i];\n        }\n    }\n    \n    let maxAdditional = windowSaved;\n    \n    for (let i = minutes; i < n; i++) {\n        if (grumpy[i] === 1) {\n            windowSaved += customers[i];\n        }\n        if (grumpy[i - minutes] === 1) {\n            windowSaved -= customers[i - minutes];\n        }\n        \n        maxAdditional = Math.max(maxAdditional, windowSaved);\n    }\n    \n    return baseSatisfied + maxAdditional;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to add base satisfied customers to result",
+    "Adding all customers in window instead of only grumpy ones",
+    "Not handling edge case when minutes >= n",
+    "Confusing which customers are affected by the technique"
+  ],
+  "hints": [
+    "Separate into two parts: always satisfied + bonus from technique",
+    "The technique only helps during grumpy minutes",
+    "Find fixed window with maximum grumpy customers to save",
+    "Answer = base satisfied + max additional saved"
+  ],
+  "followUp": [
+    "What if you can use technique multiple times with cooldown?",
+    "What if technique reduces grumpiness by percentage instead of eliminating?",
+    "Minimize unsatisfied customers instead?"
+  ],
+  "companies": ["Amazon", "Google"],
+  "tags": ["array", "sliding-window"],
+  "relatedProblems": [
+    "Maximum Points from Cards",
+    "Maximum Sum of Two Non-Overlapping Subarrays",
+    "Defuse the Bomb"
+  ]
+}

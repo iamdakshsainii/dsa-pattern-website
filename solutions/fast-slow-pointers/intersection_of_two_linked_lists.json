@@ -1,0 +1,122 @@
+{
+  "questionId": "160",
+  "questionSlug": "intersection-of-two-linked-lists",
+  "title": "Intersection of Two Linked Lists",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/intersection-of-two-linked-lists/",
+    "videos": [
+      {
+        "title": "Intersection of Two Linked Lists",
+        "url": "https://www.youtube.com/watch?v=D0X0BONOQhI",
+        "channel": "NeetCode",
+        "duration": "9:20",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Find intersection of two linked lists = Two pointers, when both reach end, swap to other list's head.",
+  "approaches": [
+    {
+      "name": "Hash Set",
+      "order": 1,
+      "intuition": "Store all nodes of first list in hash set, then traverse second list and check if any node exists in set.",
+      "approach": "Add all nodes from list A to set, then check list B for first node in set.",
+      "steps": [
+        "Create hash set",
+        "Traverse list A, add all nodes to set",
+        "Traverse list B:",
+        "  If current node is in set: return node",
+        "Return null (no intersection)"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(m)",
+        "timeExplanation": "Traverse both lists once",
+        "spaceExplanation": "Set stores all nodes from first list"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {\n        unordered_set<ListNode*> nodes;\n        \n        // Store all nodes from list A\n        ListNode* curr = headA;\n        while (curr) {\n            nodes.insert(curr);\n            curr = curr->next;\n        }\n        \n        // Check list B for intersection\n        curr = headB;\n        while (curr) {\n            if (nodes.count(curr)) {\n                return curr;\n            }\n            curr = curr->next;\n        }\n        \n        return nullptr;\n    }\n};",
+        "java": "public class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        Set<ListNode> nodes = new HashSet<>();\n        \n        // Store all nodes from list A\n        ListNode curr = headA;\n        while (curr != null) {\n            nodes.add(curr);\n            curr = curr.next;\n        }\n        \n        // Check list B for intersection\n        curr = headB;\n        while (curr != null) {\n            if (nodes.contains(curr)) {\n                return curr;\n            }\n            curr = curr.next;\n        }\n        \n        return null;\n    }\n}",
+        "python": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:\n        nodes = set()\n        \n        # Store all nodes from list A\n        curr = headA\n        while curr:\n            nodes.add(curr)\n            curr = curr.next\n        \n        # Check list B for intersection\n        curr = headB\n        while curr:\n            if curr in nodes:\n                return curr\n            curr = curr.next\n        \n        return None",
+        "javascript": "var getIntersectionNode = function(headA, headB) {\n    const nodes = new Set();\n    \n    // Store all nodes from list A\n    let curr = headA;\n    while (curr) {\n        nodes.add(curr);\n        curr = curr.next;\n    }\n    \n    // Check list B for intersection\n    curr = headB;\n    while (curr) {\n        if (nodes.has(curr)) {\n            return curr;\n        }\n        curr = curr.next;\n    }\n    \n    return null;\n};"
+      }
+    },
+    {
+      "name": "Calculate Length Difference",
+      "order": 2,
+      "intuition": "Find lengths of both lists. Advance longer list by difference, then move both together until they meet.",
+      "approach": "Calculate length difference, align starting points, traverse together.",
+      "steps": [
+        "Calculate lengths of both lists",
+        "Find difference: diff = abs(lenA - lenB)",
+        "Advance pointer of longer list by diff steps",
+        "Move both pointers together",
+        "When they point to same node, that's intersection",
+        "Return null if they don't meet"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes to calculate lengths, one pass to find intersection",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {\n        // Calculate lengths\n        int lenA = getLength(headA);\n        int lenB = getLength(headB);\n        \n        // Align starting points\n        while (lenA > lenB) {\n            headA = headA->next;\n            lenA--;\n        }\n        while (lenB > lenA) {\n            headB = headB->next;\n            lenB--;\n        }\n        \n        // Find intersection\n        while (headA && headB) {\n            if (headA == headB) {\n                return headA;\n            }\n            headA = headA->next;\n            headB = headB->next;\n        }\n        \n        return nullptr;\n    }\n    \nprivate:\n    int getLength(ListNode* head) {\n        int length = 0;\n        while (head) {\n            length++;\n            head = head->next;\n        }\n        return length;\n    }\n};",
+        "java": "public class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        // Calculate lengths\n        int lenA = getLength(headA);\n        int lenB = getLength(headB);\n        \n        // Align starting points\n        while (lenA > lenB) {\n            headA = headA.next;\n            lenA--;\n        }\n        while (lenB > lenA) {\n            headB = headB.next;\n            lenB--;\n        }\n        \n        // Find intersection\n        while (headA != null && headB != null) {\n            if (headA == headB) {\n                return headA;\n            }\n            headA = headA.next;\n            headB = headB.next;\n        }\n        \n        return null;\n    }\n    \n    private int getLength(ListNode head) {\n        int length = 0;\n        while (head != null) {\n            length++;\n            head = head.next;\n        }\n        return length;\n    }\n}",
+        "python": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:\n        def get_length(head):\n            length = 0\n            while head:\n                length += 1\n                head = head.next\n            return length\n        \n        # Calculate lengths\n        len_a = get_length(headA)\n        len_b = get_length(headB)\n        \n        # Align starting points\n        while len_a > len_b:\n            headA = headA.next\n            len_a -= 1\n        while len_b > len_a:\n            headB = headB.next\n            len_b -= 1\n        \n        # Find intersection\n        while headA and headB:\n            if headA == headB:\n                return headA\n            headA = headA.next\n            headB = headB.next\n        \n        return None",
+        "javascript": "var getIntersectionNode = function(headA, headB) {\n    function getLength(head) {\n        let length = 0;\n        while (head) {\n            length++;\n            head = head.next;\n        }\n        return length;\n    }\n    \n    // Calculate lengths\n    let lenA = getLength(headA);\n    let lenB = getLength(headB);\n    \n    // Align starting points\n    while (lenA > lenB) {\n        headA = headA.next;\n        lenA--;\n    }\n    while (lenB > lenA) {\n        headB = headB.next;\n        lenB--;\n    }\n    \n    // Find intersection\n    while (headA && headB) {\n        if (headA === headB) {\n            return headA;\n        }\n        headA = headA.next;\n        headB = headB.next;\n    }\n    \n    return null;\n};"
+      }
+    },
+    {
+      "name": "Two Pointers - Elegant Swap - Optimal",
+      "order": 3,
+      "intuition": "Use two pointers. When each reaches end, swap to other list's head. They'll meet at intersection or null after same total distance.",
+      "approach": "Both traverse same total distance by switching lists. They meet at intersection or null.",
+      "steps": [
+        "Initialize pA = headA, pB = headB",
+        "While pA != pB:",
+        "  pA = pA ? pA.next : headB",
+        "  pB = pB ? pB.next : headA",
+        "Return pA (intersection or null)",
+        "Key: After swap, both travel distance (lenA + lenB)"
+      ],
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "timeExplanation": "Each pointer traverses at most m + n nodes",
+        "spaceExplanation": "Only two pointers used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {\n        if (!headA || !headB) return nullptr;\n        \n        ListNode* pA = headA;\n        ListNode* pB = headB;\n        \n        // When reaching end, switch to other list's head\n        while (pA != pB) {\n            pA = pA ? pA->next : headB;\n            pB = pB ? pB->next : headA;\n        }\n        \n        return pA; // intersection or null\n    }\n};",
+        "java": "public class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        if (headA == null || headB == null) return null;\n        \n        ListNode pA = headA;\n        ListNode pB = headB;\n        \n        // When reaching end, switch to other list's head\n        while (pA != pB) {\n            pA = (pA != null) ? pA.next : headB;\n            pB = (pB != null) ? pB.next : headA;\n        }\n        \n        return pA; // intersection or null\n    }\n}",
+        "python": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:\n        if not headA or not headB:\n            return None\n        \n        pA, pB = headA, headB\n        \n        # When reaching end, switch to other list's head\n        while pA != pB:\n            pA = pA.next if pA else headB\n            pB = pB.next if pB else headA\n        \n        return pA  # intersection or null",
+        "javascript": "var getIntersectionNode = function(headA, headB) {\n    if (!headA || !headB) return null;\n    \n    let pA = headA;\n    let pB = headB;\n    \n    // When reaching end, switch to other list's head\n    while (pA !== pB) {\n        pA = pA ? pA.next : headB;\n        pB = pB ? pB.next : headA;\n    }\n    \n    return pA; // intersection or null\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Comparing node values instead of node references",
+    "Not handling case when there's no intersection",
+    "In swap approach, not handling the null case correctly",
+    "Thinking this is about finding duplicate values"
+  ],
+  "hints": [
+    "You need to compare node references, not values",
+    "The elegant solution: when pointer reaches end, switch to other list",
+    "Both pointers will travel same total distance",
+    "If no intersection, both will reach null together"
+  ],
+  "followUp": [
+    "Can you solve it without modifying the lists? (Yes, all approaches do this)",
+    "What if lists can have cycles?",
+    "Can you solve in O(1) space? (Yes, two pointer approach)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Facebook", "Bloomberg", "Apple"],
+  "tags": ["linked-list", "two-pointers", "hash-table"],
+  "relatedProblems": [
+    "Linked List Cycle II",
+    "Minimum Index Sum of Two Lists",
+    "Delete Node in a Linked List"
+  ]
+}

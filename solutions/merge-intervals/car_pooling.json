@@ -1,0 +1,125 @@
+{
+  "questionId": "1094",
+  "questionSlug": "car-pooling",
+  "title": "Car Pooling",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/car-pooling/",
+    "videos": [
+      {
+        "title": "Car Pooling - Sweep Line",
+        "url": "https://www.youtube.com/watch?v=VW1YHA535rU",
+        "channel": "NeetCode",
+        "duration": "9:45",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Check if capacity exceeds at any point = Sweep line with passenger changes, track running count.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Locations",
+      "order": 1,
+      "intuition": "For each location from 0 to max, count passengers at that location. If ever exceeds capacity, return false.",
+      "approach": "Check passenger count at every possible location.",
+      "steps": [
+        "Find max location from all trips",
+        "For each location i from 0 to max:",
+        "  Count passengers: sum of numPassengers for trips where from <= i < to",
+        "  If count > capacity: return false",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n * maxLocation)",
+        "space": "O(1)",
+        "timeExplanation": "Check each location against all trips",
+        "spaceExplanation": "Constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool carPooling(vector<vector<int>>& trips, int capacity) {\n        // Find max location\n        int maxLoc = 0;\n        for (auto& trip : trips) {\n            maxLoc = max(maxLoc, trip[2]);\n        }\n        \n        // Check each location\n        for (int loc = 0; loc <= maxLoc; loc++) {\n            int passengers = 0;\n            for (auto& trip : trips) {\n                int numPass = trip[0];\n                int from = trip[1];\n                int to = trip[2];\n                \n                // Passengers are in car at location loc if from <= loc < to\n                if (from <= loc && loc < to) {\n                    passengers += numPass;\n                }\n            }\n            \n            if (passengers > capacity) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean carPooling(int[][] trips, int capacity) {\n        // Find max location\n        int maxLoc = 0;\n        for (int[] trip : trips) {\n            maxLoc = Math.max(maxLoc, trip[2]);\n        }\n        \n        // Check each location\n        for (int loc = 0; loc <= maxLoc; loc++) {\n            int passengers = 0;\n            for (int[] trip : trips) {\n                int numPass = trip[0];\n                int from = trip[1];\n                int to = trip[2];\n                \n                // Passengers are in car at location loc if from <= loc < to\n                if (from <= loc && loc < to) {\n                    passengers += numPass;\n                }\n            }\n            \n            if (passengers > capacity) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n}",
+        "python": "class Solution:\n    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:\n        # Find max location\n        max_loc = max(trip[2] for trip in trips)\n        \n        # Check each location\n        for loc in range(max_loc + 1):\n            passengers = 0\n            for num_pass, from_loc, to_loc in trips:\n                # Passengers are in car at location loc if from <= loc < to\n                if from_loc <= loc < to_loc:\n                    passengers += num_pass\n            \n            if passengers > capacity:\n                return False\n        \n        return True",
+        "javascript": "var carPooling = function(trips, capacity) {\n    // Find max location\n    let maxLoc = 0;\n    for (const [numPass, from, to] of trips) {\n        maxLoc = Math.max(maxLoc, to);\n    }\n    \n    // Check each location\n    for (let loc = 0; loc <= maxLoc; loc++) {\n        let passengers = 0;\n        for (const [numPass, from, to] of trips) {\n            // Passengers are in car at location loc if from <= loc < to\n            if (from <= loc && loc < to) {\n                passengers += numPass;\n            }\n        }\n        \n        if (passengers > capacity) {\n            return false;\n        }\n    }\n    \n    return true;\n};"
+      }
+    },
+    {
+      "name": "Difference Array - Optimal",
+      "order": 2,
+      "intuition": "Use difference array: increment at pickup location, decrement at drop-off. Compute prefix sum to get passenger count at each location.",
+      "approach": "Create difference array, check if any prefix sum exceeds capacity.",
+      "steps": [
+        "Create array of size 1001 (max location + 1)",
+        "For each trip [num, from, to]:",
+        "  diff[from] += num (passengers get in)",
+        "  diff[to] -= num (passengers get out)",
+        "Compute prefix sum and check if ever exceeds capacity",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n + maxLocation)",
+        "space": "O(maxLocation)",
+        "timeExplanation": "Process n trips + scan array",
+        "spaceExplanation": "Fixed size array (1001)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool carPooling(vector<vector<int>>& trips, int capacity) {\n        vector<int> diff(1001, 0);\n        \n        // Build difference array\n        for (auto& trip : trips) {\n            int numPass = trip[0];\n            int from = trip[1];\n            int to = trip[2];\n            \n            diff[from] += numPass;\n            diff[to] -= numPass;\n        }\n        \n        // Check prefix sum\n        int passengers = 0;\n        for (int i = 0; i < 1001; i++) {\n            passengers += diff[i];\n            if (passengers > capacity) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean carPooling(int[][] trips, int capacity) {\n        int[] diff = new int[1001];\n        \n        // Build difference array\n        for (int[] trip : trips) {\n            int numPass = trip[0];\n            int from = trip[1];\n            int to = trip[2];\n            \n            diff[from] += numPass;\n            diff[to] -= numPass;\n        }\n        \n        // Check prefix sum\n        int passengers = 0;\n        for (int i = 0; i < 1001; i++) {\n            passengers += diff[i];\n            if (passengers > capacity) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n}",
+        "python": "class Solution:\n    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:\n        diff = [0] * 1001\n        \n        # Build difference array\n        for num_pass, from_loc, to_loc in trips:\n            diff[from_loc] += num_pass\n            diff[to_loc] -= num_pass\n        \n        # Check prefix sum\n        passengers = 0\n        for change in diff:\n            passengers += change\n            if passengers > capacity:\n                return False\n        \n        return True",
+        "javascript": "var carPooling = function(trips, capacity) {\n    const diff = new Array(1001).fill(0);\n    \n    // Build difference array\n    for (const [numPass, from, to] of trips) {\n        diff[from] += numPass;\n        diff[to] -= numPass;\n    }\n    \n    // Check prefix sum\n    let passengers = 0;\n    for (let i = 0; i < 1001; i++) {\n        passengers += diff[i];\n        if (passengers > capacity) {\n            return false;\n        }\n    }\n    \n    return true;\n};"
+      }
+    },
+    {
+      "name": "Sweep Line with Events - Alternative",
+      "order": 3,
+      "intuition": "Create events for pickup (+passengers) and drop-off (-passengers). Sort by location, sweep through checking capacity.",
+      "approach": "Convert to events, sort, sweep and track running passenger count.",
+      "steps": [
+        "Create events: (location, passenger_change)",
+        "  Pickup: (from, +numPassengers)",
+        "  Drop-off: (to, -numPassengers)",
+        "Sort events by location (drop-offs before pickups at same loc)",
+        "Sweep through events:",
+        "  Update passenger count",
+        "  If exceeds capacity: return false",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting 2n events",
+        "spaceExplanation": "Store 2n events"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool carPooling(vector<vector<int>>& trips, int capacity) {\n        // Create events: {location, passenger_change}\n        vector<pair<int, int>> events;\n        \n        for (auto& trip : trips) {\n            int numPass = trip[0];\n            int from = trip[1];\n            int to = trip[2];\n            \n            events.push_back({from, numPass});   // Pickup\n            events.push_back({to, -numPass});    // Drop-off\n        }\n        \n        // Sort by location, drop-offs (-) before pickups (+) at same location\n        sort(events.begin(), events.end(), [](auto& a, auto& b) {\n            if (a.first == b.first) {\n                return a.second < b.second; // Drop-off before pickup\n            }\n            return a.first < b.first;\n        });\n        \n        // Sweep through events\n        int passengers = 0;\n        for (auto& [loc, change] : events) {\n            passengers += change;\n            if (passengers > capacity) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean carPooling(int[][] trips, int capacity) {\n        // Create events: {location, passenger_change}\n        List<int[]> events = new ArrayList<>();\n        \n        for (int[] trip : trips) {\n            int numPass = trip[0];\n            int from = trip[1];\n            int to = trip[2];\n            \n            events.add(new int[]{from, numPass});   // Pickup\n            events.add(new int[]{to, -numPass});    // Drop-off\n        }\n        \n        // Sort by location, drop-offs (-) before pickups (+) at same location\n        Collections.sort(events, (a, b) -> {\n            if (a[0] == b[0]) {\n                return Integer.compare(a[1], b[1]); // Drop-off before pickup\n            }\n            return Integer.compare(a[0], b[0]);\n        });\n        \n        // Sweep through events\n        int passengers = 0;\n        for (int[] event : events) {\n            passengers += event[1];\n            if (passengers > capacity) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n}",
+        "python": "class Solution:\n    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:\n        # Create events: (location, passenger_change)\n        events = []\n        \n        for num_pass, from_loc, to_loc in trips:\n            events.append((from_loc, num_pass))    # Pickup\n            events.append((to_loc, -num_pass))     # Drop-off\n        \n        # Sort by location, drop-offs (-) before pickups (+) at same location\n        events.sort(key=lambda x: (x[0], x[1]))\n        \n        # Sweep through events\n        passengers = 0\n        for loc, change in events:\n            passengers += change\n            if passengers > capacity:\n                return False\n        \n        return True",
+        "javascript": "var carPooling = function(trips, capacity) {\n    // Create events: [location, passenger_change]\n    const events = [];\n    \n    for (const [numPass, from, to] of trips) {\n        events.push([from, numPass]);    // Pickup\n        events.push([to, -numPass]);     // Drop-off\n    }\n    \n    // Sort by location, drop-offs (-) before pickups (+) at same location\n    events.sort((a, b) => {\n        if (a[0] === b[0]) {\n            return a[1] - b[1]; // Drop-off before pickup\n        }\n        return a[0] - b[0];\n    });\n    \n    // Sweep through events\n    let passengers = 0;\n    for (const [loc, change] of events) {\n        passengers += change;\n        if (passengers > capacity) {\n            return false;\n        }\n    }\n    \n    return true;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling drop-offs before pickups at same location",
+    "Using closed intervals instead of half-open [from, to)",
+    "Forgetting that passengers drop off at 'to' location (not counted at 'to')",
+    "In sweep line, not sorting properly when locations are equal"
+  ],
+  "hints": [
+    "This is similar to Meeting Rooms II but with weighted intervals",
+    "Use difference array for O(n) solution",
+    "At each location, track passenger change (+pickup, -dropoff)",
+    "Passengers are in car during [from, to) - half-open interval"
+  ],
+  "followUp": [
+    "What if trips can be rescheduled to minimize capacity?",
+    "How to find minimum capacity needed?",
+    "What if locations are on a graph, not a line?"
+  ],
+  "companies": ["Uber", "Lyft", "Amazon", "Google"],
+  "tags": ["intervals", "array", "sweep-line", "prefix-sum"],
+  "relatedProblems": [
+    "Meeting Rooms II",
+    "Maximum CPU Load",
+    "My Calendar III",
+    "Corporate Flight Bookings"
+  ]
+}

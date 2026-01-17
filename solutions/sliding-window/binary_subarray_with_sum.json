@@ -1,0 +1,132 @@
+{
+  "questionId": "930",
+  "questionSlug": "binary-subarrays-with-sum",
+  "title": "Binary Subarrays with Sum",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/binary-subarrays-with-sum/",
+    "videos": [
+      {
+        "title": "Binary Subarrays with Sum - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=XnMdNUkX6VM",
+        "channel": "takeUforward",
+        "duration": "15:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Count subarrays with exact sum = Count(≤goal) - Count(≤goal-1). Use helper function for 'at most' sum.",
+  "approaches": [
+    {
+      "name": "Brute Force (All Subarrays)",
+      "order": 1,
+      "intuition": "Generate all subarrays, calculate sum of each, count those with sum = goal.",
+      "approach": "Two nested loops to generate subarrays, calculate sum, increment count when sum equals goal.",
+      "steps": [
+        "Initialize count = 0",
+        "For i from 0 to n-1:",
+        "  sum = 0",
+        "  For j from i to n-1:",
+        "    sum += nums[j]",
+        "    If sum == goal:",
+        "      count++",
+        "    If sum > goal:",
+        "      Break (optimization for binary array)",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops try all subarrays",
+        "spaceExplanation": "Only counter variables used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numSubarraysWithSum(vector<int>& nums, int goal) {\n        int n = nums.size();\n        int count = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int sum = 0;\n            for (int j = i; j < n; j++) {\n                sum += nums[j];\n                if (sum == goal) {\n                    count++;\n                }\n                if (sum > goal) {\n                    break;\n                }\n            }\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int numSubarraysWithSum(int[] nums, int goal) {\n        int n = nums.length;\n        int count = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int sum = 0;\n            for (int j = i; j < n; j++) {\n                sum += nums[j];\n                if (sum == goal) {\n                    count++;\n                }\n                if (sum > goal) {\n                    break;\n                }\n            }\n        }\n        \n        return count;\n    }\n}",
+        "python": "class Solution:\n    def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:\n        n = len(nums)\n        count = 0\n        \n        for i in range(n):\n            total = 0\n            for j in range(i, n):\n                total += nums[j]\n                if total == goal:\n                    count += 1\n                if total > goal:\n                    break\n        \n        return count",
+        "javascript": "var numSubarraysWithSum = function(nums, goal) {\n    const n = nums.length;\n    let count = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let sum = 0;\n        for (let j = i; j < n; j++) {\n            sum += nums[j];\n            if (sum === goal) {\n                count++;\n            }\n            if (sum > goal) {\n                break;\n            }\n        }\n    }\n    \n    return count;\n};"
+      }
+    },
+    {
+      "name": "HashMap (Prefix Sum)",
+      "order": 2,
+      "intuition": "Use prefix sum. For each position, check if (currentSum - goal) exists in map. Count such occurrences.",
+      "approach": "Store prefix sums in hashmap with frequencies. Check for (prefixSum - goal) at each step.",
+      "steps": [
+        "Initialize map with {0: 1}, prefixSum = 0, count = 0",
+        "For each num in nums:",
+        "  prefixSum += num",
+        "  If (prefixSum - goal) exists in map:",
+        "    count += map[prefixSum - goal]",
+        "  map[prefixSum]++",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "HashMap stores prefix sums"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int numSubarraysWithSum(vector<int>& nums, int goal) {\n        unordered_map<int, int> prefixCount;\n        prefixCount[0] = 1;\n        int prefixSum = 0;\n        int count = 0;\n        \n        for (int num : nums) {\n            prefixSum += num;\n            if (prefixCount.find(prefixSum - goal) != prefixCount.end()) {\n                count += prefixCount[prefixSum - goal];\n            }\n            prefixCount[prefixSum]++;\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int numSubarraysWithSum(int[] nums, int goal) {\n        Map<Integer, Integer> prefixCount = new HashMap<>();\n        prefixCount.put(0, 1);\n        int prefixSum = 0;\n        int count = 0;\n        \n        for (int num : nums) {\n            prefixSum += num;\n            count += prefixCount.getOrDefault(prefixSum - goal, 0);\n            prefixCount.put(prefixSum, prefixCount.getOrDefault(prefixSum, 0) + 1);\n        }\n        \n        return count;\n    }\n}",
+        "python": "class Solution:\n    def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:\n        prefix_count = {0: 1}\n        prefix_sum = 0\n        count = 0\n        \n        for num in nums:\n            prefix_sum += num\n            if prefix_sum - goal in prefix_count:\n                count += prefix_count[prefix_sum - goal]\n            prefix_count[prefix_sum] = prefix_count.get(prefix_sum, 0) + 1\n        \n        return count",
+        "javascript": "var numSubarraysWithSum = function(nums, goal) {\n    const prefixCount = new Map([[0, 1]]);\n    let prefixSum = 0;\n    let count = 0;\n    \n    for (const num of nums) {\n        prefixSum += num;\n        count += prefixCount.get(prefixSum - goal) || 0;\n        prefixCount.set(prefixSum, (prefixCount.get(prefixSum) || 0) + 1);\n    }\n    \n    return count;\n};"
+      }
+    },
+    {
+      "name": "Sliding Window - Optimal (At Most Technique)",
+      "order": 3,
+      "intuition": "Count(exactly goal) = Count(at most goal) - Count(at most goal-1). Use helper for 'at most sum'.",
+      "approach": "Create helper function that counts subarrays with sum ≤ target. Return helper(goal) - helper(goal-1).",
+      "steps": [
+        "Define helper(target):",
+        "  If target < 0: return 0",
+        "  left = 0, sum = 0, count = 0",
+        "  For right from 0 to n-1:",
+        "    sum += nums[right]",
+        "    While sum > target:",
+        "      sum -= nums[left]",
+        "      left++",
+        "    count += (right - left + 1)",
+        "  Return count",
+        "Return helper(goal) - helper(goal - 1)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes, each element visited at most twice",
+        "spaceExplanation": "Only pointer and counter variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int atMost(vector<int>& nums, int goal) {\n        if (goal < 0) return 0;\n        int left = 0, sum = 0, count = 0;\n        \n        for (int right = 0; right < nums.size(); right++) {\n            sum += nums[right];\n            while (sum > goal) {\n                sum -= nums[left];\n                left++;\n            }\n            count += (right - left + 1);\n        }\n        return count;\n    }\n    \n    int numSubarraysWithSum(vector<int>& nums, int goal) {\n        return atMost(nums, goal) - atMost(nums, goal - 1);\n    }\n};",
+        "java": "class Solution {\n    private int atMost(int[] nums, int goal) {\n        if (goal < 0) return 0;\n        int left = 0, sum = 0, count = 0;\n        \n        for (int right = 0; right < nums.length; right++) {\n            sum += nums[right];\n            while (sum > goal) {\n                sum -= nums[left];\n                left++;\n            }\n            count += (right - left + 1);\n        }\n        return count;\n    }\n    \n    public int numSubarraysWithSum(int[] nums, int goal) {\n        return atMost(nums, goal) - atMost(nums, goal - 1);\n    }\n}",
+        "python": "class Solution:\n    def atMost(self, nums: List[int], goal: int) -> int:\n        if goal < 0:\n            return 0\n        left = sum_val = count = 0\n        \n        for right in range(len(nums)):\n            sum_val += nums[right]\n            while sum_val > goal:\n                sum_val -= nums[left]\n                left += 1\n            count += (right - left + 1)\n        \n        return count\n    \n    def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:\n        return self.atMost(nums, goal) - self.atMost(nums, goal - 1)",
+        "javascript": "var numSubarraysWithSum = function(nums, goal) {\n    const atMost = (target) => {\n        if (target < 0) return 0;\n        let left = 0, sum = 0, count = 0;\n        \n        for (let right = 0; right < nums.length; right++) {\n            sum += nums[right];\n            while (sum > target) {\n                sum -= nums[left];\n                left++;\n            }\n            count += (right - left + 1);\n        }\n        return count;\n    };\n    \n    return atMost(goal) - atMost(goal - 1);\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling goal = 0 case properly",
+    "Forgetting the 'at most' technique for exact sum",
+    "Not initializing prefix sum map with {0: 1}",
+    "Confusing count += 1 with count += (right - left + 1)"
+  ],
+  "hints": [
+    "For exact sum, use: atMost(goal) - atMost(goal-1)",
+    "In sliding window, count all valid subarrays ending at right",
+    "For prefix sum approach, store frequencies not just sums"
+  ],
+  "followUp": [
+    "What if array contains negative numbers?",
+    "Find subarrays with sum in range [L, R]?",
+    "Count subarrays with product equal to K?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft"],
+  "tags": ["array", "sliding-window", "prefix-sum", "hash-table"],
+  "relatedProblems": [
+    "Subarray Sum Equals K",
+    "Count Number of Nice Subarrays",
+    "Subarrays with K Different Integers"
+  ]
+}

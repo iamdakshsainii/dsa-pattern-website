@@ -1,0 +1,136 @@
+{
+  "questionId": "3",
+  "questionSlug": "longest-substring-without-repeating-characters",
+  "title": "Longest Substring Without Repeating Characters",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+    "videos": [
+      {
+        "title": "Longest Substring Without Repeating Characters",
+        "url": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Sliding Window Pattern Explained",
+        "url": "https://www.youtube.com/watch?v=jM2dhDPYMQM",
+        "channel": "Striver",
+        "duration": "15:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Longest substring without duplicates = Variable Sliding Window + Set/HashMap to track characters in current window.",
+  "approaches": [
+    {
+      "name": "Brute Force (All Substrings)",
+      "order": 1,
+      "intuition": "Generate all substrings, check each for duplicate characters using set, track maximum length without duplicates.",
+      "approach": "Two nested loops for substrings, use set to detect duplicates, update max length.",
+      "steps": [
+        "Initialize maxLen = 0",
+        "For i from 0 to n-1:",
+        "  charSet = set()",
+        "  For j from i to n-1:",
+        "    If s[j] in charSet:",
+        "      Break (found duplicate)",
+        "    charSet.add(s[j])",
+        "    maxLen = max(maxLen, j - i + 1)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(min(n, 128))",
+        "timeExplanation": "Nested loops try all substrings",
+        "spaceExplanation": "Set stores characters (at most 128 ASCII)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        int n = s.length();\n        int maxLen = 0;\n        \n        for (int i = 0; i < n; i++) {\n            unordered_set<char> charSet;\n            for (int j = i; j < n; j++) {\n                if (charSet.count(s[j])) {\n                    break;\n                }\n                charSet.insert(s[j]);\n                maxLen = max(maxLen, j - i + 1);\n            }\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        int n = s.length();\n        int maxLen = 0;\n        \n        for (int i = 0; i < n; i++) {\n            Set<Character> charSet = new HashSet<>();\n            for (int j = i; j < n; j++) {\n                if (charSet.contains(s.charAt(j))) {\n                    break;\n                }\n                charSet.add(s.charAt(j));\n                maxLen = Math.max(maxLen, j - i + 1);\n            }\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        n = len(s)\n        max_len = 0\n        \n        for i in range(n):\n            char_set = set()\n            for j in range(i, n):\n                if s[j] in char_set:\n                    break\n                char_set.add(s[j])\n                max_len = max(max_len, j - i + 1)\n        \n        return max_len",
+        "javascript": "var lengthOfLongestSubstring = function(s) {\n    const n = s.length;\n    let maxLen = 0;\n    \n    for (let i = 0; i < n; i++) {\n        const charSet = new Set();\n        for (let j = i; j < n; j++) {\n            if (charSet.has(s[j])) {\n                break;\n            }\n            charSet.add(s[j]);\n            maxLen = Math.max(maxLen, j - i + 1);\n        }\n    }\n    \n    return maxLen;\n};"
+      }
+    },
+    {
+      "name": "Sliding Window + Set",
+      "order": 2,
+      "intuition": "Use set to track characters in current window. When duplicate found, shrink window from left until duplicate removed.",
+      "approach": "Expand right pointer, add to set. If duplicate, remove from left until no duplicate, then continue.",
+      "steps": [
+        "Initialize left = 0, maxLen = 0, charSet = set()",
+        "For right from 0 to n-1:",
+        "  While s[right] in charSet:",
+        "    charSet.remove(s[left])",
+        "    left++",
+        "  charSet.add(s[right])",
+        "  maxLen = max(maxLen, right - left + 1)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(2n) = O(n)",
+        "space": "O(min(n, 128))",
+        "timeExplanation": "Each character visited at most twice (by right and left)",
+        "spaceExplanation": "Set stores unique characters in window"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        int n = s.length();\n        int left = 0;\n        int maxLen = 0;\n        unordered_set<char> charSet;\n        \n        for (int right = 0; right < n; right++) {\n            while (charSet.count(s[right])) {\n                charSet.erase(s[left]);\n                left++;\n            }\n            charSet.insert(s[right]);\n            maxLen = max(maxLen, right - left + 1);\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        int n = s.length();\n        int left = 0;\n        int maxLen = 0;\n        Set<Character> charSet = new HashSet<>();\n        \n        for (int right = 0; right < n; right++) {\n            while (charSet.contains(s.charAt(right))) {\n                charSet.remove(s.charAt(left));\n                left++;\n            }\n            charSet.add(s.charAt(right));\n            maxLen = Math.max(maxLen, right - left + 1);\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        n = len(s)\n        left = 0\n        max_len = 0\n        char_set = set()\n        \n        for right in range(n):\n            while s[right] in char_set:\n                char_set.remove(s[left])\n                left += 1\n            char_set.add(s[right])\n            max_len = max(max_len, right - left + 1)\n        \n        return max_len",
+        "javascript": "var lengthOfLongestSubstring = function(s) {\n    const n = s.length;\n    let left = 0;\n    let maxLen = 0;\n    const charSet = new Set();\n    \n    for (let right = 0; right < n; right++) {\n        while (charSet.has(s[right])) {\n            charSet.delete(s[left]);\n            left++;\n        }\n        charSet.add(s[right]);\n        maxLen = Math.max(maxLen, right - left + 1);\n    }\n    \n    return maxLen;\n};"
+      }
+    },
+    {
+      "name": "Sliding Window + HashMap - Optimal",
+      "order": 3,
+      "intuition": "Store character → last index in HashMap. When duplicate found, jump left pointer directly to position after last occurrence.",
+      "approach": "Use HashMap to store last seen index. When duplicate found, move left to max(left, lastIndex[char] + 1).",
+      "steps": [
+        "Initialize left = 0, maxLen = 0, charIndex = {}",
+        "For right from 0 to n-1:",
+        "  If s[right] in charIndex AND charIndex[s[right]] >= left:",
+        "    left = charIndex[s[right]] + 1",
+        "  charIndex[s[right]] = right",
+        "  maxLen = max(maxLen, right - left + 1)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(min(n, 128))",
+        "timeExplanation": "Single pass, each character visited once",
+        "spaceExplanation": "HashMap stores character positions"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        int n = s.length();\n        int left = 0;\n        int maxLen = 0;\n        unordered_map<char, int> charIndex;\n        \n        for (int right = 0; right < n; right++) {\n            if (charIndex.count(s[right]) && charIndex[s[right]] >= left) {\n                left = charIndex[s[right]] + 1;\n            }\n            charIndex[s[right]] = right;\n            maxLen = max(maxLen, right - left + 1);\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        int n = s.length();\n        int left = 0;\n        int maxLen = 0;\n        Map<Character, Integer> charIndex = new HashMap<>();\n        \n        for (int right = 0; right < n; right++) {\n            char c = s.charAt(right);\n            if (charIndex.containsKey(c) && charIndex.get(c) >= left) {\n                left = charIndex.get(c) + 1;\n            }\n            charIndex.put(c, right);\n            maxLen = Math.max(maxLen, right - left + 1);\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        n = len(s)\n        left = 0\n        max_len = 0\n        char_index = {}\n        \n        for right in range(n):\n            if s[right] in char_index and char_index[s[right]] >= left:\n                left = char_index[s[right]] + 1\n            char_index[s[right]] = right\n            max_len = max(max_len, right - left + 1)\n        \n        return max_len",
+        "javascript": "var lengthOfLongestSubstring = function(s) {\n    const n = s.length;\n    let left = 0;\n    let maxLen = 0;\n    const charIndex = new Map();\n    \n    for (let right = 0; right < n; right++) {\n        if (charIndex.has(s[right]) && charIndex.get(s[right]) >= left) {\n            left = charIndex.get(s[right]) + 1;\n        }\n        charIndex.set(s[right], right);\n        maxLen = Math.max(maxLen, right - left + 1);\n    }\n    \n    return maxLen;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if charIndex[char] >= left before jumping",
+    "Updating left incorrectly (should be lastIndex + 1)",
+    "Not handling single character strings",
+    "Forgetting to update charIndex after moving left"
+  ],
+  "hints": [
+    "Use HashMap to store last seen index of each character",
+    "When duplicate found, jump left pointer to position after last occurrence",
+    "Make sure to check if last occurrence is within current window",
+    "Update character index after processing"
+  ],
+  "followUp": [
+    "What if we allow at most K duplicate characters?",
+    "Find all substrings without repeating characters?",
+    "What if string contains Unicode characters?"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Apple", "Bloomberg"],
+  "tags": ["string", "sliding-window", "hash-map", "set"],
+  "relatedProblems": [
+    "Longest Substring with At Most K Distinct Characters",
+    "Longest Repeating Character Replacement",
+    "Minimum Window Substring"
+  ]
+}

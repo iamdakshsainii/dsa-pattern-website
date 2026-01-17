@@ -1,0 +1,98 @@
+{
+  "questionId": "2095",
+  "questionSlug": "delete-the-middle-node-of-a-linked-list",
+  "title": "Delete the Middle Node of a Linked List",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/",
+    "videos": [
+      {
+        "title": "Delete Middle Node - Fast & Slow Pointers",
+        "url": "https://www.youtube.com/watch?v=ePpV-_pfOeI",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Find and delete middle node = Fast & Slow pointers. Slow moves 1 step, fast moves 2 steps. When fast reaches end, slow is at middle.",
+  "approaches": [
+    {
+      "name": "Two Pass (Count then Delete)",
+      "order": 1,
+      "intuition": "First pass to count nodes, calculate middle index. Second pass to delete node at middle index.",
+      "approach": "Count total nodes, find middle position (n/2), traverse again to delete.",
+      "steps": [
+        "Count total nodes in list",
+        "Calculate middle index = n / 2",
+        "Traverse to node before middle",
+        "Delete middle node: prev.next = prev.next.next",
+        "Return head"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through the list",
+        "spaceExplanation": "Only pointer variables used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* deleteMiddle(ListNode* head) {\n        if (!head || !head->next) return nullptr;\n        \n        // Count nodes\n        int count = 0;\n        ListNode* temp = head;\n        while (temp) {\n            count++;\n            temp = temp->next;\n        }\n        \n        // Find middle index\n        int mid = count / 2;\n        \n        // Traverse to node before middle\n        temp = head;\n        for (int i = 0; i < mid - 1; i++) {\n            temp = temp->next;\n        }\n        \n        // Delete middle node\n        temp->next = temp->next->next;\n        \n        return head;\n    }\n};",
+        "java": "class Solution {\n    public ListNode deleteMiddle(ListNode head) {\n        if (head == null || head.next == null) return null;\n        \n        int count = 0;\n        ListNode temp = head;\n        while (temp != null) {\n            count++;\n            temp = temp.next;\n        }\n        \n        int mid = count / 2;\n        \n        temp = head;\n        for (int i = 0; i < mid - 1; i++) {\n            temp = temp.next;\n        }\n        \n        temp.next = temp.next.next;\n        \n        return head;\n    }\n}",
+        "python": "class Solution:\n    def deleteMiddle(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        if not head or not head.next:\n            return None\n        \n        # Count nodes\n        count = 0\n        temp = head\n        while temp:\n            count += 1\n            temp = temp.next\n        \n        # Find middle index\n        mid = count // 2\n        \n        # Traverse to node before middle\n        temp = head\n        for _ in range(mid - 1):\n            temp = temp.next\n        \n        # Delete middle node\n        temp.next = temp.next.next\n        \n        return head",
+        "javascript": "var deleteMiddle = function(head) {\n    if (!head || !head.next) return null;\n    \n    let count = 0;\n    let temp = head;\n    while (temp) {\n        count++;\n        temp = temp.next;\n    }\n    \n    const mid = Math.floor(count / 2);\n    \n    temp = head;\n    for (let i = 0; i < mid - 1; i++) {\n        temp = temp.next;\n    }\n    \n    temp.next = temp.next.next;\n    \n    return head;\n};"
+      }
+    },
+    {
+      "name": "Fast & Slow Pointers - Optimal",
+      "order": 2,
+      "intuition": "Use two pointers: slow (1 step) and fast (2 steps). When fast reaches end, slow is at middle. Keep prev pointer to delete.",
+      "approach": "Fast pointer moves twice as fast. When fast reaches end, slow is at middle. Use prev to delete slow node.",
+      "steps": [
+        "Handle edge case: if only 1 node, return null",
+        "Initialize prev = null, slow = head, fast = head",
+        "While fast and fast.next exist:",
+        "  prev = slow",
+        "  slow = slow.next",
+        "  fast = fast.next.next",
+        "Delete slow: prev.next = slow.next",
+        "Return head"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through the list",
+        "spaceExplanation": "Only three pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* deleteMiddle(ListNode* head) {\n        if (!head || !head->next) return nullptr;\n        \n        ListNode* prev = nullptr;\n        ListNode* slow = head;\n        ListNode* fast = head;\n        \n        while (fast && fast->next) {\n            prev = slow;\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        \n        // Delete middle node\n        prev->next = slow->next;\n        \n        return head;\n    }\n};",
+        "java": "class Solution {\n    public ListNode deleteMiddle(ListNode head) {\n        if (head == null || head.next == null) return null;\n        \n        ListNode prev = null;\n        ListNode slow = head;\n        ListNode fast = head;\n        \n        while (fast != null && fast.next != null) {\n            prev = slow;\n            slow = slow.next;\n            fast = fast.next.next;\n        }\n        \n        prev.next = slow.next;\n        \n        return head;\n    }\n}",
+        "python": "class Solution:\n    def deleteMiddle(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        if not head or not head.next:\n            return None\n        \n        prev = None\n        slow = head\n        fast = head\n        \n        while fast and fast.next:\n            prev = slow\n            slow = slow.next\n            fast = fast.next.next\n        \n        # Delete middle node\n        prev.next = slow.next\n        \n        return head",
+        "javascript": "var deleteMiddle = function(head) {\n    if (!head || !head.next) return null;\n    \n    let prev = null;\n    let slow = head;\n    let fast = head;\n    \n    while (fast && fast.next) {\n        prev = slow;\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    \n    prev.next = slow.next;\n    \n    return head;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling single node edge case (should return null)",
+    "Not keeping track of previous node (needed to delete)",
+    "Forgetting to check fast.next before accessing fast.next.next",
+    "Not initializing prev pointer"
+  ],
+  "hints": [
+    "Fast pointer moves 2x speed of slow pointer",
+    "When fast reaches end, slow is at middle",
+    "Keep prev pointer to perform deletion",
+    "Edge case: list with 1 node returns null"
+  ],
+  "followUp": [
+    "Delete node at position k from end?",
+    "Delete all middle nodes in segments of k?",
+    "What if we need to delete the node closest to a specific value?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google"],
+  "tags": ["linked-list", "fast-slow-pointers", "two-pointers"],
+  "relatedProblems": [
+    "Middle of the Linked List",
+    "Remove Nth Node From End of List",
+    "Delete Node in a Linked List"
+  ]
+}

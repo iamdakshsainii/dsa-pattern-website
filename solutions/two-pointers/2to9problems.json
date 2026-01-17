@@ -1,0 +1,961 @@
+[
+  {
+    "questionId": "26",
+    "questionSlug": "remove-duplicates-from-sorted-array",
+    "title": "Remove Duplicates from Sorted Array",
+    "difficulty": "Easy",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+      "videos": [
+        {
+          "title": "Remove Duplicates from Sorted Array - Leetcode 26",
+          "url": "https://www.youtube.com/watch?v=DEJAZBq0FDA",
+          "channel": "NeetCode",
+          "duration": "5:23",
+          "language": "English"
+        },
+        {
+          "title": "L3. Remove Duplicates in-place from Sorted Array",
+          "url": "https://www.youtube.com/watch?v=Fm_p9lJ4Z_8",
+          "channel": "take U forward",
+          "duration": "11:40",
+          "language": "English"
+        },
+        {
+          "title": "Remove Duplicates From Sorted Array",
+          "url": "https://www.youtube.com/watch?v=jSKdl4gBYPk",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "6:12",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Remove Duplicates from Sorted Array - LeetCode Solution",
+          "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/solution/",
+          "source": "LeetCode Official"
+        },
+        {
+          "title": "Remove duplicates from sorted array",
+          "url": "https://takeuforward.org/data-structure/remove-duplicates-in-place-from-sorted-array/",
+          "source": "takeuforward"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "Sorted array + in-place modification = Two Pointers (slow-fast). Slow pointer tracks position to place unique element, fast pointer scans array.",
+    "approaches": [
+      {
+        "name": "Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Use slow pointer to track position for next unique element. Fast pointer scans array. When fast finds new unique element, place it at slow position.",
+        "approach": "Slow pointer marks insertion position for unique elements. Fast pointer finds unique elements by comparing with previous.",
+        "steps": [
+          "Handle edge case: if array length <= 1, return length",
+          "Initialize slow = 1 (position for next unique)",
+          "Initialize fast = 1 (scanner)",
+          "While fast < n:",
+          "  If nums[fast] != nums[fast-1] (found unique):",
+          "    Place nums[fast] at nums[slow]",
+          "    Increment slow",
+          "  Increment fast",
+          "Return slow (number of unique elements)"
+        ],
+        "complexity": {
+          "time": "O(n)",
+          "space": "O(1)",
+          "timeExplanation": "Single pass through array",
+          "spaceExplanation": "Only using two pointer variables"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    int removeDuplicates(vector<int>& nums) {\n        if (nums.size() <= 1) return nums.size();\n        \n        int slow = 1;\n        \n        for (int fast = 1; fast < nums.size(); fast++) {\n            if (nums[fast] != nums[fast - 1]) {\n                nums[slow] = nums[fast];\n                slow++;\n            }\n        }\n        \n        return slow;\n    }\n};",
+          "java": "class Solution {\n    public int removeDuplicates(int[] nums) {\n        if (nums.length <= 1) return nums.length;\n        \n        int slow = 1;\n        \n        for (int fast = 1; fast < nums.length; fast++) {\n            if (nums[fast] != nums[fast - 1]) {\n                nums[slow] = nums[fast];\n                slow++;\n            }\n        }\n        \n        return slow;\n    }\n}",
+          "python": "class Solution:\n    def removeDuplicates(self, nums: List[int]) -> int:\n        if len(nums) <= 1:\n            return len(nums)\n        \n        slow = 1\n        \n        for fast in range(1, len(nums)):\n            if nums[fast] != nums[fast - 1]:\n                nums[slow] = nums[fast]\n                slow += 1\n        \n        return slow",
+          "javascript": "var removeDuplicates = function(nums) {\n    if (nums.length <= 1) return nums.length;\n    \n    let slow = 1;\n    \n    for (let fast = 1; fast < nums.length; fast++) {\n        if (nums[fast] !== nums[fast - 1]) {\n            nums[slow] = nums[fast];\n            slow++;\n        }\n    }\n    \n    return slow;\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Using extra space when in-place solution required",
+      "Not understanding that order must be maintained",
+      "Comparing nums[fast] with nums[slow] instead of nums[fast-1]"
+    ],
+    "hints": [
+      "Array is sorted, duplicates are adjacent",
+      "Use slow pointer for placement, fast for scanning",
+      "Only move slow when unique element found"
+    ],
+    "followUp": [
+      "What if array is not sorted?",
+      "What if duplicates allowed at most twice?"
+    ],
+    "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Apple"],
+    "tags": ["array", "two-pointers"],
+    "relatedProblems": [
+      "Remove Element",
+      "Remove Duplicates from Sorted Array II"
+    ]
+  },
+  {
+    "questionId": "283",
+    "questionSlug": "move-zeroes",
+    "title": "Move Zeroes",
+    "difficulty": "Easy",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/move-zeroes/",
+      "videos": [
+        {
+          "title": "Move Zeroes - Leetcode 283",
+          "url": "https://www.youtube.com/watch?v=aayNRwUN3Do",
+          "channel": "NeetCode",
+          "duration": "5:11",
+          "language": "English"
+        },
+        {
+          "title": "L4. Move Zeros to end",
+          "url": "https://www.youtube.com/watch?v=wvcQg43_V8U",
+          "channel": "take U forward",
+          "duration": "10:25",
+          "language": "English"
+        },
+        {
+          "title": "Move Zeroes Solution",
+          "url": "https://www.youtube.com/watch?v=1PEncepEIoE",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "4:45",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Move Zeroes - LeetCode Solution",
+          "url": "https://leetcode.com/problems/move-zeroes/solution/",
+          "source": "LeetCode Official"
+        },
+        {
+          "title": "Move all Zeros to the end of the array",
+          "url": "https://takeuforward.org/data-structure/move-all-zeros-to-the-end-of-the-array/",
+          "source": "takeuforward"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/move-zeroes/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "In-place array modification + partition = Two Pointers. Partition non-zeros to left, zeros to right.",
+    "approaches": [
+      {
+        "name": "Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Use slow pointer to track position for next non-zero. Fast pointer finds non-zeros. Swap when found.",
+        "approach": "Slow pointer marks position for non-zero placement. Fast scans and swaps non-zeros to slow position.",
+        "steps": [
+          "Initialize slow = 0 (position for next non-zero)",
+          "Iterate fast from 0 to n-1:",
+          "  If nums[fast] != 0:",
+          "    Swap nums[slow] with nums[fast]",
+          "    Increment slow",
+          "After loop, all non-zeros at front, zeros at end"
+        ],
+        "complexity": {
+          "time": "O(n)",
+          "space": "O(1)",
+          "timeExplanation": "Single pass through array",
+          "spaceExplanation": "Only using two pointer variables"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        int slow = 0;\n        \n        for (int fast = 0; fast < nums.size(); fast++) {\n            if (nums[fast] != 0) {\n                swap(nums[slow], nums[fast]);\n                slow++;\n            }\n        }\n    }\n};",
+          "java": "class Solution {\n    public void moveZeroes(int[] nums) {\n        int slow = 0;\n        \n        for (int fast = 0; fast < nums.length; fast++) {\n            if (nums[fast] != 0) {\n                int temp = nums[slow];\n                nums[slow] = nums[fast];\n                nums[fast] = temp;\n                slow++;\n            }\n        }\n    }\n}",
+          "python": "class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        slow = 0\n        \n        for fast in range(len(nums)):\n            if nums[fast] != 0:\n                nums[slow], nums[fast] = nums[fast], nums[slow]\n                slow += 1",
+          "javascript": "var moveZeroes = function(nums) {\n    let slow = 0;\n    \n    for (let fast = 0; fast < nums.length; fast++) {\n        if (nums[fast] !== 0) {\n            [nums[slow], nums[fast]] = [nums[fast], nums[slow]];\n            slow++;\n        }\n    }\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Using extra space for new array",
+      "Not maintaining relative order of non-zero elements",
+      "Overcomplicating with multiple passes"
+    ],
+    "hints": [
+      "Think of it as partitioning: non-zeros left, zeros right",
+      "Swap instead of just copying to maintain order",
+      "Slow pointer tracks where next non-zero should go"
+    ],
+    "followUp": [
+      "Minimize number of write operations",
+      "What if we want zeros at the beginning?"
+    ],
+    "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Apple"],
+    "tags": ["array", "two-pointers"],
+    "relatedProblems": ["Remove Element", "Remove Duplicates from Sorted Array"]
+  },
+  {
+    "questionId": "977",
+    "questionSlug": "squares-of-a-sorted-array",
+    "title": "Squares of a Sorted Array",
+    "difficulty": "Easy",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/squares-of-a-sorted-array/",
+      "videos": [
+        {
+          "title": "Squares of a Sorted Array - Leetcode 977",
+          "url": "https://www.youtube.com/watch?v=FPCZsG_AkUg",
+          "channel": "NeetCode",
+          "duration": "6:34",
+          "language": "English"
+        },
+        {
+          "title": "Squares of a Sorted Array",
+          "url": "https://www.youtube.com/watch?v=3QJzHqNAEXs",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "5:20",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Squares of a Sorted Array - LeetCode Solution",
+          "url": "https://leetcode.com/problems/squares-of-a-sorted-array/solution/",
+          "source": "LeetCode Official"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/squares-of-a-sorted-array/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "Sorted array with negatives + merge from ends = Two Pointers. Compare absolute values from both ends, fill result from back.",
+    "approaches": [
+      {
+        "name": "Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Largest squares are at ends (most negative or most positive). Compare from both ends, fill result array from back to front.",
+        "approach": "Use two pointers at ends. Compare absolute values, place larger square at end of result, move that pointer inward.",
+        "steps": [
+          "Create result array of same size",
+          "Initialize left = 0, right = n-1, pos = n-1",
+          "While left <= right:",
+          "  Calculate leftSquare = nums[left]²",
+          "  Calculate rightSquare = nums[right]²",
+          "  If leftSquare > rightSquare:",
+          "    result[pos] = leftSquare, left++",
+          "  Else:",
+          "    result[pos] = rightSquare, right--",
+          "  Decrement pos",
+          "Return result"
+        ],
+        "complexity": {
+          "time": "O(n)",
+          "space": "O(n)",
+          "timeExplanation": "Single pass through array",
+          "spaceExplanation": "Result array of size n"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    vector<int> sortedSquares(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n);\n        int left = 0, right = n - 1, pos = n - 1;\n        \n        while (left <= right) {\n            int leftSquare = nums[left] * nums[left];\n            int rightSquare = nums[right] * nums[right];\n            \n            if (leftSquare > rightSquare) {\n                result[pos] = leftSquare;\n                left++;\n            } else {\n                result[pos] = rightSquare;\n                right--;\n            }\n            pos--;\n        }\n        \n        return result;\n    }\n};",
+          "java": "class Solution {\n    public int[] sortedSquares(int[] nums) {\n        int n = nums.length;\n        int[] result = new int[n];\n        int left = 0, right = n - 1, pos = n - 1;\n        \n        while (left <= right) {\n            int leftSquare = nums[left] * nums[left];\n            int rightSquare = nums[right] * nums[right];\n            \n            if (leftSquare > rightSquare) {\n                result[pos] = leftSquare;\n                left++;\n            } else {\n                result[pos] = rightSquare;\n                right--;\n            }\n            pos--;\n        }\n        \n        return result;\n    }\n}",
+          "python": "class Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        result = [0] * n\n        left, right, pos = 0, n - 1, n - 1\n        \n        while left <= right:\n            left_square = nums[left] ** 2\n            right_square = nums[right] ** 2\n            \n            if left_square > right_square:\n                result[pos] = left_square\n                left += 1\n            else:\n                result[pos] = right_square\n                right -= 1\n            pos -= 1\n        \n        return result",
+          "javascript": "var sortedSquares = function(nums) {\n    const n = nums.length;\n    const result = new Array(n);\n    let left = 0, right = n - 1, pos = n - 1;\n    \n    while (left <= right) {\n        const leftSquare = nums[left] ** 2;\n        const rightSquare = nums[right] ** 2;\n        \n        if (leftSquare > rightSquare) {\n            result[pos] = leftSquare;\n            left++;\n        } else {\n            result[pos] = rightSquare;\n            right--;\n        }\n        pos--;\n    }\n    \n    return result;\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Squaring then sorting (O(n log n) instead of O(n))",
+      "Trying to find middle point unnecessarily",
+      "Not filling result from back to front"
+    ],
+    "hints": [
+      "Largest squares must be at the ends",
+      "Fill result array backwards",
+      "Compare absolute values (or squares directly)"
+    ],
+    "followUp": ["What if array not sorted?", "Can you do it in-place?"],
+    "companies": ["Amazon", "Google", "Facebook", "Microsoft"],
+    "tags": ["array", "two-pointers", "sorting"],
+    "relatedProblems": ["Merge Sorted Array", "Sort Transformed Array"]
+  },
+  {
+    "questionId": "125",
+    "questionSlug": "valid-palindrome",
+    "title": "Valid Palindrome",
+    "difficulty": "Easy",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/valid-palindrome/",
+      "videos": [
+        {
+          "title": "Valid Palindrome - Leetcode 125",
+          "url": "https://www.youtube.com/watch?v=jJXJ16kPFWg",
+          "channel": "NeetCode",
+          "duration": "7:02",
+          "language": "English"
+        },
+        {
+          "title": "Valid Palindrome Solution",
+          "url": "https://www.youtube.com/watch?v=rYyn9Vc-dCA",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "5:15",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Valid Palindrome - LeetCode Solution",
+          "url": "https://leetcode.com/problems/valid-palindrome/solution/",
+          "source": "LeetCode Official"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/valid-palindrome/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "String comparison from ends + palindrome = Two Pointers. Compare characters from both ends, skip non-alphanumeric.",
+    "approaches": [
+      {
+        "name": "Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Palindrome reads same forwards and backwards. Use two pointers from ends, skip non-alphanumeric, compare case-insensitive.",
+        "approach": "Left pointer starts at beginning, right at end. Skip invalid characters, compare lowercase versions.",
+        "steps": [
+          "Initialize left = 0, right = s.length - 1",
+          "While left < right:",
+          "  Skip non-alphanumeric from left",
+          "  Skip non-alphanumeric from right",
+          "  Compare lowercase s[left] with lowercase s[right]",
+          "  If not equal, return false",
+          "  Move both pointers inward",
+          "Return true"
+        ],
+        "complexity": {
+          "time": "O(n)",
+          "space": "O(1)",
+          "timeExplanation": "Single pass through string",
+          "spaceExplanation": "Only using two pointer variables"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    bool isPalindrome(string s) {\n        int left = 0, right = s.length() - 1;\n        \n        while (left < right) {\n            while (left < right && !isalnum(s[left])) left++;\n            while (left < right && !isalnum(s[right])) right--;\n            \n            if (tolower(s[left]) != tolower(s[right])) {\n                return false;\n            }\n            \n            left++;\n            right--;\n        }\n        \n        return true;\n    }\n};",
+          "java": "class Solution {\n    public boolean isPalindrome(String s) {\n        int left = 0, right = s.length() - 1;\n        \n        while (left < right) {\n            while (left < right && !Character.isLetterOrDigit(s.charAt(left))) {\n                left++;\n            }\n            while (left < right && !Character.isLetterOrDigit(s.charAt(right))) {\n                right--;\n            }\n            \n            if (Character.toLowerCase(s.charAt(left)) != \n                Character.toLowerCase(s.charAt(right))) {\n                return false;\n            }\n            \n            left++;\n            right--;\n        }\n        \n        return true;\n    }\n}",
+          "python": "class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        left, right = 0, len(s) - 1\n        \n        while left < right:\n            while left < right and not s[left].isalnum():\n                left += 1\n            while left < right and not s[right].isalnum():\n                right -= 1\n            \n            if s[left].lower() != s[right].lower():\n                return False\n            \n            left += 1\n            right -= 1\n        \n        return True",
+          "javascript": "var isPalindrome = function(s) {\n    let left = 0, right = s.length - 1;\n    \n    const isAlphaNumeric = (char) => {\n        return /[a-zA-Z0-9]/.test(char);\n    };\n    \n    while (left < right) {\n        while (left < right && !isAlphaNumeric(s[left])) left++;\n        while (left < right && !isAlphaNumeric(s[right])) right--;\n        \n        if (s[left].toLowerCase() !== s[right].toLowerCase()) {\n            return false;\n        }\n        \n        left++;\n        right--;\n    }\n    \n    return true;\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Not handling non-alphanumeric characters properly",
+      "Case-sensitive comparison",
+      "Creating filtered string (uses extra space)"
+    ],
+    "hints": [
+      "Ignore non-alphanumeric characters",
+      "Convert to same case before comparing",
+      "Two pointers avoid creating new string"
+    ],
+    "followUp": [
+      "What if only one character deletion allowed?",
+      "What about palindrome phrases ignoring spaces?"
+    ],
+    "companies": ["Amazon", "Microsoft", "Facebook", "Apple", "Google"],
+    "tags": ["two-pointers", "string"],
+    "relatedProblems": ["Valid Palindrome II", "Palindrome Linked List"]
+  },
+  {
+    "questionId": "27",
+    "questionSlug": "remove-element",
+    "title": "Remove Element",
+    "difficulty": "Easy",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/remove-element/",
+      "videos": [
+        {
+          "title": "Remove Element - Leetcode 27",
+          "url": "https://www.youtube.com/watch?v=Pcd1ii9P9ZI",
+          "channel": "NeetCode",
+          "duration": "4:52",
+          "language": "English"
+        },
+        {
+          "title": "Remove Element Solution",
+          "url": "https://www.youtube.com/watch?v=Yhqlq6RKxGw",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "3:45",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Remove Element - LeetCode Solution",
+          "url": "https://leetcode.com/problems/remove-element/solution/",
+          "source": "LeetCode Official"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/remove-element/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "In-place removal + any order = Two Pointers. Overwrite elements to remove with elements to keep.",
+    "approaches": [
+      {
+        "name": "Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Track position for next valid element with slow pointer. Fast pointer scans and copies non-val elements to slow position.",
+        "approach": "Slow marks insertion position. Fast finds elements != val and copies them to slow position.",
+        "steps": [
+          "Initialize slow = 0",
+          "Iterate fast from 0 to n-1:",
+          "  If nums[fast] != val:",
+          "    Copy nums[fast] to nums[slow]",
+          "    Increment slow",
+          "Return slow (count of elements != val)"
+        ],
+        "complexity": {
+          "time": "O(n)",
+          "space": "O(1)",
+          "timeExplanation": "Single pass through array",
+          "spaceExplanation": "Only using two pointer variables"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    int removeElement(vector<int>& nums, int val) {\n        int slow = 0;\n        \n        for (int fast = 0; fast < nums.size(); fast++) {\n            if (nums[fast] != val) {\n                nums[slow] = nums[fast];\n                slow++;\n            }\n        }\n        \n        return slow;\n    }\n};",
+          "java": "class Solution {\n    public int removeElement(int[] nums, int val) {\n        int slow = 0;\n        \n        for (int fast = 0; fast < nums.length; fast++) {\n            if (nums[fast] != val) {\n                nums[slow] = nums[fast];\n                slow++;\n            }\n        }\n        \n        return slow;\n    }\n}",
+          "python": "class Solution:\n    def removeElement(self, nums: List[int], val: int) -> int:\n        slow = 0\n        \n        for fast in range(len(nums)):\n            if nums[fast] != val:\n                nums[slow] = nums[fast]\n                slow += 1\n        \n        return slow",
+          "javascript": "var removeElement = function(nums, val) {\n    let slow = 0;\n    \n    for (let fast = 0; fast < nums.length; fast++) {\n        if (nums[fast] !== val) {\n            nums[slow] = nums[fast];\n            slow++;\n        }\n    }\n    \n    return slow;\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Using extra space",
+      "Not understanding in-place requirement",
+      "Worrying about elements after returned length"
+    ],
+    "hints": [
+      "Overwrite elements equal to val",
+      "Order doesn't matter",
+      "Slow pointer tracks result length"
+    ],
+    "followUp": [
+      "Minimize number of operations when val is rare",
+      "What if val is very common?"
+    ],
+    "companies": ["Amazon", "Microsoft", "Google"],
+    "tags": ["array", "two-pointers"],
+    "relatedProblems": ["Remove Duplicates from Sorted Array", "Move Zeroes"]
+  },
+  {
+    "questionId": "75",
+    "questionSlug": "sort-colors",
+    "title": "Sort Colors",
+    "difficulty": "Medium",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/sort-colors/",
+      "videos": [
+        {
+          "title": "Sort Colors - Leetcode 75",
+          "url": "https://www.youtube.com/watch?v=4xbWSRZHqac",
+          "channel": "NeetCode",
+          "duration": "9:13",
+          "language": "English"
+        },
+        {
+          "title": "L12. Sort an array of 0's 1's and 2's",
+          "url": "https://www.youtube.com/watch?v=oaVa-9wmpns",
+          "channel": "take U forward",
+          "duration": "16:40",
+          "language": "English"
+        },
+        {
+          "title": "Sort Colors - Dutch National Flag",
+          "url": "https://www.youtube.com/watch?v=uvB-Ns_TVis",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "7:25",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Sort Colors - LeetCode Solution",
+          "url": "https://leetcode.com/problems/sort-colors/solution/",
+          "source": "LeetCode Official"
+        },
+        {
+          "title": "Sort an array of 0s, 1s and 2s",
+          "url": "https://takeuforward.org/data-structure/sort-an-array-of-0s-1s-and-2s/",
+          "source": "takeuforward"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/sort-colors/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "Three-way partitioning + in-place = Dutch National Flag (Three Pointers). Partition into three sections.",
+    "approaches": [
+      {
+        "name": "Dutch National Flag (Optimal)",
+        "order": 1,
+        "intuition": "Use three pointers: low for 0s boundary, mid for current element, high for 2s boundary. Partition array into [0s][1s][2s].",
+        "approach": "Three pointers divide array. Swap elements to appropriate sections based on value.",
+        "steps": [
+          "Initialize low = 0, mid = 0, high = n-1",
+          "While mid <= high:",
+          "  If nums[mid] == 0:",
+          "    Swap nums[low] and nums[mid]",
+          "    Increment low and mid",
+          "  Else if nums[mid] == 1:",
+          "    Increment mid",
+          "  Else (nums[mid] == 2):",
+          "    Swap nums[mid] and nums[high]",
+          "    Decrement high (don't increment mid)"
+        ],
+        "complexity": {
+          "time": "O(n)",
+          "space": "O(1)",
+          "timeExplanation": "Single pass through array",
+          "spaceExplanation": "Only using three pointer variables"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    void sortColors(vector<int>& nums) {\n        int low = 0, mid = 0, high = nums.size() - 1;\n        \n        while (mid <= high) {\n            if (nums[mid] == 0) {\n                swap(nums[low], nums[mid]);\n                low++;\n                mid++;\n            } else if (nums[mid] == 1) {\n                mid++;\n            } else {\n                swap(nums[mid], nums[high]);\n                high--;\n            }\n        }\n    }\n};",
+          "java": "class Solution {\n    public void sortColors(int[] nums) {\n        int low = 0, mid = 0, high = nums.length - 1;\n        \n        while (mid <= high) {\n            if (nums[mid] == 0) {\n                int temp = nums[low];\n                nums[low] = nums[mid];\n                nums[mid] = temp;\n                low++;\n                mid++;\n            } else if (nums[mid] == 1) {\n                mid++;\n            } else {\n                int temp = nums[mid];\n                nums[mid] = nums[high];\n                nums[high] = temp;\n                high--;\n            }\n        }\n    }\n}",
+          "python": "class Solution:\n    def sortColors(self, nums: List[int]) -> None:\n        low, mid, high = 0, 0, len(nums) - 1\n        \n        while mid <= high:\n            if nums[mid] == 0:\n                nums[low], nums[mid] = nums[mid], nums[low]\n                low += 1\n                mid += 1\n            elif nums[mid] == 1:\n                mid += 1\n            else:\n                nums[mid], nums[high] = nums[high], nums[mid]\n                high -= 1",
+          "javascript": "var sortColors = function(nums) {\n    let low = 0, mid = 0, high = nums.length - 1;\n    \n    while (mid <= high) {\n        if (nums[mid] === 0) {\n            [nums[low], nums[mid]] = [nums[mid], nums[low]];\n            low++;\n            mid++;\n        } else if (nums[mid] === 1) {\n            mid++;\n        } else {\n            [nums[mid], nums[high]] = [nums[high], nums[mid]];\n            high--;\n        }\n    }\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Incrementing mid after swapping with high",
+      "Using counting sort (valid but not one-pass)",
+      "Not maintaining proper boundaries"
+    ],
+    "hints": [
+      "Think of three regions: [0s][1s][2s]",
+      "Mid pointer scans, low and high are boundaries",
+      "When swapping with high, don't move mid yet"
+    ],
+    "followUp": [
+      "What if there are k colors?",
+      "Can you do it with two passes?",
+      "What if you can't modify array?"
+    ],
+    "companies": ["Amazon", "Microsoft", "Facebook", "Google", "Apple"],
+    "tags": ["array", "two-pointers", "sorting"],
+    "relatedProblems": ["Sort List", "Wiggle Sort", "Wiggle Sort II"]
+  },
+  {
+    "questionId": "11",
+    "questionSlug": "container-with-most-water",
+    "title": "Container With Most Water",
+    "difficulty": "Medium",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/container-with-most-water/",
+      "videos": [
+        {
+          "title": "Container With Most Water - Leetcode 11",
+          "url": "https://www.youtube.com/watch?v=UuiTKBwPgAo",
+          "channel": "NeetCode",
+          "duration": "8:47",
+          "language": "English"
+        },
+        {
+          "title": "Container With Most Water Solution",
+          "url": "https://www.youtube.com/watch?v=6PrIRPpTI9Q",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "6:30",
+          "language": "English"
+        },
+        {
+          "title": "Container With Most Water Explained",
+          "url": "https://www.youtube.com/watch?v=ZHQg07n_tbg",
+          "channel": "Back To Back SWE",
+          "duration": "11:20",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Container With Most Water - LeetCode Solution",
+          "url": "https://leetcode.com/problems/container-with-most-water/solution/",
+          "source": "LeetCode Official"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/container-with-most-water/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "Maximize area with constraints = Two Pointers. Start from widest, move pointer with smaller height (greedy).",
+    "approaches": [
+      {
+        "name": "Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Area limited by shorter line. Start with maximum width. Move pointer at shorter height inward to potentially find taller line.",
+        "approach": "Two pointers at ends. Calculate area, move pointer with smaller height inward, track maximum area.",
+        "steps": [
+          "Initialize left = 0, right = n-1, maxArea = 0",
+          "While left < right:",
+          "  Calculate width = right - left",
+          "  Calculate height = min(height[left], height[right])",
+          "  Calculate area = width * height",
+          "  Update maxArea if area > maxArea",
+          "  If height[left] < height[right]:",
+          "    Increment left",
+          "  Else:",
+          "    Decrement right",
+          "Return maxArea"
+        ],
+        "complexity": {
+          "time": "O(n)",
+          "space": "O(1)",
+          "timeExplanation": "Single pass with two pointers",
+          "spaceExplanation": "Only using pointer variables and maxArea"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        int left = 0, right = height.size() - 1;\n        int maxArea = 0;\n        \n        while (left < right) {\n            int width = right - left;\n            int h = min(height[left], height[right]);\n            int area = width * h;\n            maxArea = max(maxArea, area);\n            \n            if (height[left] < height[right]) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        \n        return maxArea;\n    }\n};",
+          "java": "class Solution {\n    public int maxArea(int[] height) {\n        int left = 0, right = height.length - 1;\n        int maxArea = 0;\n        \n        while (left < right) {\n            int width = right - left;\n            int h = Math.min(height[left], height[right]);\n            int area = width * h;\n            maxArea = Math.max(maxArea, area);\n            \n            if (height[left] < height[right]) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        \n        return maxArea;\n    }\n}",
+          "python": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        left, right = 0, len(height) - 1\n        max_area = 0\n        \n        while left < right:\n            width = right - left\n            h = min(height[left], height[right])\n            area = width * h\n            max_area = max(max_area, area)\n            \n            if height[left] < height[right]:\n                left += 1\n            else:\n                right -= 1\n        \n        return max_area",
+          "javascript": "var maxArea = function(height) {\n    let left = 0, right = height.length - 1;\n    let maxArea = 0;\n    \n    while (left < right) {\n        const width = right - left;\n        const h = Math.min(height[left], height[right]);\n        const area = width * h;\n        maxArea = Math.max(maxArea, area);\n        \n        if (height[left] < height[right]) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    \n    return maxArea;\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Trying all pairs (O(n²) brute force)",
+      "Moving both pointers at once",
+      "Not understanding why we move shorter pointer"
+    ],
+    "hints": [
+      "Area = width × min(left_height, right_height)",
+      "Start with maximum width",
+      "Moving shorter pointer might find taller line"
+    ],
+    "followUp": [
+      "What if lines have different widths?",
+      "3D version of this problem?",
+      "Prove why greedy approach works"
+    ],
+    "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Apple"],
+    "tags": ["array", "two-pointers", "greedy"],
+    "relatedProblems": ["Trapping Rain Water", "Product of Array Except Self"]
+  },
+  {
+    "questionId": "15",
+    "questionSlug": "3sum",
+    "title": "3Sum",
+    "difficulty": "Medium",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/3sum/",
+      "videos": [
+        {
+          "title": "3Sum - Leetcode 15",
+          "url": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
+          "channel": "NeetCode",
+          "duration": "12:54",
+          "language": "English"
+        },
+        {
+          "title": "L13. 3 Sum | Find Triplets that add up to a target value",
+          "url": "https://www.youtube.com/watch?v=DhFh8Kw7ymk",
+          "channel": "take U forward",
+          "duration": "19:35",
+          "language": "English"
+        },
+        {
+          "title": "3Sum Solution",
+          "url": "https://www.youtube.com/watch?v=qJSPYnS35SE",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "9:15",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "3Sum - LeetCode Solution",
+          "url": "https://leetcode.com/problems/3sum/solution/",
+          "source": "LeetCode Official"
+        },
+        {
+          "title": "3 Sum | Find triplets that add up to a target",
+          "url": "https://takeuforward.org/data-structure/3-sum-find-triplets-that-add-up-to-a-zero/",
+          "source": "takeuforward"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/3sum/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "Three elements + target sum = Sort + Fix one + Two Pointers. Convert to 2Sum by fixing first element.",
+    "approaches": [
+      {
+        "name": "Sort + Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Sort array. Fix first element, use two pointers for remaining pair. Skip duplicates to avoid duplicate triplets.",
+        "approach": "Sort first. For each element, solve 2Sum on remaining array. Handle duplicates carefully.",
+        "steps": [
+          "Sort array",
+          "Iterate i from 0 to n-3:",
+          "  Skip if nums[i] same as nums[i-1] (avoid duplicates)",
+          "  Initialize left = i+1, right = n-1",
+          "  While left < right:",
+          "    Calculate sum = nums[i] + nums[left] + nums[right]",
+          "    If sum == 0:",
+          "      Add triplet to result",
+          "      Skip duplicates for left and right",
+          "      Move both pointers",
+          "    Else if sum < 0: left++",
+          "    Else: right--",
+          "Return result"
+        ],
+        "complexity": {
+          "time": "O(n²)",
+          "space": "O(1)",
+          "timeExplanation": "O(n log n) for sort + O(n²) for nested loops",
+          "spaceExplanation": "Ignoring output array, only constant space used"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        vector<vector<int>> result;\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        \n        for (int i = 0; i < n - 2; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            \n            int left = i + 1, right = n - 1;\n            \n            while (left < right) {\n                int sum = nums[i] + nums[left] + nums[right];\n                \n                if (sum == 0) {\n                    result.push_back({nums[i], nums[left], nums[right]});\n                    \n                    while (left < right && nums[left] == nums[left + 1]) left++;\n                    while (left < right && nums[right] == nums[right - 1]) right--;\n                    \n                    left++;\n                    right--;\n                } else if (sum < 0) {\n                    left++;\n                } else {\n                    right--;\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+          "java": "class Solution {\n    public List<List<Integer>> threeSum(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(nums);\n        int n = nums.length;\n        \n        for (int i = 0; i < n - 2; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            \n            int left = i + 1, right = n - 1;\n            \n            while (left < right) {\n                int sum = nums[i] + nums[left] + nums[right];\n                \n                if (sum == 0) {\n                    result.add(Arrays.asList(nums[i], nums[left], nums[right]));\n                    \n                    while (left < right && nums[left] == nums[left + 1]) left++;\n                    while (left < right && nums[right] == nums[right - 1]) right--;\n                    \n                    left++;\n                    right--;\n                } else if (sum < 0) {\n                    left++;\n                } else {\n                    right--;\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+          "python": "class Solution:\n    def threeSum(self, nums: List[int]) -> List[List[int]]:\n        result = []\n        nums.sort()\n        n = len(nums)\n        \n        for i in range(n - 2):\n            if i > 0 and nums[i] == nums[i - 1]:\n                continue\n            \n            left, right = i + 1, n - 1\n            \n            while left < right:\n                total = nums[i] + nums[left] + nums[right]\n                \n                if total == 0:\n                    result.append([nums[i], nums[left], nums[right]])\n                    \n                    while left < right and nums[left] == nums[left + 1]:\n                        left += 1\n                    while left < right and nums[right] == nums[right - 1]:\n                        right -= 1\n                    \n                    left += 1\n                    right -= 1\n                elif total < 0:\n                    left += 1\n                else:\n                    right -= 1\n        \n        return result",
+          "javascript": "var threeSum = function(nums) {\n    const result = [];\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    \n    for (let i = 0; i < n - 2; i++) {\n        if (i > 0 && nums[i] === nums[i - 1]) continue;\n        \n        let left = i + 1, right = n - 1;\n        \n        while (left < right) {\n            const sum = nums[i] + nums[left] + nums[right];\n            \n            if (sum === 0) {\n                result.push([nums[i], nums[left], nums[right]]);\n                \n                while (left < right && nums[left] === nums[left + 1]) left++;\n                while (left < right && nums[right] === nums[right - 1]) right--;\n                \n                left++;\n                right--;\n            } else if (sum < 0) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n    }\n    \n    return result;\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Not handling duplicates properly",
+      "Forgetting to sort array first",
+      "Including duplicate triplets in result",
+      "Using HashSet to remove duplicates (inefficient)"
+    ],
+    "hints": [
+      "Sort the array first",
+      "Fix one element, solve 2Sum for rest",
+      "Skip duplicates at all three positions",
+      "Target is 0, so nums[i] + nums[left] + nums[right] = 0"
+    ],
+    "followUp": [
+      "What if target is not 0?",
+      "Can you solve 4Sum?",
+      "What about k-Sum?"
+    ],
+    "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Apple"],
+    "tags": ["array", "two-pointers", "sorting"],
+    "relatedProblems": ["Two Sum", "3Sum Closest", "4Sum", "3Sum Smaller"]
+  },
+  {
+    "questionId": "16",
+    "questionSlug": "3sum-closest",
+    "title": "3Sum Closest",
+    "difficulty": "Medium",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/3sum-closest/",
+      "videos": [
+        {
+          "title": "3Sum Closest - Leetcode 16",
+          "url": "https://www.youtube.com/watch?v=qBr2hq4daWE",
+          "channel": "NeetCode",
+          "duration": "9:17",
+          "language": "English"
+        },
+        {
+          "title": "3Sum Closest Solution",
+          "url": "https://www.youtube.com/watch?v=W6x-I4HpPC4",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "7:05",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "3Sum Closest - LeetCode Solution",
+          "url": "https://leetcode.com/problems/3sum-closest/solution/",
+          "source": "LeetCode Official"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/3sum-closest/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "Minimize distance to target = Sort + Fix one + Two Pointers. Track closest sum while using 3Sum approach.",
+    "approaches": [
+      {
+        "name": "Sort + Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Similar to 3Sum. Sort array, fix first element, use two pointers. Track sum closest to target by comparing absolute differences.",
+        "approach": "Sort array. For each fixed element, use two pointers to find pair that makes sum closest to target.",
+        "steps": [
+          "Sort array",
+          "Initialize closestSum = infinity",
+          "Iterate i from 0 to n-3:",
+          "  Initialize left = i+1, right = n-1",
+          "  While left < right:",
+          "    Calculate sum = nums[i] + nums[left] + nums[right]",
+          "    If abs(sum - target) < abs(closestSum - target):",
+          "      Update closestSum = sum",
+          "    If sum < target: left++",
+          "    Else if sum > target: right--",
+          "    Else return target (exact match)",
+          "Return closestSum"
+        ],
+        "complexity": {
+          "time": "O(n²)",
+          "space": "O(1)",
+          "timeExplanation": "O(n log n) for sort + O(n²) for nested loops",
+          "spaceExplanation": "Only constant space for variables"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    int threeSumClosest(vector<int>& nums, int target) {\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        int closestSum = nums[0] + nums[1] + nums[2];\n        \n        for (int i = 0; i < n - 2; i++) {\n            int left = i + 1, right = n - 1;\n            \n            while (left < right) {\n                int sum = nums[i] + nums[left] + nums[right];\n                \n                if (abs(sum - target) < abs(closestSum - target)) {\n                    closestSum = sum;\n                }\n                \n                if (sum < target) {\n                    left++;\n                } else if (sum > target) {\n                    right--;\n                } else {\n                    return target;\n                }\n            }\n        }\n        \n        return closestSum;\n    }\n};",
+          "java": "class Solution {\n    public int threeSumClosest(int[] nums, int target) {\n        Arrays.sort(nums);\n        int n = nums.length;\n        int closestSum = nums[0] + nums[1] + nums[2];\n        \n        for (int i = 0; i < n - 2; i++) {\n            int left = i + 1, right = n - 1;\n            \n            while (left < right) {\n                int sum = nums[i] + nums[left] + nums[right];\n                \n                if (Math.abs(sum - target) < Math.abs(closestSum - target)) {\n                    closestSum = sum;\n                }\n                \n                if (sum < target) {\n                    left++;\n                } else if (sum > target) {\n                    right--;\n                } else {\n                    return target;\n                }\n            }\n        }\n        \n        return closestSum;\n    }\n}",
+          "python": "class Solution:\n    def threeSumClosest(self, nums: List[int], target: int) -> int:\n        nums.sort()\n        n = len(nums)\n        closest_sum = nums[0] + nums[1] + nums[2]\n        \n        for i in range(n - 2):\n            left, right = i + 1, n - 1\n            \n            while left < right:\n                current_sum = nums[i] + nums[left] + nums[right]\n                \n                if abs(current_sum - target) < abs(closest_sum - target):\n                    closest_sum = current_sum\n                \n                if current_sum < target:\n                    left += 1\n                elif current_sum > target:\n                    right -= 1\n                else:\n                    return target\n        \n        return closest_sum",
+          "javascript": "var threeSumClosest = function(nums, target) {\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    let closestSum = nums[0] + nums[1] + nums[2];\n    \n    for (let i = 0; i < n - 2; i++) {\n        let left = i + 1, right = n - 1;\n        \n        while (left < right) {\n            const sum = nums[i] + nums[left] + nums[right];\n            \n            if (Math.abs(sum - target) < Math.abs(closestSum - target)) {\n                closestSum = sum;\n            }\n            \n            if (sum < target) {\n                left++;\n            } else if (sum > target) {\n                right--;\n            } else {\n                return target;\n            }\n        }\n    }\n    \n    return closestSum;\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Not initializing closestSum properly",
+      "Comparing sums instead of distances to target",
+      "Not returning early when exact match found"
+    ],
+    "hints": [
+      "Similar to 3Sum but track closest distance",
+      "Use absolute difference to compare closeness",
+      "Can return immediately if sum == target"
+    ],
+    "followUp": [
+      "What if you need k closest sums?",
+      "Can you optimize for nearly sorted array?"
+    ],
+    "companies": ["Amazon", "Facebook", "Google", "Microsoft"],
+    "tags": ["array", "two-pointers", "sorting"],
+    "relatedProblems": ["3Sum", "4Sum"]
+  },
+  {
+    "questionId": "18",
+    "questionSlug": "4sum",
+    "title": "4Sum",
+    "difficulty": "Medium",
+    "resources": {
+      "leetcode": "https://leetcode.com/problems/4sum/",
+      "videos": [
+        {
+          "title": "4Sum - Leetcode 18",
+          "url": "https://www.youtube.com/watch?v=4ggF3tXIAp4",
+          "channel": "NeetCode",
+          "duration": "13:25",
+          "language": "English"
+        },
+        {
+          "title": "L14. 4 Sum | Find Quads that add up to a target value",
+          "url": "https://www.youtube.com/watch?v=eD95WRfh81c",
+          "channel": "take U forward",
+          "duration": "17:40",
+          "language": "English"
+        },
+        {
+          "title": "4Sum Solution",
+          "url": "https://www.youtube.com/watch?v=hJDTdZN9dAQ",
+          "channel": "Kevin Naughton Jr.",
+          "duration": "10:15",
+          "language": "English"
+        }
+      ],
+      "articles": [
+        {
+          "title": "4Sum - LeetCode Solution",
+          "url": "https://leetcode.com/problems/4sum/solution/",
+          "source": "LeetCode Official"
+        },
+        {
+          "title": "4 Sum | Find Quads that add up to a target",
+          "url": "https://takeuforward.org/data-structure/4-sum-find-quads-that-add-up-to-a-target-value/",
+          "source": "takeuforward"
+        }
+      ],
+      "practice": [
+        {
+          "title": "Practice on LeetCode",
+          "url": "https://leetcode.com/problems/4sum/",
+          "platform": "LeetCode"
+        }
+      ]
+    },
+    "patternTriggers": "Four elements + target = Sort + Fix two + Two Pointers. Extend 3Sum by fixing two elements instead of one.",
+    "approaches": [
+      {
+        "name": "Sort + Nested Two Pointers (Optimal)",
+        "order": 1,
+        "intuition": "Extension of 3Sum. Sort array, fix first two elements, use two pointers for remaining pair. Skip duplicates at all levels.",
+        "approach": "Sort first. Use two nested loops to fix two elements, then two pointers for the pair. Handle duplicates carefully.",
+        "steps": [
+          "Sort array",
+          "Iterate i from 0 to n-4:",
+          "  Skip if nums[i] same as nums[i-1]",
+          "  Iterate j from i+1 to n-3:",
+          "    Skip if nums[j] same as nums[j-1] (except first j)",
+          "    Initialize left = j+1, right = n-1",
+          "    While left < right:",
+          "      Calculate sum = nums[i] + nums[j] + nums[left] + nums[right]",
+          "      If sum == target:",
+          "        Add quadruplet, skip duplicates, move both",
+          "      Else if sum < target: left++",
+          "      Else: right--",
+          "Return result"
+        ],
+        "complexity": {
+          "time": "O(n³)",
+          "space": "O(1)",
+          "timeExplanation": "O(n log n) for sort + O(n³) for three nested loops",
+          "spaceExplanation": "Ignoring output, only constant space used"
+        },
+        "code": {
+          "cpp": "class Solution {\npublic:\n    vector<vector<int>> fourSum(vector<int>& nums, int target) {\n        vector<vector<int>> result;\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        \n        for (int i = 0; i < n - 3; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            \n            for (int j = i + 1; j < n - 2; j++) {\n                if (j > i + 1 && nums[j] == nums[j - 1]) continue;\n                \n                int left = j + 1, right = n - 1;\n                \n                while (left < right) {\n                    long long sum = (long long)nums[i] + nums[j] + nums[left] + nums[right];\n                    \n                    if (sum == target) {\n                        result.push_back({nums[i], nums[j], nums[left], nums[right]});\n                        \n                        while (left < right && nums[left] == nums[left + 1]) left++;\n                        while (left < right && nums[right] == nums[right - 1]) right--;\n                        \n                        left++;\n                        right--;\n                    } else if (sum < target) {\n                        left++;\n                    } else {\n                        right--;\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+          "java": "class Solution {\n    public List<List<Integer>> fourSum(int[] nums, int target) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(nums);\n        int n = nums.length;\n        \n        for (int i = 0; i < n - 3; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            \n            for (int j = i + 1; j < n - 2; j++) {\n                if (j > i + 1 && nums[j] == nums[j - 1]) continue;\n                \n                int left = j + 1, right = n - 1;\n                \n                while (left < right) {\n                    long sum = (long)nums[i] + nums[j] + nums[left] + nums[right];\n                    \n                    if (sum == target) {\n                        result.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));\n                        \n                        while (left < right && nums[left] == nums[left + 1]) left++;\n                        while (left < right && nums[right] == nums[right - 1]) right--;\n                        \n                        left++;\n                        right--;\n                    } else if (sum < target) {\n                        left++;\n                    } else {\n                        right--;\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+          "python": "class Solution:\n    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:\n        result = []\n        nums.sort()\n        n = len(nums)\n        \n        for i in range(n - 3):\n            if i > 0 and nums[i] == nums[i - 1]:\n                continue\n            \n            for j in range(i + 1, n - 2):\n                if j > i + 1 and nums[j] == nums[j - 1]:\n                    continue\n                \n                left, right = j + 1, n - 1\n                \n                while left < right:\n                    total = nums[i] + nums[j] + nums[left] + nums[right]\n                    \n                    if total == target:\n                        result.append([nums[i], nums[j], nums[left], nums[right]])\n                        \n                        while left < right and nums[left] == nums[left + 1]:\n                            left += 1\n                        while left < right and nums[right] == nums[right - 1]:\n                            right -= 1\n                        \n                        left += 1\n                        right -= 1\n                    elif total < target:\n                        left += 1\n                    else:\n                        right -= 1\n        \n        return result",
+          "javascript": "var fourSum = function(nums, target) {\n    const result = [];\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    \n    for (let i = 0; i < n - 3; i++) {\n        if (i > 0 && nums[i] === nums[i - 1]) continue;\n        \n        for (let j = i + 1; j < n - 2; j++) {\n            if (j > i + 1 && nums[j] === nums[j - 1]) continue;\n            \n            let left = j + 1, right = n - 1;\n            \n            while (left < right) {\n                const sum = nums[i] + nums[j] + nums[left] + nums[right];\n                \n                if (sum === target) {\n                    result.push([nums[i], nums[j], nums[left], nums[right]]);\n                    \n                    while (left < right && nums[left] === nums[left + 1]) left++;\n                    while (left < right && nums[right] === nums[right - 1]) right--;\n                    \n                    left++;\n                    right--;\n                } else if (sum < target) {\n                    left++;\n                } else {\n                    right--;\n                }\n            }\n        }\n    }\n    \n    return result;\n};"
+        }
+      }
+    ],
+    "commonMistakes": [
+      "Integer overflow when summing large numbers",
+      "Not handling duplicates at all four positions",
+      "Wrong duplicate skipping condition for j loop"
+    ],
+    "hints": [
+      "Extend 3Sum by adding one more outer loop",
+      "Use long/BigInteger to avoid overflow",
+      "Skip duplicates at all four pointer positions",
+      "j > i + 1 for second duplicate check"
+    ],
+    "followUp": ["Generalize to k-Sum problem", "What if target can overflow?"],
+    "companies": ["Amazon", "Facebook", "Google", "Microsoft"],
+    "tags": ["array", "two-pointers", "sorting"],
+    "relatedProblems": ["Two Sum", "3Sum", "3Sum Closest"]
+  }
+]

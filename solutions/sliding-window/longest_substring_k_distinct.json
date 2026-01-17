@@ -1,0 +1,108 @@
+{
+  "questionId": "340",
+  "questionSlug": "longest-substring-with-at-most-k-distinct-characters",
+  "title": "Longest Substring with At Most K Distinct Characters",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/",
+    "videos": [
+      {
+        "title": "Longest Substring K Distinct - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=MK-NZ4hN7rs",
+        "channel": "NeetCode",
+        "duration": "14:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Longest substring with constraint (at most K distinct) = Variable Sliding Window + HashMap. Expand right, shrink left when constraint violated.",
+  "approaches": [
+    {
+      "name": "Brute Force (All Substrings)",
+      "order": 1,
+      "intuition": "Try all substrings, count distinct characters using set/map, track maximum length where distinct <= K.",
+      "approach": "Two nested loops generate substrings, use map to count distinct chars, update max length when distinct <= K.",
+      "steps": [
+        "Initialize maxLen = 0",
+        "For i from 0 to n-1:",
+        "  charCount = {} (map)",
+        "  For j from i to n-1:",
+        "    charCount[s[j]]++",
+        "    If charCount.size() <= K:",
+        "      maxLen = max(maxLen, j - i + 1)",
+        "    Else:",
+        "      Break",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(k)",
+        "timeExplanation": "Nested loops try all substrings",
+        "spaceExplanation": "HashMap stores at most K+1 characters"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int lengthOfLongestSubstringKDistinct(string s, int k) {\n        if (k == 0) return 0;\n        int n = s.length();\n        int maxLen = 0;\n        \n        for (int i = 0; i < n; i++) {\n            unordered_map<char, int> charCount;\n            for (int j = i; j < n; j++) {\n                charCount[s[j]]++;\n                if (charCount.size() <= k) {\n                    maxLen = max(maxLen, j - i + 1);\n                } else {\n                    break;\n                }\n            }\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int lengthOfLongestSubstringKDistinct(String s, int k) {\n        if (k == 0) return 0;\n        int n = s.length();\n        int maxLen = 0;\n        \n        for (int i = 0; i < n; i++) {\n            Map<Character, Integer> charCount = new HashMap<>();\n            for (int j = i; j < n; j++) {\n                charCount.put(s.charAt(j), charCount.getOrDefault(s.charAt(j), 0) + 1);\n                if (charCount.size() <= k) {\n                    maxLen = Math.max(maxLen, j - i + 1);\n                } else {\n                    break;\n                }\n            }\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def lengthOfLongestSubstringKDistinct(self, s: str, k: int) -> int:\n        if k == 0:\n            return 0\n        n = len(s)\n        max_len = 0\n        \n        for i in range(n):\n            char_count = {}\n            for j in range(i, n):\n                char_count[s[j]] = char_count.get(s[j], 0) + 1\n                if len(char_count) <= k:\n                    max_len = max(max_len, j - i + 1)\n                else:\n                    break\n        \n        return max_len",
+        "javascript": "var lengthOfLongestSubstringKDistinct = function(s, k) {\n    if (k === 0) return 0;\n    const n = s.length;\n    let maxLen = 0;\n    \n    for (let i = 0; i < n; i++) {\n        const charCount = new Map();\n        for (let j = i; j < n; j++) {\n            charCount.set(s[j], (charCount.get(s[j]) || 0) + 1);\n            if (charCount.size <= k) {\n                maxLen = Math.max(maxLen, j - i + 1);\n            } else {\n                break;\n            }\n        }\n    }\n    \n    return maxLen;\n};"
+      }
+    },
+    {
+      "name": "Variable Sliding Window + HashMap - Optimal",
+      "order": 2,
+      "intuition": "Expand window with right pointer. When distinct chars > K, shrink from left until distinct <= K again. Track max length.",
+      "approach": "Use HashMap to track character frequencies. Expand right, shrink left when map.size() > K, update max length.",
+      "steps": [
+        "Initialize left = 0, maxLen = 0, charCount = {}",
+        "For right from 0 to n-1:",
+        "  charCount[s[right]]++",
+        "  While charCount.size() > K:",
+        "    charCount[s[left]]--",
+        "    If charCount[s[left]] == 0:",
+        "      Remove s[left] from map",
+        "    left++",
+        "  maxLen = max(maxLen, right - left + 1)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(k)",
+        "timeExplanation": "Each character visited at most twice (right and left pointer)",
+        "spaceExplanation": "HashMap stores at most K+1 distinct characters"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int lengthOfLongestSubstringKDistinct(string s, int k) {\n        if (k == 0) return 0;\n        \n        int n = s.length();\n        int left = 0;\n        int maxLen = 0;\n        unordered_map<char, int> charCount;\n        \n        for (int right = 0; right < n; right++) {\n            charCount[s[right]]++;\n            \n            while (charCount.size() > k) {\n                charCount[s[left]]--;\n                if (charCount[s[left]] == 0) {\n                    charCount.erase(s[left]);\n                }\n                left++;\n            }\n            \n            maxLen = max(maxLen, right - left + 1);\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int lengthOfLongestSubstringKDistinct(String s, int k) {\n        if (k == 0) return 0;\n        \n        int n = s.length();\n        int left = 0;\n        int maxLen = 0;\n        Map<Character, Integer> charCount = new HashMap<>();\n        \n        for (int right = 0; right < n; right++) {\n            char rightChar = s.charAt(right);\n            charCount.put(rightChar, charCount.getOrDefault(rightChar, 0) + 1);\n            \n            while (charCount.size() > k) {\n                char leftChar = s.charAt(left);\n                charCount.put(leftChar, charCount.get(leftChar) - 1);\n                if (charCount.get(leftChar) == 0) {\n                    charCount.remove(leftChar);\n                }\n                left++;\n            }\n            \n            maxLen = Math.max(maxLen, right - left + 1);\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def lengthOfLongestSubstringKDistinct(self, s: str, k: int) -> int:\n        if k == 0:\n            return 0\n        \n        n = len(s)\n        left = 0\n        max_len = 0\n        char_count = {}\n        \n        for right in range(n):\n            char_count[s[right]] = char_count.get(s[right], 0) + 1\n            \n            while len(char_count) > k:\n                char_count[s[left]] -= 1\n                if char_count[s[left]] == 0:\n                    del char_count[s[left]]\n                left += 1\n            \n            max_len = max(max_len, right - left + 1)\n        \n        return max_len",
+        "javascript": "var lengthOfLongestSubstringKDistinct = function(s, k) {\n    if (k === 0) return 0;\n    \n    const n = s.length;\n    let left = 0;\n    let maxLen = 0;\n    const charCount = new Map();\n    \n    for (let right = 0; right < n; right++) {\n        charCount.set(s[right], (charCount.get(s[right]) || 0) + 1);\n        \n        while (charCount.size > k) {\n            charCount.set(s[left], charCount.get(s[left]) - 1);\n            if (charCount.get(s[left]) === 0) {\n                charCount.delete(s[left]);\n            }\n            left++;\n        }\n        \n        maxLen = Math.max(maxLen, right - left + 1);\n    }\n    \n    return maxLen;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not removing character from map when count becomes 0",
+    "Using if instead of while for shrinking window",
+    "Forgetting to handle k=0 edge case",
+    "Not updating maxLen after shrinking",
+    "Counting characters incorrectly"
+  ],
+  "hints": [
+    "Use HashMap to track character frequencies",
+    "Expand window by moving right pointer",
+    "Shrink from left when distinct chars > K",
+    "Remove char from map only when count becomes 0",
+    "Update max length after each valid window"
+  ],
+  "followUp": [
+    "What if K = 2? (Fruits Into Baskets problem)",
+    "Find shortest substring with K distinct characters?",
+    "Count subarrays with at most K distinct?",
+    "What if we need exactly K distinct?"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Uber"],
+  "tags": ["string", "sliding-window", "hash-map"],
+  "relatedProblems": [
+    "Fruits Into Baskets",
+    "Longest Substring Without Repeating Characters",
+    "Longest Repeating Character Replacement"
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "questionId": "GFG",
+  "questionSlug": "find-missing-and-repeating",
+  "title": "Find Missing and Repeating",
+  "difficulty": "Medium",
+  "resources": {
+    "gfg": "https://www.geeksforgeeks.org/find-a-repeating-and-a-missing-number/",
+    "videos": [
+      {
+        "title": "Find Missing and Repeating Number",
+        "url": "https://www.youtube.com/watch?v=2D0D8HE6uak",
+        "channel": "take U forward",
+        "duration": "15:20",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Array [1, n] with one missing and one repeating = Cyclic Sort or Math equations",
+  "approaches": [
+    {
+      "name": "Brute Force - Count Frequency",
+      "order": 1,
+      "intuition": "Count frequency of each number. Number with count 2 is repeating, count 0 is missing",
+      "approach": "Use frequency array",
+      "steps": [
+        "Create frequency array of size n+1",
+        "Count each number",
+        "Find number with frequency 2 (repeating)",
+        "Find number with frequency 0 (missing)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes - one to count, one to find",
+        "spaceExplanation": "Frequency array of size n+1"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findTwoElement(vector<int>& arr, int n) {\n        vector<int> freq(n + 1, 0);\n        \n        // Count frequencies\n        for (int num : arr) {\n            freq[num]++;\n        }\n        \n        int repeating = -1, missing = -1;\n        for (int i = 1; i <= n; i++) {\n            if (freq[i] == 2) {\n                repeating = i;\n            } else if (freq[i] == 0) {\n                missing = i;\n            }\n        }\n        \n        return {repeating, missing};\n    }\n};",
+        "java": "class Solution {\n    public int[] findTwoElement(int[] arr, int n) {\n        int[] freq = new int[n + 1];\n        \n        // Count frequencies\n        for (int num : arr) {\n            freq[num]++;\n        }\n        \n        int repeating = -1, missing = -1;\n        for (int i = 1; i <= n; i++) {\n            if (freq[i] == 2) {\n                repeating = i;\n            } else if (freq[i] == 0) {\n                missing = i;\n            }\n        }\n        \n        return new int[]{repeating, missing};\n    }\n}",
+        "python": "class Solution:\n    def findTwoElement(self, arr, n):\n        freq = [0] * (n + 1)\n        \n        # Count frequencies\n        for num in arr:\n            freq[num] += 1\n        \n        repeating, missing = -1, -1\n        for i in range(1, n + 1):\n            if freq[i] == 2:\n                repeating = i\n            elif freq[i] == 0:\n                missing = i\n        \n        return [repeating, missing]",
+        "javascript": "function findTwoElement(arr, n) {\n    const freq = new Array(n + 1).fill(0);\n    \n    // Count frequencies\n    for (const num of arr) {\n        freq[num]++;\n    }\n    \n    let repeating = -1, missing = -1;\n    for (let i = 1; i <= n; i++) {\n        if (freq[i] === 2) {\n            repeating = i;\n        } else if (freq[i] === 0) {\n            missing = i;\n        }\n    }\n    \n    return [repeating, missing];\n}"
+      }
+    },
+    {
+      "name": "Math - Sum and Sum of Squares",
+      "order": 2,
+      "intuition": "Use equations: (missing - repeating) and (missing² - repeating²) to solve",
+      "approach": "Solve two equations with two unknowns",
+      "steps": [
+        "Let x = repeating, y = missing",
+        "Equation 1: sum(1 to n) - sum(arr) = y - x",
+        "Equation 2: sum_sq(1 to n) - sum_sq(arr) = y² - x²",
+        "y² - x² = (y - x)(y + x)",
+        "Solve: y + x = (y² - x²) / (y - x)",
+        "Then: y = ((y + x) + (y - x)) / 2, x = ((y + x) - (y - x)) / 2"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass to calculate sums",
+        "spaceExplanation": "Only variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findTwoElement(vector<int>& arr, int n) {\n        long long expectedSum = (long long)n * (n + 1) / 2;\n        long long expectedSumSq = (long long)n * (n + 1) * (2 * n + 1) / 6;\n        \n        long long actualSum = 0, actualSumSq = 0;\n        for (int num : arr) {\n            actualSum += num;\n            actualSumSq += (long long)num * num;\n        }\n        \n        // y - x\n        long long diff = expectedSum - actualSum;\n        \n        // y^2 - x^2 = (y - x)(y + x)\n        long long diffSq = expectedSumSq - actualSumSq;\n        \n        // y + x\n        long long sum = diffSq / diff;\n        \n        // Solve for y and x\n        int missing = (diff + sum) / 2;\n        int repeating = (sum - diff) / 2;\n        \n        return {repeating, missing};\n    }\n};",
+        "java": "class Solution {\n    public int[] findTwoElement(int[] arr, int n) {\n        long expectedSum = (long)n * (n + 1) / 2;\n        long expectedSumSq = (long)n * (n + 1) * (2 * n + 1) / 6;\n        \n        long actualSum = 0, actualSumSq = 0;\n        for (int num : arr) {\n            actualSum += num;\n            actualSumSq += (long)num * num;\n        }\n        \n        // y - x\n        long diff = expectedSum - actualSum;\n        \n        // y^2 - x^2 = (y - x)(y + x)\n        long diffSq = expectedSumSq - actualSumSq;\n        \n        // y + x\n        long sum = diffSq / diff;\n        \n        // Solve for y and x\n        int missing = (int)((diff + sum) / 2);\n        int repeating = (int)((sum - diff) / 2);\n        \n        return new int[]{repeating, missing};\n    }\n}",
+        "python": "class Solution:\n    def findTwoElement(self, arr, n):\n        expected_sum = n * (n + 1) // 2\n        expected_sum_sq = n * (n + 1) * (2 * n + 1) // 6\n        \n        actual_sum = sum(arr)\n        actual_sum_sq = sum(num * num for num in arr)\n        \n        # y - x\n        diff = expected_sum - actual_sum\n        \n        # y^2 - x^2 = (y - x)(y + x)\n        diff_sq = expected_sum_sq - actual_sum_sq\n        \n        # y + x\n        sum_val = diff_sq // diff\n        \n        # Solve for y and x\n        missing = (diff + sum_val) // 2\n        repeating = (sum_val - diff) // 2\n        \n        return [repeating, missing]",
+        "javascript": "function findTwoElement(arr, n) {\n    const expectedSum = n * (n + 1) / 2;\n    const expectedSumSq = n * (n + 1) * (2 * n + 1) / 6;\n    \n    let actualSum = 0, actualSumSq = 0;\n    for (const num of arr) {\n        actualSum += num;\n        actualSumSq += num * num;\n    }\n    \n    // y - x\n    const diff = expectedSum - actualSum;\n    \n    // y^2 - x^2 = (y - x)(y + x)\n    const diffSq = expectedSumSq - actualSumSq;\n    \n    // y + x\n    const sum = diffSq / diff;\n    \n    // Solve for y and x\n    const missing = (diff + sum) / 2;\n    const repeating = (sum - diff) / 2;\n    \n    return [repeating, missing];\n}"
+      }
+    },
+    {
+      "name": "Cyclic Sort - Optimal",
+      "order": 3,
+      "intuition": "Place each number at index (num-1). Number at wrong position is repeating, missing index has wrong number",
+      "approach": "Sort in-place, then find anomaly",
+      "steps": [
+        "While i < n:",
+        "  correctPos = arr[i] - 1",
+        "  If arr[i] != arr[correctPos]: swap",
+        "  Else: i++",
+        "After sort, find index where arr[i] != i + 1",
+        "That position has repeating number, missing = i + 1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element swapped at most once",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findTwoElement(vector<int>& arr, int n) {\n        int i = 0;\n        \n        // Cyclic sort: place arr[i] at index arr[i]-1\n        while (i < n) {\n            int correctPos = arr[i] - 1;\n            if (arr[i] != arr[correctPos]) {\n                swap(arr[i], arr[correctPos]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find repeating and missing\n        for (int i = 0; i < n; i++) {\n            if (arr[i] != i + 1) {\n                return {arr[i], i + 1}; // {repeating, missing}\n            }\n        }\n        \n        return {-1, -1};\n    }\n};",
+        "java": "class Solution {\n    public int[] findTwoElement(int[] arr, int n) {\n        int i = 0;\n        \n        // Cyclic sort: place arr[i] at index arr[i]-1\n        while (i < n) {\n            int correctPos = arr[i] - 1;\n            if (arr[i] != arr[correctPos]) {\n                // Swap\n                int temp = arr[i];\n                arr[i] = arr[correctPos];\n                arr[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find repeating and missing\n        for (int j = 0; j < n; j++) {\n            if (arr[j] != j + 1) {\n                return new int[]{arr[j], j + 1}; // {repeating, missing}\n            }\n        }\n        \n        return new int[]{-1, -1};\n    }\n}",
+        "python": "class Solution:\n    def findTwoElement(self, arr, n):\n        i = 0\n        \n        # Cyclic sort: place arr[i] at index arr[i]-1\n        while i < n:\n            correct_pos = arr[i] - 1\n            if arr[i] != arr[correct_pos]:\n                arr[i], arr[correct_pos] = arr[correct_pos], arr[i]\n            else:\n                i += 1\n        \n        # Find repeating and missing\n        for i in range(n):\n            if arr[i] != i + 1:\n                return [arr[i], i + 1]  # [repeating, missing]\n        \n        return [-1, -1]",
+        "javascript": "function findTwoElement(arr, n) {\n    let i = 0;\n    \n    // Cyclic sort: place arr[i] at index arr[i]-1\n    while (i < n) {\n        const correctPos = arr[i] - 1;\n        if (arr[i] !== arr[correctPos]) {\n            [arr[i], arr[correctPos]] = [arr[correctPos], arr[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find repeating and missing\n    for (let j = 0; j < n; j++) {\n        if (arr[j] !== j + 1) {\n            return [arr[j], j + 1]; // [repeating, missing]\n        }\n    }\n    \n    return [-1, -1];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Integer overflow with sum approach - use long",
+    "Confusing 0-indexed vs 1-indexed (array is [1, n] range)",
+    "In cyclic sort, not checking arr[i] != arr[correctPos] before swap causes infinite loop"
+  ],
+  "hints": [
+    "Numbers are in range [1, n], so arr[i] should be at index arr[i]-1",
+    "Use long to avoid overflow in sum calculations",
+    "XOR approach can also work: XOR of indices and elements"
+  ],
+  "followUp": [
+    "Can you solve without modifying the array?",
+    "What if multiple numbers are missing/repeating?",
+    "How to use XOR to solve this problem?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Uber"],
+  "tags": ["array", "math", "cyclic-sort", "bit-manipulation"],
+  "relatedProblems": [
+    "Missing Number",
+    "Find All Duplicates in Array",
+    "Set Mismatch"
+  ]
+}

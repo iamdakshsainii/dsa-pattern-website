@@ -1,0 +1,96 @@
+{
+  "questionId": "452",
+  "questionSlug": "minimum-number-of-arrows-to-burst-balloons",
+  "title": "Minimum Number of Arrows to Burst Balloons",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/",
+    "videos": [
+      {
+        "title": "Minimum Arrows - Greedy Intervals",
+        "url": "https://www.youtube.com/watch?v=H3A6R5lDpKY",
+        "channel": "NeetCode",
+        "duration": "9:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Minimum points to cover all intervals = Greedy: sort by end, shoot arrow at end of each group.",
+  "approaches": [
+    {
+      "name": "Brute Force - Try All Positions",
+      "order": 1,
+      "intuition": "Try shooting arrows at every possible position and find minimum arrows needed.",
+      "approach": "Recursively try shooting or not shooting at each position.",
+      "steps": [
+        "For each possible arrow position:",
+        "  Shoot arrow, remove all balloons it bursts",
+        "  Recursively find minimum arrows for remaining",
+        "Return minimum across all choices"
+      ],
+      "complexity": {
+        "time": "O(2^n)",
+        "space": "O(n)",
+        "timeExplanation": "Exponential - try all combinations",
+        "spaceExplanation": "Recursion stack"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMinArrowShots(vector<vector<int>>& points) {\n        if (points.empty()) return 0;\n        \n        // Sort by start for better pruning\n        sort(points.begin(), points.end());\n        \n        return helper(points, 0);\n    }\n    \nprivate:\n    int helper(vector<vector<int>>& points, int start) {\n        if (start >= points.size()) return 0;\n        \n        // Option 1: Shoot arrow at end of current balloon\n        int arrowPos = points[start][1];\n        int nextStart = start + 1;\n        \n        // Skip all balloons this arrow bursts\n        while (nextStart < points.size() && \n               points[nextStart][0] <= arrowPos) {\n            nextStart++;\n        }\n        \n        int withArrow = 1 + helper(points, nextStart);\n        \n        // Option 2: Try next balloon (this creates suboptimal paths)\n        int skipCurrent = 1 + helper(points, start + 1);\n        \n        return min(withArrow, skipCurrent);\n    }\n};",
+        "java": "class Solution {\n    public int findMinArrowShots(int[][] points) {\n        if (points.length == 0) return 0;\n        \n        // Sort by start\n        Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        return helper(points, 0);\n    }\n    \n    private int helper(int[][] points, int start) {\n        if (start >= points.length) return 0;\n        \n        // Shoot arrow at end of current balloon\n        int arrowPos = points[start][1];\n        int nextStart = start + 1;\n        \n        // Skip all balloons this arrow bursts\n        while (nextStart < points.length && \n               points[nextStart][0] <= arrowPos) {\n            nextStart++;\n        }\n        \n        int withArrow = 1 + helper(points, nextStart);\n        int skipCurrent = 1 + helper(points, start + 1);\n        \n        return Math.min(withArrow, skipCurrent);\n    }\n}",
+        "python": "class Solution:\n    def findMinArrowShots(self, points: List[List[int]]) -> int:\n        if not points:\n            return 0\n        \n        # Sort by start\n        points.sort()\n        \n        def helper(start: int) -> int:\n            if start >= len(points):\n                return 0\n            \n            # Shoot arrow at end of current balloon\n            arrow_pos = points[start][1]\n            next_start = start + 1\n            \n            # Skip all balloons this arrow bursts\n            while next_start < len(points) and points[next_start][0] <= arrow_pos:\n                next_start += 1\n            \n            with_arrow = 1 + helper(next_start)\n            skip_current = 1 + helper(start + 1)\n            \n            return min(with_arrow, skip_current)\n        \n        return helper(0)",
+        "javascript": "var findMinArrowShots = function(points) {\n    if (points.length === 0) return 0;\n    \n    // Sort by start\n    points.sort((a, b) => a[0] - b[0]);\n    \n    function helper(start) {\n        if (start >= points.length) return 0;\n        \n        // Shoot arrow at end of current balloon\n        const arrowPos = points[start][1];\n        let nextStart = start + 1;\n        \n        // Skip all balloons this arrow bursts\n        while (nextStart < points.length && \n               points[nextStart][0] <= arrowPos) {\n            nextStart++;\n        }\n        \n        const withArrow = 1 + helper(nextStart);\n        const skipCurrent = 1 + helper(start + 1);\n        \n        return Math.min(withArrow, skipCurrent);\n    }\n    \n    return helper(0);\n};"
+      }
+    },
+    {
+      "name": "Greedy - Sort by End - Optimal",
+      "order": 2,
+      "intuition": "Sort balloons by end position. Shoot arrow at end of first balloon. This arrow bursts all overlapping balloons. Repeat for remaining.",
+      "approach": "Greedy: always shoot at the earliest possible end position.",
+      "steps": [
+        "Sort balloons by end position",
+        "Shoot first arrow at end of first balloon",
+        "For each balloon:",
+        "  If current balloon starts after last arrow:",
+        "    Need new arrow, shoot at end of current balloon",
+        "    Increment arrow count",
+        "Return arrow count"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(log n)",
+        "timeExplanation": "Sorting dominates",
+        "spaceExplanation": "Sorting space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int findMinArrowShots(vector<vector<int>>& points) {\n        if (points.empty()) return 0;\n        \n        // Sort by end position\n        sort(points.begin(), points.end(), \n             [](const vector<int>& a, const vector<int>& b) {\n                 return a[1] < b[1];\n             });\n        \n        int arrows = 1;\n        int lastArrowPos = points[0][1];\n        \n        for (int i = 1; i < points.size(); i++) {\n            // If current balloon starts after last arrow position\n            if (points[i][0] > lastArrowPos) {\n                // Need new arrow\n                arrows++;\n                lastArrowPos = points[i][1];\n            }\n            // Else: current balloon is burst by previous arrow\n        }\n        \n        return arrows;\n    }\n};",
+        "java": "class Solution {\n    public int findMinArrowShots(int[][] points) {\n        if (points.length == 0) return 0;\n        \n        // Sort by end position\n        Arrays.sort(points, (a, b) -> Integer.compare(a[1], b[1]));\n        \n        int arrows = 1;\n        int lastArrowPos = points[0][1];\n        \n        for (int i = 1; i < points.length; i++) {\n            // If current balloon starts after last arrow position\n            if (points[i][0] > lastArrowPos) {\n                // Need new arrow\n                arrows++;\n                lastArrowPos = points[i][1];\n            }\n            // Else: current balloon is burst by previous arrow\n        }\n        \n        return arrows;\n    }\n}",
+        "python": "class Solution:\n    def findMinArrowShots(self, points: List[List[int]]) -> int:\n        if not points:\n            return 0\n        \n        # Sort by end position\n        points.sort(key=lambda x: x[1])\n        \n        arrows = 1\n        last_arrow_pos = points[0][1]\n        \n        for i in range(1, len(points)):\n            # If current balloon starts after last arrow position\n            if points[i][0] > last_arrow_pos:\n                # Need new arrow\n                arrows += 1\n                last_arrow_pos = points[i][1]\n            # Else: current balloon is burst by previous arrow\n        \n        return arrows",
+        "javascript": "var findMinArrowShots = function(points) {\n    if (points.length === 0) return 0;\n    \n    // Sort by end position\n    points.sort((a, b) => a[1] - b[1]);\n    \n    let arrows = 1;\n    let lastArrowPos = points[0][1];\n    \n    for (let i = 1; i < points.length; i++) {\n        // If current balloon starts after last arrow position\n        if (points[i][0] > lastArrowPos) {\n            // Need new arrow\n            arrows++;\n            lastArrowPos = points[i][1];\n        }\n        // Else: current balloon is burst by previous arrow\n    }\n    \n    return arrows;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Sorting by start instead of end (less optimal)",
+    "Using >= instead of > for checking if new arrow needed",
+    "Not understanding this is interval covering problem",
+    "Trying to track overlapping regions instead of greedy approach"
+  ],
+  "hints": [
+    "This is similar to Non-overlapping Intervals problem",
+    "Greedy approach: sort by end time",
+    "Shoot arrow at earliest end position to maximize coverage",
+    "Each arrow bursts all balloons that contain that position"
+  ],
+  "followUp": [
+    "What if arrows can only be shot at integer positions?",
+    "How to find the actual positions to shoot arrows?",
+    "What if balloons have different heights/priorities?"
+  ],
+  "companies": ["Microsoft", "Amazon", "Google", "Facebook"],
+  "tags": ["intervals", "greedy", "sorting"],
+  "relatedProblems": [
+    "Non-overlapping Intervals",
+    "Maximum Length of Pair Chain",
+    "Meeting Rooms II"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "questionId": "18",
+  "questionSlug": "4sum",
+  "title": "4Sum",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/4sum/",
+    "videos": [
+      {
+        "title": "4Sum - Leetcode 18",
+        "url": "https://www.youtube.com/watch?v=4ggF3tXIAp4",
+        "channel": "NeetCode",
+        "duration": "13:25",
+        "language": "English"
+      },
+      {
+        "title": "L14. 4 Sum | Find Quads that add up to a target value",
+        "url": "https://www.youtube.com/watch?v=eD95WRfh81c",
+        "channel": "take U forward",
+        "duration": "17:40",
+        "language": "English"
+      },
+      {
+        "title": "4Sum Solution",
+        "url": "https://www.youtube.com/watch?v=hJDTdZN9dAQ",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "4Sum - LeetCode Solution",
+        "url": "https://leetcode.com/problems/4sum/solution/",
+        "source": "LeetCode Official"
+      },
+      {
+        "title": "4 Sum | Find Quads that add up to a target",
+        "url": "https://takeuforward.org/data-structure/4-sum-find-quads-that-add-up-to-a-target-value/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/4sum/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Four elements + target = Sort + Fix two + Two Pointers. Extend 3Sum by fixing two elements instead of one.",
+  "approaches": [
+    {
+      "name": "Brute Force (Four Nested Loops)",
+      "order": 1,
+      "intuition": "Check all possible quadruplets using four nested loops, use Set to avoid duplicates.",
+      "approach": "Generate all combinations of four elements, check sum, store unique quadruplets.",
+      "steps": [
+        "Use Set to store unique quadruplets",
+        "Iterate i from 0 to n-4:",
+        "  Iterate j from i+1 to n-3:",
+        "    Iterate k from j+1 to n-2:",
+        "      Iterate l from k+1 to n-1:",
+        "        If nums[i] + nums[j] + nums[k] + nums[l] == target:",
+        "          Sort and add quadruplet to Set",
+        "Return Set as List"
+      ],
+      "complexity": {
+        "time": "O(n⁴)",
+        "space": "O(n)",
+        "timeExplanation": "Four nested loops",
+        "spaceExplanation": "Set to store unique quadruplets"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> fourSum(vector<int>& nums, int target) {\n        set<vector<int>> uniqueQuads;\n        int n = nums.size();\n        \n        for (int i = 0; i < n - 3; i++) {\n            for (int j = i + 1; j < n - 2; j++) {\n                for (int k = j + 1; k < n - 1; k++) {\n                    for (int l = k + 1; l < n; l++) {\n                        long long sum = (long long)nums[i] + nums[j] + nums[k] + nums[l];\n                        if (sum == target) {\n                            vector<int> quad = {nums[i], nums[j], nums[k], nums[l]};\n                            sort(quad.begin(), quad.end());\n                            uniqueQuads.insert(quad);\n                        }\n                    }\n                }\n            }\n        }\n        \n        return vector<vector<int>>(uniqueQuads.begin(), uniqueQuads.end());\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> fourSum(int[] nums, int target) {\n        Set<List<Integer>> uniqueQuads = new HashSet<>();\n        int n = nums.length;\n        \n        for (int i = 0; i < n - 3; i++) {\n            for (int j = i + 1; j < n - 2; j++) {\n                for (int k = j + 1; k < n - 1; k++) {\n                    for (int l = k + 1; l < n; l++) {\n                        long sum = (long)nums[i] + nums[j] + nums[k] + nums[l];\n                        if (sum == target) {\n                            List<Integer> quad = Arrays.asList(nums[i], nums[j], nums[k], nums[l]);\n                            Collections.sort(quad);\n                            uniqueQuads.add(quad);\n                        }\n                    }\n                }\n            }\n        }\n        \n        return new ArrayList<>(uniqueQuads);\n    }\n}",
+        "python": "class Solution:\n    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:\n        unique_quads = set()\n        n = len(nums)\n        \n        for i in range(n - 3):\n            for j in range(i + 1, n - 2):\n                for k in range(j + 1, n - 1):\n                    for l in range(k + 1, n):\n                        if nums[i] + nums[j] + nums[k] + nums[l] == target:\n                            quad = tuple(sorted([nums[i], nums[j], nums[k], nums[l]]))\n                            unique_quads.add(quad)\n        \n        return [list(q) for q in unique_quads]",
+        "javascript": "var fourSum = function(nums, target) {\n    const uniqueQuads = new Set();\n    const n = nums.length;\n    \n    for (let i = 0; i < n - 3; i++) {\n        for (let j = i + 1; j < n - 2; j++) {\n            for (let k = j + 1; k < n - 1; k++) {\n                for (let l = k + 1; l < n; l++) {\n                    if (nums[i] + nums[j] + nums[k] + nums[l] === target) {\n                        const quad = [nums[i], nums[j], nums[k], nums[l]].sort((a, b) => a - b);\n                        uniqueQuads.add(quad.join(','));\n                    }\n                }\n            }\n        }\n    }\n    \n    return Array.from(uniqueQuads).map(s => s.split(',').map(Number));\n};"
+      }
+    },
+    {
+      "name": "Better (HashSet for Pair Sum)",
+      "order": 2,
+      "intuition": "Fix first two elements, use HashSet to find pairs that complete the quadruplet.",
+      "approach": "Two loops for first two elements, HashSet to find remaining pair sum.",
+      "steps": [
+        "Use Set for unique quadruplets",
+        "Iterate i from 0 to n-4:",
+        "  Iterate j from i+1 to n-3:",
+        "    Create HashSet",
+        "    Iterate k from j+1 to n-1:",
+        "      complement = target - (nums[i] + nums[j] + nums[k])",
+        "      If complement in HashSet:",
+        "        Add sorted quadruplet to result",
+        "      Add nums[k] to HashSet",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(n)",
+        "timeExplanation": "Three nested loops with HashSet operations",
+        "spaceExplanation": "HashSet for pairs + result Set"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> fourSum(vector<int>& nums, int target) {\n        set<vector<int>> result;\n        int n = nums.size();\n        \n        for (int i = 0; i < n - 3; i++) {\n            for (int j = i + 1; j < n - 2; j++) {\n                unordered_set<long long> seen;\n                \n                for (int k = j + 1; k < n; k++) {\n                    long long complement = (long long)target - nums[i] - nums[j] - nums[k];\n                    \n                    if (seen.find(complement) != seen.end()) {\n                        vector<int> quad = {nums[i], nums[j], nums[k], (int)complement};\n                        sort(quad.begin(), quad.end());\n                        result.insert(quad);\n                    }\n                    \n                    seen.insert(nums[k]);\n                }\n            }\n        }\n        \n        return vector<vector<int>>(result.begin(), result.end());\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> fourSum(int[] nums, int target) {\n        Set<List<Integer>> result = new HashSet<>();\n        int n = nums.length;\n        \n        for (int i = 0; i < n - 3; i++) {\n            for (int j = i + 1; j < n - 2; j++) {\n                Set<Long> seen = new HashSet<>();\n                \n                for (int k = j + 1; k < n; k++) {\n                    long complement = (long)target - nums[i] - nums[j] - nums[k];\n                    \n                    if (seen.contains(complement)) {\n                        List<Integer> quad = Arrays.asList(nums[i], nums[j], nums[k], (int)complement);\n                        Collections.sort(quad);\n                        result.add(quad);\n                    }\n                    \n                    seen.add((long)nums[k]);\n                }\n            }\n        }\n        \n        return new ArrayList<>(result);\n    }\n}",
+        "python": "class Solution:\n    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:\n        result = set()\n        n = len(nums)\n        \n        for i in range(n - 3):\n            for j in range(i + 1, n - 2):\n                seen = set()\n                \n                for k in range(j + 1, n):\n                    complement = target - nums[i] - nums[j] - nums[k]\n                    \n                    if complement in seen:\n                        quad = tuple(sorted([nums[i], nums[j], nums[k], complement]))\n                        result.add(quad)\n                    \n                    seen.add(nums[k])\n        \n        return [list(q) for q in result]",
+        "javascript": "var fourSum = function(nums, target) {\n    const result = new Set();\n    const n = nums.length;\n    \n    for (let i = 0; i < n - 3; i++) {\n        for (let j = i + 1; j < n - 2; j++) {\n            const seen = new Set();\n            \n            for (let k = j + 1; k < n; k++) {\n                const complement = target - nums[i] - nums[j] - nums[k];\n                \n                if (seen.has(complement)) {\n                    const quad = [nums[i], nums[j], nums[k], complement].sort((a, b) => a - b);\n                    result.add(quad.join(','));\n                }\n                \n                seen.add(nums[k]);\n            }\n        }\n    }\n    \n    return Array.from(result).map(s => s.split(',').map(Number));\n};"
+      }
+    },
+    {
+      "name": "Sort + Nested Two Pointers - Optimal",
+      "order": 3,
+      "intuition": "Extension of 3Sum. Sort array, fix first two elements, use two pointers for remaining pair. Skip duplicates at all levels.",
+      "approach": "Sort first. Use two nested loops to fix two elements, then two pointers for the pair. Handle duplicates carefully.",
+      "steps": [
+        "Sort array",
+        "Iterate i from 0 to n-4:",
+        "  Skip if nums[i] same as nums[i-1]",
+        "  Iterate j from i+1 to n-3:",
+        "    Skip if nums[j] same as nums[j-1] (except first j)",
+        "    Initialize left = j+1, right = n-1",
+        "    While left < right:",
+        "      Calculate sum = nums[i] + nums[j] + nums[left] + nums[right]",
+        "      If sum == target:",
+        "        Add quadruplet, skip duplicates, move both",
+        "      Else if sum < target: left++",
+        "      Else: right--",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(1)",
+        "timeExplanation": "O(n log n) for sort + O(n³) for three nested loops",
+        "spaceExplanation": "Ignoring output, only constant space used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<int>> fourSum(vector<int>& nums, int target) {\n        vector<vector<int>> result;\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        \n        for (int i = 0; i < n - 3; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            \n            for (int j = i + 1; j < n - 2; j++) {\n                if (j > i + 1 && nums[j] == nums[j - 1]) continue;\n                \n                int left = j + 1, right = n - 1;\n                \n                while (left < right) {\n                    long long sum = (long long)nums[i] + nums[j] + nums[left] + nums[right];\n                    \n                    if (sum == target) {\n                        result.push_back({nums[i], nums[j], nums[left], nums[right]});\n                        \n                        while (left < right && nums[left] == nums[left + 1]) left++;\n                        while (left < right && nums[right] == nums[right - 1]) right--;\n                        \n                        left++;\n                        right--;\n                    } else if (sum < target) {\n                        left++;\n                    } else {\n                        right--;\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<List<Integer>> fourSum(int[] nums, int target) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(nums);\n        int n = nums.length;\n        \n        for (int i = 0; i < n - 3; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            \n            for (int j = i + 1; j < n - 2; j++) {\n                if (j > i + 1 && nums[j] == nums[j - 1]) continue;\n                \n                int left = j + 1, right = n - 1;\n                \n                while (left < right) {\n                    long sum = (long)nums[i] + nums[j] + nums[left] + nums[right];\n                    \n                    if (sum == target) {\n                        result.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));\n                        \n                        while (left < right && nums[left] == nums[left + 1]) left++;\n                        while (left < right && nums[right] == nums[right - 1]) right--;\n                        \n                        left++;\n                        right--;\n                    } else if (sum < target) {\n                        left++;\n                    } else {\n                        right--;\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:\n        result = []\n        nums.sort()\n        n = len(nums)\n        \n        for i in range(n - 3):\n            if i > 0 and nums[i] == nums[i - 1]:\n                continue\n            \n            for j in range(i + 1, n - 2):\n                if j > i + 1 and nums[j] == nums[j - 1]:\n                    continue\n                \n                left, right = j + 1, n - 1\n                \n                while left < right:\n                    total = nums[i] + nums[j] + nums[left] + nums[right]\n                    \n                    if total == target:\n                        result.append([nums[i], nums[j], nums[left], nums[right]])\n                        \n                        while left < right and nums[left] == nums[left + 1]:\n                            left += 1\n                        while left < right and nums[right] == nums[right - 1]:\n                            right -= 1\n                        \n                        left += 1\n                        right -= 1\n                    elif total < target:\n                        left += 1\n                    else:\n                        right -= 1\n        \n        return result",
+        "javascript": "var fourSum = function(nums, target) {\n    const result = [];\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    \n    for (let i = 0; i < n - 3; i++) {\n        if (i > 0 && nums[i] === nums[i - 1]) continue;\n        \n        for (let j = i + 1; j < n - 2; j++) {\n            if (j > i + 1 && nums[j] === nums[j - 1]) continue;\n            \n            let left = j + 1, right = n - 1;\n            \n            while (left < right) {\n                const sum = nums[i] + nums[j] + nums[left] + nums[right];\n                \n                if (sum === target) {\n                    result.push([nums[i], nums[j], nums[left], nums[right]]);\n                    \n                    while (left < right && nums[left] === nums[left + 1]) left++;\n                    while (left < right && nums[right] === nums[right - 1]) right--;\n                    \n                    left++;\n                    right--;\n                } else if (sum < target) {\n                    left++;\n                } else {\n                    right--;\n                }\n            }\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Integer overflow when summing large numbers",
+    "Not handling duplicates at all four positions",
+    "Wrong duplicate skipping condition for j loop (should be j > i + 1)",
+    "Using int instead of long for sum calculation"
+  ],
+  "hints": [
+    "Extend 3Sum by adding one more outer loop",
+    "Use long/BigInteger to avoid overflow",
+    "Skip duplicates at all four pointer positions",
+    "j > i + 1 for second duplicate check (not j > 0)",
+    "Sort first to enable two pointer approach"
+  ],
+  "followUp": [
+    "Generalize to k-Sum problem",
+    "What if target can overflow?",
+    "Can you optimize with early termination?",
+    "What about 4Sum II with different arrays?"
+  ],
+  "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Adobe"],
+  "tags": ["array", "two-pointers", "sorting"],
+  "relatedProblems": [
+    "Two Sum",
+    "3Sum",
+    "3Sum Closest",
+    "4Sum II"
+  ]
+}

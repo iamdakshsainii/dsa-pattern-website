@@ -1,0 +1,159 @@
+{
+  "questionId": "11",
+  "questionSlug": "container-with-most-water",
+  "title": "Container With Most Water",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/container-with-most-water/",
+    "videos": [
+      {
+        "title": "Container With Most Water - Leetcode 11",
+        "url": "https://www.youtube.com/watch?v=UuiTKBwPgAo",
+        "channel": "NeetCode",
+        "duration": "8:47",
+        "language": "English"
+      },
+      {
+        "title": "Container With Most Water Solution",
+        "url": "https://www.youtube.com/watch?v=6PrIRPpTI9Q",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:30",
+        "language": "English"
+      },
+      {
+        "title": "Container With Most Water Explained",
+        "url": "https://www.youtube.com/watch?v=ZHQg07n_tbg",
+        "channel": "Back To Back SWE",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Container With Most Water - LeetCode Solution",
+        "url": "https://leetcode.com/problems/container-with-most-water/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/container-with-most-water/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Maximize area with constraints = Two Pointers. Start from widest, move pointer with smaller height (greedy).",
+  "approaches": [
+    {
+      "name": "Brute Force (All Pairs)",
+      "order": 1,
+      "intuition": "Try all possible pairs of lines and calculate area for each, keep track of maximum.",
+      "approach": "Use nested loops to check every pair, calculate area, update maximum.",
+      "steps": [
+        "Initialize maxArea = 0",
+        "Iterate i from 0 to n-2:",
+        "  Iterate j from i+1 to n-1:",
+        "    Calculate width = j - i",
+        "    Calculate height = min(height[i], height[j])",
+        "    Calculate area = width * height",
+        "    Update maxArea if area > maxArea",
+        "Return maxArea"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops check all pairs",
+        "spaceExplanation": "Only using variables for calculation"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        int maxArea = 0;\n        int n = height.size();\n        \n        for (int i = 0; i < n - 1; i++) {\n            for (int j = i + 1; j < n; j++) {\n                int width = j - i;\n                int h = min(height[i], height[j]);\n                int area = width * h;\n                maxArea = max(maxArea, area);\n            }\n        }\n        \n        return maxArea;\n    }\n};",
+        "java": "class Solution {\n    public int maxArea(int[] height) {\n        int maxArea = 0;\n        int n = height.length;\n        \n        for (int i = 0; i < n - 1; i++) {\n            for (int j = i + 1; j < n; j++) {\n                int width = j - i;\n                int h = Math.min(height[i], height[j]);\n                int area = width * h;\n                maxArea = Math.max(maxArea, area);\n            }\n        }\n        \n        return maxArea;\n    }\n}",
+        "python": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        max_area = 0\n        n = len(height)\n        \n        for i in range(n - 1):\n            for j in range(i + 1, n):\n                width = j - i\n                h = min(height[i], height[j])\n                area = width * h\n                max_area = max(max_area, area)\n        \n        return max_area",
+        "javascript": "var maxArea = function(height) {\n    let maxArea = 0;\n    const n = height.length;\n    \n    for (let i = 0; i < n - 1; i++) {\n        for (let j = i + 1; j < n; j++) {\n            const width = j - i;\n            const h = Math.min(height[i], height[j]);\n            const area = width * h;\n            maxArea = Math.max(maxArea, area);\n        }\n    }\n    \n    return maxArea;\n};"
+      }
+    },
+    {
+      "name": "Better (Optimization with Early Break)",
+      "order": 2,
+      "intuition": "Same as brute force but skip checking pairs where even maximum possible area can't beat current max.",
+      "approach": "For each left pointer, skip right pointers where theoretical max area is less than current max.",
+      "steps": [
+        "Initialize maxArea = 0",
+        "Iterate i from 0 to n-2:",
+        "  Iterate j from i+1 to n-1:",
+        "    If height[i] * (n-1-i) <= maxArea: break",
+        "    Calculate area and update maxArea",
+        "Return maxArea"
+      ],
+      "complexity": {
+        "time": "O(n²) worst case, better in practice",
+        "space": "O(1)",
+        "timeExplanation": "Still O(n²) but with pruning",
+        "spaceExplanation": "Only using variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        int maxArea = 0;\n        int n = height.size();\n        \n        for (int i = 0; i < n - 1; i++) {\n            if (height[i] * (n - 1 - i) <= maxArea) continue;\n            \n            for (int j = i + 1; j < n; j++) {\n                int width = j - i;\n                int h = min(height[i], height[j]);\n                int area = width * h;\n                maxArea = max(maxArea, area);\n            }\n        }\n        \n        return maxArea;\n    }\n};",
+        "java": "class Solution {\n    public int maxArea(int[] height) {\n        int maxArea = 0;\n        int n = height.length;\n        \n        for (int i = 0; i < n - 1; i++) {\n            if (height[i] * (n - 1 - i) <= maxArea) continue;\n            \n            for (int j = i + 1; j < n; j++) {\n                int width = j - i;\n                int h = Math.min(height[i], height[j]);\n                int area = width * h;\n                maxArea = Math.max(maxArea, area);\n            }\n        }\n        \n        return maxArea;\n    }\n}",
+        "python": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        max_area = 0\n        n = len(height)\n        \n        for i in range(n - 1):\n            if height[i] * (n - 1 - i) <= max_area:\n                continue\n            \n            for j in range(i + 1, n):\n                width = j - i\n                h = min(height[i], height[j])\n                area = width * h\n                max_area = max(max_area, area)\n        \n        return max_area",
+        "javascript": "var maxArea = function(height) {\n    let maxArea = 0;\n    const n = height.length;\n    \n    for (let i = 0; i < n - 1; i++) {\n        if (height[i] * (n - 1 - i) <= maxArea) continue;\n        \n        for (let j = i + 1; j < n; j++) {\n            const width = j - i;\n            const h = Math.min(height[i], height[j]);\n            const area = width * h;\n            maxArea = Math.max(maxArea, area);\n        }\n    }\n    \n    return maxArea;\n};"
+      }
+    },
+    {
+      "name": "Two Pointers - Optimal",
+      "order": 3,
+      "intuition": "Area limited by shorter line. Start with maximum width. Move pointer at shorter height inward to potentially find taller line.",
+      "approach": "Two pointers at ends. Calculate area, move pointer with smaller height inward, track maximum area.",
+      "steps": [
+        "Initialize left = 0, right = n-1, maxArea = 0",
+        "While left < right:",
+        "  Calculate width = right - left",
+        "  Calculate height = min(height[left], height[right])",
+        "  Calculate area = width * height",
+        "  Update maxArea if area > maxArea",
+        "  If height[left] < height[right]:",
+        "    Increment left",
+        "  Else:",
+        "    Decrement right",
+        "Return maxArea"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass with two pointers",
+        "spaceExplanation": "Only using pointer variables and maxArea"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        int left = 0, right = height.size() - 1;\n        int maxArea = 0;\n        \n        while (left < right) {\n            int width = right - left;\n            int h = min(height[left], height[right]);\n            int area = width * h;\n            maxArea = max(maxArea, area);\n            \n            if (height[left] < height[right]) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        \n        return maxArea;\n    }\n};",
+        "java": "class Solution {\n    public int maxArea(int[] height) {\n        int left = 0, right = height.length - 1;\n        int maxArea = 0;\n        \n        while (left < right) {\n            int width = right - left;\n            int h = Math.min(height[left], height[right]);\n            int area = width * h;\n            maxArea = Math.max(maxArea, area);\n            \n            if (height[left] < height[right]) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        \n        return maxArea;\n    }\n}",
+        "python": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        left, right = 0, len(height) - 1\n        max_area = 0\n        \n        while left < right:\n            width = right - left\n            h = min(height[left], height[right])\n            area = width * h\n            max_area = max(max_area, area)\n            \n            if height[left] < height[right]:\n                left += 1\n            else:\n                right -= 1\n        \n        return max_area",
+        "javascript": "var maxArea = function(height) {\n    let left = 0, right = height.length - 1;\n    let maxArea = 0;\n    \n    while (left < right) {\n        const width = right - left;\n        const h = Math.min(height[left], height[right]);\n        const area = width * h;\n        maxArea = Math.max(maxArea, area);\n        \n        if (height[left] < height[right]) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    \n    return maxArea;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Trying all pairs (O(n²) brute force)",
+    "Moving both pointers at once",
+    "Not understanding why we move shorter pointer",
+    "Thinking we need to track all possible containers"
+  ],
+  "hints": [
+    "Area = width × min(left_height, right_height)",
+    "Start with maximum width",
+    "Moving shorter pointer might find taller line",
+    "Moving taller pointer can only decrease area (width decreases, height can't increase)"
+  ],
+  "followUp": [
+    "What if lines have different widths?",
+    "3D version of this problem?",
+    "Prove why greedy approach works",
+    "Can you find second maximum area?"
+  ],
+  "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Apple"],
+  "tags": ["array", "two-pointers", "greedy"],
+  "relatedProblems": [
+    "Trapping Rain Water",
+    "Product of Array Except Self",
+    "Largest Rectangle in Histogram"
+  ]
+}

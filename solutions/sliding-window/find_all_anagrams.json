@@ -1,0 +1,130 @@
+{
+  "questionId": "438",
+  "questionSlug": "find-all-anagrams-in-a-string",
+  "title": "Find All Anagrams in a String",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-all-anagrams-in-a-string/",
+    "videos": [
+      {
+        "title": "Find All Anagrams in a String - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=MW4lJ8Y0xXk",
+        "channel": "NeetCode",
+        "duration": "11:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Find all substrings of fixed length that are anagrams = Fixed window + frequency match. Compare character frequencies.",
+  "approaches": [
+    {
+      "name": "Brute Force (Check Each Substring)",
+      "order": 1,
+      "intuition": "For each substring of length p, check if it's an anagram by comparing sorted strings or frequencies.",
+      "approach": "Generate all substrings of length p, sort and compare with sorted p.",
+      "steps": [
+        "Initialize result array",
+        "Sort string p to get pSorted",
+        "For i from 0 to s.length - p.length:",
+        "  Extract substring of length p starting at i",
+        "  Sort substring",
+        "  If sorted substring == pSorted:",
+        "    Add i to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O((n-m) * m*log(m))",
+        "space": "O(m)",
+        "timeExplanation": "For each position, sort substring of length m",
+        "spaceExplanation": "Space for sorting and substring"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findAnagrams(string s, string p) {\n        vector<int> result;\n        if (s.length() < p.length()) return result;\n        \n        string pSorted = p;\n        sort(pSorted.begin(), pSorted.end());\n        \n        for (int i = 0; i <= s.length() - p.length(); i++) {\n            string window = s.substr(i, p.length());\n            sort(window.begin(), window.end());\n            if (window == pSorted) {\n                result.push_back(i);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findAnagrams(String s, String p) {\n        List<Integer> result = new ArrayList<>();\n        if (s.length() < p.length()) return result;\n        \n        char[] pArr = p.toCharArray();\n        Arrays.sort(pArr);\n        String pSorted = new String(pArr);\n        \n        for (int i = 0; i <= s.length() - p.length(); i++) {\n            String window = s.substring(i, i + p.length());\n            char[] windowArr = window.toCharArray();\n            Arrays.sort(windowArr);\n            if (new String(windowArr).equals(pSorted)) {\n                result.add(i);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findAnagrams(self, s: str, p: str) -> List[int]:\n        result = []\n        if len(s) < len(p):\n            return result\n        \n        p_sorted = sorted(p)\n        \n        for i in range(len(s) - len(p) + 1):\n            window = s[i:i + len(p)]\n            if sorted(window) == p_sorted:\n                result.append(i)\n        \n        return result",
+        "javascript": "var findAnagrams = function(s, p) {\n    const result = [];\n    if (s.length < p.length) return result;\n    \n    const pSorted = p.split('').sort().join('');\n    \n    for (let i = 0; i <= s.length - p.length; i++) {\n        const window = s.substring(i, i + p.length);\n        if (window.split('').sort().join('') === pSorted) {\n            result.push(i);\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Sliding Window with Frequency Map - Better",
+      "order": 2,
+      "intuition": "Build frequency map for p. Use sliding window of size p and compare frequencies at each position.",
+      "approach": "Fixed window slides through s. Compare window's frequency with p's frequency.",
+      "steps": [
+        "Build frequency map for p",
+        "Build frequency map for first window of size p.length",
+        "If frequencies match, add 0 to result",
+        "For i from p.length to s.length:",
+        "  Remove s[i - p.length] from window",
+        "  Add s[i] to window",
+        "  If frequencies match:",
+        "    Add (i - p.length + 1) to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n * 26)",
+        "space": "O(1)",
+        "timeExplanation": "Slide window n times, compare 26 characters each time",
+        "spaceExplanation": "Fixed size frequency arrays (26 letters)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findAnagrams(string s, string p) {\n        vector<int> result;\n        if (s.length() < p.length()) return result;\n        \n        vector<int> pFreq(26, 0), windowFreq(26, 0);\n        \n        for (char c : p) {\n            pFreq[c - 'a']++;\n        }\n        \n        for (int i = 0; i < p.length(); i++) {\n            windowFreq[s[i] - 'a']++;\n        }\n        \n        if (pFreq == windowFreq) {\n            result.push_back(0);\n        }\n        \n        for (int i = p.length(); i < s.length(); i++) {\n            windowFreq[s[i] - 'a']++;\n            windowFreq[s[i - p.length()] - 'a']--;\n            \n            if (pFreq == windowFreq) {\n                result.push_back(i - p.length() + 1);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findAnagrams(String s, String p) {\n        List<Integer> result = new ArrayList<>();\n        if (s.length() < p.length()) return result;\n        \n        int[] pFreq = new int[26];\n        int[] windowFreq = new int[26];\n        \n        for (char c : p.toCharArray()) {\n            pFreq[c - 'a']++;\n        }\n        \n        for (int i = 0; i < p.length(); i++) {\n            windowFreq[s.charAt(i) - 'a']++;\n        }\n        \n        if (Arrays.equals(pFreq, windowFreq)) {\n            result.add(0);\n        }\n        \n        for (int i = p.length(); i < s.length(); i++) {\n            windowFreq[s.charAt(i) - 'a']++;\n            windowFreq[s.charAt(i - p.length()) - 'a']--;\n            \n            if (Arrays.equals(pFreq, windowFreq)) {\n                result.add(i - p.length() + 1);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findAnagrams(self, s: str, p: str) -> List[int]:\n        result = []\n        if len(s) < len(p):\n            return result\n        \n        p_freq = [0] * 26\n        window_freq = [0] * 26\n        \n        for c in p:\n            p_freq[ord(c) - ord('a')] += 1\n        \n        for i in range(len(p)):\n            window_freq[ord(s[i]) - ord('a')] += 1\n        \n        if p_freq == window_freq:\n            result.append(0)\n        \n        for i in range(len(p), len(s)):\n            window_freq[ord(s[i]) - ord('a')] += 1\n            window_freq[ord(s[i - len(p)]) - ord('a')] -= 1\n            \n            if p_freq == window_freq:\n                result.append(i - len(p) + 1)\n        \n        return result",
+        "javascript": "var findAnagrams = function(s, p) {\n    const result = [];\n    if (s.length < p.length) return result;\n    \n    const pFreq = new Array(26).fill(0);\n    const windowFreq = new Array(26).fill(0);\n    \n    for (const c of p) {\n        pFreq[c.charCodeAt(0) - 97]++;\n    }\n    \n    for (let i = 0; i < p.length; i++) {\n        windowFreq[s.charCodeAt(i) - 97]++;\n    }\n    \n    if (pFreq.toString() === windowFreq.toString()) {\n        result.push(0);\n    }\n    \n    for (let i = p.length; i < s.length; i++) {\n        windowFreq[s.charCodeAt(i) - 97]++;\n        windowFreq[s.charCodeAt(i - p.length) - 97]--;\n        \n        if (pFreq.toString() === windowFreq.toString()) {\n            result.push(i - p.length + 1);\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Sliding Window with Match Count - Optimal",
+      "order": 3,
+      "intuition": "Instead of comparing entire arrays, track number of matching characters. When matches = 26, we have anagram.",
+      "approach": "Use match counter. When frequency of char becomes equal, increment matches. When unequal, decrement.",
+      "steps": [
+        "Build frequency map for p",
+        "Build initial window frequency",
+        "Count initial matches (chars with equal frequency)",
+        "For each new position:",
+        "  Add new char: update its match status",
+        "  Remove old char: update its match status",
+        "  If matches == 26: add index to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass, constant time per operation",
+        "spaceExplanation": "Fixed size arrays (26 letters)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findAnagrams(string s, string p) {\n        vector<int> result;\n        if (s.length() < p.length()) return result;\n        \n        vector<int> pFreq(26, 0), windowFreq(26, 0);\n        \n        for (char c : p) {\n            pFreq[c - 'a']++;\n        }\n        \n        int matches = 0;\n        for (int i = 0; i < p.length(); i++) {\n            windowFreq[s[i] - 'a']++;\n        }\n        \n        for (int i = 0; i < 26; i++) {\n            if (pFreq[i] == windowFreq[i]) {\n                matches++;\n            }\n        }\n        \n        if (matches == 26) {\n            result.push_back(0);\n        }\n        \n        for (int i = p.length(); i < s.length(); i++) {\n            int right = s[i] - 'a';\n            int left = s[i - p.length()] - 'a';\n            \n            // Add right character\n            if (pFreq[right] == windowFreq[right]) {\n                matches--;\n            }\n            windowFreq[right]++;\n            if (pFreq[right] == windowFreq[right]) {\n                matches++;\n            }\n            \n            // Remove left character\n            if (pFreq[left] == windowFreq[left]) {\n                matches--;\n            }\n            windowFreq[left]--;\n            if (pFreq[left] == windowFreq[left]) {\n                matches++;\n            }\n            \n            if (matches == 26) {\n                result.push_back(i - p.length() + 1);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findAnagrams(String s, String p) {\n        List<Integer> result = new ArrayList<>();\n        if (s.length() < p.length()) return result;\n        \n        int[] pFreq = new int[26];\n        int[] windowFreq = new int[26];\n        \n        for (char c : p.toCharArray()) {\n            pFreq[c - 'a']++;\n        }\n        \n        int matches = 0;\n        for (int i = 0; i < p.length(); i++) {\n            windowFreq[s.charAt(i) - 'a']++;\n        }\n        \n        for (int i = 0; i < 26; i++) {\n            if (pFreq[i] == windowFreq[i]) {\n                matches++;\n            }\n        }\n        \n        if (matches == 26) {\n            result.add(0);\n        }\n        \n        for (int i = p.length(); i < s.length(); i++) {\n            int right = s.charAt(i) - 'a';\n            int left = s.charAt(i - p.length()) - 'a';\n            \n            if (pFreq[right] == windowFreq[right]) matches--;\n            windowFreq[right]++;\n            if (pFreq[right] == windowFreq[right]) matches++;\n            \n            if (pFreq[left] == windowFreq[left]) matches--;\n            windowFreq[left]--;\n            if (pFreq[left] == windowFreq[left]) matches++;\n            \n            if (matches == 26) {\n                result.add(i - p.length() + 1);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findAnagrams(self, s: str, p: str) -> List[int]:\n        result = []\n        if len(s) < len(p):\n            return result\n        \n        p_freq = [0] * 26\n        window_freq = [0] * 26\n        \n        for c in p:\n            p_freq[ord(c) - ord('a')] += 1\n        \n        matches = 0\n        for i in range(len(p)):\n            window_freq[ord(s[i]) - ord('a')] += 1\n        \n        for i in range(26):\n            if p_freq[i] == window_freq[i]:\n                matches += 1\n        \n        if matches == 26:\n            result.append(0)\n        \n        for i in range(len(p), len(s)):\n            right = ord(s[i]) - ord('a')\n            left = ord(s[i - len(p)]) - ord('a')\n            \n            if p_freq[right] == window_freq[right]:\n                matches -= 1\n            window_freq[right] += 1\n            if p_freq[right] == window_freq[right]:\n                matches += 1\n            \n            if p_freq[left] == window_freq[left]:\n                matches -= 1\n            window_freq[left] -= 1\n            if p_freq[left] == window_freq[left]:\n                matches += 1\n            \n            if matches == 26:\n                result.append(i - len(p) + 1)\n        \n        return result",
+        "javascript": "var findAnagrams = function(s, p) {\n    const result = [];\n    if (s.length < p.length) return result;\n    \n    const pFreq = new Array(26).fill(0);\n    const windowFreq = new Array(26).fill(0);\n    \n    for (const c of p) {\n        pFreq[c.charCodeAt(0) - 97]++;\n    }\n    \n    let matches = 0;\n    for (let i = 0; i < p.length; i++) {\n        windowFreq[s.charCodeAt(i) - 97]++;\n    }\n    \n    for (let i = 0; i < 26; i++) {\n        if (pFreq[i] === windowFreq[i]) {\n            matches++;\n        }\n    }\n    \n    if (matches === 26) {\n        result.push(0);\n    }\n    \n    for (let i = p.length; i < s.length; i++) {\n        const right = s.charCodeAt(i) - 97;\n        const left = s.charCodeAt(i - p.length) - 97;\n        \n        if (pFreq[right] === windowFreq[right]) matches--;\n        windowFreq[right]++;\n        if (pFreq[right] === windowFreq[right]) matches++;\n        \n        if (pFreq[left] === windowFreq[left]) matches--;\n        windowFreq[left]--;\n        if (pFreq[left] === windowFreq[left]) matches++;\n        \n        if (matches === 26) {\n            result.push(i - p.length + 1);\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling edge case when s.length < p.length",
+    "Forgetting to check first window before sliding",
+    "Wrong index calculation when adding to result",
+    "Not updating match count correctly when adding/removing chars"
+  ],
+  "hints": [
+    "Anagram means same character frequencies",
+    "Use fixed sliding window of size p.length",
+    "Track matches instead of comparing entire arrays for O(1) check",
+    "Update match count when frequencies become equal/unequal"
+  ],
+  "followUp": [
+    "What if strings contain unicode characters?",
+    "Can you solve it with HashMap instead of array?",
+    "Find all substrings that are permutations with repetitions allowed?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook"],
+  "tags": ["string", "sliding-window", "hash-table"],
+  "relatedProblems": [
+    "Permutation in String",
+    "Minimum Window Substring",
+    "Substring with Concatenation of All Words"
+  ]
+}

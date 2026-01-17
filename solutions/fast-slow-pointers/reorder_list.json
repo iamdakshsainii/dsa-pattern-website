@@ -1,0 +1,97 @@
+{
+  "questionId": "143",
+  "questionSlug": "reorder-list",
+  "title": "Reorder List",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/reorder-list/",
+    "videos": [
+      {
+        "title": "Reorder List - Fast & Slow Pointers",
+        "url": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
+        "channel": "NeetCode",
+        "duration": "10:12",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Reorder list in specific pattern = Find middle with fast & slow, reverse second half, merge alternately.",
+  "approaches": [
+    {
+      "name": "Array Storage + Rebuild",
+      "order": 1,
+      "intuition": "Store all nodes in array, then rebuild list by picking nodes alternately from start and end.",
+      "approach": "Convert to array, use two pointers to reconnect nodes in desired order.",
+      "steps": [
+        "Store all nodes in array",
+        "Use two pointers: left = 0, right = n-1",
+        "While left < right:",
+        "  Connect nodes[left] -> nodes[right]",
+        "  Connect nodes[right] -> nodes[left+1]",
+        "  left++, right--",
+        "Set last node's next to null"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass to store, single pass to rebuild",
+        "spaceExplanation": "Array stores all n nodes"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void reorderList(ListNode* head) {\n        if (!head || !head->next) return;\n        \n        // Store all nodes in array\n        vector<ListNode*> nodes;\n        ListNode* curr = head;\n        while (curr) {\n            nodes.push_back(curr);\n            curr = curr->next;\n        }\n        \n        // Rebuild list\n        int left = 0, right = nodes.size() - 1;\n        while (left < right) {\n            nodes[left]->next = nodes[right];\n            left++;\n            \n            if (left == right) break;\n            \n            nodes[right]->next = nodes[left];\n            right--;\n        }\n        \n        nodes[left]->next = nullptr;\n    }\n};",
+        "java": "class Solution {\n    public void reorderList(ListNode head) {\n        if (head == null || head.next == null) return;\n        \n        // Store all nodes in array\n        List<ListNode> nodes = new ArrayList<>();\n        ListNode curr = head;\n        while (curr != null) {\n            nodes.add(curr);\n            curr = curr.next;\n        }\n        \n        // Rebuild list\n        int left = 0, right = nodes.size() - 1;\n        while (left < right) {\n            nodes.get(left).next = nodes.get(right);\n            left++;\n            \n            if (left == right) break;\n            \n            nodes.get(right).next = nodes.get(left);\n            right--;\n        }\n        \n        nodes.get(left).next = null;\n    }\n}",
+        "python": "class Solution:\n    def reorderList(self, head: Optional[ListNode]) -> None:\n        if not head or not head.next:\n            return\n        \n        # Store all nodes in array\n        nodes = []\n        curr = head\n        while curr:\n            nodes.append(curr)\n            curr = curr.next\n        \n        # Rebuild list\n        left, right = 0, len(nodes) - 1\n        while left < right:\n            nodes[left].next = nodes[right]\n            left += 1\n            \n            if left == right:\n                break\n            \n            nodes[right].next = nodes[left]\n            right -= 1\n        \n        nodes[left].next = None",
+        "javascript": "var reorderList = function(head) {\n    if (!head || !head.next) return;\n    \n    // Store all nodes in array\n    const nodes = [];\n    let curr = head;\n    while (curr) {\n        nodes.push(curr);\n        curr = curr.next;\n    }\n    \n    // Rebuild list\n    let left = 0, right = nodes.length - 1;\n    while (left < right) {\n        nodes[left].next = nodes[right];\n        left++;\n        \n        if (left === right) break;\n        \n        nodes[right].next = nodes[left];\n        right--;\n    }\n    \n    nodes[left].next = null;\n};"
+      }
+    },
+    {
+      "name": "Find Middle + Reverse + Merge - Optimal",
+      "order": 2,
+      "intuition": "Split list at middle, reverse second half, then merge both halves alternately. Classic combination of three techniques.",
+      "approach": "Use fast & slow to find middle, reverse second half, merge two lists alternately.",
+      "steps": [
+        "Find middle using fast & slow pointers",
+        "Split list into two halves",
+        "Reverse second half",
+        "Merge both halves alternately:",
+        "  L0 -> Ln -> L1 -> Ln-1 -> L2 -> Ln-2 ..."
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Three O(n) passes: find middle, reverse, merge",
+        "spaceExplanation": "Only constant extra space for pointers"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void reorderList(ListNode* head) {\n        if (!head || !head->next) return;\n        \n        // Step 1: Find middle\n        ListNode* slow = head;\n        ListNode* fast = head;\n        while (fast->next && fast->next->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        \n        // Step 2: Split and reverse second half\n        ListNode* second = reverse(slow->next);\n        slow->next = nullptr;\n        \n        // Step 3: Merge two halves\n        ListNode* first = head;\n        while (second) {\n            ListNode* temp1 = first->next;\n            ListNode* temp2 = second->next;\n            \n            first->next = second;\n            second->next = temp1;\n            \n            first = temp1;\n            second = temp2;\n        }\n    }\n    \nprivate:\n    ListNode* reverse(ListNode* head) {\n        ListNode* prev = nullptr;\n        ListNode* curr = head;\n        \n        while (curr) {\n            ListNode* next = curr->next;\n            curr->next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        return prev;\n    }\n};",
+        "java": "class Solution {\n    public void reorderList(ListNode head) {\n        if (head == null || head.next == null) return;\n        \n        // Step 1: Find middle\n        ListNode slow = head;\n        ListNode fast = head;\n        while (fast.next != null && fast.next.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n        }\n        \n        // Step 2: Split and reverse second half\n        ListNode second = reverse(slow.next);\n        slow.next = null;\n        \n        // Step 3: Merge two halves\n        ListNode first = head;\n        while (second != null) {\n            ListNode temp1 = first.next;\n            ListNode temp2 = second.next;\n            \n            first.next = second;\n            second.next = temp1;\n            \n            first = temp1;\n            second = temp2;\n        }\n    }\n    \n    private ListNode reverse(ListNode head) {\n        ListNode prev = null;\n        ListNode curr = head;\n        \n        while (curr != null) {\n            ListNode next = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = next;\n        }\n        \n        return prev;\n    }\n}",
+        "python": "class Solution:\n    def reorderList(self, head: Optional[ListNode]) -> None:\n        if not head or not head.next:\n            return\n        \n        # Step 1: Find middle\n        slow = fast = head\n        while fast.next and fast.next.next:\n            slow = slow.next\n            fast = fast.next.next\n        \n        # Step 2: Split and reverse second half\n        second = self.reverse(slow.next)\n        slow.next = None\n        \n        # Step 3: Merge two halves\n        first = head\n        while second:\n            temp1 = first.next\n            temp2 = second.next\n            \n            first.next = second\n            second.next = temp1\n            \n            first = temp1\n            second = temp2\n    \n    def reverse(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        prev = None\n        curr = head\n        \n        while curr:\n            next_node = curr.next\n            curr.next = prev\n            prev = curr\n            curr = next_node\n        \n        return prev",
+        "javascript": "var reorderList = function(head) {\n    if (!head || !head.next) return;\n    \n    // Step 1: Find middle\n    let slow = head;\n    let fast = head;\n    while (fast.next && fast.next.next) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    \n    // Step 2: Split and reverse second half\n    let second = reverse(slow.next);\n    slow.next = null;\n    \n    // Step 3: Merge two halves\n    let first = head;\n    while (second) {\n        const temp1 = first.next;\n        const temp2 = second.next;\n        \n        first.next = second;\n        second.next = temp1;\n        \n        first = temp1;\n        second = temp2;\n    }\n};\n\nfunction reverse(head) {\n    let prev = null;\n    let curr = head;\n    \n    while (curr) {\n        const next = curr.next;\n        curr.next = prev;\n        prev = curr;\n        curr = next;\n    }\n    \n    return prev;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not splitting the list properly at middle",
+    "Forgetting to set slow.next = null after split",
+    "Wrong merge logic causing infinite loops",
+    "Not handling odd vs even length lists correctly"
+  ],
+  "hints": [
+    "This problem combines three techniques: find middle, reverse, merge",
+    "Split the list into two halves at the middle",
+    "Reverse the second half completely",
+    "Merge alternately: take one from first, one from second"
+  ],
+  "followUp": [
+    "Can you do it in O(1) space? (Yes, this solution is O(1))",
+    "What if the input is a doubly linked list?",
+    "How would you handle circular linked lists?"
+  ],
+  "companies": ["Facebook", "Amazon", "Microsoft", "Bloomberg", "Apple"],
+  "tags": ["linked-list", "fast-slow-pointers", "two-pointers"],
+  "relatedProblems": [
+    "Reverse Linked List",
+    "Palindrome Linked List",
+    "Merge Two Sorted Lists"
+  ]
+}

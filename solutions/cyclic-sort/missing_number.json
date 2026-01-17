@@ -1,0 +1,164 @@
+{
+  "questionId": "268",
+  "questionSlug": "missing-number",
+  "title": "Missing Number",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/missing-number/",
+    "videos": [
+      {
+        "title": "Missing Number - Bit Manipulation Trick",
+        "url": "https://www.youtube.com/watch?v=WnPLSRLSANE",
+        "channel": "NeetCode",
+        "duration": "5:32",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Array of size n with numbers in range [0, n], one missing = Cyclic Sort or XOR",
+  "approaches": [
+    {
+      "name": "Sorting",
+      "order": 1,
+      "intuition": "Sort the array and find the first position where nums[i] != i",
+      "approach": "Sort and scan for mismatch",
+      "steps": [
+        "Sort the array",
+        "Iterate through sorted array",
+        "If nums[i] != i, return i",
+        "If no mismatch, return n (last number missing)"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "timeExplanation": "Sorting takes O(n log n)",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        int n = nums.size();\n        sort(nums.begin(), nums.end());\n        \n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i) {\n                return i;\n            }\n        }\n        \n        return n;\n    }\n};",
+        "java": "class Solution {\n    public int missingNumber(int[] nums) {\n        int n = nums.length;\n        Arrays.sort(nums);\n        \n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i) {\n                return i;\n            }\n        }\n        \n        return n;\n    }\n}",
+        "python": "class Solution:\n    def missingNumber(self, nums: List[int]) -> int:\n        nums.sort()\n        \n        for i, num in enumerate(nums):\n            if num != i:\n                return i\n        \n        return len(nums)",
+        "javascript": "var missingNumber = function(nums) {\n    const n = nums.length;\n    nums.sort((a, b) => a - b);\n    \n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== i) {\n            return i;\n        }\n    }\n    \n    return n;\n};"
+      }
+    },
+    {
+      "name": "Hash Set",
+      "order": 2,
+      "intuition": "Store all numbers in a set, then check which number from 0 to n is missing",
+      "approach": "Use hash set for O(1) lookup",
+      "steps": [
+        "Create a set from nums array",
+        "Iterate from 0 to n",
+        "Return the first number not in set"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass to create set, single pass to find missing",
+        "spaceExplanation": "Set stores n elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        unordered_set<int> numSet(nums.begin(), nums.end());\n        int n = nums.size();\n        \n        for (int i = 0; i <= n; i++) {\n            if (numSet.find(i) == numSet.end()) {\n                return i;\n            }\n        }\n        \n        return -1;\n    }\n};",
+        "java": "class Solution {\n    public int missingNumber(int[] nums) {\n        Set<Integer> numSet = new HashSet<>();\n        for (int num : nums) {\n            numSet.add(num);\n        }\n        \n        int n = nums.length;\n        for (int i = 0; i <= n; i++) {\n            if (!numSet.contains(i)) {\n                return i;\n            }\n        }\n        \n        return -1;\n    }\n}",
+        "python": "class Solution:\n    def missingNumber(self, nums: List[int]) -> int:\n        num_set = set(nums)\n        n = len(nums)\n        \n        for i in range(n + 1):\n            if i not in num_set:\n                return i\n        \n        return -1",
+        "javascript": "var missingNumber = function(nums) {\n    const numSet = new Set(nums);\n    const n = nums.length;\n    \n    for (let i = 0; i <= n; i++) {\n        if (!numSet.has(i)) {\n            return i;\n        }\n    }\n    \n    return -1;\n};"
+      }
+    },
+    {
+      "name": "Math - Sum Formula",
+      "order": 3,
+      "intuition": "Expected sum of 0 to n is n*(n+1)/2. Missing number = expected - actual",
+      "approach": "Use Gauss formula for sum",
+      "steps": [
+        "Calculate expected sum: n * (n + 1) / 2",
+        "Calculate actual sum of array",
+        "Return expected - actual"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass to sum array",
+        "spaceExplanation": "Only variables for sums"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        int n = nums.size();\n        int expectedSum = n * (n + 1) / 2;\n        int actualSum = 0;\n        \n        for (int num : nums) {\n            actualSum += num;\n        }\n        \n        return expectedSum - actualSum;\n    }\n};",
+        "java": "class Solution {\n    public int missingNumber(int[] nums) {\n        int n = nums.length;\n        int expectedSum = n * (n + 1) / 2;\n        int actualSum = 0;\n        \n        for (int num : nums) {\n            actualSum += num;\n        }\n        \n        return expectedSum - actualSum;\n    }\n}",
+        "python": "class Solution:\n    def missingNumber(self, nums: List[int]) -> int:\n        n = len(nums)\n        expected_sum = n * (n + 1) // 2\n        actual_sum = sum(nums)\n        \n        return expected_sum - actual_sum",
+        "javascript": "var missingNumber = function(nums) {\n    const n = nums.length;\n    const expectedSum = n * (n + 1) / 2;\n    const actualSum = nums.reduce((sum, num) => sum + num, 0);\n    \n    return expectedSum - actualSum;\n};"
+      }
+    },
+    {
+      "name": "XOR - Optimal",
+      "order": 4,
+      "intuition": "XOR of all numbers 0 to n with all array elements. Duplicate cancels, missing remains",
+      "approach": "Use XOR property: a ^ a = 0, a ^ 0 = a",
+      "steps": [
+        "Initialize result = n",
+        "For each index i:",
+        "  result ^= i",
+        "  result ^= nums[i]",
+        "Return result (all pairs cancel except missing)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass",
+        "spaceExplanation": "Only result variable"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        int n = nums.size();\n        int result = n; // Start with n\n        \n        for (int i = 0; i < n; i++) {\n            result ^= i ^ nums[i];\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public int missingNumber(int[] nums) {\n        int n = nums.length;\n        int result = n; // Start with n\n        \n        for (int i = 0; i < n; i++) {\n            result ^= i ^ nums[i];\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def missingNumber(self, nums: List[int]) -> int:\n        n = len(nums)\n        result = n  # Start with n\n        \n        for i, num in enumerate(nums):\n            result ^= i ^ num\n        \n        return result",
+        "javascript": "var missingNumber = function(nums) {\n    const n = nums.length;\n    let result = n; // Start with n\n    \n    for (let i = 0; i < n; i++) {\n        result ^= i ^ nums[i];\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Cyclic Sort",
+      "order": 5,
+      "intuition": "Place each number at its correct index. The index without correct number is missing",
+      "approach": "Sort in-place by swapping to correct positions",
+      "steps": [
+        "While i < n:",
+        "  If nums[i] < n and nums[i] != nums[nums[i]]:",
+        "    Swap nums[i] with nums[nums[i]]",
+        "  Else: i++",
+        "Find first index where nums[i] != i",
+        "If all correct, return n"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each number swapped at most once",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        int n = nums.size();\n        int i = 0;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctPos = nums[i];\n            if (correctPos < n && nums[i] != nums[correctPos]) {\n                swap(nums[i], nums[correctPos]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find missing number\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i) {\n                return i;\n            }\n        }\n        \n        return n;\n    }\n};",
+        "java": "class Solution {\n    public int missingNumber(int[] nums) {\n        int n = nums.length;\n        int i = 0;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctPos = nums[i];\n            if (correctPos < n && nums[i] != nums[correctPos]) {\n                // Swap\n                int temp = nums[i];\n                nums[i] = nums[correctPos];\n                nums[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find missing number\n        for (int j = 0; j < n; j++) {\n            if (nums[j] != j) {\n                return j;\n            }\n        }\n        \n        return n;\n    }\n}",
+        "python": "class Solution:\n    def missingNumber(self, nums: List[int]) -> int:\n        n = len(nums)\n        i = 0\n        \n        # Cyclic sort\n        while i < n:\n            correct_pos = nums[i]\n            if correct_pos < n and nums[i] != nums[correct_pos]:\n                nums[i], nums[correct_pos] = nums[correct_pos], nums[i]\n            else:\n                i += 1\n        \n        # Find missing number\n        for i in range(n):\n            if nums[i] != i:\n                return i\n        \n        return n",
+        "javascript": "var missingNumber = function(nums) {\n    const n = nums.length;\n    let i = 0;\n    \n    // Cyclic sort\n    while (i < n) {\n        const correctPos = nums[i];\n        if (correctPos < n && nums[i] !== nums[correctPos]) {\n            // Swap\n            [nums[i], nums[correctPos]] = [nums[correctPos], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find missing number\n    for (let j = 0; j < n; j++) {\n        if (nums[j] !== j) {\n            return j;\n        }\n    }\n    \n    return n;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Integer overflow with sum approach for large n",
+    "Not handling the case when n itself is missing",
+    "In cyclic sort, swapping with index >= n causes out of bounds"
+  ],
+  "hints": [
+    "XOR has special property: a ^ a = 0 and a ^ 0 = a",
+    "Sum of 0 to n is n*(n+1)/2",
+    "Cyclic sort works because we want nums[i] = i"
+  ],
+  "followUp": [
+    "What if there are multiple missing numbers?",
+    "How to find missing number in O(1) space without modifying array?",
+    "Can you solve without using +, -, *, / operators?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Facebook", "Google"],
+  "tags": ["array", "math", "bit-manipulation", "cyclic-sort"],
+  "relatedProblems": [
+    "Find All Numbers Disappeared in an Array",
+    "Find Missing and Repeating",
+    "First Missing Positive"
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "questionId": "1004",
+  "questionSlug": "max-consecutive-ones-iii",
+  "title": "Max Consecutive Ones III",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/max-consecutive-ones-iii/",
+    "videos": [
+      {
+        "title": "Max Consecutive Ones III - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=3E4JBHSLpYk",
+        "channel": "NeetCode",
+        "duration": "10:25",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Maximum length with at most K flips (zeros) = Longest subarray with at most K zeros. Variable sliding window + count zeros.",
+  "approaches": [
+    {
+      "name": "Brute Force (All Subarrays)",
+      "order": 1,
+      "intuition": "Try all subarrays, count zeros in each, if zeros <= K then valid, track maximum length.",
+      "approach": "Two nested loops to generate subarrays, count zeros, update max when valid.",
+      "steps": [
+        "Initialize maxLen = 0",
+        "For i from 0 to n-1:",
+        "  zeroCount = 0",
+        "  For j from i to n-1:",
+        "    If nums[j] == 0:",
+        "      zeroCount++",
+        "    If zeroCount <= K:",
+        "      maxLen = max(maxLen, j - i + 1)",
+        "    Else:",
+        "      Break",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops try all subarrays",
+        "spaceExplanation": "Only counter variable used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int longestOnes(vector<int>& nums, int k) {\n        int n = nums.size();\n        int maxLen = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int zeroCount = 0;\n            for (int j = i; j < n; j++) {\n                if (nums[j] == 0) {\n                    zeroCount++;\n                }\n                if (zeroCount <= k) {\n                    maxLen = max(maxLen, j - i + 1);\n                } else {\n                    break;\n                }\n            }\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int longestOnes(int[] nums, int k) {\n        int n = nums.length;\n        int maxLen = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int zeroCount = 0;\n            for (int j = i; j < n; j++) {\n                if (nums[j] == 0) {\n                    zeroCount++;\n                }\n                if (zeroCount <= k) {\n                    maxLen = Math.max(maxLen, j - i + 1);\n                } else {\n                    break;\n                }\n            }\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def longestOnes(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        max_len = 0\n        \n        for i in range(n):\n            zero_count = 0\n            for j in range(i, n):\n                if nums[j] == 0:\n                    zero_count += 1\n                if zero_count <= k:\n                    max_len = max(max_len, j - i + 1)\n                else:\n                    break\n        \n        return max_len",
+        "javascript": "var longestOnes = function(nums, k) {\n    const n = nums.length;\n    let maxLen = 0;\n    \n    for (let i = 0; i < n; i++) {\n        let zeroCount = 0;\n        for (let j = i; j < n; j++) {\n            if (nums[j] === 0) {\n                zeroCount++;\n            }\n            if (zeroCount <= k) {\n                maxLen = Math.max(maxLen, j - i + 1);\n            } else {\n                break;\n            }\n        }\n    }\n    \n    return maxLen;\n};"
+      }
+    },
+    {
+      "name": "Variable Sliding Window - Optimal",
+      "order": 2,
+      "intuition": "Expand window with right pointer. Count zeros. When zeros > K, shrink from left. Track maximum valid window.",
+      "approach": "Use two pointers and zero counter. Expand right, increment zero count. Shrink left when zeros > K.",
+      "steps": [
+        "Initialize left = 0, maxLen = 0, zeroCount = 0",
+        "For right from 0 to n-1:",
+        "  If nums[right] == 0:",
+        "    zeroCount++",
+        "  While zeroCount > K:",
+        "    If nums[left] == 0:",
+        "      zeroCount--",
+        "    left++",
+        "  maxLen = max(maxLen, right - left + 1)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element visited at most twice",
+        "spaceExplanation": "Only counter and pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int longestOnes(vector<int>& nums, int k) {\n        int n = nums.size();\n        int left = 0;\n        int maxLen = 0;\n        int zeroCount = 0;\n        \n        for (int right = 0; right < n; right++) {\n            if (nums[right] == 0) {\n                zeroCount++;\n            }\n            \n            while (zeroCount > k) {\n                if (nums[left] == 0) {\n                    zeroCount--;\n                }\n                left++;\n            }\n            \n            maxLen = max(maxLen, right - left + 1);\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int longestOnes(int[] nums, int k) {\n        int n = nums.length;\n        int left = 0;\n        int maxLen = 0;\n        int zeroCount = 0;\n        \n        for (int right = 0; right < n; right++) {\n            if (nums[right] == 0) {\n                zeroCount++;\n            }\n            \n            while (zeroCount > k) {\n                if (nums[left] == 0) {\n                    zeroCount--;\n                }\n                left++;\n            }\n            \n            maxLen = Math.max(maxLen, right - left + 1);\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def longestOnes(self, nums: List[int], k: int) -> int:\n        n = len(nums)\n        left = 0\n        max_len = 0\n        zero_count = 0\n        \n        for right in range(n):\n            if nums[right] == 0:\n                zero_count += 1\n            \n            while zero_count > k:\n                if nums[left] == 0:\n                    zero_count -= 1\n                left += 1\n            \n            max_len = max(max_len, right - left + 1)\n        \n        return max_len",
+        "javascript": "var longestOnes = function(nums, k) {\n    const n = nums.length;\n    let left = 0;\n    let maxLen = 0;\n    let zeroCount = 0;\n    \n    for (let right = 0; right < n; right++) {\n        if (nums[right] === 0) {\n            zeroCount++;\n        }\n        \n        while (zeroCount > k) {\n            if (nums[left] === 0) {\n                zeroCount--;\n            }\n            left++;\n        }\n        \n        maxLen = Math.max(maxLen, right - left + 1);\n    }\n    \n    return maxLen;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not decrementing zeroCount when moving left over a zero",
+    "Using if instead of while for shrinking window",
+    "Forgetting to handle K=0 case",
+    "Not updating maxLen after each iteration"
+  ],
+  "hints": [
+    "This is 'Longest Subarray with At Most K Zeros'",
+    "Count zeros in current window",
+    "When zeros > K, shrink from left",
+    "Remember to decrease zero count when left moves past a zero"
+  ],
+  "followUp": [
+    "What if we can flip at most K ones to zeros?",
+    "Find minimum flips to make all ones?",
+    "What if array contains values other than 0 and 1?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google"],
+  "tags": ["array", "sliding-window", "two-pointers"],
+  "relatedProblems": [
+    "Max Consecutive Ones",
+    "Max Consecutive Ones II",
+    "Longest Repeating Character Replacement"
+  ]
+}

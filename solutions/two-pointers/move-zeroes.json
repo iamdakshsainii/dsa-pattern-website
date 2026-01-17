@@ -1,0 +1,154 @@
+{
+  "questionId": "283",
+  "questionSlug": "move-zeroes",
+  "title": "Move Zeroes",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/move-zeroes/",
+    "videos": [
+      {
+        "title": "Move Zeroes - Leetcode 283",
+        "url": "https://www.youtube.com/watch?v=aayNRwUN3Do",
+        "channel": "NeetCode",
+        "duration": "5:11",
+        "language": "English"
+      },
+      {
+        "title": "L4. Move Zeros to end",
+        "url": "https://www.youtube.com/watch?v=wvcQg43_V8U",
+        "channel": "take U forward",
+        "duration": "10:25",
+        "language": "English"
+      },
+      {
+        "title": "Move Zeroes Solution",
+        "url": "https://www.youtube.com/watch?v=1PEncepEIoE",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "4:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Move Zeroes - LeetCode Solution",
+        "url": "https://leetcode.com/problems/move-zeroes/solution/",
+        "source": "LeetCode Official"
+      },
+      {
+        "title": "Move all Zeros to the end of the array",
+        "url": "https://takeuforward.org/data-structure/move-all-zeros-to-the-end-of-the-array/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/move-zeroes/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "In-place array modification + partition = Two Pointers. Partition non-zeros to left, zeros to right.",
+  "approaches": [
+    {
+      "name": "Brute Force (Extra Space)",
+      "order": 1,
+      "intuition": "Create a new array, copy all non-zero elements first, then fill remaining positions with zeros.",
+      "approach": "Use temporary array to collect non-zeros, then copy back to original array and fill rest with zeros.",
+      "steps": [
+        "Create temporary array of same size",
+        "Iterate through original array, copy non-zero elements to temp",
+        "Track count of non-zeros",
+        "Copy temp array back to original",
+        "Fill remaining positions with zeros"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes through array",
+        "spaceExplanation": "Extra array of size n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> temp;\n        \n        for (int i = 0; i < n; i++) {\n            if (nums[i] != 0) {\n                temp.push_back(nums[i]);\n            }\n        }\n        \n        int nonZeroCount = temp.size();\n        \n        for (int i = 0; i < nonZeroCount; i++) {\n            nums[i] = temp[i];\n        }\n        \n        for (int i = nonZeroCount; i < n; i++) {\n            nums[i] = 0;\n        }\n    }\n};",
+        "java": "class Solution {\n    public void moveZeroes(int[] nums) {\n        int n = nums.length;\n        int[] temp = new int[n];\n        int index = 0;\n        \n        for (int i = 0; i < n; i++) {\n            if (nums[i] != 0) {\n                temp[index++] = nums[i];\n            }\n        }\n        \n        for (int i = 0; i < index; i++) {\n            nums[i] = temp[i];\n        }\n        \n        for (int i = index; i < n; i++) {\n            nums[i] = 0;\n        }\n    }\n}",
+        "python": "class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        n = len(nums)\n        temp = []\n        \n        for num in nums:\n            if num != 0:\n                temp.append(num)\n        \n        non_zero_count = len(temp)\n        \n        for i in range(non_zero_count):\n            nums[i] = temp[i]\n        \n        for i in range(non_zero_count, n):\n            nums[i] = 0",
+        "javascript": "var moveZeroes = function(nums) {\n    const n = nums.length;\n    const temp = [];\n    \n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== 0) {\n            temp.push(nums[i]);\n        }\n    }\n    \n    const nonZeroCount = temp.length;\n    \n    for (let i = 0; i < nonZeroCount; i++) {\n        nums[i] = temp[i];\n    }\n    \n    for (let i = nonZeroCount; i < n; i++) {\n        nums[i] = 0;\n    }\n};"
+      }
+    },
+    {
+      "name": "Better (Two Pass)",
+      "order": 2,
+      "intuition": "First pass: move all non-zeros to front. Second pass: fill remaining positions with zeros.",
+      "approach": "Use index to track position for non-zeros. After placing all non-zeros, fill rest with zeros.",
+      "steps": [
+        "Initialize index = 0",
+        "First pass: iterate through array",
+        "  If element != 0, place at nums[index] and increment index",
+        "Second pass: fill positions from index to end with 0"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through array",
+        "spaceExplanation": "Only using index variable"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        int index = 0;\n        \n        for (int i = 0; i < nums.size(); i++) {\n            if (nums[i] != 0) {\n                nums[index++] = nums[i];\n            }\n        }\n        \n        for (int i = index; i < nums.size(); i++) {\n            nums[i] = 0;\n        }\n    }\n};",
+        "java": "class Solution {\n    public void moveZeroes(int[] nums) {\n        int index = 0;\n        \n        for (int i = 0; i < nums.length; i++) {\n            if (nums[i] != 0) {\n                nums[index++] = nums[i];\n            }\n        }\n        \n        for (int i = index; i < nums.length; i++) {\n            nums[i] = 0;\n        }\n    }\n}",
+        "python": "class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        index = 0\n        \n        for i in range(len(nums)):\n            if nums[i] != 0:\n                nums[index] = nums[i]\n                index += 1\n        \n        for i in range(index, len(nums)):\n            nums[i] = 0",
+        "javascript": "var moveZeroes = function(nums) {\n    let index = 0;\n    \n    for (let i = 0; i < nums.length; i++) {\n        if (nums[i] !== 0) {\n            nums[index++] = nums[i];\n        }\n    }\n    \n    for (let i = index; i < nums.length; i++) {\n        nums[i] = 0;\n    }\n};"
+      }
+    },
+    {
+      "name": "Two Pointers - Optimal (Single Pass)",
+      "order": 3,
+      "intuition": "Use slow pointer to track position for next non-zero. Fast pointer finds non-zeros. Swap when found, maintaining relative order.",
+      "approach": "Slow pointer marks position for non-zero placement. Fast scans and swaps non-zeros to slow position in single pass.",
+      "steps": [
+        "Initialize slow = 0 (position for next non-zero)",
+        "Iterate fast from 0 to n-1:",
+        "  If nums[fast] != 0:",
+        "    Swap nums[slow] with nums[fast]",
+        "    Increment slow",
+        "After loop, all non-zeros at front, zeros at end"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only using two pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        int slow = 0;\n        \n        for (int fast = 0; fast < nums.size(); fast++) {\n            if (nums[fast] != 0) {\n                swap(nums[slow], nums[fast]);\n                slow++;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public void moveZeroes(int[] nums) {\n        int slow = 0;\n        \n        for (int fast = 0; fast < nums.length; fast++) {\n            if (nums[fast] != 0) {\n                int temp = nums[slow];\n                nums[slow] = nums[fast];\n                nums[fast] = temp;\n                slow++;\n            }\n        }\n    }\n}",
+        "python": "class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        slow = 0\n        \n        for fast in range(len(nums)):\n            if nums[fast] != 0:\n                nums[slow], nums[fast] = nums[fast], nums[slow]\n                slow += 1",
+        "javascript": "var moveZeroes = function(nums) {\n    let slow = 0;\n    \n    for (let fast = 0; fast < nums.length; fast++) {\n        if (nums[fast] !== 0) {\n            [nums[slow], nums[fast]] = [nums[fast], nums[slow]];\n            slow++;\n        }\n    }\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using extra space for new array",
+    "Not maintaining relative order of non-zero elements",
+    "Overcomplicating with multiple passes",
+    "Forgetting to swap - only copying loses relative order"
+  ],
+  "hints": [
+    "Think of it as partitioning: non-zeros left, zeros right",
+    "Swap instead of just copying to maintain order in single pass",
+    "Slow pointer tracks where next non-zero should go",
+    "All zeros automatically move to end when non-zeros move left"
+  ],
+  "followUp": [
+    "Minimize number of write operations",
+    "What if we want zeros at the beginning?",
+    "Can you count total swaps performed?",
+    "What if array contains negative numbers?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Apple"],
+  "tags": ["array", "two-pointers"],
+  "relatedProblems": [
+    "Remove Element",
+    "Remove Duplicates from Sorted Array",
+    "Sort Colors"
+  ]
+}

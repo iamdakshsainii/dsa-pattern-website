@@ -1,0 +1,112 @@
+{
+  "questionId": "209",
+  "questionSlug": "minimum-size-subarray-sum",
+  "title": "Minimum Size Subarray Sum (Smallest Subarray with Given Sum)",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/minimum-size-subarray-sum/",
+    "videos": [
+      {
+        "title": "Minimum Size Subarray Sum - Sliding Window",
+        "url": "https://www.youtube.com/watch?v=aYqYMIqZx5s",
+        "channel": "NeetCode",
+        "duration": "11:45",
+        "language": "English"
+      },
+      {
+        "title": "Variable Size Sliding Window",
+        "url": "https://www.youtube.com/watch?v=MK-NZ4hN7rs",
+        "channel": "Striver",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Minimum length subarray with sum >= target = Variable Sliding Window. Expand to meet condition, shrink to minimize length.",
+  "approaches": [
+    {
+      "name": "Brute Force (All Subarrays)",
+      "order": 1,
+      "intuition": "Try all possible subarrays, check if sum >= target, track minimum length among valid ones.",
+      "approach": "Two nested loops to generate all subarrays, calculate sum, update minimum length when sum >= target.",
+      "steps": [
+        "Initialize minLen = INT_MAX",
+        "For i from 0 to n-1:",
+        "  currentSum = 0",
+        "  For j from i to n-1:",
+        "    currentSum += nums[j]",
+        "    If currentSum >= target:",
+        "      minLen = min(minLen, j - i + 1)",
+        "      Break (no need to extend further from i)",
+        "Return minLen == INT_MAX ? 0 : minLen"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops try all subarrays",
+        "spaceExplanation": "Only variables used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minSubArrayLen(int target, vector<int>& nums) {\n        int n = nums.size();\n        int minLen = INT_MAX;\n        \n        for (int i = 0; i < n; i++) {\n            int currentSum = 0;\n            for (int j = i; j < n; j++) {\n                currentSum += nums[j];\n                if (currentSum >= target) {\n                    minLen = min(minLen, j - i + 1);\n                    break;\n                }\n            }\n        }\n        \n        return minLen == INT_MAX ? 0 : minLen;\n    }\n};",
+        "java": "class Solution {\n    public int minSubArrayLen(int target, int[] nums) {\n        int n = nums.length;\n        int minLen = Integer.MAX_VALUE;\n        \n        for (int i = 0; i < n; i++) {\n            int currentSum = 0;\n            for (int j = i; j < n; j++) {\n                currentSum += nums[j];\n                if (currentSum >= target) {\n                    minLen = Math.min(minLen, j - i + 1);\n                    break;\n                }\n            }\n        }\n        \n        return minLen == Integer.MAX_VALUE ? 0 : minLen;\n    }\n}",
+        "python": "class Solution:\n    def minSubArrayLen(self, target: int, nums: List[int]) -> int:\n        n = len(nums)\n        min_len = float('inf')\n        \n        for i in range(n):\n            current_sum = 0\n            for j in range(i, n):\n                current_sum += nums[j]\n                if current_sum >= target:\n                    min_len = min(min_len, j - i + 1)\n                    break\n        \n        return 0 if min_len == float('inf') else min_len",
+        "javascript": "var minSubArrayLen = function(target, nums) {\n    const n = nums.length;\n    let minLen = Infinity;\n    \n    for (let i = 0; i < n; i++) {\n        let currentSum = 0;\n        for (let j = i; j < n; j++) {\n            currentSum += nums[j];\n            if (currentSum >= target) {\n                minLen = Math.min(minLen, j - i + 1);\n                break;\n            }\n        }\n    }\n    \n    return minLen === Infinity ? 0 : minLen;\n};"
+      }
+    },
+    {
+      "name": "Variable Sliding Window - Optimal",
+      "order": 2,
+      "intuition": "Expand window until sum >= target, then shrink from left while maintaining sum >= target to minimize length.",
+      "approach": "Use two pointers. Expand right to increase sum. When sum >= target, shrink left while possible, track minimum length.",
+      "steps": [
+        "Initialize left = 0, windowSum = 0, minLen = INT_MAX",
+        "For right from 0 to n-1:",
+        "  windowSum += nums[right]",
+        "  While windowSum >= target:",
+        "    minLen = min(minLen, right - left + 1)",
+        "    windowSum -= nums[left]",
+        "    left++",
+        "Return minLen == INT_MAX ? 0 : minLen"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element visited at most twice (once by right, once by left)",
+        "spaceExplanation": "Only pointer variables used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minSubArrayLen(int target, vector<int>& nums) {\n        int n = nums.size();\n        int left = 0;\n        int windowSum = 0;\n        int minLen = INT_MAX;\n        \n        for (int right = 0; right < n; right++) {\n            windowSum += nums[right];\n            \n            while (windowSum >= target) {\n                minLen = min(minLen, right - left + 1);\n                windowSum -= nums[left];\n                left++;\n            }\n        }\n        \n        return minLen == INT_MAX ? 0 : minLen;\n    }\n};",
+        "java": "class Solution {\n    public int minSubArrayLen(int target, int[] nums) {\n        int n = nums.length;\n        int left = 0;\n        int windowSum = 0;\n        int minLen = Integer.MAX_VALUE;\n        \n        for (int right = 0; right < n; right++) {\n            windowSum += nums[right];\n            \n            while (windowSum >= target) {\n                minLen = Math.min(minLen, right - left + 1);\n                windowSum -= nums[left];\n                left++;\n            }\n        }\n        \n        return minLen == Integer.MAX_VALUE ? 0 : minLen;\n    }\n}",
+        "python": "class Solution:\n    def minSubArrayLen(self, target: int, nums: List[int]) -> int:\n        n = len(nums)\n        left = 0\n        window_sum = 0\n        min_len = float('inf')\n        \n        for right in range(n):\n            window_sum += nums[right]\n            \n            while window_sum >= target:\n                min_len = min(min_len, right - left + 1)\n                window_sum -= nums[left]\n                left += 1\n        \n        return 0 if min_len == float('inf') else min_len",
+        "javascript": "var minSubArrayLen = function(target, nums) {\n    const n = nums.length;\n    let left = 0;\n    let windowSum = 0;\n    let minLen = Infinity;\n    \n    for (let right = 0; right < n; right++) {\n        windowSum += nums[right];\n        \n        while (windowSum >= target) {\n            minLen = Math.min(minLen, right - left + 1);\n            windowSum -= nums[left];\n            left++;\n        }\n    }\n    \n    return minLen === Infinity ? 0 : minLen;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using if instead of while for shrinking - misses optimal length",
+    "Not checking windowSum >= target before shrinking",
+    "Forgetting to return 0 when no valid subarray found",
+    "Off-by-one errors in length calculation",
+    "Not updating minLen before shrinking window"
+  ],
+  "hints": [
+    "This is VARIABLE size sliding window - window size changes",
+    "Expand window (right++) to meet condition",
+    "Shrink window (left++) while condition still holds",
+    "Update answer before/during shrinking",
+    "Use WHILE loop for shrinking, not IF"
+  ],
+  "followUp": [
+    "What if all numbers are negative?",
+    "Find maximum length subarray with sum <= target?",
+    "Count number of subarrays with sum >= target?",
+    "What if we need exact sum = target?"
+  ],
+  "companies": ["Facebook", "Google", "Amazon", "Microsoft"],
+  "tags": ["array", "sliding-window", "variable-window", "two-pointers"],
+  "relatedProblems": [
+    "Maximum Size Subarray Sum Equals k",
+    "Maximum Average Subarray I",
+    "Shortest Subarray with Sum at Least K"
+  ]
+}

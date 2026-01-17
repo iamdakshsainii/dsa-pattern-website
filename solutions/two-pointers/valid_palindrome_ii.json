@@ -1,0 +1,149 @@
+{
+  "questionId": "680",
+  "questionSlug": "valid-palindrome-ii",
+  "title": "Valid Palindrome II",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/valid-palindrome-ii/",
+    "videos": [
+      {
+        "title": "Valid Palindrome II - Leetcode 680",
+        "url": "https://www.youtube.com/watch?v=JrxRYBwG6EI",
+        "channel": "NeetCode",
+        "duration": "7:45",
+        "language": "English"
+      },
+      {
+        "title": "Valid Palindrome II Solution",
+        "url": "https://www.youtube.com/watch?v=EvhJNDHJW_k",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Valid Palindrome II - LeetCode Solution",
+        "url": "https://leetcode.com/problems/valid-palindrome-ii/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/valid-palindrome-ii/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Palindrome with one deletion allowed = Two Pointers. On mismatch, try deleting either character and check if remaining is palindrome.",
+  "approaches": [
+    {
+      "name": "Brute Force (Try Deleting Each Character)",
+      "order": 1,
+      "intuition": "Try deleting each character one at a time and check if resulting string is palindrome.",
+      "approach": "Generate all possible strings by deleting one character, check each for palindrome property.",
+      "steps": [
+        "If string is already palindrome, return true",
+        "For i from 0 to n-1:",
+        "  Create string without character at index i",
+        "  Check if this new string is palindrome",
+        "  If yes, return true",
+        "Return false"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "Try deleting n positions, each palindrome check is O(n)",
+        "spaceExplanation": "Creating new strings for each deletion"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool validPalindrome(string s) {\n        if (isPalindrome(s)) return true;\n        \n        int n = s.length();\n        for (int i = 0; i < n; i++) {\n            string temp = s.substr(0, i) + s.substr(i + 1);\n            if (isPalindrome(temp)) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n    \nprivate:\n    bool isPalindrome(string str) {\n        int left = 0, right = str.length() - 1;\n        while (left < right) {\n            if (str[left] != str[right]) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean validPalindrome(String s) {\n        if (isPalindrome(s)) return true;\n        \n        int n = s.length();\n        for (int i = 0; i < n; i++) {\n            String temp = s.substring(0, i) + s.substring(i + 1);\n            if (isPalindrome(temp)) {\n                return true;\n            }\n        }\n        \n        return false;\n    }\n    \n    private boolean isPalindrome(String str) {\n        int left = 0, right = str.length() - 1;\n        while (left < right) {\n            if (str.charAt(left) != str.charAt(right)) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n}",
+        "python": "class Solution:\n    def validPalindrome(self, s: str) -> bool:\n        def is_palindrome(string):\n            return string == string[::-1]\n        \n        if is_palindrome(s):\n            return True\n        \n        for i in range(len(s)):\n            temp = s[:i] + s[i+1:]\n            if is_palindrome(temp):\n                return True\n        \n        return False",
+        "javascript": "var validPalindrome = function(s) {\n    const isPalindrome = (str) => {\n        let left = 0, right = str.length - 1;\n        while (left < right) {\n            if (str[left] !== str[right]) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    };\n    \n    if (isPalindrome(s)) return true;\n    \n    for (let i = 0; i < s.length; i++) {\n        const temp = s.slice(0, i) + s.slice(i + 1);\n        if (isPalindrome(temp)) {\n            return true;\n        }\n    }\n    \n    return false;\n};"
+      }
+    },
+    {
+      "name": "Better (Check Palindrome First)",
+      "order": 2,
+      "intuition": "First check if string is already palindrome. If not, only try deleting characters near mismatched positions.",
+      "approach": "Use two pointers to find first mismatch. Try deleting left or right character at mismatch point.",
+      "steps": [
+        "Use two pointers from both ends",
+        "Move towards center while characters match",
+        "On first mismatch:",
+        "  Try skipping left character, check if rest is palindrome",
+        "  Try skipping right character, check if rest is palindrome",
+        "Return true if either works",
+        "If no mismatch found, already palindrome"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "At most 2 palindrome checks",
+        "spaceExplanation": "Only using pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool validPalindrome(string s) {\n        int left = 0, right = s.length() - 1;\n        \n        while (left < right) {\n            if (s[left] != s[right]) {\n                return isPalindrome(s, left + 1, right) || \n                       isPalindrome(s, left, right - 1);\n            }\n            left++;\n            right--;\n        }\n        \n        return true;\n    }\n    \nprivate:\n    bool isPalindrome(string& s, int left, int right) {\n        while (left < right) {\n            if (s[left] != s[right]) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean validPalindrome(String s) {\n        int left = 0, right = s.length() - 1;\n        \n        while (left < right) {\n            if (s.charAt(left) != s.charAt(right)) {\n                return isPalindrome(s, left + 1, right) || \n                       isPalindrome(s, left, right - 1);\n            }\n            left++;\n            right--;\n        }\n        \n        return true;\n    }\n    \n    private boolean isPalindrome(String s, int left, int right) {\n        while (left < right) {\n            if (s.charAt(left) != s.charAt(right)) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n}",
+        "python": "class Solution:\n    def validPalindrome(self, s: str) -> bool:\n        def is_palindrome(left, right):\n            while left < right:\n                if s[left] != s[right]:\n                    return False\n                left += 1\n                right -= 1\n            return True\n        \n        left, right = 0, len(s) - 1\n        \n        while left < right:\n            if s[left] != s[right]:\n                return is_palindrome(left + 1, right) or is_palindrome(left, right - 1)\n            left += 1\n            right -= 1\n        \n        return True",
+        "javascript": "var validPalindrome = function(s) {\n    const isPalindrome = (left, right) => {\n        while (left < right) {\n            if (s[left] !== s[right]) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    };\n    \n    let left = 0, right = s.length - 1;\n    \n    while (left < right) {\n        if (s[left] !== s[right]) {\n            return isPalindrome(left + 1, right) || isPalindrome(left, right - 1);\n        }\n        left++;\n        right--;\n    }\n    \n    return true;\n};"
+      }
+    },
+    {
+      "name": "Two Pointers - Optimal",
+      "order": 3,
+      "intuition": "At most one deletion allowed. Use two pointers. On first mismatch, we must delete either left or right character. Check both options.",
+      "approach": "Two pointers from ends. On mismatch, try both deletion options and verify remaining substring is palindrome.",
+      "steps": [
+        "Initialize left = 0, right = n-1",
+        "While left < right:",
+        "  If s[left] == s[right]:",
+        "    Move both pointers inward",
+        "  Else (first mismatch found):",
+        "    Option 1: Skip left char, check s[left+1...right]",
+        "    Option 2: Skip right char, check s[left...right-1]",
+        "    Return true if either option is palindrome",
+        "If no mismatch, return true"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass with at most one additional palindrome check",
+        "spaceExplanation": "Only using pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool validPalindrome(string s) {\n        int left = 0, right = s.length() - 1;\n        \n        while (left < right) {\n            if (s[left] != s[right]) {\n                return isPalindrome(s, left + 1, right) || \n                       isPalindrome(s, left, right - 1);\n            }\n            left++;\n            right--;\n        }\n        \n        return true;\n    }\n    \nprivate:\n    bool isPalindrome(const string& s, int left, int right) {\n        while (left < right) {\n            if (s[left] != s[right]) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean validPalindrome(String s) {\n        int left = 0, right = s.length() - 1;\n        \n        while (left < right) {\n            if (s.charAt(left) != s.charAt(right)) {\n                return isPalindrome(s, left + 1, right) || \n                       isPalindrome(s, left, right - 1);\n            }\n            left++;\n            right--;\n        }\n        \n        return true;\n    }\n    \n    private boolean isPalindrome(String s, int left, int right) {\n        while (left < right) {\n            if (s.charAt(left) != s.charAt(right)) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n}",
+        "python": "class Solution:\n    def validPalindrome(self, s: str) -> bool:\n        def is_palindrome(left: int, right: int) -> bool:\n            while left < right:\n                if s[left] != s[right]:\n                    return False\n                left += 1\n                right -= 1\n            return True\n        \n        left, right = 0, len(s) - 1\n        \n        while left < right:\n            if s[left] != s[right]:\n                return is_palindrome(left + 1, right) or is_palindrome(left, right - 1)\n            left += 1\n            right -= 1\n        \n        return True",
+        "javascript": "var validPalindrome = function(s) {\n    const isPalindrome = (left, right) => {\n        while (left < right) {\n            if (s[left] !== s[right]) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    };\n    \n    let left = 0, right = s.length - 1;\n    \n    while (left < right) {\n        if (s[left] !== s[right]) {\n            return isPalindrome(left + 1, right) || isPalindrome(left, right - 1);\n        }\n        left++;\n        right--;\n    }\n    \n    return true;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking both deletion options (left and right)",
+    "Trying to delete more than one character",
+    "Forgetting that string might already be palindrome",
+    "Creating new strings instead of using indices"
+  ],
+  "hints": [
+    "At most one deletion means at most one mismatch",
+    "On mismatch, try deleting either character",
+    "Use helper function to check substring palindrome",
+    "Don't need to actually delete - just skip index"
+  ],
+  "followUp": [
+    "What if k deletions allowed?",
+    "What if we can insert one character instead?",
+    "What if both deletion and insertion allowed?",
+    "Can you solve with recursion?"
+  ],
+  "companies": ["Facebook", "Amazon", "Microsoft", "Google", "Bloomberg"],
+  "tags": ["string", "two-pointers", "greedy"],
+  "relatedProblems": [
+    "Valid Palindrome",
+    "Valid Palindrome III",
+    "Palindrome Linked List"
+  ]
+}

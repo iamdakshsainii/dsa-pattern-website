@@ -1,0 +1,97 @@
+{
+  "questionId": "19",
+  "questionSlug": "remove-nth-node-from-end-of-list",
+  "title": "Remove Nth Node From End of List",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+    "videos": [
+      {
+        "title": "Remove Nth Node From End - One Pass",
+        "url": "https://www.youtube.com/watch?v=XVuQxVej6y8",
+        "channel": "NeetCode",
+        "duration": "7:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Remove nth node from end = Two pointers with n gap, when fast reaches end, slow is at target.",
+  "approaches": [
+    {
+      "name": "Two Pass - Calculate Length",
+      "order": 1,
+      "intuition": "Find total length first, then remove (length - n + 1)th node from beginning.",
+      "approach": "First pass to count nodes, second pass to remove target node.",
+      "steps": [
+        "First pass: count total nodes (length)",
+        "Calculate position from start: length - n",
+        "Second pass: traverse to (length - n)th node",
+        "Remove the next node",
+        "Handle edge case: removing head"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through the list",
+        "spaceExplanation": "Only constant extra space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* removeNthFromEnd(ListNode* head, int n) {\n        // First pass: count length\n        int length = 0;\n        ListNode* curr = head;\n        while (curr) {\n            length++;\n            curr = curr->next;\n        }\n        \n        // Edge case: remove head\n        if (length == n) {\n            return head->next;\n        }\n        \n        // Second pass: remove node\n        curr = head;\n        for (int i = 0; i < length - n - 1; i++) {\n            curr = curr->next;\n        }\n        \n        curr->next = curr->next->next;\n        return head;\n    }\n};",
+        "java": "class Solution {\n    public ListNode removeNthFromEnd(ListNode head, int n) {\n        // First pass: count length\n        int length = 0;\n        ListNode curr = head;\n        while (curr != null) {\n            length++;\n            curr = curr.next;\n        }\n        \n        // Edge case: remove head\n        if (length == n) {\n            return head.next;\n        }\n        \n        // Second pass: remove node\n        curr = head;\n        for (int i = 0; i < length - n - 1; i++) {\n            curr = curr.next;\n        }\n        \n        curr.next = curr.next.next;\n        return head;\n    }\n}",
+        "python": "class Solution:\n    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:\n        # First pass: count length\n        length = 0\n        curr = head\n        while curr:\n            length += 1\n            curr = curr.next\n        \n        # Edge case: remove head\n        if length == n:\n            return head.next\n        \n        # Second pass: remove node\n        curr = head\n        for _ in range(length - n - 1):\n            curr = curr.next\n        \n        curr.next = curr.next.next\n        return head",
+        "javascript": "var removeNthFromEnd = function(head, n) {\n    // First pass: count length\n    let length = 0;\n    let curr = head;\n    while (curr) {\n        length++;\n        curr = curr.next;\n    }\n    \n    // Edge case: remove head\n    if (length === n) {\n        return head.next;\n    }\n    \n    // Second pass: remove node\n    curr = head;\n    for (let i = 0; i < length - n - 1; i++) {\n        curr = curr.next;\n    }\n    \n    curr.next = curr.next.next;\n    return head;\n};"
+      }
+    },
+    {
+      "name": "One Pass - Two Pointers with Gap - Optimal",
+      "order": 2,
+      "intuition": "Maintain two pointers with gap of n. When fast reaches end, slow is just before target node.",
+      "approach": "Use dummy node. Move fast n+1 steps ahead, then move both until fast reaches end.",
+      "steps": [
+        "Create dummy node pointing to head (handles edge cases)",
+        "Initialize fast and slow at dummy",
+        "Move fast n+1 steps ahead",
+        "Move both pointers until fast reaches end",
+        "Now slow is just before the target node",
+        "Remove target node: slow.next = slow.next.next",
+        "Return dummy.next"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through the list",
+        "spaceExplanation": "Only constant extra space for pointers"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* removeNthFromEnd(ListNode* head, int n) {\n        ListNode* dummy = new ListNode(0);\n        dummy->next = head;\n        \n        ListNode* fast = dummy;\n        ListNode* slow = dummy;\n        \n        // Move fast n+1 steps ahead\n        for (int i = 0; i <= n; i++) {\n            fast = fast->next;\n        }\n        \n        // Move both until fast reaches end\n        while (fast) {\n            slow = slow->next;\n            fast = fast->next;\n        }\n        \n        // Remove target node\n        slow->next = slow->next->next;\n        \n        return dummy->next;\n    }\n};",
+        "java": "class Solution {\n    public ListNode removeNthFromEnd(ListNode head, int n) {\n        ListNode dummy = new ListNode(0);\n        dummy.next = head;\n        \n        ListNode fast = dummy;\n        ListNode slow = dummy;\n        \n        // Move fast n+1 steps ahead\n        for (int i = 0; i <= n; i++) {\n            fast = fast.next;\n        }\n        \n        // Move both until fast reaches end\n        while (fast != null) {\n            slow = slow.next;\n            fast = fast.next;\n        }\n        \n        // Remove target node\n        slow.next = slow.next.next;\n        \n        return dummy.next;\n    }\n}",
+        "python": "class Solution:\n    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:\n        dummy = ListNode(0)\n        dummy.next = head\n        \n        fast = slow = dummy\n        \n        # Move fast n+1 steps ahead\n        for _ in range(n + 1):\n            fast = fast.next\n        \n        # Move both until fast reaches end\n        while fast:\n            slow = slow.next\n            fast = fast.next\n        \n        # Remove target node\n        slow.next = slow.next.next\n        \n        return dummy.next",
+        "javascript": "var removeNthFromEnd = function(head, n) {\n    const dummy = new ListNode(0);\n    dummy.next = head;\n    \n    let fast = dummy;\n    let slow = dummy;\n    \n    // Move fast n+1 steps ahead\n    for (let i = 0; i <= n; i++) {\n        fast = fast.next;\n    }\n    \n    // Move both until fast reaches end\n    while (fast) {\n        slow = slow.next;\n        fast = fast.next;\n    }\n    \n    // Remove target node\n    slow.next = slow.next.next;\n    \n    return dummy.next;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the case when head needs to be removed",
+    "Off-by-one errors in gap calculation (should be n+1, not n)",
+    "Not using dummy node, making edge cases complex",
+    "Moving fast exactly n steps instead of n+1"
+  ],
+  "hints": [
+    "Use a dummy node to simplify edge cases",
+    "Maintain a gap of exactly n between two pointers",
+    "When fast reaches null, slow should be just before target",
+    "Move fast n+1 steps ahead initially, not n"
+  ],
+  "followUp": [
+    "Can you solve it in one pass? (Yes, this solution does)",
+    "What if n is always valid? (Same approach works)",
+    "How to handle if n might be greater than list length?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Facebook", "Apple", "Google"],
+  "tags": ["linked-list", "two-pointers", "fast-slow-pointers"],
+  "relatedProblems": [
+    "Remove Linked List Elements",
+    "Delete Node in a Linked List",
+    "Swap Nodes in Pairs"
+  ]
+}

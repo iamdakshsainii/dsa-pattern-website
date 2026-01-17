@@ -1,0 +1,99 @@
+{
+  "questionId": "759",
+  "questionSlug": "employee-free-time",
+  "title": "Employee Free Time",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/employee-free-time/",
+    "videos": [
+      {
+        "title": "Employee Free Time - Interval Merge",
+        "url": "https://www.youtube.com/watch?v=L3-uMrcjG8o",
+        "channel": "Algorithms Made Easy",
+        "duration": "13:45",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Find common free time = Merge all intervals, find gaps between merged intervals.",
+  "approaches": [
+    {
+      "name": "Flatten and Sort - Then Find Gaps",
+      "order": 1,
+      "intuition": "Collect all intervals from all employees into one list, sort, merge overlapping intervals, then find gaps.",
+      "approach": "Flatten, sort, merge, find gaps between merged intervals.",
+      "steps": [
+        "Flatten all employee schedules into single list",
+        "Sort intervals by start time",
+        "Merge overlapping intervals",
+        "Find gaps between merged intervals",
+        "Return gap intervals as free time"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "n total intervals, sorting dominates",
+        "spaceExplanation": "Store all intervals"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<Interval> employeeFreeTime(vector<vector<Interval>> schedule) {\n        // Flatten all intervals\n        vector<Interval> allIntervals;\n        for (auto& employee : schedule) {\n            for (auto& interval : employee) {\n                allIntervals.push_back(interval);\n            }\n        }\n        \n        if (allIntervals.empty()) return {};\n        \n        // Sort by start time\n        sort(allIntervals.begin(), allIntervals.end(), \n             [](const Interval& a, const Interval& b) {\n                 return a.start < b.start;\n             });\n        \n        // Merge overlapping intervals\n        vector<Interval> merged;\n        merged.push_back(allIntervals[0]);\n        \n        for (int i = 1; i < allIntervals.size(); i++) {\n            if (allIntervals[i].start <= merged.back().end) {\n                merged.back().end = max(merged.back().end, allIntervals[i].end);\n            } else {\n                merged.push_back(allIntervals[i]);\n            }\n        }\n        \n        // Find gaps between merged intervals\n        vector<Interval> freeTime;\n        for (int i = 1; i < merged.size(); i++) {\n            freeTime.push_back(Interval(merged[i-1].end, merged[i].start));\n        }\n        \n        return freeTime;\n    }\n};",
+        "java": "class Solution {\n    public List<Interval> employeeFreeTime(List<List<Interval>> schedule) {\n        // Flatten all intervals\n        List<Interval> allIntervals = new ArrayList<>();\n        for (List<Interval> employee : schedule) {\n            allIntervals.addAll(employee);\n        }\n        \n        if (allIntervals.isEmpty()) return new ArrayList<>();\n        \n        // Sort by start time\n        Collections.sort(allIntervals, (a, b) -> Integer.compare(a.start, b.start));\n        \n        // Merge overlapping intervals\n        List<Interval> merged = new ArrayList<>();\n        merged.add(allIntervals.get(0));\n        \n        for (int i = 1; i < allIntervals.size(); i++) {\n            Interval last = merged.get(merged.size() - 1);\n            Interval curr = allIntervals.get(i);\n            \n            if (curr.start <= last.end) {\n                last.end = Math.max(last.end, curr.end);\n            } else {\n                merged.add(curr);\n            }\n        }\n        \n        // Find gaps between merged intervals\n        List<Interval> freeTime = new ArrayList<>();\n        for (int i = 1; i < merged.size(); i++) {\n            freeTime.add(new Interval(merged.get(i-1).end, merged.get(i).start));\n        }\n        \n        return freeTime;\n    }\n}",
+        "python": "class Solution:\n    def employeeFreeTime(self, schedule: List[List[Interval]]) -> List[Interval]:\n        # Flatten all intervals\n        all_intervals = []\n        for employee in schedule:\n            all_intervals.extend(employee)\n        \n        if not all_intervals:\n            return []\n        \n        # Sort by start time\n        all_intervals.sort(key=lambda x: x.start)\n        \n        # Merge overlapping intervals\n        merged = [all_intervals[0]]\n        \n        for i in range(1, len(all_intervals)):\n            if all_intervals[i].start <= merged[-1].end:\n                merged[-1].end = max(merged[-1].end, all_intervals[i].end)\n            else:\n                merged.append(all_intervals[i])\n        \n        # Find gaps between merged intervals\n        free_time = []\n        for i in range(1, len(merged)):\n            free_time.append(Interval(merged[i-1].end, merged[i].start))\n        \n        return free_time",
+        "javascript": "var employeeFreeTime = function(schedule) {\n    // Flatten all intervals\n    const allIntervals = [];\n    for (const employee of schedule) {\n        allIntervals.push(...employee);\n    }\n    \n    if (allIntervals.length === 0) return [];\n    \n    // Sort by start time\n    allIntervals.sort((a, b) => a.start - b.start);\n    \n    // Merge overlapping intervals\n    const merged = [allIntervals[0]];\n    \n    for (let i = 1; i < allIntervals.length; i++) {\n        const last = merged[merged.length - 1];\n        const curr = allIntervals[i];\n        \n        if (curr.start <= last.end) {\n            last.end = Math.max(last.end, curr.end);\n        } else {\n            merged.push(curr);\n        }\n    }\n    \n    // Find gaps between merged intervals\n    const freeTime = [];\n    for (let i = 1; i < merged.length; i++) {\n        freeTime.push(new Interval(merged[i-1].end, merged[i].start));\n    }\n    \n    return freeTime;\n};"
+      }
+    },
+    {
+      "name": "Min Heap - Process Intervals Chronologically",
+      "order": 2,
+      "intuition": "Use min heap to process intervals in chronological order across all employees. Track end of last busy period to find gaps.",
+      "approach": "Use heap to merge k sorted lists, find gaps as we go.",
+      "steps": [
+        "Create min heap with first interval from each employee",
+        "Process intervals in chronological order:",
+        "  Track end of current busy period",
+        "  If next interval starts after current ends:",
+        "    Found gap (free time)",
+        "  Update current busy period end",
+        "  Add next interval from same employee to heap",
+        "Return all gaps"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "n intervals, k employees, heap operations log k",
+        "spaceExplanation": "Heap stores at most k intervals"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<Interval> employeeFreeTime(vector<vector<Interval>> schedule) {\n        // Min heap: {interval.start, employee_id, interval_index}\n        auto cmp = [&](auto& a, auto& b) {\n            return schedule[a[0]][a[1]].start > schedule[b[0]][b[1]].start;\n        };\n        priority_queue<vector<int>, vector<vector<int>>, decltype(cmp)> minHeap(cmp);\n        \n        // Add first interval from each employee\n        for (int i = 0; i < schedule.size(); i++) {\n            if (!schedule[i].empty()) {\n                minHeap.push({i, 0});\n            }\n        }\n        \n        vector<Interval> freeTime;\n        int prevEnd = -1;\n        \n        while (!minHeap.empty()) {\n            auto curr = minHeap.top();\n            minHeap.pop();\n            \n            int empId = curr[0];\n            int idx = curr[1];\n            Interval interval = schedule[empId][idx];\n            \n            // Check for gap\n            if (prevEnd != -1 && interval.start > prevEnd) {\n                freeTime.push_back(Interval(prevEnd, interval.start));\n            }\n            \n            // Update prevEnd\n            prevEnd = max(prevEnd, interval.end);\n            \n            // Add next interval from same employee\n            if (idx + 1 < schedule[empId].size()) {\n                minHeap.push({empId, idx + 1});\n            }\n        }\n        \n        return freeTime;\n    }\n};",
+        "java": "class Solution {\n    public List<Interval> employeeFreeTime(List<List<Interval>> schedule) {\n        // Min heap: {employee_id, interval_index}\n        PriorityQueue<int[]> minHeap = new PriorityQueue<>(\n            (a, b) -> Integer.compare(\n                schedule.get(a[0]).get(a[1]).start,\n                schedule.get(b[0]).get(b[1]).start\n            )\n        );\n        \n        // Add first interval from each employee\n        for (int i = 0; i < schedule.size(); i++) {\n            if (!schedule.get(i).isEmpty()) {\n                minHeap.offer(new int[]{i, 0});\n            }\n        }\n        \n        List<Interval> freeTime = new ArrayList<>();\n        int prevEnd = -1;\n        \n        while (!minHeap.isEmpty()) {\n            int[] curr = minHeap.poll();\n            int empId = curr[0];\n            int idx = curr[1];\n            Interval interval = schedule.get(empId).get(idx);\n            \n            // Check for gap\n            if (prevEnd != -1 && interval.start > prevEnd) {\n                freeTime.add(new Interval(prevEnd, interval.start));\n            }\n            \n            // Update prevEnd\n            prevEnd = Math.max(prevEnd, interval.end);\n            \n            // Add next interval from same employee\n            if (idx + 1 < schedule.get(empId).size()) {\n                minHeap.offer(new int[]{empId, idx + 1});\n            }\n        }\n        \n        return freeTime;\n    }\n}",
+        "python": "import heapq\n\nclass Solution:\n    def employeeFreeTime(self, schedule: List[List[Interval]]) -> List[Interval]:\n        # Min heap: (interval.start, employee_id, interval_index)\n        min_heap = []\n        \n        # Add first interval from each employee\n        for i, employee in enumerate(schedule):\n            if employee:\n                heapq.heappush(min_heap, (employee[0].start, i, 0))\n        \n        free_time = []\n        prev_end = -1\n        \n        while min_heap:\n            start, emp_id, idx = heapq.heappop(min_heap)\n            interval = schedule[emp_id][idx]\n            \n            # Check for gap\n            if prev_end != -1 and interval.start > prev_end:\n                free_time.append(Interval(prev_end, interval.start))\n            \n            # Update prev_end\n            prev_end = max(prev_end, interval.end)\n            \n            # Add next interval from same employee\n            if idx + 1 < len(schedule[emp_id]):\n                next_interval = schedule[emp_id][idx + 1]\n                heapq.heappush(min_heap, (next_interval.start, emp_id, idx + 1))\n        \n        return free_time",
+        "javascript": "var employeeFreeTime = function(schedule) {\n    // Min heap: {start, empId, idx}\n    const minHeap = new MinPriorityQueue({ priority: x => x.start });\n    \n    // Add first interval from each employee\n    for (let i = 0; i < schedule.length; i++) {\n        if (schedule[i].length > 0) {\n            const interval = schedule[i][0];\n            minHeap.enqueue({start: interval.start, empId: i, idx: 0});\n        }\n    }\n    \n    const freeTime = [];\n    let prevEnd = -1;\n    \n    while (!minHeap.isEmpty()) {\n        const {empId, idx} = minHeap.dequeue().element;\n        const interval = schedule[empId][idx];\n        \n        // Check for gap\n        if (prevEnd !== -1 && interval.start > prevEnd) {\n            freeTime.push(new Interval(prevEnd, interval.start));\n        }\n        \n        // Update prevEnd\n        prevEnd = Math.max(prevEnd, interval.end);\n        \n        // Add next interval from same employee\n        if (idx + 1 < schedule[empId].length) {\n            const next = schedule[empId][idx + 1];\n            minHeap.enqueue({start: next.start, empId, idx: idx + 1});\n        }\n    }\n    \n    return freeTime;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling the case where all employees are always busy",
+    "Forgetting to merge overlapping intervals before finding gaps",
+    "Not considering that each employee's schedule is already sorted",
+    "Incorrectly calculating free time boundaries"
+  ],
+  "hints": [
+    "Each employee's schedule is already sorted by start time",
+    "Merge all intervals like 'Merge K Sorted Lists'",
+    "Free time = gaps between merged busy intervals",
+    "Can use either flatten+sort or min heap approach"
+  ],
+  "followUp": [
+    "What if you only need to find first N hours of free time?",
+    "How to find free time for specific subset of employees?",
+    "Can you do it without flattening all intervals first?"
+  ],
+  "companies": ["Google", "Amazon", "Airbnb", "Facebook"],
+  "tags": ["intervals", "heap", "sorting", "merge"],
+  "relatedProblems": [
+    "Merge Intervals",
+    "Merge K Sorted Lists",
+    "Interval List Intersections",
+    "Meeting Rooms II"
+  ]
+}

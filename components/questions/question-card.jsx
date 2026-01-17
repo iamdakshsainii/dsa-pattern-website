@@ -45,7 +45,6 @@ export default function QuestionCard({
     setLoading(true)
     const newStatus = !localCompleted
 
-    // Update UI immediately for instant feedback
     setLocalCompleted(newStatus)
 
     try {
@@ -63,10 +62,8 @@ export default function QuestionCard({
       })
 
       if (response.ok) {
-        // Dispatch events immediately after success
         window.dispatchEvent(new Event("dashboard-refresh"))
 
-        // Dispatch with proper details
         window.dispatchEvent(new CustomEvent("pattern-progress-update", {
           detail: {
             patternSlug: patternSlug,
@@ -76,12 +73,10 @@ export default function QuestionCard({
           }
         }))
 
-        // Call callback immediately
         if (onProgressUpdate) {
           setTimeout(() => onProgressUpdate(), 100)
         }
       } else {
-        // Revert on failure
         setLocalCompleted(!newStatus)
         alert("Failed to update progress")
       }
@@ -103,7 +98,6 @@ export default function QuestionCard({
     setLoading(true)
     const newBookmarked = !localBookmarked
 
-    // Update UI immediately
     setLocalBookmarked(newBookmarked)
 
     try {
@@ -125,7 +119,6 @@ export default function QuestionCard({
           setTimeout(() => onBookmarkUpdate(), 100)
         }
       } else {
-        // Revert on failure
         setLocalBookmarked(!newBookmarked)
         alert("Failed to update bookmark")
       }
@@ -138,10 +131,16 @@ export default function QuestionCard({
   }
 
   return (
-    <Card className={`p-4 md:p-6 hover:shadow-lg transition-shadow ${
+    <Card className={`group relative p-4 md:p-6 hover:shadow-lg transition-shadow ${
       localCompleted ? 'bg-green-50/50 dark:bg-green-950/20 border-green-300 dark:border-green-800' : ''
     }`}>
-      <div className="flex gap-3 md:gap-4">
+      {number && (
+        <div className="absolute top-3 left-3 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-lg z-10 group-hover:scale-110 transition-transform duration-300">
+          {number}
+        </div>
+      )}
+
+      <div className="flex gap-3 md:gap-4 pl-12">
         <div
           onClick={handleCheckboxClick}
           className={`flex-shrink-0 mt-1 ${!currentUser ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
@@ -156,16 +155,9 @@ export default function QuestionCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-3 md:gap-4 mb-3">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                {number && (
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
-                    {number}
-                  </span>
-                )}
-                <h3 className="text-base md:text-lg font-semibold truncate md:line-clamp-2">
-                  {question.title}
-                </h3>
-              </div>
+              <h3 className="text-base md:text-lg font-semibold truncate md:line-clamp-2 mb-2">
+                {question.title}
+              </h3>
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className={difficultyColors[question.difficulty]}>
                   {question.difficulty}

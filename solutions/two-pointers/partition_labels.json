@@ -1,0 +1,149 @@
+{
+  "questionId": "763",
+  "questionSlug": "partition-labels",
+  "title": "Partition Labels",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/partition-labels/",
+    "videos": [
+      {
+        "title": "Partition Labels - Leetcode 763",
+        "url": "https://www.youtube.com/watch?v=B7m8UmZE-vw",
+        "channel": "NeetCode",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Partition Labels Solution",
+        "url": "https://www.youtube.com/watch?v=ED4ateJu86I",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Partition Labels - LeetCode Solution",
+        "url": "https://leetcode.com/problems/partition-labels/solution/",
+        "source": "LeetCode Official"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/partition-labels/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Greedy partitioning by last occurrence = Track last index of each character. Extend partition until reaching last occurrence.",
+  "approaches": [
+    {
+      "name": "Brute Force (Try All Partitions)",
+      "order": 1,
+      "intuition": "Try all possible ways to partition string. Check if each partition is valid (character appears in only one partition).",
+      "approach": "Generate all possible partition points, validate each partition configuration, find valid one with maximum parts.",
+      "steps": [
+        "Generate all possible partition points",
+        "For each partition configuration:",
+        "  Check if valid (each char appears in only one part)",
+        "  Count number of partitions",
+        "Return configuration with maximum valid partitions",
+        "Store partition sizes"
+      ],
+      "complexity": {
+        "time": "O(2^n * n)",
+        "space": "O(n)",
+        "timeExplanation": "2^n possible partitions, O(n) to validate each",
+        "spaceExplanation": "Space for storing partitions and validation"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> partitionLabels(string s) {\n        int n = s.length();\n        vector<int> result;\n        vector<bool> used(26, false);\n        int start = 0;\n        \n        for (int i = 0; i < n; i++) {\n            used[s[i] - 'a'] = true;\n            bool canPartition = true;\n            \n            for (int j = i + 1; j < n; j++) {\n                if (used[s[j] - 'a']) {\n                    canPartition = false;\n                    break;\n                }\n            }\n            \n            if (canPartition) {\n                result.push_back(i - start + 1);\n                start = i + 1;\n                fill(used.begin(), used.end(), false);\n            }\n        }\n        \n        if (start < n) {\n            result.push_back(n - start);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> partitionLabels(String s) {\n        int n = s.length();\n        List<Integer> result = new ArrayList<>();\n        boolean[] used = new boolean[26];\n        int start = 0;\n        \n        for (int i = 0; i < n; i++) {\n            used[s.charAt(i) - 'a'] = true;\n            boolean canPartition = true;\n            \n            for (int j = i + 1; j < n; j++) {\n                if (used[s.charAt(j) - 'a']) {\n                    canPartition = false;\n                    break;\n                }\n            }\n            \n            if (canPartition) {\n                result.add(i - start + 1);\n                start = i + 1;\n                Arrays.fill(used, false);\n            }\n        }\n        \n        if (start < n) {\n            result.add(n - start);\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def partitionLabels(self, s: str) -> List[int]:\n        n = len(s)\n        result = []\n        used = set()\n        start = 0\n        \n        for i in range(n):\n            used.add(s[i])\n            can_partition = True\n            \n            for j in range(i + 1, n):\n                if s[j] in used:\n                    can_partition = False\n                    break\n            \n            if can_partition:\n                result.append(i - start + 1)\n                start = i + 1\n                used.clear()\n        \n        if start < n:\n            result.append(n - start)\n        \n        return result",
+        "javascript": "var partitionLabels = function(s) {\n    const n = s.length;\n    const result = [];\n    const used = new Set();\n    let start = 0;\n    \n    for (let i = 0; i < n; i++) {\n        used.add(s[i]);\n        let canPartition = true;\n        \n        for (let j = i + 1; j < n; j++) {\n            if (used.has(s[j])) {\n                canPartition = false;\n                break;\n            }\n        }\n        \n        if (canPartition) {\n            result.push(i - start + 1);\n            start = i + 1;\n            used.clear();\n        }\n    }\n    \n    if (start < n) {\n        result.push(n - start);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Better (Last Occurrence Map)",
+      "order": 2,
+      "intuition": "Store last occurrence of each character. A partition can end only when we've seen all occurrences of characters in current partition.",
+      "approach": "Create map of last occurrences. Track the furthest last occurrence we need to reach before making partition.",
+      "steps": [
+        "Create map: lastOccurrence[char] = last index of char",
+        "Initialize start = 0, end = 0",
+        "Iterate through string:",
+        "  Update end = max(end, lastOccurrence[s[i]])",
+        "  If i == end (reached last occurrence of all chars so far):",
+        "    Create partition from start to i",
+        "    Update start = i + 1",
+        "Return partition sizes"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes: one to build map, one to partition",
+        "spaceExplanation": "Map stores at most 26 characters"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> partitionLabels(string s) {\n        unordered_map<char, int> lastOccurrence;\n        int n = s.length();\n        \n        for (int i = 0; i < n; i++) {\n            lastOccurrence[s[i]] = i;\n        }\n        \n        vector<int> result;\n        int start = 0, end = 0;\n        \n        for (int i = 0; i < n; i++) {\n            end = max(end, lastOccurrence[s[i]]);\n            \n            if (i == end) {\n                result.push_back(end - start + 1);\n                start = i + 1;\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> partitionLabels(String s) {\n        Map<Character, Integer> lastOccurrence = new HashMap<>();\n        int n = s.length();\n        \n        for (int i = 0; i < n; i++) {\n            lastOccurrence.put(s.charAt(i), i);\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        int start = 0, end = 0;\n        \n        for (int i = 0; i < n; i++) {\n            end = Math.max(end, lastOccurrence.get(s.charAt(i)));\n            \n            if (i == end) {\n                result.add(end - start + 1);\n                start = i + 1;\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def partitionLabels(self, s: str) -> List[int]:\n        last_occurrence = {char: i for i, char in enumerate(s)}\n        \n        result = []\n        start, end = 0, 0\n        \n        for i, char in enumerate(s):\n            end = max(end, last_occurrence[char])\n            \n            if i == end:\n                result.append(end - start + 1)\n                start = i + 1\n        \n        return result",
+        "javascript": "var partitionLabels = function(s) {\n    const lastOccurrence = new Map();\n    const n = s.length;\n    \n    for (let i = 0; i < n; i++) {\n        lastOccurrence.set(s[i], i);\n    }\n    \n    const result = [];\n    let start = 0, end = 0;\n    \n    for (let i = 0; i < n; i++) {\n        end = Math.max(end, lastOccurrence.get(s[i]));\n        \n        if (i === end) {\n            result.push(end - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Greedy with Array - Optimal",
+      "order": 3,
+      "intuition": "Same as better but use array instead of map for O(1) access. Greedy: extend partition as far as needed to include all occurrences.",
+      "approach": "Use array of size 26 for last occurrences. Track end of current partition, create new partition when reaching it.",
+      "steps": [
+        "Create array last[26] for last occurrence of each letter",
+        "Fill array: last[s[i] - 'a'] = i",
+        "Initialize start = 0, end = 0",
+        "Iterate i from 0 to n-1:",
+        "  Update end = max(end, last[s[i] - 'a'])",
+        "  If i == end:",
+        "    Add (end - start + 1) to result",
+        "    Update start = i + 1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through string",
+        "spaceExplanation": "Fixed size array of 26 elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> partitionLabels(string s) {\n        vector<int> last(26, 0);\n        int n = s.length();\n        \n        for (int i = 0; i < n; i++) {\n            last[s[i] - 'a'] = i;\n        }\n        \n        vector<int> result;\n        int start = 0, end = 0;\n        \n        for (int i = 0; i < n; i++) {\n            end = max(end, last[s[i] - 'a']);\n            \n            if (i == end) {\n                result.push_back(end - start + 1);\n                start = i + 1;\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> partitionLabels(String s) {\n        int[] last = new int[26];\n        int n = s.length();\n        \n        for (int i = 0; i < n; i++) {\n            last[s.charAt(i) - 'a'] = i;\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        int start = 0, end = 0;\n        \n        for (int i = 0; i < n; i++) {\n            end = Math.max(end, last[s.charAt(i) - 'a']);\n            \n            if (i == end) {\n                result.add(end - start + 1);\n                start = i + 1;\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def partitionLabels(self, s: str) -> List[int]:\n        last = [0] * 26\n        \n        for i, char in enumerate(s):\n            last[ord(char) - ord('a')] = i\n        \n        result = []\n        start, end = 0, 0\n        \n        for i, char in enumerate(s):\n            end = max(end, last[ord(char) - ord('a')])\n            \n            if i == end:\n                result.append(end - start + 1)\n                start = i + 1\n        \n        return result",
+        "javascript": "var partitionLabels = function(s) {\n    const last = new Array(26).fill(0);\n    const n = s.length;\n    \n    for (let i = 0; i < n; i++) {\n        last[s.charCodeAt(i) - 97] = i;\n    }\n    \n    const result = [];\n    let start = 0, end = 0;\n    \n    for (let i = 0; i < n; i++) {\n        end = Math.max(end, last[s.charCodeAt(i) - 97]);\n        \n        if (i === end) {\n            result.push(end - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not tracking last occurrence of all characters",
+    "Creating partition before reaching last occurrence",
+    "Forgetting to update start pointer after partition",
+    "Not understanding that partition must be extended if new char's last occurrence is further"
+  ],
+  "hints": [
+    "Track last occurrence of each character",
+    "Current partition must extend to furthest last occurrence seen",
+    "Can partition when current index equals the end boundary",
+    "Greedy approach works: extend as minimally as needed"
+  ],
+  "followUp": [
+    "What if we want minimum number of partitions?",
+    "What if each character can appear in at most k partitions?",
+    "Can you solve with one pass without storing last occurrences?",
+    "What about partitioning with other constraints?"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Adobe"],
+  "tags": ["string", "greedy", "two-pointers", "hash-table"],
+  "relatedProblems": [
+    "Merge Intervals",
+    "Split Array into Consecutive Subsequences"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "questionId": "731",
+  "questionSlug": "my-calendar-ii",
+  "title": "My Calendar II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/my-calendar-ii/",
+    "videos": [
+      {
+        "title": "My Calendar II - Interval Overlap",
+        "url": "https://www.youtube.com/watch?v=VW1YHA535rU",
+        "channel": "NeetCode",
+        "duration": "10:45",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Track overlapping bookings, prevent triple booking = Store single and double bookings separately, check conflicts.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Intervals",
+      "order": 1,
+      "intuition": "For each new booking, check against all existing bookings to detect overlaps and track double bookings.",
+      "approach": "Maintain list of bookings. For new booking, check all existing for overlaps.",
+      "steps": [
+        "Maintain list of all bookings",
+        "For new booking [start, end):",
+        "  Check all existing bookings for overlap",
+        "  Count overlaps at each point",
+        "  If any point has 2+ overlaps: return false",
+        "Add booking and return true"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "For each booking, check all previous bookings",
+        "spaceExplanation": "Store all bookings"
+      },
+      "code": {
+        "cpp": "class MyCalendarTwo {\nprivate:\n    vector<pair<int, int>> bookings;\n    \n    bool hasTripleBooking(int start, int end) {\n        vector<pair<int, int>> overlaps;\n        \n        // Find all overlaps with existing bookings\n        for (auto& [s, e] : bookings) {\n            int overlapStart = max(start, s);\n            int overlapEnd = min(end, e);\n            \n            if (overlapStart < overlapEnd) {\n                // Check if this overlap conflicts with previous overlaps\n                for (auto& [os, oe] : overlaps) {\n                    int tripleStart = max(overlapStart, os);\n                    int tripleEnd = min(overlapEnd, oe);\n                    \n                    if (tripleStart < tripleEnd) {\n                        return true; // Triple booking found\n                    }\n                }\n                overlaps.push_back({overlapStart, overlapEnd});\n            }\n        }\n        return false;\n    }\n    \npublic:\n    MyCalendarTwo() {}\n    \n    bool book(int start, int end) {\n        if (hasTripleBooking(start, end)) {\n            return false;\n        }\n        bookings.push_back({start, end});\n        return true;\n    }\n};",
+        "java": "class MyCalendarTwo {\n    private List<int[]> bookings;\n    \n    public MyCalendarTwo() {\n        bookings = new ArrayList<>();\n    }\n    \n    public boolean book(int start, int end) {\n        if (hasTripleBooking(start, end)) {\n            return false;\n        }\n        bookings.add(new int[]{start, end});\n        return true;\n    }\n    \n    private boolean hasTripleBooking(int start, int end) {\n        List<int[]> overlaps = new ArrayList<>();\n        \n        for (int[] booking : bookings) {\n            int overlapStart = Math.max(start, booking[0]);\n            int overlapEnd = Math.min(end, booking[1]);\n            \n            if (overlapStart < overlapEnd) {\n                // Check if this overlap conflicts with previous overlaps\n                for (int[] overlap : overlaps) {\n                    int tripleStart = Math.max(overlapStart, overlap[0]);\n                    int tripleEnd = Math.min(overlapEnd, overlap[1]);\n                    \n                    if (tripleStart < tripleEnd) {\n                        return true; // Triple booking found\n                    }\n                }\n                overlaps.add(new int[]{overlapStart, overlapEnd});\n            }\n        }\n        return false;\n    }\n}",
+        "python": "class MyCalendarTwo:\n    def __init__(self):\n        self.bookings = []\n    \n    def book(self, start: int, end: int) -> bool:\n        if self._has_triple_booking(start, end):\n            return False\n        self.bookings.append((start, end))\n        return True\n    \n    def _has_triple_booking(self, start: int, end: int) -> bool:\n        overlaps = []\n        \n        for s, e in self.bookings:\n            overlap_start = max(start, s)\n            overlap_end = min(end, e)\n            \n            if overlap_start < overlap_end:\n                # Check if this overlap conflicts with previous overlaps\n                for os, oe in overlaps:\n                    triple_start = max(overlap_start, os)\n                    triple_end = min(overlap_end, oe)\n                    \n                    if triple_start < triple_end:\n                        return True  # Triple booking found\n                \n                overlaps.append((overlap_start, overlap_end))\n        \n        return False",
+        "javascript": "class MyCalendarTwo {\n    constructor() {\n        this.bookings = [];\n    }\n    \n    book(start, end) {\n        if (this.hasTripleBooking(start, end)) {\n            return false;\n        }\n        this.bookings.push([start, end]);\n        return true;\n    }\n    \n    hasTripleBooking(start, end) {\n        const overlaps = [];\n        \n        for (const [s, e] of this.bookings) {\n            const overlapStart = Math.max(start, s);\n            const overlapEnd = Math.min(end, e);\n            \n            if (overlapStart < overlapEnd) {\n                // Check if this overlap conflicts with previous overlaps\n                for (const [os, oe] of overlaps) {\n                    const tripleStart = Math.max(overlapStart, os);\n                    const tripleEnd = Math.min(overlapEnd, oe);\n                    \n                    if (tripleStart < tripleEnd) {\n                        return true; // Triple booking found\n                    }\n                }\n                overlaps.push([overlapStart, overlapEnd]);\n            }\n        }\n        return false;\n    }\n}"
+      }
+    },
+    {
+      "name": "Track Single and Double Bookings - Optimal",
+      "order": 2,
+      "intuition": "Maintain separate lists for single bookings and double bookings. New booking creates triple if it overlaps with any double booking.",
+      "approach": "Check new interval against double bookings first. If no conflict, find overlaps with single bookings to create new doubles.",
+      "steps": [
+        "Maintain: singles list, doubles list",
+        "For new booking [start, end):",
+        "  Check if overlaps with any double booking",
+        "    If yes: return false (would create triple)",
+        "  Find all overlaps with single bookings",
+        "    Add each overlap to doubles",
+        "  Add booking to singles",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "Each booking checks all previous bookings",
+        "spaceExplanation": "Store singles and doubles (doubles can grow to O(n²))"
+      },
+      "code": {
+        "cpp": "class MyCalendarTwo {\nprivate:\n    vector<pair<int, int>> singles;\n    vector<pair<int, int>> doubles;\n    \n    pair<int, int> getOverlap(int s1, int e1, int s2, int e2) {\n        int start = max(s1, s2);\n        int end = min(e1, e2);\n        if (start < end) {\n            return {start, end};\n        }\n        return {-1, -1};\n    }\n    \npublic:\n    MyCalendarTwo() {}\n    \n    bool book(int start, int end) {\n        // Check against double bookings first\n        for (auto& [s, e] : doubles) {\n            auto [overlapStart, overlapEnd] = getOverlap(start, end, s, e);\n            if (overlapStart != -1) {\n                return false; // Would create triple booking\n            }\n        }\n        \n        // Find overlaps with single bookings and add to doubles\n        for (auto& [s, e] : singles) {\n            auto [overlapStart, overlapEnd] = getOverlap(start, end, s, e);\n            if (overlapStart != -1) {\n                doubles.push_back({overlapStart, overlapEnd});\n            }\n        }\n        \n        // Add to singles\n        singles.push_back({start, end});\n        return true;\n    }\n};",
+        "java": "class MyCalendarTwo {\n    private List<int[]> singles;\n    private List<int[]> doubles;\n    \n    public MyCalendarTwo() {\n        singles = new ArrayList<>();\n        doubles = new ArrayList<>();\n    }\n    \n    public boolean book(int start, int end) {\n        // Check against double bookings first\n        for (int[] d : doubles) {\n            int overlapStart = Math.max(start, d[0]);\n            int overlapEnd = Math.min(end, d[1]);\n            if (overlapStart < overlapEnd) {\n                return false; // Would create triple booking\n            }\n        }\n        \n        // Find overlaps with single bookings and add to doubles\n        for (int[] s : singles) {\n            int overlapStart = Math.max(start, s[0]);\n            int overlapEnd = Math.min(end, s[1]);\n            if (overlapStart < overlapEnd) {\n                doubles.add(new int[]{overlapStart, overlapEnd});\n            }\n        }\n        \n        // Add to singles\n        singles.add(new int[]{start, end});\n        return true;\n    }\n}",
+        "python": "class MyCalendarTwo:\n    def __init__(self):\n        self.singles = []\n        self.doubles = []\n    \n    def book(self, start: int, end: int) -> bool:\n        # Check against double bookings first\n        for s, e in self.doubles:\n            overlap_start = max(start, s)\n            overlap_end = min(end, e)\n            if overlap_start < overlap_end:\n                return False  # Would create triple booking\n        \n        # Find overlaps with single bookings and add to doubles\n        for s, e in self.singles:\n            overlap_start = max(start, s)\n            overlap_end = min(end, e)\n            if overlap_start < overlap_end:\n                self.doubles.append((overlap_start, overlap_end))\n        \n        # Add to singles\n        self.singles.append((start, end))\n        return True",
+        "javascript": "class MyCalendarTwo {\n    constructor() {\n        this.singles = [];\n        this.doubles = [];\n    }\n    \n    book(start, end) {\n        // Check against double bookings first\n        for (const [s, e] of this.doubles) {\n            const overlapStart = Math.max(start, s);\n            const overlapEnd = Math.min(end, e);\n            if (overlapStart < overlapEnd) {\n                return false; // Would create triple booking\n            }\n        }\n        \n        // Find overlaps with single bookings and add to doubles\n        for (const [s, e] of this.singles) {\n            const overlapStart = Math.max(start, s);\n            const overlapEnd = Math.min(end, e);\n            if (overlapStart < overlapEnd) {\n                this.doubles.push([overlapStart, overlapEnd]);\n            }\n        }\n        \n        // Add to singles\n        this.singles.push([start, end]);\n        return true;\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking double bookings before adding to singles",
+    "Treating intervals as closed instead of half-open [start, end)",
+    "Not properly calculating overlap intervals",
+    "Checking singles before doubles (should check doubles first)"
+  ],
+  "hints": [
+    "Keep track of single bookings and double bookings separately",
+    "A triple booking occurs when new interval overlaps a double booking",
+    "When adding new booking, first check doubles, then update doubles from singles",
+    "Overlap calculation: max(s1, s2) to min(e1, e2)"
+  ],
+  "followUp": [
+    "What if we need to prevent K-tuple bookings instead of just triple?",
+    "Can you solve this with a segment tree?",
+    "How would you handle deletions of bookings?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft"],
+  "tags": ["intervals", "design", "ordered-map"],
+  "relatedProblems": [
+    "My Calendar I",
+    "My Calendar III",
+    "Meeting Rooms II",
+    "Maximum CPU Load"
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "questionId": "435",
+  "questionSlug": "non-overlapping-intervals",
+  "title": "Non-overlapping Intervals",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/non-overlapping-intervals/",
+    "videos": [
+      {
+        "title": "Non-overlapping Intervals - Greedy",
+        "url": "https://www.youtube.com/watch?v=nONCGxWoUfM",
+        "channel": "NeetCode",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Minimum removals to make non-overlapping = Greedy: sort by end time, keep interval with earliest end.",
+  "approaches": [
+    {
+      "name": "Sort by Start - Greedy",
+      "order": 1,
+      "intuition": "Sort by start time. Count overlaps by comparing each interval's start with previous interval's end.",
+      "approach": "Sort by start, count and remove overlapping intervals.",
+      "steps": [
+        "Sort intervals by start time",
+        "Track end of last kept interval",
+        "For each interval:",
+        "  If overlaps with last kept (start < lastEnd):",
+        "    Remove one (increment count)",
+        "    Keep the one with earlier end",
+        "  Else:",
+        "    Update lastEnd",
+        "Return removal count"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(log n)",
+        "timeExplanation": "Sorting dominates",
+        "spaceExplanation": "Sorting space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return 0;\n        \n        // Sort by start time\n        sort(intervals.begin(), intervals.end());\n        \n        int removals = 0;\n        int prevEnd = intervals[0][1];\n        \n        for (int i = 1; i < intervals.size(); i++) {\n            // Check overlap\n            if (intervals[i][0] < prevEnd) {\n                // Overlap detected, need to remove one\n                removals++;\n                // Keep interval with earlier end\n                prevEnd = min(prevEnd, intervals[i][1]);\n            } else {\n                // No overlap, update prevEnd\n                prevEnd = intervals[i][1];\n            }\n        }\n        \n        return removals;\n    }\n};",
+        "java": "class Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        \n        // Sort by start time\n        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        int removals = 0;\n        int prevEnd = intervals[0][1];\n        \n        for (int i = 1; i < intervals.length; i++) {\n            // Check overlap\n            if (intervals[i][0] < prevEnd) {\n                // Overlap detected, need to remove one\n                removals++;\n                // Keep interval with earlier end\n                prevEnd = Math.min(prevEnd, intervals[i][1]);\n            } else {\n                // No overlap, update prevEnd\n                prevEnd = intervals[i][1];\n            }\n        }\n        \n        return removals;\n    }\n}",
+        "python": "class Solution:\n    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        \n        # Sort by start time\n        intervals.sort()\n        \n        removals = 0\n        prev_end = intervals[0][1]\n        \n        for i in range(1, len(intervals)):\n            # Check overlap\n            if intervals[i][0] < prev_end:\n                # Overlap detected, need to remove one\n                removals += 1\n                # Keep interval with earlier end\n                prev_end = min(prev_end, intervals[i][1])\n            else:\n                # No overlap, update prev_end\n                prev_end = intervals[i][1]\n        \n        return removals",
+        "javascript": "var eraseOverlapIntervals = function(intervals) {\n    if (intervals.length === 0) return 0;\n    \n    // Sort by start time\n    intervals.sort((a, b) => a[0] - b[0]);\n    \n    let removals = 0;\n    let prevEnd = intervals[0][1];\n    \n    for (let i = 1; i < intervals.length; i++) {\n        // Check overlap\n        if (intervals[i][0] < prevEnd) {\n            // Overlap detected, need to remove one\n            removals++;\n            // Keep interval with earlier end\n            prevEnd = Math.min(prevEnd, intervals[i][1]);\n        } else {\n            // No overlap, update prevEnd\n            prevEnd = intervals[i][1];\n        }\n    }\n    \n    return removals;\n};"
+      }
+    },
+    {
+      "name": "Sort by End - Greedy Optimal",
+      "order": 2,
+      "intuition": "Sort by end time. Greedily keep intervals with earliest end times. This leaves maximum room for future intervals.",
+      "approach": "Sort by end, keep non-overlapping intervals greedily.",
+      "steps": [
+        "Sort intervals by end time",
+        "Keep first interval",
+        "For each interval:",
+        "  If doesn't overlap with last kept:",
+        "    Keep it, update lastEnd",
+        "  Else:",
+        "    Remove it (increment count)",
+        "Return removal count"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(log n)",
+        "timeExplanation": "Sorting dominates",
+        "spaceExplanation": "Sorting space"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return 0;\n        \n        // Sort by end time\n        sort(intervals.begin(), intervals.end(), \n             [](const vector<int>& a, const vector<int>& b) {\n                 return a[1] < b[1];\n             });\n        \n        int kept = 1; // Keep first interval\n        int lastEnd = intervals[0][1];\n        \n        for (int i = 1; i < intervals.size(); i++) {\n            // If no overlap, keep this interval\n            if (intervals[i][0] >= lastEnd) {\n                kept++;\n                lastEnd = intervals[i][1];\n            }\n            // Else: overlaps, don't keep (implicit removal)\n        }\n        \n        // Removals = total - kept\n        return intervals.size() - kept;\n    }\n};",
+        "java": "class Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        \n        // Sort by end time\n        Arrays.sort(intervals, (a, b) -> Integer.compare(a[1], b[1]));\n        \n        int kept = 1; // Keep first interval\n        int lastEnd = intervals[0][1];\n        \n        for (int i = 1; i < intervals.length; i++) {\n            // If no overlap, keep this interval\n            if (intervals[i][0] >= lastEnd) {\n                kept++;\n                lastEnd = intervals[i][1];\n            }\n            // Else: overlaps, don't keep (implicit removal)\n        }\n        \n        // Removals = total - kept\n        return intervals.length - kept;\n    }\n}",
+        "python": "class Solution:\n    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        \n        # Sort by end time\n        intervals.sort(key=lambda x: x[1])\n        \n        kept = 1  # Keep first interval\n        last_end = intervals[0][1]\n        \n        for i in range(1, len(intervals)):\n            # If no overlap, keep this interval\n            if intervals[i][0] >= last_end:\n                kept += 1\n                last_end = intervals[i][1]\n            # Else: overlaps, don't keep (implicit removal)\n        \n        # Removals = total - kept\n        return len(intervals) - kept",
+        "javascript": "var eraseOverlapIntervals = function(intervals) {\n    if (intervals.length === 0) return 0;\n    \n    // Sort by end time\n    intervals.sort((a, b) => a[1] - b[1]);\n    \n    let kept = 1; // Keep first interval\n    let lastEnd = intervals[0][1];\n    \n    for (let i = 1; i < intervals.length; i++) {\n        // If no overlap, keep this interval\n        if (intervals[i][0] >= lastEnd) {\n            kept++;\n            lastEnd = intervals[i][1];\n        }\n        // Else: overlaps, don't keep (implicit removal)\n    }\n    \n    // Removals = total - kept\n    return intervals.length - kept;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using <= instead of < for overlap check",
+    "Sorting by start instead of end (less optimal)",
+    "Not understanding this is equivalent to Activity Selection problem",
+    "Trying to use dynamic programming (greedy is simpler and optimal)"
+  ],
+  "hints": [
+    "This is the classic Activity Selection problem",
+    "Greedy approach: sort by end time, keep non-overlapping intervals",
+    "Always keep the interval that ends earliest",
+    "Count intervals you can keep, subtract from total"
+  ],
+  "followUp": [
+    "What if intervals have weights/values?",
+    "How to find the actual intervals to remove?",
+    "Can you solve with DP? (Yes, but greedy is better)"
+  ],
+  "companies": ["Amazon", "Facebook", "Google", "Microsoft"],
+  "tags": ["intervals", "greedy", "sorting"],
+  "relatedProblems": [
+    "Minimum Number of Arrows to Burst Balloons",
+    "Maximum Length of Pair Chain",
+    "Meeting Rooms II"
+  ]
+}

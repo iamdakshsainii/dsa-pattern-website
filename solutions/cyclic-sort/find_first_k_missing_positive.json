@@ -1,0 +1,99 @@
+{
+  "questionId": "PATTERN",
+  "questionSlug": "find-first-k-missing-positive-numbers",
+  "title": "Find First K Missing Positive Numbers",
+  "difficulty": "Hard",
+  "resources": {
+    "educative": "https://www.educative.io/courses/grokking-the-coding-interview/q2LA7G0ANX0",
+    "videos": [
+      {
+        "title": "Find K Missing Positive Numbers",
+        "url": "https://www.youtube.com/watch?v=wT66W1SMN8Q",
+        "channel": "Coding Decoded",
+        "duration": "14:20",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Find k smallest missing positives = Extended Cyclic Sort",
+  "approaches": [
+    {
+      "name": "Hash Set",
+      "order": 1,
+      "intuition": "Store all numbers in set, check from 1 upward, collect k missing",
+      "approach": "Use set for O(1) lookup",
+      "steps": [
+        "Create set from array",
+        "Start from i = 1",
+        "While result.size() < k:",
+        "  If i not in set: add to result",
+        "  i++",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n + k)",
+        "space": "O(n)",
+        "timeExplanation": "Build set + check up to k missing",
+        "spaceExplanation": "Set stores n elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findKMissingPositive(vector<int>& nums, int k) {\n        unordered_set<int> numSet(nums.begin(), nums.end());\n        vector<int> result;\n        \n        int i = 1;\n        while (result.size() < k) {\n            if (numSet.find(i) == numSet.end()) {\n                result.push_back(i);\n            }\n            i++;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findKMissingPositive(int[] nums, int k) {\n        Set<Integer> numSet = new HashSet<>();\n        for (int num : nums) {\n            numSet.add(num);\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        int i = 1;\n        \n        while (result.size() < k) {\n            if (!numSet.contains(i)) {\n                result.add(i);\n            }\n            i++;\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findKMissingPositive(self, nums: List[int], k: int) -> List[int]:\n        num_set = set(nums)\n        result = []\n        i = 1\n        \n        while len(result) < k:\n            if i not in num_set:\n                result.append(i)\n            i += 1\n        \n        return result",
+        "javascript": "function findKMissingPositive(nums, k) {\n    const numSet = new Set(nums);\n    const result = [];\n    let i = 1;\n    \n    while (result.length < k) {\n        if (!numSet.has(i)) {\n            result.push(i);\n        }\n        i++;\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Cyclic Sort - Optimal",
+      "order": 2,
+      "intuition": "Place valid positives at correct positions. After sort, collect missing from wrong positions and beyond n",
+      "approach": "Cyclic sort + two-phase collection",
+      "steps": [
+        "Cyclic sort (only [1, n]):",
+        "  While i < n:",
+        "    If nums[i] in [1, n] and at wrong position: swap",
+        "    Else: i++",
+        "Collect missing:",
+        "  Phase 1: indices where nums[i] != i+1 (add i+1)",
+        "  Phase 2: if still < k, add n+1, n+2, ... until k numbers",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n + k)",
+        "space": "O(1)",
+        "timeExplanation": "Cyclic sort + collect k numbers",
+        "spaceExplanation": "In-place sorting (output doesn't count)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findKMissingPositive(vector<int>& nums, int k) {\n        int n = nums.size();\n        int i = 0;\n        \n        // Cyclic sort: place [1, n] at correct positions\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            if (nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctPos]) {\n                swap(nums[i], nums[correctPos]);\n            } else {\n                i++;\n            }\n        }\n        \n        vector<int> result;\n        set<int> extraNumbers; // Numbers > n that are duplicates\n        \n        // Phase 1: Find missing in [1, n]\n        for (int i = 0; i < n && result.size() < k; i++) {\n            if (nums[i] != i + 1) {\n                result.push_back(i + 1);\n                // Store the number at wrong position if it's > n\n                if (nums[i] > n) {\n                    extraNumbers.insert(nums[i]);\n                }\n            }\n        }\n        \n        // Phase 2: If still need more, add n+1, n+2, ...\n        int candidate = n + 1;\n        while (result.size() < k) {\n            // Skip if this number exists in array\n            if (extraNumbers.find(candidate) == extraNumbers.end()) {\n                result.push_back(candidate);\n            }\n            candidate++;\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findKMissingPositive(int[] nums, int k) {\n        int n = nums.length;\n        int i = 0;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            if (nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctPos]) {\n                int temp = nums[i];\n                nums[i] = nums[correctPos];\n                nums[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        Set<Integer> extraNumbers = new HashSet<>();\n        \n        // Phase 1: missing in [1, n]\n        for (int j = 0; j < n && result.size() < k; j++) {\n            if (nums[j] != j + 1) {\n                result.add(j + 1);\n                if (nums[j] > n) {\n                    extraNumbers.add(nums[j]);\n                }\n            }\n        }\n        \n        // Phase 2: add beyond n\n        int candidate = n + 1;\n        while (result.size() < k) {\n            if (!extraNumbers.contains(candidate)) {\n                result.add(candidate);\n            }\n            candidate++;\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findKMissingPositive(self, nums: List[int], k: int) -> List[int]:\n        n = len(nums)\n        i = 0\n        \n        # Cyclic sort\n        while i < n:\n            correct_pos = nums[i] - 1\n            if 0 < nums[i] <= n and nums[i] != nums[correct_pos]:\n                nums[i], nums[correct_pos] = nums[correct_pos], nums[i]\n            else:\n                i += 1\n        \n        result = []\n        extra_numbers = set()\n        \n        # Phase 1: missing in [1, n]\n        for i in range(n):\n            if len(result) < k and nums[i] != i + 1:\n                result.append(i + 1)\n                if nums[i] > n:\n                    extra_numbers.add(nums[i])\n        \n        # Phase 2: add beyond n\n        candidate = n + 1\n        while len(result) < k:\n            if candidate not in extra_numbers:\n                result.append(candidate)\n            candidate += 1\n        \n        return result",
+        "javascript": "function findKMissingPositive(nums, k) {\n    const n = nums.length;\n    let i = 0;\n    \n    // Cyclic sort\n    while (i < n) {\n        const correctPos = nums[i] - 1;\n        if (nums[i] > 0 && nums[i] <= n && nums[i] !== nums[correctPos]) {\n            [nums[i], nums[correctPos]] = [nums[correctPos], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    const result = [];\n    const extraNumbers = new Set();\n    \n    // Phase 1: missing in [1, n]\n    for (let j = 0; j < n && result.length < k; j++) {\n        if (nums[j] !== j + 1) {\n            result.push(j + 1);\n            if (nums[j] > n) {\n                extraNumbers.add(nums[j]);\n            }\n        }\n    }\n    \n    // Phase 2: add beyond n\n    let candidate = n + 1;\n    while (result.length < k) {\n        if (!extraNumbers.has(candidate)) {\n            result.push(candidate);\n        }\n        candidate++;\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling case where k > number of missing in [1, n]",
+    "Forgetting to skip duplicates when adding numbers beyond n",
+    "Example: nums = [2, 3, 4], k = 3 → answer is [1, 5, 6] not [1, 5, 4]",
+    "Not tracking extra numbers (> n) that are at wrong positions"
+  ],
+  "hints": [
+    "Extension of First Missing Positive",
+    "After cyclic sort, missing numbers are at indices with wrong values",
+    "If k is large, need to add numbers beyond n",
+    "Be careful: some numbers > n might be in array as duplicates"
+  ],
+  "followUp": [
+    "What if we need k missing numbers in range [L, R]?",
+    "Can you optimize for very large k?",
+    "How to handle if array size is very small but k is large?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google"],
+  "tags": ["array", "cyclic-sort", "hash-table"],
+  "relatedProblems": [
+    "First Missing Positive",
+    "Kth Missing Positive Number",
+    "Missing Number"
+  ]
+}

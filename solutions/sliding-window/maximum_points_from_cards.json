@@ -1,0 +1,128 @@
+{
+  "questionId": "1423",
+  "questionSlug": "maximum-points-you-can-obtain-from-cards",
+  "title": "Maximum Points You Can Obtain from Cards",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/",
+    "videos": [
+      {
+        "title": "Maximum Points from Cards - Sliding Window Trick",
+        "url": "https://www.youtube.com/watch?v=TsA4vbtfCvo",
+        "channel": "NeetCode",
+        "duration": "12:40",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Pick K cards from either end = Inverse thinking: find minimum sum subarray of length (n-K) in middle. Max from ends = Total - Min middle.",
+  "approaches": [
+    {
+      "name": "Brute Force (Try All Combinations)",
+      "order": 1,
+      "intuition": "Try all ways to pick K cards: 0 from left + K from right, 1 from left + K-1 from right, ..., K from left + 0 from right.",
+      "approach": "For each split i (taking i from left, K-i from right), calculate sum and track maximum.",
+      "steps": [
+        "Initialize maxPoints = 0",
+        "For i from 0 to K:",
+        "  leftSum = sum of first i cards",
+        "  rightSum = sum of last (K - i) cards",
+        "  totalPoints = leftSum + rightSum",
+        "  maxPoints = max(maxPoints, totalPoints)",
+        "Return maxPoints"
+      ],
+      "complexity": {
+        "time": "O(K²)",
+        "space": "O(1)",
+        "timeExplanation": "K iterations, each computing sum takes O(K)",
+        "spaceExplanation": "Only variables used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxScore(vector<int>& cardPoints, int k) {\n        int maxPoints = 0;\n        \n        for (int i = 0; i <= k; i++) {\n            int leftSum = 0;\n            for (int j = 0; j < i; j++) {\n                leftSum += cardPoints[j];\n            }\n            \n            int rightSum = 0;\n            int n = cardPoints.size();\n            for (int j = n - (k - i); j < n; j++) {\n                rightSum += cardPoints[j];\n            }\n            \n            maxPoints = max(maxPoints, leftSum + rightSum);\n        }\n        \n        return maxPoints;\n    }\n};",
+        "java": "class Solution {\n    public int maxScore(int[] cardPoints, int k) {\n        int maxPoints = 0;\n        \n        for (int i = 0; i <= k; i++) {\n            int leftSum = 0;\n            for (int j = 0; j < i; j++) {\n                leftSum += cardPoints[j];\n            }\n            \n            int rightSum = 0;\n            int n = cardPoints.length;\n            for (int j = n - (k - i); j < n; j++) {\n                rightSum += cardPoints[j];\n            }\n            \n            maxPoints = Math.max(maxPoints, leftSum + rightSum);\n        }\n        \n        return maxPoints;\n    }\n}",
+        "python": "class Solution:\n    def maxScore(self, cardPoints: List[int], k: int) -> int:\n        max_points = 0\n        \n        for i in range(k + 1):\n            left_sum = sum(cardPoints[:i])\n            right_sum = sum(cardPoints[len(cardPoints) - (k - i):])\n            max_points = max(max_points, left_sum + right_sum)\n        \n        return max_points",
+        "javascript": "var maxScore = function(cardPoints, k) {\n    let maxPoints = 0;\n    \n    for (let i = 0; i <= k; i++) {\n        let leftSum = 0;\n        for (let j = 0; j < i; j++) {\n            leftSum += cardPoints[j];\n        }\n        \n        let rightSum = 0;\n        const n = cardPoints.length;\n        for (let j = n - (k - i); j < n; j++) {\n            rightSum += cardPoints[j];\n        }\n        \n        maxPoints = Math.max(maxPoints, leftSum + rightSum);\n    }\n    \n    return maxPoints;\n};"
+      }
+    },
+    {
+      "name": "Sliding Window (Optimized Combinations)",
+      "order": 2,
+      "intuition": "Start with K cards from left. Then swap: remove from left, add from right. Track maximum sum.",
+      "approach": "Calculate initial sum of K leftmost cards. Slide by removing left, adding right.",
+      "steps": [
+        "Calculate sum of first K cards",
+        "maxPoints = currentSum",
+        "For i from 0 to K-1:",
+        "  Remove cardPoints[K - 1 - i] from sum",
+        "  Add cardPoints[n - 1 - i] to sum",
+        "  maxPoints = max(maxPoints, currentSum)",
+        "Return maxPoints"
+      ],
+      "complexity": {
+        "time": "O(K)",
+        "space": "O(1)",
+        "timeExplanation": "Calculate initial sum O(K), then K swaps",
+        "spaceExplanation": "Only variables used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxScore(vector<int>& cardPoints, int k) {\n        int n = cardPoints.size();\n        int currentSum = 0;\n        \n        // Sum of first k cards\n        for (int i = 0; i < k; i++) {\n            currentSum += cardPoints[i];\n        }\n        \n        int maxPoints = currentSum;\n        \n        // Slide window: remove from left, add from right\n        for (int i = 0; i < k; i++) {\n            currentSum -= cardPoints[k - 1 - i];\n            currentSum += cardPoints[n - 1 - i];\n            maxPoints = max(maxPoints, currentSum);\n        }\n        \n        return maxPoints;\n    }\n};",
+        "java": "class Solution {\n    public int maxScore(int[] cardPoints, int k) {\n        int n = cardPoints.length;\n        int currentSum = 0;\n        \n        for (int i = 0; i < k; i++) {\n            currentSum += cardPoints[i];\n        }\n        \n        int maxPoints = currentSum;\n        \n        for (int i = 0; i < k; i++) {\n            currentSum -= cardPoints[k - 1 - i];\n            currentSum += cardPoints[n - 1 - i];\n            maxPoints = Math.max(maxPoints, currentSum);\n        }\n        \n        return maxPoints;\n    }\n}",
+        "python": "class Solution:\n    def maxScore(self, cardPoints: List[int], k: int) -> int:\n        n = len(cardPoints)\n        current_sum = sum(cardPoints[:k])\n        max_points = current_sum\n        \n        for i in range(k):\n            current_sum -= cardPoints[k - 1 - i]\n            current_sum += cardPoints[n - 1 - i]\n            max_points = max(max_points, current_sum)\n        \n        return max_points",
+        "javascript": "var maxScore = function(cardPoints, k) {\n    const n = cardPoints.length;\n    let currentSum = 0;\n    \n    for (let i = 0; i < k; i++) {\n        currentSum += cardPoints[i];\n    }\n    \n    let maxPoints = currentSum;\n    \n    for (let i = 0; i < k; i++) {\n        currentSum -= cardPoints[k - 1 - i];\n        currentSum += cardPoints[n - 1 - i];\n        maxPoints = Math.max(maxPoints, currentSum);\n    }\n    \n    return maxPoints;\n};"
+      }
+    },
+    {
+      "name": "Inverse Sliding Window - Optimal (Most Elegant)",
+      "order": 3,
+      "intuition": "Taking K from ends = leaving (n-K) in middle. Maximize ends sum = Minimize middle sum. Find minimum subarray of size (n-K).",
+      "approach": "Calculate total sum. Find minimum sum window of size (n-K). Return total - minimum.",
+      "steps": [
+        "Calculate total sum of all cards",
+        "If K == n: return total",
+        "windowSize = n - K",
+        "Calculate sum of first windowSize cards",
+        "minSum = windowSum",
+        "Slide window from windowSize to n:",
+        "  Add new card, remove old card",
+        "  Update minSum",
+        "Return total - minSum"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass to calculate total and find minimum window",
+        "spaceExplanation": "Only variables used"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxScore(vector<int>& cardPoints, int k) {\n        int n = cardPoints.size();\n        int total = 0;\n        \n        for (int point : cardPoints) {\n            total += point;\n        }\n        \n        if (k == n) return total;\n        \n        int windowSize = n - k;\n        int windowSum = 0;\n        \n        for (int i = 0; i < windowSize; i++) {\n            windowSum += cardPoints[i];\n        }\n        \n        int minSum = windowSum;\n        \n        for (int i = windowSize; i < n; i++) {\n            windowSum += cardPoints[i];\n            windowSum -= cardPoints[i - windowSize];\n            minSum = min(minSum, windowSum);\n        }\n        \n        return total - minSum;\n    }\n};",
+        "java": "class Solution {\n    public int maxScore(int[] cardPoints, int k) {\n        int n = cardPoints.length;\n        int total = 0;\n        \n        for (int point : cardPoints) {\n            total += point;\n        }\n        \n        if (k == n) return total;\n        \n        int windowSize = n - k;\n        int windowSum = 0;\n        \n        for (int i = 0; i < windowSize; i++) {\n            windowSum += cardPoints[i];\n        }\n        \n        int minSum = windowSum;\n        \n        for (int i = windowSize; i < n; i++) {\n            windowSum += cardPoints[i];\n            windowSum -= cardPoints[i - windowSize];\n            minSum = Math.min(minSum, windowSum);\n        }\n        \n        return total - minSum;\n    }\n}",
+        "python": "class Solution:\n    def maxScore(self, cardPoints: List[int], k: int) -> int:\n        n = len(cardPoints)\n        total = sum(cardPoints)\n        \n        if k == n:\n            return total\n        \n        window_size = n - k\n        window_sum = sum(cardPoints[:window_size])\n        min_sum = window_sum\n        \n        for i in range(window_size, n):\n            window_sum += cardPoints[i]\n            window_sum -= cardPoints[i - window_size]\n            min_sum = min(min_sum, window_sum)\n        \n        return total - min_sum",
+        "javascript": "var maxScore = function(cardPoints, k) {\n    const n = cardPoints.length;\n    const total = cardPoints.reduce((sum, val) => sum + val, 0);\n    \n    if (k === n) return total;\n    \n    const windowSize = n - k;\n    let windowSum = 0;\n    \n    for (let i = 0; i < windowSize; i++) {\n        windowSum += cardPoints[i];\n    }\n    \n    let minSum = windowSum;\n    \n    for (let i = windowSize; i < n; i++) {\n        windowSum += cardPoints[i];\n        windowSum -= cardPoints[i - windowSize];\n        minSum = Math.min(minSum, windowSum);\n    }\n    \n    return total - minSum;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not realizing this is inverse problem (minimize middle instead of maximize ends)",
+    "Getting confused with index calculations when swapping cards",
+    "Forgetting K == n edge case",
+    "Not understanding the connection to minimum subarray problem"
+  ],
+  "hints": [
+    "Think inversely: maximize ends = minimize middle",
+    "Find minimum sum subarray of length (n-K)",
+    "Answer = Total sum - Minimum middle window",
+    "This transforms the problem into a simpler sliding window"
+  ],
+  "followUp": [
+    "What if you can pick from middle as well?",
+    "What if each card can only be picked once globally?",
+    "Maximize with constraints on specific card values?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft"],
+  "tags": ["array", "sliding-window", "prefix-sum"],
+  "relatedProblems": [
+    "Maximum Sum of Two Non-Overlapping Subarrays",
+    "Minimum Size Subarray Sum",
+    "Maximum Subarray"
+  ]
+}

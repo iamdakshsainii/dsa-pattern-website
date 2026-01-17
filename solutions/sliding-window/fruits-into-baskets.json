@@ -1,191 +1,104 @@
 {
-  "questionId": "694d4a3a98494915f3bc8e8f",
-  "questionSlug": "fruits-into-baskets",
-  "title": "Fruits Into Baskets",
+  "questionId": "904",
+  "questionSlug": "fruit-into-baskets",
+  "title": "Fruit Into Baskets (At Most 2 Distinct)",
   "difficulty": "Medium",
   "resources": {
     "leetcode": "https://leetcode.com/problems/fruit-into-baskets/",
     "videos": [
       {
         "title": "Fruit Into Baskets - Sliding Window",
-        "url": "https://www.youtube.com/watch?v=yYtaV0G3mWQ",
-        "channel": "NeetCode",
-        "duration": "10:45",
-        "language": "English"
-      },
-      {
-        "title": "2 Distinct Elements Sliding Window",
-        "url": "https://www.youtube.com/watch?v=e3bs0uA1NhQ",
-        "channel": "Aditya Verma",
-        "duration": "16:50",
-        "language": "English"
-      },
-      {
-        "title": "HashMap Window Pattern",
         "url": "https://www.youtube.com/watch?v=s_zu2dOkq80",
-        "channel": "take U forward",
-        "duration": "13:20",
+        "channel": "NeetCode",
+        "duration": "13:25",
         "language": "English"
       }
-    ],
-    "articles": [
-      {
-        "title": "Fruit Into Baskets Solution",
-        "url": "https://leetcode.com/problems/fruit-into-baskets/solutions/",
-        "source": "LeetCode"
-      },
-      {
-        "title": "Longest Subarray with 2 Distinct Elements",
-        "url": "https://www.geeksforgeeks.org/longest-subarray-having-count-of-1s-one-more-than-count-of-0s/",
-        "source": "GeeksforGeeks"
-      },
-      {
-        "title": "Sliding Window K=2 Pattern",
-        "url": "https://algo.monster/problems/sliding_window_k2",
-        "source": "AlgoMonster"
-      }
-    ],
-    "practice": [
-      {
-        "title": "Longest Substring with At Most K Distinct Characters",
-        "url": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/",
-        "platform": "LeetCode"
-      },
-      {
-        "title": "Max Consecutive Ones III",
-        "url": "https://leetcode.com/problems/max-consecutive-ones-iii/",
-        "platform": "LeetCode"
-      },
-      {
-        "title": "Longest Repeating Character Replacement",
-        "url": "https://leetcode.com/problems/longest-repeating-character-replacement/",
-        "platform": "LeetCode"
-      },
-      {
-        "title": "Subarrays with K Different Integers",
-        "url": "https://leetcode.com/problems/subarrays-with-k-different-integers/",
-        "platform": "LeetCode"
-      }
-    ],
-    "discussions": []
+    ]
   },
-  "patternTriggers": "Use Fruits Into Baskets when: collect from contiguous trees, two baskets (2 types), maximize fruits, longest subarray with at most 2 distinct elements. Keywords: 'two types', 'contiguous', 'maximum fruits'.",
+  "patternTriggers": "Collect max fruits with 2 baskets (2 types) = Longest Subarray with At Most 2 Distinct Elements. Variable sliding window + HashMap.",
   "approaches": [
     {
-      "name": "Sliding Window with HashMap (Optimal)",
+      "name": "Brute Force (All Subarrays)",
       "order": 1,
-      "intuition": "This is longest subarray with at most 2 distinct elements. Use HashMap to track fruit types in window. Expand right to collect fruits. When types > 2, shrink from left. Track maximum fruits collected. O(n) time.",
-      "approach": "Two pointers with HashMap tracking fruit frequencies. HashMap size indicates distinct types. Shrink when types exceed 2.",
+      "intuition": "Try all contiguous subarrays, check if they have at most 2 distinct fruit types, track maximum length.",
+      "approach": "Two nested loops to generate subarrays, use set to count distinct types, update max when distinct <= 2.",
       "steps": [
-        "Initialize left = 0, maxFruits = 0, fruitMap = {}",
-        "For right from 0 to n-1:",
-        "  - Add fruits[right] to fruitMap",
-        "  - While fruitMap.size() > 2:",
-        "    - Decrement frequency of fruits[left]",
-        "    - If frequency becomes 0, remove from map",
-        "    - Increment left",
-        "  - Update maxFruits = max(maxFruits, right - left + 1)",
+        "Initialize maxFruits = 0",
+        "For i from 0 to n-1:",
+        "  fruitTypes = set()",
+        "  For j from i to n-1:",
+        "    fruitTypes.add(fruits[j])",
+        "    If fruitTypes.size() <= 2:",
+        "      maxFruits = max(maxFruits, j - i + 1)",
+        "    Else:",
+        "      Break",
         "Return maxFruits"
       ],
       "complexity": {
-        "time": "O(n)",
+        "time": "O(n²)",
         "space": "O(1)",
-        "timeExplanation": "Each fruit visited at most twice (once by right, once by left): O(2n) = O(n).",
-        "spaceExplanation": "HashMap stores at most 3 fruit types at any time: O(1) constant space."
+        "timeExplanation": "Nested loops try all subarrays",
+        "spaceExplanation": "Set stores at most 3 elements"
       },
       "code": {
-        "cpp": "class Solution {\npublic:\n    int totalFruit(vector<int>& fruits) {\n        int n = fruits.size();\n        int left = 0;\n        int maxFruits = 0;\n        unordered_map<int, int> fruitMap;\n        \n        for (int right = 0; right < n; right++) {\n            fruitMap[fruits[right]]++;\n            \n            while (fruitMap.size() > 2) {\n                fruitMap[fruits[left]]--;\n                if (fruitMap[fruits[left]] == 0) {\n                    fruitMap.erase(fruits[left]);\n                }\n                left++;\n            }\n            \n            maxFruits = max(maxFruits, right - left + 1);\n        }\n        \n        return maxFruits;\n    }\n};",
-        "java": "class Solution {\n    public int totalFruit(int[] fruits) {\n        int n = fruits.length;\n        int left = 0;\n        int maxFruits = 0;\n        Map<Integer, Integer> fruitMap = new HashMap<>();\n        \n        for (int right = 0; right < n; right++) {\n            fruitMap.put(fruits[right], fruitMap.getOrDefault(fruits[right], 0) + 1);\n            \n            while (fruitMap.size() > 2) {\n                fruitMap.put(fruits[left], fruitMap.get(fruits[left]) - 1);\n                if (fruitMap.get(fruits[left]) == 0) {\n                    fruitMap.remove(fruits[left]);\n                }\n                left++;\n            }\n            \n            maxFruits = Math.max(maxFruits, right - left + 1);\n        }\n        \n        return maxFruits;\n    }\n}",
-        "python": "class Solution:\n    def totalFruit(self, fruits: List[int]) -> int:\n        n = len(fruits)\n        left = 0\n        max_fruits = 0\n        fruit_map = {}\n        \n        for right in range(n):\n            fruit_map[fruits[right]] = fruit_map.get(fruits[right], 0) + 1\n            \n            while len(fruit_map) > 2:\n                fruit_map[fruits[left]] -= 1\n                if fruit_map[fruits[left]] == 0:\n                    del fruit_map[fruits[left]]\n                left += 1\n            \n            max_fruits = max(max_fruits, right - left + 1)\n        \n        return max_fruits",
-        "javascript": "function totalFruit(fruits) {\n    const n = fruits.length;\n    let left = 0;\n    let maxFruits = 0;\n    const fruitMap = new Map();\n    \n    for (let right = 0; right < n; right++) {\n        fruitMap.set(fruits[right], (fruitMap.get(fruits[right]) || 0) + 1);\n        \n        while (fruitMap.size > 2) {\n            fruitMap.set(fruits[left], fruitMap.get(fruits[left]) - 1);\n            if (fruitMap.get(fruits[left]) === 0) {\n                fruitMap.delete(fruits[left]);\n            }\n            left++;\n        }\n        \n        maxFruits = Math.max(maxFruits, right - left + 1);\n    }\n    \n    return maxFruits;\n}"
+        "cpp": "class Solution {\npublic:\n    int totalFruit(vector<int>& fruits) {\n        int n = fruits.size();\n        int maxFruits = 0;\n        \n        for (int i = 0; i < n; i++) {\n            unordered_set<int> fruitTypes;\n            for (int j = i; j < n; j++) {\n                fruitTypes.insert(fruits[j]);\n                if (fruitTypes.size() <= 2) {\n                    maxFruits = max(maxFruits, j - i + 1);\n                } else {\n                    break;\n                }\n            }\n        }\n        \n        return maxFruits;\n    }\n};",
+        "java": "class Solution {\n    public int totalFruit(int[] fruits) {\n        int n = fruits.length;\n        int maxFruits = 0;\n        \n        for (int i = 0; i < n; i++) {\n            Set<Integer> fruitTypes = new HashSet<>();\n            for (int j = i; j < n; j++) {\n                fruitTypes.add(fruits[j]);\n                if (fruitTypes.size() <= 2) {\n                    maxFruits = Math.max(maxFruits, j - i + 1);\n                } else {\n                    break;\n                }\n            }\n        }\n        \n        return maxFruits;\n    }\n}",
+        "python": "class Solution:\n    def totalFruit(self, fruits: List[int]) -> int:\n        n = len(fruits)\n        max_fruits = 0\n        \n        for i in range(n):\n            fruit_types = set()\n            for j in range(i, n):\n                fruit_types.add(fruits[j])\n                if len(fruit_types) <= 2:\n                    max_fruits = max(max_fruits, j - i + 1)\n                else:\n                    break\n        \n        return max_fruits",
+        "javascript": "var totalFruit = function(fruits) {\n    const n = fruits.length;\n    let maxFruits = 0;\n    \n    for (let i = 0; i < n; i++) {\n        const fruitTypes = new Set();\n        for (let j = i; j < n; j++) {\n            fruitTypes.add(fruits[j]);\n            if (fruitTypes.size <= 2) {\n                maxFruits = Math.max(maxFruits, j - i + 1);\n            } else {\n                break;\n            }\n        }\n    }\n    \n    return maxFruits;\n};"
       }
     },
     {
-      "name": "Optimized Two Pointers",
+      "name": "Variable Sliding Window + HashMap - Optimal",
       "order": 2,
-      "intuition": "Alternative approach: instead of while loop, use if condition and move left to position that gives exactly 2 types. More optimized in practice but same O(n) complexity.",
-      "approach": "Track last index of each fruit type. When 3rd type appears, move left to position after first fruit type's last occurrence.",
+      "intuition": "This is exactly 'Longest Substring with At Most K Distinct Characters' where K=2. Use sliding window with HashMap.",
+      "approach": "Expand window with right pointer. When distinct types > 2, shrink from left. Track maximum length.",
       "steps": [
-        "Initialize left = 0, maxFruits = 0",
-        "Initialize lastSeen map for tracking indices",
+        "Initialize left = 0, maxFruits = 0, fruitCount = {}",
         "For right from 0 to n-1:",
-        "  - Update lastSeen[fruits[right]] = right",
-        "  - If lastSeen.size() > 2:",
-        "    - Find minimum lastSeen index",
-        "    - Remove that fruit from lastSeen",
-        "    - Update left to minIndex + 1",
-        "  - Update maxFruits = max(maxFruits, right - left + 1)",
+        "  fruitCount[fruits[right]]++",
+        "  While fruitCount.size() > 2:",
+        "    fruitCount[fruits[left]]--",
+        "    If fruitCount[fruits[left]] == 0:",
+        "      Remove fruits[left] from map",
+        "    left++",
+        "  maxFruits = max(maxFruits, right - left + 1)",
         "Return maxFruits"
       ],
       "complexity": {
         "time": "O(n)",
         "space": "O(1)",
-        "timeExplanation": "Single pass through array. Finding min in map of size 3 is O(1): total O(n).",
-        "spaceExplanation": "Map stores at most 3 fruit types: O(1) constant space."
+        "timeExplanation": "Each element visited at most twice by right and left pointers",
+        "spaceExplanation": "HashMap stores at most 3 fruit types"
       },
       "code": {
-        "cpp": "class Solution {\npublic:\n    int totalFruit(vector<int>& fruits) {\n        int n = fruits.size();\n        int left = 0;\n        int maxFruits = 0;\n        unordered_map<int, int> lastSeen;\n        \n        for (int right = 0; right < n; right++) {\n            lastSeen[fruits[right]] = right;\n            \n            if (lastSeen.size() > 2) {\n                int minIndex = n;\n                for (auto& [fruit, index] : lastSeen) {\n                    minIndex = min(minIndex, index);\n                }\n                \n                lastSeen.erase(fruits[minIndex]);\n                left = minIndex + 1;\n            }\n            \n            maxFruits = max(maxFruits, right - left + 1);\n        }\n        \n        return maxFruits;\n    }\n};",
-        "java": "class Solution {\n    public int totalFruit(int[] fruits) {\n        int n = fruits.length;\n        int left = 0;\n        int maxFruits = 0;\n        Map<Integer, Integer> lastSeen = new HashMap<>();\n        \n        for (int right = 0; right < n; right++) {\n            lastSeen.put(fruits[right], right);\n            \n            if (lastSeen.size() > 2) {\n                int minIndex = n;\n                for (int index : lastSeen.values()) {\n                    minIndex = Math.min(minIndex, index);\n                }\n                \n                lastSeen.remove(fruits[minIndex]);\n                left = minIndex + 1;\n            }\n            \n            maxFruits = Math.max(maxFruits, right - left + 1);\n        }\n        \n        return maxFruits;\n    }\n}",
-        "python": "class Solution:\n    def totalFruit(self, fruits: List[int]) -> int:\n        n = len(fruits)\n        left = 0\n        max_fruits = 0\n        last_seen = {}\n        \n        for right in range(n):\n            last_seen[fruits[right]] = right\n            \n            if len(last_seen) > 2:\n                min_index = min(last_seen.values())\n                del last_seen[fruits[min_index]]\n                left = min_index + 1\n            \n            max_fruits = max(max_fruits, right - left + 1)\n        \n        return max_fruits",
-        "javascript": "function totalFruit(fruits) {\n    const n = fruits.length;\n    let left = 0;\n    let maxFruits = 0;\n    const lastSeen = new Map();\n    \n    for (let right = 0; right < n; right++) {\n        lastSeen.set(fruits[right], right);\n        \n        if (lastSeen.size > 2) {\n            let minIndex = n;\n            for (const index of lastSeen.values()) {\n                minIndex = Math.min(minIndex, index);\n            }\n            \n            lastSeen.delete(fruits[minIndex]);\n            left = minIndex + 1;\n        }\n        \n        maxFruits = Math.max(maxFruits, right - left + 1);\n    }\n    \n    return maxFruits;\n}"
+        "cpp": "class Solution {\npublic:\n    int totalFruit(vector<int>& fruits) {\n        int n = fruits.size();\n        int left = 0;\n        int maxFruits = 0;\n        unordered_map<int, int> fruitCount;\n        \n        for (int right = 0; right < n; right++) {\n            fruitCount[fruits[right]]++;\n            \n            while (fruitCount.size() > 2) {\n                fruitCount[fruits[left]]--;\n                if (fruitCount[fruits[left]] == 0) {\n                    fruitCount.erase(fruits[left]);\n                }\n                left++;\n            }\n            \n            maxFruits = max(maxFruits, right - left + 1);\n        }\n        \n        return maxFruits;\n    }\n};",
+        "java": "class Solution {\n    public int totalFruit(int[] fruits) {\n        int n = fruits.length;\n        int left = 0;\n        int maxFruits = 0;\n        Map<Integer, Integer> fruitCount = new HashMap<>();\n        \n        for (int right = 0; right < n; right++) {\n            fruitCount.put(fruits[right], fruitCount.getOrDefault(fruits[right], 0) + 1);\n            \n            while (fruitCount.size() > 2) {\n                fruitCount.put(fruits[left], fruitCount.get(fruits[left]) - 1);\n                if (fruitCount.get(fruits[left]) == 0) {\n                    fruitCount.remove(fruits[left]);\n                }\n                left++;\n            }\n            \n            maxFruits = Math.max(maxFruits, right - left + 1);\n        }\n        \n        return maxFruits;\n    }\n}",
+        "python": "class Solution:\n    def totalFruit(self, fruits: List[int]) -> int:\n        n = len(fruits)\n        left = 0\n        max_fruits = 0\n        fruit_count = {}\n        \n        for right in range(n):\n            fruit_count[fruits[right]] = fruit_count.get(fruits[right], 0) + 1\n            \n            while len(fruit_count) > 2:\n                fruit_count[fruits[left]] -= 1\n                if fruit_count[fruits[left]] == 0:\n                    del fruit_count[fruits[left]]\n                left += 1\n            \n            max_fruits = max(max_fruits, right - left + 1)\n        \n        return max_fruits",
+        "javascript": "var totalFruit = function(fruits) {\n    const n = fruits.length;\n    let left = 0;\n    let maxFruits = 0;\n    const fruitCount = new Map();\n    \n    for (let right = 0; right < n; right++) {\n        fruitCount.set(fruits[right], (fruitCount.get(fruits[right]) || 0) + 1);\n        \n        while (fruitCount.size > 2) {\n            fruitCount.set(fruits[left], fruitCount.get(fruits[left]) - 1);\n            if (fruitCount.get(fruits[left]) === 0) {\n                fruitCount.delete(fruits[left]);\n            }\n            left++;\n        }\n        \n        maxFruits = Math.max(maxFruits, right - left + 1);\n    }\n    \n    return maxFruits;\n};"
       }
     }
   ],
   "commonMistakes": [
-    "Not recognizing this is 'k=2 distinct elements' problem",
-    "Removing wrong fruit when shrinking window",
-    "Not handling single fruit type edge case",
-    "Using set instead of map (loses frequency tracking)",
-    "Wrong window size calculation",
-    "Not removing fruit from map when frequency is 0",
-    "Checking fruitMap.size() >= 2 instead of > 2",
-    "Forgetting to update maxFruits every iteration"
+    "Not recognizing this is 'At Most K Distinct' with K=2",
+    "Not removing fruit type from map when count becomes 0",
+    "Using if instead of while for shrinking",
+    "Not updating max length continuously"
   ],
   "hints": [
-    "This is longest subarray with at most 2 distinct elements",
-    "Same as 'Longest Substring with K Distinct' where k=2",
-    "HashMap tracks fruit types and frequencies",
-    "Shrink window when types exceed 2",
-    "Each tree visited at most twice",
-    "Alternative: track last seen index of each fruit",
-    "Window size = right - left + 1 gives fruits collected",
-    "Space complexity O(1) since at most 3 fruit types"
+    "This is identical to 'Longest Substring with At Most 2 Distinct Characters'",
+    "Use HashMap to track fruit type counts",
+    "Shrink window when you have more than 2 types",
+    "Remove type from map only when count = 0"
   ],
   "followUp": [
-    "What if you can carry k baskets instead of 2?",
-    "Can you find minimum fruits needed to have 2 types?",
-    "What about circular array of trees?",
-    "How to handle if fruits have weights?",
-    "What if some trees have no fruits?",
-    "Can you count all valid collection sequences?",
-    "How to optimize for very long tree rows?",
-    "What if you can skip at most m trees?"
+    "What if you have K baskets instead of 2?",
+    "Find minimum fruits collected with 2 types?",
+    "Count all subarrays with at most 2 types?"
   ],
-  "companies": [
-    "Amazon",
-    "Google",
-    "Facebook",
-    "Microsoft",
-    "Apple",
-    "Bloomberg",
-    "Uber",
-    "LinkedIn"
-  ],
-  "tags": [
-    "Sliding Window",
-    "HashMap",
-    "Array",
-    "Two Pointers",
-    "Variable Window"
-  ],
+  "companies": ["Amazon", "Google", "Bloomberg"],
+  "tags": ["array", "sliding-window", "hash-map"],
   "relatedProblems": [
     "Longest Substring with At Most K Distinct Characters",
-    "Longest Substring with At Most Two Distinct Characters",
-    "Max Consecutive Ones III",
-    "Longest Repeating Character Replacement",
-    "Subarrays with K Different Integers",
-    "Longest Substring Without Repeating Characters",
-    "Minimum Window Substring",
-    "Count Number of Nice Subarrays"
+    "Longest Substring Without Repeating Characters"
   ]
 }

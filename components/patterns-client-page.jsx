@@ -18,7 +18,7 @@ import {
   CheckCircle2,
   Circle,
   Code,
-  FileText,    
+  FileText,
   ArrowRight,
 } from "lucide-react";
 import DifficultyFilter from "./filters/difficulty-filter";
@@ -143,19 +143,33 @@ export default function PatternsClientPage({
   }, [allQuestions]);
 
   const filteredPatterns = useMemo(() => {
-    if (
-      !filters.difficulty &&
-      !filters.search &&
-      !filters.company &&
-      !filters.tag
-    ) {
+    // Check if any meaningful filters are applied
+    const hasFilters =
+      (filters.difficulty && filters.difficulty !== "All") ||
+      (filters.search && filters.search.trim() !== "") ||
+      (filters.company && filters.company !== "All") ||
+      (filters.tag && filters.tag !== "All");
+
+    // If no filters, return all sorted patterns
+    if (!hasFilters) {
       return sortedPatterns;
     }
 
+    // Apply filters
     return sortedPatterns.filter((pattern) => {
       const patternQuestions = allQuestions.filter(
-        (q) => q.patternSlug === pattern.slug
-      );
+  (q) => q.pattern_id === pattern.slug
+);
+
+      // If no questions exist for this pattern yet, still show it if it matches search
+      if (patternQuestions.length === 0) {
+        if (filters.search) {
+          const searchLower = filters.search.toLowerCase();
+          return pattern.name.toLowerCase().includes(searchLower);
+        }
+        return true; // Show pattern even if no questions
+      }
+
       const matchingQuestions = patternQuestions.filter((q) => {
         if (filters.difficulty && filters.difficulty !== "All") {
           if (q.difficulty !== filters.difficulty) return false;
@@ -261,50 +275,50 @@ export default function PatternsClientPage({
 
   return (
     <main className="container px-4 py-8 max-w-7xl mx-auto">
-
-         <Card className="mb-8 overflow-hidden border-2 border-blue-200 dark:border-blue-800">
-    <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-1">
-      <div className="bg-background p-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 text-white">
-              <BookOpen className="h-8 w-8" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                📚 New to DSA Patterns? Start Here!
-              </h3>
-              <p className="text-muted-foreground text-sm mb-2">
-                Check out our complete <strong>12-week study guide</strong> with 300 curated problems,
-                learning tips, and company-specific prep strategies.
-              </p>
-              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3 text-green-600" />
-                  30 Core Patterns
-                </span>
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3 text-green-600" />
-                  Study Schedule
-                </span>
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3 text-green-600" />
-                  FAANG Tips
-                </span>
+      <Card className="mb-8 overflow-hidden border-2 border-blue-200 dark:border-blue-800">
+        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-1">
+          <div className="bg-background p-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+                  <BookOpen className="h-8 w-8" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    📚 New to DSA Patterns? Start Here!
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-2">
+                    Check out our complete <strong>6 month study guide</strong>{" "}
+                    with 300 curated problems, learning tips, and
+                    company-specific prep strategies.
+                  </p>
+                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3 text-green-600" />
+                      30 Core Patterns
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3 text-green-600" />
+                      Study Schedule
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3 text-green-600" />
+                      FAANG Tips
+                    </span>
+                  </div>
+                </div>
               </div>
+              <Link href="/syllabus">
+                <Button className="shrink-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 group">
+                  <FileText className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                  View Complete Syllabus
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </div>
-          <Link href="/syllabus">
-            <Button className="shrink-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 group">
-              <FileText className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-              View Complete Syllabus
-              <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
         </div>
-      </div>
-    </div>
-  </Card>
+      </Card>
 
       <div className="mb-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
         <Card className="lg:col-span-1 p-6 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
@@ -505,8 +519,8 @@ export default function PatternsClientPage({
                 <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                   {filteredPatterns.map((pattern) => {
                     const patternQuestions = allQuestions.filter(
-                      (q) => q.patternSlug === pattern.slug
-                    );
+  (q) => q.pattern_id === pattern.slug
+);
                     const completedCount = patternQuestions.filter((q) =>
                       userProgress?.completed?.includes(q._id)
                     ).length;
@@ -573,18 +587,18 @@ export default function PatternsClientPage({
                               {pattern.description}
                             </p>
 
-                            {pattern.complexity && (
+                            {pattern.time_complexity && (
                               <div className="pt-3 border-t border-muted flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-1.5">
                                   <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                                   <code className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-foreground font-mono font-semibold">
-                                    {pattern.complexity.time}
+                                    {pattern.time_complexity}
                                   </code>
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                   <Database className="h-3.5 w-3.5 text-muted-foreground" />
                                   <code className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-foreground font-mono font-semibold">
-                                    {pattern.complexity.space}
+                                    {pattern.space_complexity}
                                   </code>
                                 </div>
                               </div>
@@ -601,8 +615,8 @@ export default function PatternsClientPage({
                 <div className="space-y-4 max-w-6xl mx-auto">
                   {filteredPatterns.map((pattern) => {
                     const patternQuestions = allQuestions.filter(
-                      (q) => q.patternSlug === pattern.slug
-                    );
+  (q) => q.pattern_id === pattern.slug
+);
                     const completedCount = patternQuestions.filter((q) =>
                       userProgress?.completed?.includes(q._id)
                     ).length;
@@ -639,20 +653,20 @@ export default function PatternsClientPage({
                               <p className="text-sm text-muted-foreground line-clamp-1 mb-3">
                                 {pattern.description}
                               </p>
-                              {pattern.complexity && (
+                              {pattern.time_complexity && (
                                 <div className="flex items-center gap-6 text-xs text-muted-foreground">
                                   <span className="flex items-center gap-2">
                                     <Clock className="h-4 w-4" />
                                     <span className="font-medium">Time:</span>
                                     <code className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-mono font-semibold">
-                                      {pattern.complexity.time}
+                                      {pattern.time_complexity}
                                     </code>
                                   </span>
                                   <span className="flex items-center gap-2">
                                     <Database className="h-4 w-4" />
                                     <span className="font-medium">Space:</span>
                                     <code className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-mono font-semibold">
-                                      {pattern.complexity.space}
+                                      {pattern.space_complexity}
                                     </code>
                                   </span>
                                 </div>
@@ -732,7 +746,7 @@ export default function PatternsClientPage({
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <Link href={`/questions/${question._id}`}>
+                            <Link href={`/patterns/${patternSlug}/questions/${question.slug}`}>
                               <h3 className="text-base font-bold hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 hover:bg-clip-text transition-all duration-300 mb-2 line-clamp-2">
                                 {question.title}
                               </h3>
@@ -777,7 +791,7 @@ export default function PatternsClientPage({
                             )}
 
                             <div className="flex gap-2">
-                              <Link href={`/questions/${question._id}`}>
+                              <Link href={`/patterns/${patternSlug}/questions/${question.slug}`}>
                                 <Button
                                   size="sm"
                                   className="h-9 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all"
@@ -843,7 +857,7 @@ export default function PatternsClientPage({
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-2">
-                              <Link href={`/questions/${question._id}`}>
+                              <Link href={`/patterns/${patternSlug}/questions/${question.slug}`}>
                                 <h3 className="text-lg font-bold hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 hover:bg-clip-text transition-all duration-300">
                                   {question.title}
                                 </h3>
@@ -887,7 +901,7 @@ export default function PatternsClientPage({
                           </div>
 
                           <div className="flex gap-3 shrink-0">
-                            <Link href={`/questions/${question._id}`}>
+                            <Link href={`/patterns/${patternSlug}/questions/${question.slug}`}>
                               <Button
                                 size="sm"
                                 className="h-9 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all"

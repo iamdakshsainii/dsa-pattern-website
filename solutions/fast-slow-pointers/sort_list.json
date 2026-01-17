@@ -1,0 +1,96 @@
+{
+  "questionId": "148",
+  "questionSlug": "sort-list",
+  "title": "Sort List",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/sort-list/",
+    "videos": [
+      {
+        "title": "Sort List - Merge Sort on Linked List",
+        "url": "https://www.youtube.com/watch?v=pNTc1bM1z-4",
+        "channel": "takeUforward",
+        "duration": "18:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Sort linked list in O(n log n) = Merge Sort. Use fast & slow pointers to find middle, split list, recursively sort, merge sorted halves.",
+  "approaches": [
+    {
+      "name": "Convert to Array and Sort",
+      "order": 1,
+      "intuition": "Convert linked list to array, sort array using standard sorting, rebuild linked list from sorted array.",
+      "approach": "Extract values to array, sort, create new sorted linked list.",
+      "steps": [
+        "Traverse list and store values in array",
+        "Sort array using built-in sort",
+        "Create new linked list from sorted array",
+        "Return new head"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Array sorting takes O(n log n)",
+        "spaceExplanation": "Array to store n elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* sortList(ListNode* head) {\n        if (!head) return nullptr;\n        \n        vector<int> values;\n        ListNode* temp = head;\n        \n        while (temp) {\n            values.push_back(temp->val);\n            temp = temp->next;\n        }\n        \n        sort(values.begin(), values.end());\n        \n        ListNode* dummy = new ListNode(0);\n        temp = dummy;\n        \n        for (int val : values) {\n            temp->next = new ListNode(val);\n            temp = temp->next;\n        }\n        \n        return dummy->next;\n    }\n};",
+        "java": "class Solution {\n    public ListNode sortList(ListNode head) {\n        if (head == null) return null;\n        \n        List<Integer> values = new ArrayList<>();\n        ListNode temp = head;\n        \n        while (temp != null) {\n            values.add(temp.val);\n            temp = temp.next;\n        }\n        \n        Collections.sort(values);\n        \n        ListNode dummy = new ListNode(0);\n        temp = dummy;\n        \n        for (int val : values) {\n            temp.next = new ListNode(val);\n            temp = temp.next;\n        }\n        \n        return dummy.next;\n    }\n}",
+        "python": "class Solution:\n    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        if not head:\n            return None\n        \n        values = []\n        temp = head\n        \n        while temp:\n            values.append(temp.val)\n            temp = temp.next\n        \n        values.sort()\n        \n        dummy = ListNode(0)\n        temp = dummy\n        \n        for val in values:\n            temp.next = ListNode(val)\n            temp = temp.next\n        \n        return dummy.next",
+        "javascript": "var sortList = function(head) {\n    if (!head) return null;\n    \n    const values = [];\n    let temp = head;\n    \n    while (temp) {\n        values.push(temp.val);\n        temp = temp.next;\n    }\n    \n    values.sort((a, b) => a - b);\n    \n    const dummy = new ListNode(0);\n    temp = dummy;\n    \n    for (const val of values) {\n        temp.next = new ListNode(val);\n        temp = temp.next;\n    }\n    \n    return dummy.next;\n};"
+      }
+    },
+    {
+      "name": "Merge Sort (Recursive) - Optimal",
+      "order": 2,
+      "intuition": "Apply merge sort to linked list. Use fast & slow pointers to find middle, split into two halves, recursively sort each half, merge sorted halves.",
+      "approach": "Divide: find middle using fast & slow. Conquer: recursively sort left and right. Combine: merge two sorted lists.",
+      "steps": [
+        "Base case: if list empty or single node, return head",
+        "Find middle using fast & slow pointers",
+        "Split list into two halves at middle",
+        "Recursively sort left half",
+        "Recursively sort right half",
+        "Merge two sorted halves",
+        "Return merged list head"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(log n)",
+        "timeExplanation": "Divide list log n times, merge takes O(n) at each level",
+        "spaceExplanation": "Recursion stack depth is O(log n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    ListNode* sortList(ListNode* head) {\n        if (!head || !head->next) return head;\n        \n        // Find middle using fast & slow pointers\n        ListNode* mid = getMid(head);\n        ListNode* left = head;\n        ListNode* right = mid->next;\n        mid->next = nullptr; // Split the list\n        \n        // Recursively sort both halves\n        left = sortList(left);\n        right = sortList(right);\n        \n        // Merge sorted halves\n        return merge(left, right);\n    }\n    \nprivate:\n    ListNode* getMid(ListNode* head) {\n        ListNode* slow = head;\n        ListNode* fast = head->next;\n        \n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        \n        return slow;\n    }\n    \n    ListNode* merge(ListNode* l1, ListNode* l2) {\n        ListNode dummy(0);\n        ListNode* tail = &dummy;\n        \n        while (l1 && l2) {\n            if (l1->val < l2->val) {\n                tail->next = l1;\n                l1 = l1->next;\n            } else {\n                tail->next = l2;\n                l2 = l2->next;\n            }\n            tail = tail->next;\n        }\n        \n        tail->next = l1 ? l1 : l2;\n        return dummy.next;\n    }\n};",
+        "java": "class Solution {\n    public ListNode sortList(ListNode head) {\n        if (head == null || head.next == null) return head;\n        \n        ListNode mid = getMid(head);\n        ListNode left = head;\n        ListNode right = mid.next;\n        mid.next = null;\n        \n        left = sortList(left);\n        right = sortList(right);\n        \n        return merge(left, right);\n    }\n    \n    private ListNode getMid(ListNode head) {\n        ListNode slow = head;\n        ListNode fast = head.next;\n        \n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n        }\n        \n        return slow;\n    }\n    \n    private ListNode merge(ListNode l1, ListNode l2) {\n        ListNode dummy = new ListNode(0);\n        ListNode tail = dummy;\n        \n        while (l1 != null && l2 != null) {\n            if (l1.val < l2.val) {\n                tail.next = l1;\n                l1 = l1.next;\n            } else {\n                tail.next = l2;\n                l2 = l2.next;\n            }\n            tail = tail.next;\n        }\n        \n        tail.next = (l1 != null) ? l1 : l2;\n        return dummy.next;\n    }\n}",
+        "python": "class Solution:\n    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        if not head or not head.next:\n            return head\n        \n        # Find middle\n        mid = self.getMid(head)\n        left = head\n        right = mid.next\n        mid.next = None\n        \n        # Recursively sort\n        left = self.sortList(left)\n        right = self.sortList(right)\n        \n        # Merge\n        return self.merge(left, right)\n    \n    def getMid(self, head):\n        slow = head\n        fast = head.next\n        \n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n        \n        return slow\n    \n    def merge(self, l1, l2):\n        dummy = ListNode(0)\n        tail = dummy\n        \n        while l1 and l2:\n            if l1.val < l2.val:\n                tail.next = l1\n                l1 = l1.next\n            else:\n                tail.next = l2\n                l2 = l2.next\n            tail = tail.next\n        \n        tail.next = l1 if l1 else l2\n        return dummy.next",
+        "javascript": "var sortList = function(head) {\n    if (!head || !head.next) return head;\n    \n    const mid = getMid(head);\n    const left = head;\n    const right = mid.next;\n    mid.next = null;\n    \n    return merge(sortList(left), sortList(right));\n};\n\nfunction getMid(head) {\n    let slow = head;\n    let fast = head.next;\n    \n    while (fast && fast.next) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    \n    return slow;\n}\n\nfunction merge(l1, l2) {\n    const dummy = new ListNode(0);\n    let tail = dummy;\n    \n    while (l1 && l2) {\n        if (l1.val < l2.val) {\n            tail.next = l1;\n            l1 = l1.next;\n        } else {\n            tail.next = l2;\n            l2 = l2.next;\n        }\n        tail = tail.next;\n    }\n    \n    tail.next = l1 || l2;\n    return dummy.next;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not splitting the list properly (forgetting mid.next = null)",
+    "Starting fast pointer at head instead of head.next (causes incorrect middle)",
+    "Not handling single node base case",
+    "Forgetting to return merged list in merge function"
+  ],
+  "hints": [
+    "Use merge sort - most efficient for linked lists",
+    "Fast & slow pointers to find middle (fast starts at head.next)",
+    "Split list at middle, sort recursively, merge",
+    "Merge two sorted lists is a standard operation"
+  ],
+  "followUp": [
+    "Sort list with O(1) space complexity?",
+    "Sort list in descending order?",
+    "What if list contains duplicate values?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook"],
+  "tags": ["linked-list", "fast-slow-pointers", "merge-sort", "divide-and-conquer"],
+  "relatedProblems": [
+    "Merge Two Sorted Lists",
+    "Sort Colors",
+    "Insertion Sort List"
+  ]
+}

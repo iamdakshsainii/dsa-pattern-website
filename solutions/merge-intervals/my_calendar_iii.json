@@ -1,0 +1,127 @@
+{
+  "questionId": "732",
+  "questionSlug": "my-calendar-iii",
+  "title": "My Calendar III",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/my-calendar-iii/",
+    "videos": [
+      {
+        "title": "My Calendar III - Sweep Line",
+        "url": "https://www.youtube.com/watch?v=VW1YHA535rU",
+        "channel": "NeetCode",
+        "duration": "12:30",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Find maximum k-booking at any time = Sweep line with events, track running count of active bookings.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Time Points",
+      "order": 1,
+      "intuition": "For every unique time point, count how many intervals are active at that time.",
+      "approach": "Collect all time boundaries, check overlap count at each boundary.",
+      "steps": [
+        "Store all bookings",
+        "For book() call:",
+        "  Add new booking",
+        "  Collect all start and end times",
+        "  For each time point:",
+        "    Count active intervals",
+        "  Return maximum count"
+      ],
+      "complexity": {
+        "time": "O(n²) per book",
+        "space": "O(n)",
+        "timeExplanation": "For each time point, check all intervals",
+        "spaceExplanation": "Store all bookings and time points"
+      },
+      "code": {
+        "cpp": "class MyCalendarThree {\nprivate:\n    vector<pair<int, int>> bookings;\n    \npublic:\n    MyCalendarThree() {}\n    \n    int book(int start, int end) {\n        bookings.push_back({start, end});\n        \n        // Collect all time boundaries\n        set<int> times;\n        for (auto& [s, e] : bookings) {\n            times.insert(s);\n            times.insert(e);\n        }\n        \n        int maxK = 0;\n        \n        // Check each time point\n        for (int time : times) {\n            int count = 0;\n            for (auto& [s, e] : bookings) {\n                if (s <= time && time < e) {\n                    count++;\n                }\n            }\n            maxK = max(maxK, count);\n        }\n        \n        return maxK;\n    }\n};",
+        "java": "class MyCalendarThree {\n    private List<int[]> bookings;\n    \n    public MyCalendarThree() {\n        bookings = new ArrayList<>();\n    }\n    \n    public int book(int start, int end) {\n        bookings.add(new int[]{start, end});\n        \n        // Collect all time boundaries\n        Set<Integer> times = new TreeSet<>();\n        for (int[] booking : bookings) {\n            times.add(booking[0]);\n            times.add(booking[1]);\n        }\n        \n        int maxK = 0;\n        \n        // Check each time point\n        for (int time : times) {\n            int count = 0;\n            for (int[] booking : bookings) {\n                if (booking[0] <= time && time < booking[1]) {\n                    count++;\n                }\n            }\n            maxK = Math.max(maxK, count);\n        }\n        \n        return maxK;\n    }\n}",
+        "python": "class MyCalendarThree:\n    def __init__(self):\n        self.bookings = []\n    \n    def book(self, start: int, end: int) -> int:\n        self.bookings.append((start, end))\n        \n        # Collect all time boundaries\n        times = set()\n        for s, e in self.bookings:\n            times.add(s)\n            times.add(e)\n        \n        max_k = 0\n        \n        # Check each time point\n        for time in sorted(times):\n            count = 0\n            for s, e in self.bookings:\n                if s <= time < e:\n                    count += 1\n            max_k = max(max_k, count)\n        \n        return max_k",
+        "javascript": "class MyCalendarThree {\n    constructor() {\n        this.bookings = [];\n    }\n    \n    book(start, end) {\n        this.bookings.push([start, end]);\n        \n        // Collect all time boundaries\n        const times = new Set();\n        for (const [s, e] of this.bookings) {\n            times.add(s);\n            times.add(e);\n        }\n        \n        let maxK = 0;\n        \n        // Check each time point\n        for (const time of Array.from(times).sort((a, b) => a - b)) {\n            let count = 0;\n            for (const [s, e] of this.bookings) {\n                if (s <= time && time < e) {\n                    count++;\n                }\n            }\n            maxK = Math.max(maxK, count);\n        }\n        \n        return maxK;\n    }\n}"
+      }
+    },
+    {
+      "name": "TreeMap/Ordered Map with Sweep Line - Optimal",
+      "order": 2,
+      "intuition": "Use sweep line technique with events. Increment at start, decrement at end. Track maximum active count.",
+      "approach": "Maintain ordered map of time -> delta. Each book updates map. Sweep to find max.",
+      "steps": [
+        "Use TreeMap: time -> count_delta",
+        "For each booking:",
+        "  Increment count at start time",
+        "  Decrement count at end time",
+        "Sweep through sorted times:",
+        "  Maintain running sum (active bookings)",
+        "  Track maximum",
+        "Return maximum k-booking"
+      ],
+      "complexity": {
+        "time": "O(n²) worst case, O(n log n) amortized",
+        "space": "O(n)",
+        "timeExplanation": "Each book: O(log n) to update map, O(n) to sweep",
+        "spaceExplanation": "Map stores up to 2n entries"
+      },
+      "code": {
+        "cpp": "class MyCalendarThree {\nprivate:\n    map<int, int> timeline; // time -> count delta\n    \npublic:\n    MyCalendarThree() {}\n    \n    int book(int start, int end) {\n        timeline[start]++;\n        timeline[end]--;\n        \n        int active = 0;\n        int maxK = 0;\n        \n        for (auto& [time, delta] : timeline) {\n            active += delta;\n            maxK = max(maxK, active);\n        }\n        \n        return maxK;\n    }\n};",
+        "java": "class MyCalendarThree {\n    private TreeMap<Integer, Integer> timeline;\n    \n    public MyCalendarThree() {\n        timeline = new TreeMap<>();\n    }\n    \n    public int book(int start, int end) {\n        timeline.put(start, timeline.getOrDefault(start, 0) + 1);\n        timeline.put(end, timeline.getOrDefault(end, 0) - 1);\n        \n        int active = 0;\n        int maxK = 0;\n        \n        for (int delta : timeline.values()) {\n            active += delta;\n            maxK = Math.max(maxK, active);\n        }\n        \n        return maxK;\n    }\n}",
+        "python": "from sortedcontainers import SortedDict\n\nclass MyCalendarThree:\n    def __init__(self):\n        self.timeline = SortedDict()  # time -> count delta\n    \n    def book(self, start: int, end: int) -> int:\n        self.timeline[start] = self.timeline.get(start, 0) + 1\n        self.timeline[end] = self.timeline.get(end, 0) - 1\n        \n        active = 0\n        max_k = 0\n        \n        for time in self.timeline:\n            active += self.timeline[time]\n            max_k = max(max_k, active)\n        \n        return max_k",
+        "javascript": "class MyCalendarThree {\n    constructor() {\n        this.timeline = new Map(); // time -> count delta\n    }\n    \n    book(start, end) {\n        this.timeline.set(start, (this.timeline.get(start) || 0) + 1);\n        this.timeline.set(end, (this.timeline.get(end) || 0) - 1);\n        \n        // Sort times and sweep\n        const times = Array.from(this.timeline.keys()).sort((a, b) => a - b);\n        \n        let active = 0;\n        let maxK = 0;\n        \n        for (const time of times) {\n            active += this.timeline.get(time);\n            maxK = Math.max(maxK, active);\n        }\n        \n        return maxK;\n    }\n}"
+      }
+    },
+    {
+      "name": "Optimized Sweep Line with Cached Max",
+      "order": 3,
+      "intuition": "Optimize by caching maximum k-booking. Only update when new booking might increase max.",
+      "approach": "Same as approach 2, but cache max_k to avoid full sweep when possible.",
+      "steps": [
+        "Maintain timeline map and cached max_k",
+        "For each booking:",
+        "  Update timeline",
+        "  Only sweep if needed (smart optimization)",
+        "  Update max_k",
+        "Return max_k"
+      ],
+      "complexity": {
+        "time": "O(n log n) amortized",
+        "space": "O(n)",
+        "timeExplanation": "Amortized better with caching",
+        "spaceExplanation": "Map stores events"
+      },
+      "code": {
+        "cpp": "class MyCalendarThree {\nprivate:\n    map<int, int> timeline;\n    int maxK = 0;\n    \npublic:\n    MyCalendarThree() {}\n    \n    int book(int start, int end) {\n        timeline[start]++;\n        timeline[end]--;\n        \n        // Only sweep if new booking might increase max\n        int active = 0;\n        int newMax = 0;\n        \n        for (auto& [time, delta] : timeline) {\n            active += delta;\n            newMax = max(newMax, active);\n            if (time > end) break; // Optimization: no need to check beyond\n        }\n        \n        maxK = max(maxK, newMax);\n        return maxK;\n    }\n};",
+        "java": "class MyCalendarThree {\n    private TreeMap<Integer, Integer> timeline;\n    private int maxK = 0;\n    \n    public MyCalendarThree() {\n        timeline = new TreeMap<>();\n    }\n    \n    public int book(int start, int end) {\n        timeline.put(start, timeline.getOrDefault(start, 0) + 1);\n        timeline.put(end, timeline.getOrDefault(end, 0) - 1);\n        \n        int active = 0;\n        int newMax = 0;\n        \n        for (int delta : timeline.values()) {\n            active += delta;\n            newMax = Math.max(newMax, active);\n        }\n        \n        maxK = Math.max(maxK, newMax);\n        return maxK;\n    }\n}",
+        "python": "from sortedcontainers import SortedDict\n\nclass MyCalendarThree:\n    def __init__(self):\n        self.timeline = SortedDict()\n        self.max_k = 0\n    \n    def book(self, start: int, end: int) -> int:\n        self.timeline[start] = self.timeline.get(start, 0) + 1\n        self.timeline[end] = self.timeline.get(end, 0) - 1\n        \n        active = 0\n        new_max = 0\n        \n        for time in self.timeline:\n            active += self.timeline[time]\n            new_max = max(new_max, active)\n        \n        self.max_k = max(self.max_k, new_max)\n        return self.max_k",
+        "javascript": "class MyCalendarThree {\n    constructor() {\n        this.timeline = new Map();\n        this.maxK = 0;\n    }\n    \n    book(start, end) {\n        this.timeline.set(start, (this.timeline.get(start) || 0) + 1);\n        this.timeline.set(end, (this.timeline.get(end) || 0) - 1);\n        \n        const times = Array.from(this.timeline.keys()).sort((a, b) => a - b);\n        \n        let active = 0;\n        let newMax = 0;\n        \n        for (const time of times) {\n            active += this.timeline.get(time);\n            newMax = Math.max(newMax, active);\n        }\n        \n        this.maxK = Math.max(this.maxK, newMax);\n        return this.maxK;\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not using ordered/sorted map for timeline",
+    "Forgetting to decrement at end time",
+    "Treating intervals as closed on both ends",
+    "Not maintaining running sum correctly in sweep"
+  ],
+  "hints": [
+    "Use sweep line technique with +1 at start, -1 at end",
+    "Ordered map keeps times sorted automatically",
+    "Running sum of deltas gives active bookings at any time",
+    "This is exactly like 'Maximum CPU Load' problem"
+  ],
+  "followUp": [
+    "Can you optimize to avoid sweeping all events on each book?",
+    "How would you handle deletion of bookings?",
+    "Can you use a segment tree for better complexity?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook"],
+  "tags": ["intervals", "design", "ordered-map", "sweep-line"],
+  "relatedProblems": [
+    "My Calendar I",
+    "My Calendar II",
+    "Maximum CPU Load",
+    "Meeting Rooms II"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "questionId": "252",
+  "questionSlug": "meeting-rooms",
+  "title": "Meeting Rooms",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/meeting-rooms/",
+    "videos": [
+      {
+        "title": "Meeting Rooms - Sorting",
+        "url": "https://www.youtube.com/watch?v=PaJxqZVPhbg",
+        "channel": "NeetCode",
+        "duration": "5:45",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Can attend all meetings = No overlapping intervals = Sort by start, check if any interval overlaps with next.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Pairs",
+      "order": 1,
+      "intuition": "Check every pair of meetings to see if any two overlap.",
+      "approach": "Nested loops to find any overlapping pair.",
+      "steps": [
+        "For each meeting i:",
+        "  For each meeting j (j > i):",
+        "    If meetings[i] overlaps with meetings[j]:",
+        "      Return false",
+        "Return true (no overlaps found)"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Check all pairs of meetings",
+        "spaceExplanation": "No extra space needed"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool canAttendMeetings(vector<vector<int>>& intervals) {\n        int n = intervals.size();\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                // Check if intervals[i] and intervals[j] overlap\n                // Two intervals [a,b] and [c,d] overlap if:\n                // max(a,c) < min(b,d)\n                int start = max(intervals[i][0], intervals[j][0]);\n                int end = min(intervals[i][1], intervals[j][1]);\n                \n                if (start < end) {\n                    return false; // Found overlap\n                }\n            }\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean canAttendMeetings(int[][] intervals) {\n        int n = intervals.length;\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                // Check if intervals[i] and intervals[j] overlap\n                int start = Math.max(intervals[i][0], intervals[j][0]);\n                int end = Math.min(intervals[i][1], intervals[j][1]);\n                \n                if (start < end) {\n                    return false; // Found overlap\n                }\n            }\n        }\n        \n        return true;\n    }\n}",
+        "python": "class Solution:\n    def canAttendMeetings(self, intervals: List[List[int]]) -> bool:\n        n = len(intervals)\n        \n        for i in range(n):\n            for j in range(i + 1, n):\n                # Check if intervals[i] and intervals[j] overlap\n                start = max(intervals[i][0], intervals[j][0])\n                end = min(intervals[i][1], intervals[j][1])\n                \n                if start < end:\n                    return False  # Found overlap\n        \n        return True",
+        "javascript": "var canAttendMeetings = function(intervals) {\n    const n = intervals.length;\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            // Check if intervals[i] and intervals[j] overlap\n            const start = Math.max(intervals[i][0], intervals[j][0]);\n            const end = Math.min(intervals[i][1], intervals[j][1]);\n            \n            if (start < end) {\n                return false; // Found overlap\n            }\n        }\n    }\n    \n    return true;\n};"
+      }
+    },
+    {
+      "name": "Sort and Check Adjacent - Optimal",
+      "order": 2,
+      "intuition": "Sort meetings by start time. If sorted, we only need to check if each meeting ends before the next one starts.",
+      "approach": "Sort intervals, then check adjacent pairs for overlaps.",
+      "steps": [
+        "Sort intervals by start time",
+        "For each interval (starting from index 1):",
+        "  If current.start < previous.end:",
+        "    Return false (overlap found)",
+        "Return true (no overlaps)"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(log n)",
+        "timeExplanation": "Sorting dominates the complexity",
+        "spaceExplanation": "Sorting space (or O(1) if in-place)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool canAttendMeetings(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return true;\n        \n        // Sort by start time\n        sort(intervals.begin(), intervals.end());\n        \n        // Check adjacent meetings for overlap\n        for (int i = 1; i < intervals.size(); i++) {\n            // If current meeting starts before previous ends\n            if (intervals[i][0] < intervals[i-1][1]) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean canAttendMeetings(int[][] intervals) {\n        if (intervals.length == 0) return true;\n        \n        // Sort by start time\n        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n        \n        // Check adjacent meetings for overlap\n        for (int i = 1; i < intervals.length; i++) {\n            // If current meeting starts before previous ends\n            if (intervals[i][0] < intervals[i-1][1]) {\n                return false;\n            }\n        }\n        \n        return true;\n    }\n}",
+        "python": "class Solution:\n    def canAttendMeetings(self, intervals: List[List[int]]) -> bool:\n        if not intervals:\n            return True\n        \n        # Sort by start time\n        intervals.sort(key=lambda x: x[0])\n        \n        # Check adjacent meetings for overlap\n        for i in range(1, len(intervals)):\n            # If current meeting starts before previous ends\n            if intervals[i][0] < intervals[i-1][1]:\n                return False\n        \n        return True",
+        "javascript": "var canAttendMeetings = function(intervals) {\n    if (intervals.length === 0) return true;\n    \n    // Sort by start time\n    intervals.sort((a, b) => a[0] - b[0]);\n    \n    // Check adjacent meetings for overlap\n    for (let i = 1; i < intervals.length; i++) {\n        // If current meeting starts before previous ends\n        if (intervals[i][0] < intervals[i - 1][1]) {\n            return false;\n        }\n    }\n    \n    return true;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using <= instead of < for overlap check (meetings ending at same time as next starts is OK)",
+    "Not sorting intervals before checking",
+    "Checking all pairs instead of just adjacent after sorting",
+    "Forgetting edge cases: empty array, single meeting"
+  ],
+  "hints": [
+    "Sorting makes the problem much simpler",
+    "After sorting by start time, only adjacent intervals can overlap",
+    "Two meetings don't overlap if one ends before or when the other starts",
+    "This is the simplest interval problem - foundation for harder ones"
+  ],
+  "followUp": [
+    "What if you need to find the minimum number of rooms needed? (See Meeting Rooms II)",
+    "Can you solve without sorting?",
+    "How to handle if meetings have priorities?"
+  ],
+  "companies": ["Facebook", "Amazon", "Google", "Bloomberg"],
+  "tags": ["intervals", "sorting", "array"],
+  "relatedProblems": [
+    "Meeting Rooms II",
+    "Merge Intervals",
+    "Non-overlapping Intervals"
+  ]
+}

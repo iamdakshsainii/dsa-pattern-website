@@ -1,0 +1,158 @@
+{
+  "questionId": "75",
+  "questionSlug": "sort-colors",
+  "title": "Sort Colors",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/sort-colors/",
+    "videos": [
+      {
+        "title": "Sort Colors - Leetcode 75",
+        "url": "https://www.youtube.com/watch?v=4xbWSRZHqac",
+        "channel": "NeetCode",
+        "duration": "9:13",
+        "language": "English"
+      },
+      {
+        "title": "L12. Sort an array of 0's 1's and 2's",
+        "url": "https://www.youtube.com/watch?v=oaVa-9wmpns",
+        "channel": "take U forward",
+        "duration": "16:40",
+        "language": "English"
+      },
+      {
+        "title": "Sort Colors - Dutch National Flag",
+        "url": "https://www.youtube.com/watch?v=uvB-Ns_TVis",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:25",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sort Colors - LeetCode Solution",
+        "url": "https://leetcode.com/problems/sort-colors/solution/",
+        "source": "LeetCode Official"
+      },
+      {
+        "title": "Sort an array of 0s, 1s and 2s",
+        "url": "https://takeuforward.org/data-structure/sort-an-array-of-0s-1s-and-2s/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/sort-colors/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Three-way partitioning + in-place = Dutch National Flag (Three Pointers). Partition into three sections.",
+  "approaches": [
+    {
+      "name": "Brute Force (Built-in Sort)",
+      "order": 1,
+      "intuition": "Simply use built-in sorting algorithm to sort the array.",
+      "approach": "Apply any sorting algorithm (quicksort, mergesort, etc.) to sort array.",
+      "steps": [
+        "Use built-in sort function",
+        "Array will be sorted with 0s, 1s, 2s in order"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1) or O(log n)",
+        "timeExplanation": "Standard comparison-based sorting",
+        "spaceExplanation": "Depends on sorting algorithm (quicksort O(log n) stack)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void sortColors(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n    }\n};",
+        "java": "class Solution {\n    public void sortColors(int[] nums) {\n        Arrays.sort(nums);\n    }\n}",
+        "python": "class Solution:\n    def sortColors(self, nums: List[int]) -> None:\n        nums.sort()",
+        "javascript": "var sortColors = function(nums) {\n    nums.sort((a, b) => a - b);\n};"
+      }
+    },
+    {
+      "name": "Better (Counting Sort)",
+      "order": 2,
+      "intuition": "Count occurrences of 0, 1, 2, then overwrite array with counted values.",
+      "approach": "Two-pass: first count each value, then fill array based on counts.",
+      "steps": [
+        "Initialize count0 = 0, count1 = 0, count2 = 0",
+        "First pass: count occurrences of each value",
+        "Second pass: fill array:",
+        "  Fill first count0 positions with 0",
+        "  Fill next count1 positions with 1",
+        "  Fill remaining positions with 2"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through array",
+        "spaceExplanation": "Only three counter variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void sortColors(vector<int>& nums) {\n        int count0 = 0, count1 = 0, count2 = 0;\n        \n        for (int num : nums) {\n            if (num == 0) count0++;\n            else if (num == 1) count1++;\n            else count2++;\n        }\n        \n        int index = 0;\n        \n        for (int i = 0; i < count0; i++) {\n            nums[index++] = 0;\n        }\n        \n        for (int i = 0; i < count1; i++) {\n            nums[index++] = 1;\n        }\n        \n        for (int i = 0; i < count2; i++) {\n            nums[index++] = 2;\n        }\n    }\n};",
+        "java": "class Solution {\n    public void sortColors(int[] nums) {\n        int count0 = 0, count1 = 0, count2 = 0;\n        \n        for (int num : nums) {\n            if (num == 0) count0++;\n            else if (num == 1) count1++;\n            else count2++;\n        }\n        \n        int index = 0;\n        \n        for (int i = 0; i < count0; i++) {\n            nums[index++] = 0;\n        }\n        \n        for (int i = 0; i < count1; i++) {\n            nums[index++] = 1;\n        }\n        \n        for (int i = 0; i < count2; i++) {\n            nums[index++] = 2;\n        }\n    }\n}",
+        "python": "class Solution:\n    def sortColors(self, nums: List[int]) -> None:\n        count0 = count1 = count2 = 0\n        \n        for num in nums:\n            if num == 0:\n                count0 += 1\n            elif num == 1:\n                count1 += 1\n            else:\n                count2 += 1\n        \n        index = 0\n        \n        for i in range(count0):\n            nums[index] = 0\n            index += 1\n        \n        for i in range(count1):\n            nums[index] = 1\n            index += 1\n        \n        for i in range(count2):\n            nums[index] = 2\n            index += 1",
+        "javascript": "var sortColors = function(nums) {\n    let count0 = 0, count1 = 0, count2 = 0;\n    \n    for (let num of nums) {\n        if (num === 0) count0++;\n        else if (num === 1) count1++;\n        else count2++;\n    }\n    \n    let index = 0;\n    \n    for (let i = 0; i < count0; i++) {\n        nums[index++] = 0;\n    }\n    \n    for (let i = 0; i < count1; i++) {\n        nums[index++] = 1;\n    }\n    \n    for (let i = 0; i < count2; i++) {\n        nums[index++] = 2;\n    }\n};"
+      }
+    },
+    {
+      "name": "Dutch National Flag - Optimal",
+      "order": 3,
+      "intuition": "Use three pointers: low for 0s boundary, mid for current element, high for 2s boundary. Partition array into [0s][1s][2s] in one pass.",
+      "approach": "Three pointers divide array. Swap elements to appropriate sections based on value.",
+      "steps": [
+        "Initialize low = 0, mid = 0, high = n-1",
+        "While mid <= high:",
+        "  If nums[mid] == 0:",
+        "    Swap nums[low] and nums[mid]",
+        "    Increment low and mid",
+        "  Else if nums[mid] == 1:",
+        "    Increment mid",
+        "  Else (nums[mid] == 2):",
+        "    Swap nums[mid] and nums[high]",
+        "    Decrement high (don't increment mid)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only using three pointer variables"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void sortColors(vector<int>& nums) {\n        int low = 0, mid = 0, high = nums.size() - 1;\n        \n        while (mid <= high) {\n            if (nums[mid] == 0) {\n                swap(nums[low], nums[mid]);\n                low++;\n                mid++;\n            } else if (nums[mid] == 1) {\n                mid++;\n            } else {\n                swap(nums[mid], nums[high]);\n                high--;\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public void sortColors(int[] nums) {\n        int low = 0, mid = 0, high = nums.length - 1;\n        \n        while (mid <= high) {\n            if (nums[mid] == 0) {\n                int temp = nums[low];\n                nums[low] = nums[mid];\n                nums[mid] = temp;\n                low++;\n                mid++;\n            } else if (nums[mid] == 1) {\n                mid++;\n            } else {\n                int temp = nums[mid];\n                nums[mid] = nums[high];\n                nums[high] = temp;\n                high--;\n            }\n        }\n    }\n}",
+        "python": "class Solution:\n    def sortColors(self, nums: List[int]) -> None:\n        low, mid, high = 0, 0, len(nums) - 1\n        \n        while mid <= high:\n            if nums[mid] == 0:\n                nums[low], nums[mid] = nums[mid], nums[low]\n                low += 1\n                mid += 1\n            elif nums[mid] == 1:\n                mid += 1\n            else:\n                nums[mid], nums[high] = nums[high], nums[mid]\n                high -= 1",
+        "javascript": "var sortColors = function(nums) {\n    let low = 0, mid = 0, high = nums.length - 1;\n    \n    while (mid <= high) {\n        if (nums[mid] === 0) {\n            [nums[low], nums[mid]] = [nums[mid], nums[low]];\n            low++;\n            mid++;\n        } else if (nums[mid] === 1) {\n            mid++;\n        } else {\n            [nums[mid], nums[high]] = [nums[high], nums[mid]];\n            high--;\n        }\n    }\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Incrementing mid after swapping with high",
+    "Using counting sort (valid but not one-pass)",
+    "Not maintaining proper boundaries",
+    "Moving mid when swapping with high (unknown value comes from right)"
+  ],
+  "hints": [
+    "Think of three regions: [0s][1s][2s]",
+    "Mid pointer scans, low and high are boundaries",
+    "When swapping with high, don't move mid yet",
+    "Why? Element from high is unknown, needs checking"
+  ],
+  "followUp": [
+    "What if there are k colors?",
+    "Can you do it with two passes?",
+    "What if you can't modify array?",
+    "Extend to k-way partitioning?"
+  ],
+  "companies": ["Amazon", "Microsoft", "Facebook", "Google", "Apple"],
+  "tags": ["array", "two-pointers", "sorting"],
+  "relatedProblems": [
+    "Sort List",
+    "Wiggle Sort",
+    "Wiggle Sort II",
+    "Partition Array"
+  ]
+}

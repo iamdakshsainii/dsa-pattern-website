@@ -220,7 +220,7 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
                         </span>
                       </div>
 
-                      <Link href={`/questions/${question._id}`}>
+                      <Link href={`/patterns/${patternSlug}/questions/${question.slug}`}>
                         <h3 className="text-xl font-semibold mb-2 hover:text-primary transition-colors">
                           {question.title}
                         </h3>
@@ -243,7 +243,7 @@ export default function BookmarksClient({ questions: initialQuestions, userProgr
 
                     {/* Right Side - Actions */}
                     <div className="flex flex-col gap-2">
-                      <Link href={`/questions/${question._id}`}>
+                      <Link href={`/patterns/${patternSlug}/questions/${question.slug}`}>
                         <Button size="sm" className="gap-2 w-full">
                           Solve
                           <ArrowRight className="h-4 w-4" />

@@ -1,0 +1,106 @@
+{
+  "questionId": "424",
+  "questionSlug": "longest-repeating-character-replacement",
+  "title": "Longest Repeating Character Replacement",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/longest-repeating-character-replacement/",
+    "videos": [
+      {
+        "title": "Longest Repeating Character Replacement",
+        "url": "https://www.youtube.com/watch?v=gqXU1UyA8pk",
+        "channel": "NeetCode",
+        "duration": "12:40",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Make all characters same with K replacements = Track max frequency in window. Valid when windowLength - maxFreq <= K.",
+  "approaches": [
+    {
+      "name": "Brute Force (All Substrings)",
+      "order": 1,
+      "intuition": "Try all substrings, for each count all character frequencies, check if we can make all same with K replacements.",
+      "approach": "For each substring, find most frequent character. If (length - maxFreq) <= K, it's valid.",
+      "steps": [
+        "Initialize maxLen = 0",
+        "For i from 0 to n-1:",
+        "  freq = [0] * 26",
+        "  For j from i to n-1:",
+        "    freq[s[j] - 'A']++",
+        "    maxFreq = max(freq)",
+        "    length = j - i + 1",
+        "    If length - maxFreq <= K:",
+        "      maxLen = max(maxLen, length)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n² * 26)",
+        "space": "O(1)",
+        "timeExplanation": "Nested loops * finding max frequency",
+        "spaceExplanation": "Fixed frequency array of size 26"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int characterReplacement(string s, int k) {\n        int n = s.length();\n        int maxLen = 0;\n        \n        for (int i = 0; i < n; i++) {\n            vector<int> freq(26, 0);\n            int maxFreq = 0;\n            \n            for (int j = i; j < n; j++) {\n                freq[s[j] - 'A']++;\n                maxFreq = max(maxFreq, freq[s[j] - 'A']);\n                \n                int length = j - i + 1;\n                if (length - maxFreq <= k) {\n                    maxLen = max(maxLen, length);\n                }\n            }\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int characterReplacement(String s, int k) {\n        int n = s.length();\n        int maxLen = 0;\n        \n        for (int i = 0; i < n; i++) {\n            int[] freq = new int[26];\n            int maxFreq = 0;\n            \n            for (int j = i; j < n; j++) {\n                freq[s.charAt(j) - 'A']++;\n                maxFreq = Math.max(maxFreq, freq[s.charAt(j) - 'A']);\n                \n                int length = j - i + 1;\n                if (length - maxFreq <= k) {\n                    maxLen = Math.max(maxLen, length);\n                }\n            }\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        n = len(s)\n        max_len = 0\n        \n        for i in range(n):\n            freq = [0] * 26\n            max_freq = 0\n            \n            for j in range(i, n):\n                freq[ord(s[j]) - ord('A')] += 1\n                max_freq = max(max_freq, freq[ord(s[j]) - ord('A')])\n                \n                length = j - i + 1\n                if length - max_freq <= k:\n                    max_len = max(max_len, length)\n        \n        return max_len",
+        "javascript": "var characterReplacement = function(s, k) {\n    const n = s.length;\n    let maxLen = 0;\n    \n    for (let i = 0; i < n; i++) {\n        const freq = new Array(26).fill(0);\n        let maxFreq = 0;\n        \n        for (let j = i; j < n; j++) {\n            const idx = s.charCodeAt(j) - 'A'.charCodeAt(0);\n            freq[idx]++;\n            maxFreq = Math.max(maxFreq, freq[idx]);\n            \n            const length = j - i + 1;\n            if (length - maxFreq <= k) {\n                maxLen = Math.max(maxLen, length);\n            }\n        }\n    }\n    \n    return maxLen;\n};"
+      }
+    },
+    {
+      "name": "Sliding Window + Frequency Array - Optimal",
+      "order": 2,
+      "intuition": "Use sliding window. Track max frequency in current window. If windowLength - maxFreq > K, shrink from left.",
+      "approach": "Expand right, update frequency and maxFreq. When invalid (need > K replacements), shrink left.",
+      "steps": [
+        "Initialize left = 0, maxLen = 0, maxFreq = 0, freq = [0] * 26",
+        "For right from 0 to n-1:",
+        "  freq[s[right]]++",
+        "  maxFreq = max(maxFreq, freq[s[right]])",
+        "  windowLen = right - left + 1",
+        "  While windowLen - maxFreq > K:",
+        "    freq[s[left]]--",
+        "    left++",
+        "    windowLen = right - left + 1",
+        "  maxLen = max(maxLen, windowLen)",
+        "Return maxLen"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each character visited at most twice",
+        "spaceExplanation": "Fixed frequency array of size 26"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int characterReplacement(string s, int k) {\n        int n = s.length();\n        int left = 0;\n        int maxLen = 0;\n        int maxFreq = 0;\n        vector<int> freq(26, 0);\n        \n        for (int right = 0; right < n; right++) {\n            freq[s[right] - 'A']++;\n            maxFreq = max(maxFreq, freq[s[right] - 'A']);\n            \n            int windowLen = right - left + 1;\n            while (windowLen - maxFreq > k) {\n                freq[s[left] - 'A']--;\n                left++;\n                windowLen = right - left + 1;\n            }\n            \n            maxLen = max(maxLen, windowLen);\n        }\n        \n        return maxLen;\n    }\n};",
+        "java": "class Solution {\n    public int characterReplacement(String s, int k) {\n        int n = s.length();\n        int left = 0;\n        int maxLen = 0;\n        int maxFreq = 0;\n        int[] freq = new int[26];\n        \n        for (int right = 0; right < n; right++) {\n            freq[s.charAt(right) - 'A']++;\n            maxFreq = Math.max(maxFreq, freq[s.charAt(right) - 'A']);\n            \n            int windowLen = right - left + 1;\n            while (windowLen - maxFreq > k) {\n                freq[s.charAt(left) - 'A']--;\n                left++;\n                windowLen = right - left + 1;\n            }\n            \n            maxLen = Math.max(maxLen, windowLen);\n        }\n        \n        return maxLen;\n    }\n}",
+        "python": "class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        n = len(s)\n        left = 0\n        max_len = 0\n        max_freq = 0\n        freq = [0] * 26\n        \n        for right in range(n):\n            freq[ord(s[right]) - ord('A')] += 1\n            max_freq = max(max_freq, freq[ord(s[right]) - ord('A')])\n            \n            window_len = right - left + 1\n            while window_len - max_freq > k:\n                freq[ord(s[left]) - ord('A')] -= 1\n                left += 1\n                window_len = right - left + 1\n            \n            max_len = max(max_len, window_len)\n        \n        return max_len",
+        "javascript": "var characterReplacement = function(s, k) {\n    const n = s.length;\n    let left = 0;\n    let maxLen = 0;\n    let maxFreq = 0;\n    const freq = new Array(26).fill(0);\n    \n    for (let right = 0; right < n; right++) {\n        const idx = s.charCodeAt(right) - 'A'.charCodeAt(0);\n        freq[idx]++;\n        maxFreq = Math.max(maxFreq, freq[idx]);\n        \n        let windowLen = right - left + 1;\n        while (windowLen - maxFreq > k) {\n            const leftIdx = s.charCodeAt(left) - 'A'.charCodeAt(0);\n            freq[leftIdx]--;\n            left++;\n            windowLen = right - left + 1;\n        }\n        \n        maxLen = Math.max(maxLen, windowLen);\n    }\n    \n    return maxLen;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding the condition: windowLength - maxFreq <= K",
+    "Recalculating maxFreq after shrinking (not necessary for correctness)",
+    "Using if instead of while for shrinking",
+    "Not handling edge cases (empty string, K=0)"
+  ],
+  "hints": [
+    "Key formula: windowLength - maxFrequency <= K means valid",
+    "maxFrequency is the count of most frequent character in window",
+    "We need to replace (windowLength - maxFreq) characters",
+    "If replacements needed > K, shrink window from left"
+  ],
+  "followUp": [
+    "What if we can only replace specific characters?",
+    "Find minimum replacements needed for given length?",
+    "Handle lowercase letters too?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook"],
+  "tags": ["string", "sliding-window", "hash-map"],
+  "relatedProblems": [
+    "Longest Substring Without Repeating Characters",
+    "Max Consecutive Ones III",
+    "Longest Substring with At Most K Distinct Characters"
+  ]
+}

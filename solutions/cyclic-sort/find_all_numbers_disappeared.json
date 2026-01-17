@@ -1,0 +1,121 @@
+{
+  "questionId": "448",
+  "questionSlug": "find-all-numbers-disappeared-in-an-array",
+  "title": "Find All Numbers Disappeared in an Array",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/",
+    "videos": [
+      {
+        "title": "Find All Numbers Disappeared - Cyclic Sort",
+        "url": "https://www.youtube.com/watch?v=8i-f24YFWC4",
+        "channel": "NeetCode",
+        "duration": "7:20",
+        "language": "English"
+      }
+    ]
+  },
+  "patternTriggers": "Array [1,n] with duplicates, find all missing = Cyclic Sort or Marking",
+  "approaches": [
+    {
+      "name": "Hash Set",
+      "order": 1,
+      "intuition": "Store all present numbers, then check which are missing from [1,n]",
+      "approach": "Use set for O(1) lookup",
+      "steps": [
+        "Create set from array",
+        "For i from 1 to n:",
+        "  If i not in set, add to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes - build set, check missing",
+        "spaceExplanation": "Set stores up to n elements"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findDisappearedNumbers(vector<int>& nums) {\n        unordered_set<int> numSet(nums.begin(), nums.end());\n        vector<int> result;\n        int n = nums.size();\n        \n        for (int i = 1; i <= n; i++) {\n            if (numSet.find(i) == numSet.end()) {\n                result.push_back(i);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDisappearedNumbers(int[] nums) {\n        Set<Integer> numSet = new HashSet<>();\n        for (int num : nums) {\n            numSet.add(num);\n        }\n        \n        List<Integer> result = new ArrayList<>();\n        int n = nums.length;\n        \n        for (int i = 1; i <= n; i++) {\n            if (!numSet.contains(i)) {\n                result.add(i);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:\n        num_set = set(nums)\n        n = len(nums)\n        \n        result = []\n        for i in range(1, n + 1):\n            if i not in num_set:\n                result.append(i)\n        \n        return result",
+        "javascript": "var findDisappearedNumbers = function(nums) {\n    const numSet = new Set(nums);\n    const n = nums.length;\n    const result = [];\n    \n    for (let i = 1; i <= n; i++) {\n        if (!numSet.has(i)) {\n            result.push(i);\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Mark as Negative (In-place)",
+      "order": 2,
+      "intuition": "Use array indices as hash. Mark nums[nums[i]-1] as negative to indicate presence",
+      "approach": "Negate values at indices to mark presence",
+      "steps": [
+        "For each num in nums:",
+        "  index = abs(num) - 1",
+        "  Mark nums[index] as negative",
+        "After marking, indices with positive values are missing",
+        "Return those indices + 1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through array",
+        "spaceExplanation": "No extra space (output doesn't count)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findDisappearedNumbers(vector<int>& nums) {\n        int n = nums.size();\n        \n        // Mark presence by negating\n        for (int i = 0; i < n; i++) {\n            int index = abs(nums[i]) - 1;\n            if (nums[index] > 0) {\n                nums[index] = -nums[index];\n            }\n        }\n        \n        // Find missing numbers (positive values)\n        vector<int> result;\n        for (int i = 0; i < n; i++) {\n            if (nums[i] > 0) {\n                result.push_back(i + 1);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDisappearedNumbers(int[] nums) {\n        int n = nums.length;\n        \n        // Mark presence by negating\n        for (int i = 0; i < n; i++) {\n            int index = Math.abs(nums[i]) - 1;\n            if (nums[index] > 0) {\n                nums[index] = -nums[index];\n            }\n        }\n        \n        // Find missing numbers\n        List<Integer> result = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            if (nums[i] > 0) {\n                result.add(i + 1);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        \n        # Mark presence by negating\n        for i in range(n):\n            index = abs(nums[i]) - 1\n            if nums[index] > 0:\n                nums[index] = -nums[index]\n        \n        # Find missing numbers\n        result = []\n        for i in range(n):\n            if nums[i] > 0:\n                result.append(i + 1)\n        \n        return result",
+        "javascript": "var findDisappearedNumbers = function(nums) {\n    const n = nums.length;\n    \n    // Mark presence by negating\n    for (let i = 0; i < n; i++) {\n        const index = Math.abs(nums[i]) - 1;\n        if (nums[index] > 0) {\n            nums[index] = -nums[index];\n        }\n    }\n    \n    // Find missing numbers\n    const result = [];\n    for (let i = 0; i < n; i++) {\n        if (nums[i] > 0) {\n            result.push(i + 1);\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Cyclic Sort - Optimal",
+      "order": 3,
+      "intuition": "Place each number at its correct index. Numbers that can't be placed are duplicates, their indices are missing",
+      "approach": "Use cyclic sort, then find indices with wrong values",
+      "steps": [
+        "Cyclic sort:",
+        "  While i < n:",
+        "    correctPos = nums[i] - 1",
+        "    If nums[i] != nums[correctPos]: swap",
+        "    Else: i++",
+        "After sort, indices where nums[i] != i+1 are missing",
+        "Return those indices + 1"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each element swapped at most once",
+        "spaceExplanation": "In-place sorting (output doesn't count)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<int> findDisappearedNumbers(vector<int>& nums) {\n        int n = nums.size();\n        int i = 0;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            if (nums[i] != nums[correctPos]) {\n                swap(nums[i], nums[correctPos]);\n            } else {\n                i++;\n            }\n        }\n        \n        // Find missing numbers\n        vector<int> result;\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1) {\n                result.push_back(i + 1);\n            }\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<Integer> findDisappearedNumbers(int[] nums) {\n        int n = nums.length;\n        int i = 0;\n        \n        // Cyclic sort\n        while (i < n) {\n            int correctPos = nums[i] - 1;\n            if (nums[i] != nums[correctPos]) {\n                int temp = nums[i];\n                nums[i] = nums[correctPos];\n                nums[correctPos] = temp;\n            } else {\n                i++;\n            }\n        }\n        \n        // Find missing numbers\n        List<Integer> result = new ArrayList<>();\n        for (int j = 0; j < n; j++) {\n            if (nums[j] != j + 1) {\n                result.add(j + 1);\n            }\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        i = 0\n        \n        # Cyclic sort\n        while i < n:\n            correct_pos = nums[i] - 1\n            if nums[i] != nums[correct_pos]:\n                nums[i], nums[correct_pos] = nums[correct_pos], nums[i]\n            else:\n                i += 1\n        \n        # Find missing numbers\n        result = []\n        for i in range(n):\n            if nums[i] != i + 1:\n                result.append(i + 1)\n        \n        return result",
+        "javascript": "var findDisappearedNumbers = function(nums) {\n    const n = nums.length;\n    let i = 0;\n    \n    // Cyclic sort\n    while (i < n) {\n        const correctPos = nums[i] - 1;\n        if (nums[i] !== nums[correctPos]) {\n            [nums[i], nums[correctPos]] = [nums[correctPos], nums[i]];\n        } else {\n            i++;\n        }\n    }\n    \n    // Find missing numbers\n    const result = [];\n    for (let j = 0; j < n; j++) {\n        if (nums[j] !== j + 1) {\n            result.push(j + 1);\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using nums[i] instead of abs(nums[i]) in marking approach after negation",
+    "Not checking nums[i] != nums[correctPos] in cyclic sort causes infinite loop",
+    "Modifying array when problem requires original preserved (use marking or cyclic sort carefully)"
+  ],
+  "hints": [
+    "Can you use the array indices as a hash map?",
+    "Mark presence by negating values at corresponding indices",
+    "Cyclic sort: each number k should be at index k-1",
+    "After sorting, missing numbers are at wrong positions"
+  ],
+  "followUp": [
+    "What if you can't modify the input array?",
+    "Can you solve with O(1) space if modification is allowed?",
+    "How to find both missing and duplicate numbers?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft"],
+  "tags": ["array", "hash-table", "cyclic-sort"],
+  "relatedProblems": [
+    "Find All Duplicates in an Array",
+    "Missing Number",
+    "Set Mismatch",
+    "First Missing Positive"
+  ]
+}
