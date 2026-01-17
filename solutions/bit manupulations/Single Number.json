@@ -1,0 +1,171 @@
+{
+  "questionId": "136",
+  "questionSlug": "single-number",
+  "title": "Single Number",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/single-number/",
+    "videos": [
+      {
+        "title": "Single Number - XOR Trick Explained",
+        "url": "https://www.youtube.com/watch?v=qMPX1AOa83k",
+        "channel": "NeetCode",
+        "duration": "5:45",
+        "language": "English"
+      },
+      {
+        "title": "Find Single Number using XOR",
+        "url": "https://www.youtube.com/watch?v=eYSxFIBmL_w",
+        "channel": "take U forward",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Single Number LeetCode Solution",
+        "url": "https://www.youtube.com/watch?v=XzZwpNn-KTs",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Single Number - LeetCode Official",
+        "url": "https://leetcode.com/problems/single-number/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find the element that appears once",
+        "url": "https://www.geeksforgeeks.org/find-element-appears-array-every-element-appears-twice/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Single Number using XOR",
+        "url": "https://takeuforward.org/arrays/find-the-number-appearing-once/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/single-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/element-appearing-once/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find single number among duplicates? Use XOR! a ^ a = 0, a ^ 0 = a. XOR all elements.",
+  "approaches": [
+    {
+      "name": "Hash Map - Brute Force",
+      "order": 1,
+      "intuition": "Count frequency of each number. The number with count 1 is the answer.",
+      "approach": "Use hash map to count frequencies, find element with count 1.",
+      "steps": [
+        "Create hash map to store frequencies",
+        "For each number in array:",
+        "  map[num]++",
+        "Iterate through map:",
+        "  If count == 1: return num"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Traverse array twice: once to build map, once to find single",
+        "spaceExplanation": "Hash map stores up to n/2 unique elements"
+      },
+      "code": {
+        "cpp": "int singleNumber(vector<int>& nums) {\n    unordered_map<int, int> freq;\n    \n    // Count frequencies\n    for (int num : nums) {\n        freq[num]++;\n    }\n    \n    // Find element with frequency 1\n    for (auto& [num, count] : freq) {\n        if (count == 1) return num;\n    }\n    \n    return -1; // Should never reach here\n}",
+        "java": "public int singleNumber(int[] nums) {\n    Map<Integer, Integer> freq = new HashMap<>();\n    \n    // Count frequencies\n    for (int num : nums) {\n        freq.put(num, freq.getOrDefault(num, 0) + 1);\n    }\n    \n    // Find element with frequency 1\n    for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {\n        if (entry.getValue() == 1) {\n            return entry.getKey();\n        }\n    }\n    \n    return -1;\n}",
+        "python": "def singleNumber(nums):\n    freq = {}\n    \n    # Count frequencies\n    for num in nums:\n        freq[num] = freq.get(num, 0) + 1\n    \n    # Find element with frequency 1\n    for num, count in freq.items():\n        if count == 1:\n            return num\n    \n    return -1",
+        "javascript": "function singleNumber(nums) {\n    const freq = new Map();\n    \n    // Count frequencies\n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    // Find element with frequency 1\n    for (const [num, count] of freq) {\n        if (count === 1) return num;\n    }\n    \n    return -1;\n}"
+      }
+    },
+    {
+      "name": "Sorting - Better",
+      "order": 2,
+      "intuition": "After sorting, duplicate elements will be adjacent. Single element won't have adjacent duplicate.",
+      "approach": "Sort array, check adjacent elements.",
+      "steps": [
+        "Sort the array",
+        "Iterate with step 2 (i += 2):",
+        "  If nums[i] != nums[i+1]:",
+        "    return nums[i]",
+        "If loop completes, return last element"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "timeExplanation": "Sorting takes O(n log n), iteration takes O(n)",
+        "spaceExplanation": "In-place sorting, no extra space (or O(log n) for recursion)"
+      },
+      "code": {
+        "cpp": "int singleNumber(vector<int>& nums) {\n    sort(nums.begin(), nums.end());\n    \n    // Check pairs\n    for (int i = 0; i < nums.size() - 1; i += 2) {\n        if (nums[i] != nums[i + 1]) {\n            return nums[i];\n        }\n    }\n    \n    // Single element is last\n    return nums[nums.size() - 1];\n}",
+        "java": "public int singleNumber(int[] nums) {\n    Arrays.sort(nums);\n    \n    // Check pairs\n    for (int i = 0; i < nums.length - 1; i += 2) {\n        if (nums[i] != nums[i + 1]) {\n            return nums[i];\n        }\n    }\n    \n    // Single element is last\n    return nums[nums.length - 1];\n}",
+        "python": "def singleNumber(nums):\n    nums.sort()\n    \n    # Check pairs\n    for i in range(0, len(nums) - 1, 2):\n        if nums[i] != nums[i + 1]:\n            return nums[i]\n    \n    # Single element is last\n    return nums[-1]",
+        "javascript": "function singleNumber(nums) {\n    nums.sort((a, b) => a - b);\n    \n    // Check pairs\n    for (let i = 0; i < nums.length - 1; i += 2) {\n        if (nums[i] !== nums[i + 1]) {\n            return nums[i];\n        }\n    }\n    \n    // Single element is last\n    return nums[nums.length - 1];\n}"
+      }
+    },
+    {
+      "name": "XOR - Optimal",
+      "order": 3,
+      "intuition": "XOR properties: a ^ a = 0, a ^ 0 = a, XOR is commutative. XORing all elements cancels duplicates, leaves single element.",
+      "approach": "XOR all elements together.",
+      "steps": [
+        "result = 0",
+        "For each num in array:",
+        "  result ^= num",
+        "Return result",
+        "Why it works:",
+        "  [2,2,1] → 2^2^1 → 0^1 → 1",
+        "  [4,1,2,1,2] → 4^1^2^1^2 → 4^0^0 → 4"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array",
+        "spaceExplanation": "Only one variable for result"
+      },
+      "code": {
+        "cpp": "int singleNumber(vector<int>& nums) {\n    int result = 0;\n    \n    // XOR all elements\n    // Duplicates cancel: a ^ a = 0\n    // Single element remains: a ^ 0 = a\n    for (int num : nums) {\n        result ^= num;\n    }\n    \n    return result;\n}\n\n// Example: [2, 2, 1]\n// 0 ^ 2 = 2\n// 2 ^ 2 = 0\n// 0 ^ 1 = 1 ✓",
+        "java": "public int singleNumber(int[] nums) {\n    int result = 0;\n    \n    // XOR properties:\n    // a ^ a = 0 (duplicate cancels)\n    // a ^ 0 = a (single remains)\n    // XOR is commutative and associative\n    for (int num : nums) {\n        result ^= num;\n    }\n    \n    return result;\n}\n\n// Example: [4, 1, 2, 1, 2]\n// 4 ^ 1 ^ 2 ^ 1 ^ 2\n// = 4 ^ (1 ^ 1) ^ (2 ^ 2)\n// = 4 ^ 0 ^ 0 = 4 ✓",
+        "python": "def singleNumber(nums):\n    result = 0\n    \n    # XOR all elements\n    # Duplicates cancel out: a ^ a = 0\n    # Single element remains: a ^ 0 = a\n    for num in nums:\n        result ^= num\n    \n    return result\n\n# One-liner using reduce:\n# from functools import reduce\n# return reduce(lambda x, y: x ^ y, nums, 0)",
+        "javascript": "function singleNumber(nums) {\n    let result = 0;\n    \n    // XOR all elements together\n    // Pairs cancel: a ^ a = 0\n    // Single remains: a ^ 0 = a\n    for (const num of nums) {\n        result ^= num;\n    }\n    \n    return result;\n}\n\n// One-liner:\n// return nums.reduce((acc, num) => acc ^ num, 0);\n\n// Example: [2,2,1]\n// 0^2^2^1 = 0^0^1 = 1"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using arithmetic (sum of unique - sum of duplicates) - doesn't work for negative numbers easily",
+    "Not understanding XOR properties",
+    "Overcomplicating with hash maps when XOR is sufficient",
+    "Forgetting that XOR is commutative (order doesn't matter)",
+    "Not handling edge case of single element array"
+  ],
+  "hints": [
+    "XOR properties: a ^ a = 0, a ^ 0 = a",
+    "XOR is commutative: a ^ b ^ c = c ^ b ^ a",
+    "All duplicates will cancel out when XORed",
+    "Single element XORed with 0 gives itself",
+    "Think: what operation cancels duplicate pairs?"
+  ],
+  "followUp": [
+    "What if every element appears 3 times except one? (Use bit counting)",
+    "What if two elements appear once? (Single Number III)",
+    "Can you do it without XOR? (Yes, but less efficient)",
+    "What if array can be modified? (Same approach works)",
+    "What if elements appear k times except one? (Generalize bit counting)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Adobe", "Uber"],
+  "tags": ["bit-manipulation", "array"],
+  "relatedProblems": [
+    "Single Number II",
+    "Single Number III",
+    "Missing Number",
+    "Find the Duplicate Number",
+    "Find All Duplicates in an Array"
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "questionId": "421",
+  "questionSlug": "maximum-xor-of-two-numbers-in-an-array",
+  "title": "Maximum XOR of Two Numbers in Array",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/",
+    "videos": [
+      {
+        "title": "Maximum XOR - Trie Solution",
+        "url": "https://www.youtube.com/watch?v=EIhAwfHubE8",
+        "channel": "NeetCode",
+        "duration": "16:30",
+        "language": "English"
+      },
+      {
+        "title": "Maximum XOR of Two Numbers using Trie",
+        "url": "https://www.youtube.com/watch?v=jCuXJFU0eIQ",
+        "channel": "take U forward",
+        "duration": "22:45",
+        "language": "English"
+      },
+      {
+        "title": "Max XOR - Bit Manipulation & Trie",
+        "url": "https://www.youtube.com/watch?v=xsMKKZdINBs",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "14:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum XOR - LeetCode Official",
+        "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Maximum XOR of two numbers in an array",
+        "url": "https://www.geeksforgeeks.org/maximum-xor-of-two-numbers-in-an-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Maximum XOR using Trie",
+        "url": "https://takeuforward.org/data-structure/maximum-xor-of-two-numbers-in-an-array/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/maximum-xor/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Maximum XOR of pairs? Use Trie (binary prefix tree)! Build trie with binary representations, find opposite bits.",
+  "approaches": [
+    {
+      "name": "Brute Force - Check All Pairs",
+      "order": 1,
+      "intuition": "Try all possible pairs, compute XOR, track maximum.",
+      "approach": "Nested loop to check all pairs.",
+      "steps": [
+        "maxXor = 0",
+        "For i from 0 to n-1:",
+        "  For j from i+1 to n-1:",
+        "    xor = nums[i] ^ nums[j]",
+        "    maxXor = max(maxXor, xor)",
+        "Return maxXor"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Check all pairs: n*(n-1)/2 comparisons",
+        "spaceExplanation": "Only maxXor variable"
+      },
+      "code": {
+        "cpp": "int findMaximumXOR(vector<int>& nums) {\n    int maxXor = 0;\n    int n = nums.size();\n    \n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            int xorVal = nums[i] ^ nums[j];\n            maxXor = max(maxXor, xorVal);\n        }\n    }\n    \n    return maxXor;\n}\n// Time Limit Exceeded for large inputs!",
+        "java": "public int findMaximumXOR(int[] nums) {\n    int maxXor = 0;\n    int n = nums.length;\n    \n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            int xorVal = nums[i] ^ nums[j];\n            maxXor = Math.max(maxXor, xorVal);\n        }\n    }\n    \n    return maxXor;\n}",
+        "python": "def findMaximumXOR(nums):\n    max_xor = 0\n    n = len(nums)\n    \n    for i in range(n):\n        for j in range(i + 1, n):\n            xor_val = nums[i] ^ nums[j]\n            max_xor = max(max_xor, xor_val)\n    \n    return max_xor",
+        "javascript": "function findMaximumXOR(nums) {\n    let maxXor = 0;\n    const n = nums.length;\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            const xorVal = nums[i] ^ nums[j];\n            maxXor = Math.max(maxXor, xorVal);\n        }\n    }\n    \n    return maxXor;\n}"
+      }
+    },
+    {
+      "name": "HashSet with Prefix Matching",
+      "order": 2,
+      "intuition": "Build XOR bit by bit from MSB. Use hashset to check if desired prefix exists. Greedy: try to set each bit to 1.",
+      "approach": "For each bit position, try to maximize.",
+      "steps": [
+        "maxXor = 0",
+        "For bit from 31 down to 0:",
+        "  maxXor |= (1 << bit)  // Try to set this bit",
+        "  prefixSet = {all prefixes of nums up to this bit}",
+        "  For each prefix:",
+        "    If (maxXor ^ prefix) exists in set:",
+        "      Keep bit set, break",
+        "    Else:",
+        "      Unset bit in maxXor",
+        "Return maxXor"
+      ],
+      "complexity": {
+        "time": "O(32n) = O(n)",
+        "space": "O(n)",
+        "timeExplanation": "32 iterations, each processes n elements",
+        "spaceExplanation": "HashSet stores n prefixes"
+      },
+      "code": {
+        "cpp": "int findMaximumXOR(vector<int>& nums) {\n    int maxXor = 0;\n    int mask = 0;\n    \n    // Build result bit by bit from MSB\n    for (int i = 31; i >= 0; i--) {\n        mask |= (1 << i);  // Add current bit to mask\n        \n        unordered_set<int> prefixes;\n        for (int num : nums) {\n            prefixes.insert(num & mask);\n        }\n        \n        int candidate = maxXor | (1 << i);\n        \n        // Check if this candidate is achievable\n        for (int prefix : prefixes) {\n            if (prefixes.count(candidate ^ prefix)) {\n                maxXor = candidate;\n                break;\n            }\n        }\n    }\n    \n    return maxXor;\n}",
+        "java": "public int findMaximumXOR(int[] nums) {\n    int maxXor = 0;\n    int mask = 0;\n    \n    for (int i = 31; i >= 0; i--) {\n        mask |= (1 << i);\n        \n        Set<Integer> prefixes = new HashSet<>();\n        for (int num : nums) {\n            prefixes.add(num & mask);\n        }\n        \n        int candidate = maxXor | (1 << i);\n        \n        for (int prefix : prefixes) {\n            if (prefixes.contains(candidate ^ prefix)) {\n                maxXor = candidate;\n                break;\n            }\n        }\n    }\n    \n    return maxXor;\n}",
+        "python": "def findMaximumXOR(nums):\n    max_xor = 0\n    mask = 0\n    \n    for i in range(31, -1, -1):\n        mask |= (1 << i)\n        \n        prefixes = {num & mask for num in nums}\n        \n        candidate = max_xor | (1 << i)\n        \n        for prefix in prefixes:\n            if (candidate ^ prefix) in prefixes:\n                max_xor = candidate\n                break\n    \n    return max_xor",
+        "javascript": "function findMaximumXOR(nums) {\n    let maxXor = 0;\n    let mask = 0;\n    \n    for (let i = 31; i >= 0; i--) {\n        mask |= (1 << i);\n        \n        const prefixes = new Set();\n        for (const num of nums) {\n            prefixes.add(num & mask);\n        }\n        \n        const candidate = maxXor | (1 << i);\n        \n        for (const prefix of prefixes) {\n            if (prefixes.has(candidate ^ prefix)) {\n                maxXor = candidate;\n                break;\n            }\n        }\n    }\n    \n    return maxXor;\n}"
+      }
+    },
+    {
+      "name": "Binary Trie - Optimal",
+      "order": 3,
+      "intuition": "Build binary trie with all numbers. For each number, traverse trie trying opposite bits to maximize XOR.",
+      "approach": "Trie of binary representations.",
+      "steps": [
+        "Build Trie:",
+        "  For each number:",
+        "    Insert its 32-bit binary form into trie",
+        "Find Max XOR:",
+        "  For each number:",
+        "    Traverse trie, at each bit:",
+        "      Try to go opposite direction (0→1, 1→0)",
+        "      If opposite exists, take it (maximizes XOR)",
+        "      Else, take same direction",
+        "    Track maximum XOR found"
+      ],
+      "complexity": {
+        "time": "O(32n) = O(n)",
+        "space": "O(32n) = O(n)",
+        "timeExplanation": "Insert n numbers (32 bits each), query n times (32 bits)",
+        "spaceExplanation": "Trie stores at most 32*n nodes"
+      },
+      "code": {
+        "cpp": "struct TrieNode {\n    TrieNode* children[2] = {nullptr, nullptr};\n};\n\nclass Trie {\nprivate:\n    TrieNode* root;\n    \npublic:\n    Trie() { root = new TrieNode(); }\n    \n    void insert(int num) {\n        TrieNode* node = root;\n        for (int i = 31; i >= 0; i--) {\n            int bit = (num >> i) & 1;\n            if (!node->children[bit]) {\n                node->children[bit] = new TrieNode();\n            }\n            node = node->children[bit];\n        }\n    }\n    \n    int findMaxXOR(int num) {\n        TrieNode* node = root;\n        int maxXor = 0;\n        \n        for (int i = 31; i >= 0; i--) {\n            int bit = (num >> i) & 1;\n            int oppositeBit = 1 - bit;\n            \n            if (node->children[oppositeBit]) {\n                maxXor |= (1 << i);\n                node = node->children[oppositeBit];\n            } else {\n                node = node->children[bit];\n            }\n        }\n        return maxXor;\n    }\n};\n\nint findMaximumXOR(vector<int>& nums) {\n    Trie trie;\n    \n    for (int num : nums) {\n        trie.insert(num);\n    }\n    \n    int maxXor = 0;\n    for (int num : nums) {\n        maxXor = max(maxXor, trie.findMaxXOR(num));\n    }\n    \n    return maxXor;\n}",
+        "java": "class TrieNode {\n    TrieNode[] children = new TrieNode[2];\n}\n\nclass Trie {\n    private TrieNode root;\n    \n    public Trie() { root = new TrieNode(); }\n    \n    public void insert(int num) {\n        TrieNode node = root;\n        for (int i = 31; i >= 0; i--) {\n            int bit = (num >> i) & 1;\n            if (node.children[bit] == null) {\n                node.children[bit] = new TrieNode();\n            }\n            node = node.children[bit];\n        }\n    }\n    \n    public int findMaxXOR(int num) {\n        TrieNode node = root;\n        int maxXor = 0;\n        \n        for (int i = 31; i >= 0; i--) {\n            int bit = (num >> i) & 1;\n            int oppositeBit = 1 - bit;\n            \n            if (node.children[oppositeBit] != null) {\n                maxXor |= (1 << i);\n                node = node.children[oppositeBit];\n            } else {\n                node = node.children[bit];\n            }\n        }\n        return maxXor;\n    }\n}\n\npublic int findMaximumXOR(int[] nums) {\n    Trie trie = new Trie();\n    \n    for (int num : nums) {\n        trie.insert(num);\n    }\n    \n    int maxXor = 0;\n    for (int num : nums) {\n        maxXor = Math.max(maxXor, trie.findMaxXOR(num));\n    }\n    \n    return maxXor;\n}",
+        "python": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode()\n    \n    def insert(self, num):\n        node = self.root\n        for i in range(31, -1, -1):\n            bit = (num >> i) & 1\n            if bit not in node.children:\n                node.children[bit] = TrieNode()\n            node = node.children[bit]\n    \n    def findMaxXOR(self, num):\n        node = self.root\n        max_xor = 0\n        \n        for i in range(31, -1, -1):\n            bit = (num >> i) & 1\n            opposite_bit = 1 - bit\n            \n            if opposite_bit in node.children:\n                max_xor |= (1 << i)\n                node = node.children[opposite_bit]\n            else:\n                node = node.children[bit]\n        \n        return max_xor\n\ndef findMaximumXOR(nums):\n    trie = Trie()\n    \n    for num in nums:\n        trie.insert(num)\n    \n    max_xor = 0\n    for num in nums:\n        max_xor = max(max_xor, trie.findMaxXOR(num))\n    \n    return max_xor",
+        "javascript": "class TrieNode {\n    constructor() {\n        this.children = {};\n    }\n}\n\nclass Trie {\n    constructor() {\n        this.root = new TrieNode();\n    }\n    \n    insert(num) {\n        let node = this.root;\n        for (let i = 31; i >= 0; i--) {\n            const bit = (num >> i) & 1;\n            if (!node.children[bit]) {\n                node.children[bit] = new TrieNode();\n            }\n            node = node.children[bit];\n        }\n    }\n    \n    findMaxXOR(num) {\n        let node = this.root;\n        let maxXor = 0;\n        \n        for (let i = 31; i >= 0; i--) {\n            const bit = (num >> i) & 1;\n            const oppositeBit = 1 - bit;\n            \n            if (node.children[oppositeBit]) {\n                maxXor |= (1 << i);\n                node = node.children[oppositeBit];\n            } else {\n                node = node.children[bit];\n            }\n        }\n        return maxXor;\n    }\n}\n\nfunction findMaximumXOR(nums) {\n    const trie = new Trie();\n    \n    for (const num of nums) {\n        trie.insert(num);\n    }\n    \n    let maxXor = 0;\n    for (const num of nums) {\n        maxXor = Math.max(maxXor, trie.findMaxXOR(num));\n    }\n    \n    return maxXor;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding how binary trie works",
+    "Forgetting to try opposite bit for maximum XOR",
+    "Building trie incorrectly (wrong bit order)",
+    "Not handling 32-bit integers properly",
+    "Memory leaks in C++ (not freeing trie nodes)"
+  ],
+  "hints": [
+    "XOR is maximized when bits are opposite (1^0=1, 0^1=1)",
+    "Build binary trie with all numbers",
+    "For each number, traverse trie trying opposite bits",
+    "Greedy approach: maximize from MSB to LSB",
+    "Trie allows O(32) = O(1) lookup per number"
+  ],
+  "followUp": [
+    "What if we have queries with specific pairs? (Precompute trie)",
+    "Can you find maximum XOR in a range [L,R]? (Yes, but more complex)",
+    "What if numbers can be negative? (Handle sign bit carefully)",
+    "How to find k-th maximum XOR? (Track top k during traversal)",
+    "Can you optimize space? (Hard, trie is already efficient)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Bloomberg"],
+  "tags": ["bit-manipulation", "trie", "greedy"],
+  "relatedProblems": [
+    "Maximum XOR With an Element From Array",
+    "Maximum XOR of Two Numbers in a BST",
+    "Find XOR from L to R",
+    "Single Number",
+    "Maximum Genetic Difference Query"
+  ]
+}

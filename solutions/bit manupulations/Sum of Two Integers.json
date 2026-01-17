@@ -1,0 +1,176 @@
+{
+  "questionId": "371",
+  "questionSlug": "sum-of-two-integers",
+  "title": "Sum of Two Integers",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/sum-of-two-integers/",
+    "videos": [
+      {
+        "title": "Sum of Two Integers - No Addition Operator",
+        "url": "https://www.youtube.com/watch?v=qq64FrA2UXQ",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Add Two Numbers without + Operator",
+        "url": "https://www.youtube.com/watch?v=gVUrDV4tZfY",
+        "channel": "take U forward",
+        "duration": "13:20",
+        "language": "English"
+      },
+      {
+        "title": "Sum Without Addition Operator",
+        "url": "https://www.youtube.com/watch?v=fAh8cUMN_fo",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sum of Two Integers - LeetCode Official",
+        "url": "https://leetcode.com/problems/sum-of-two-integers/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Add two numbers without using arithmetic operators",
+        "url": "https://www.geeksforgeeks.org/add-two-numbers-without-using-arithmetic-operators/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Sum of Two Integers using XOR and AND",
+        "url": "https://takeuforward.org/bit-manipulation/add-two-numbers-without-using-arithmetic-operators/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/sum-of-two-integers/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/sum-of-two-numbers-without-using-arithmetic-operators/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Add without +? Use XOR for sum without carry, AND << 1 for carry. Repeat until no carry.",
+  "approaches": [
+    {
+      "name": "Simulation with Strings - Brute Force",
+      "order": 1,
+      "intuition": "Convert to binary strings, add digit by digit with carry, convert back. Very inefficient.",
+      "approach": "Binary addition as taught in school.",
+      "steps": [
+        "Convert a and b to binary strings",
+        "Add from right to left with carry",
+        "Handle carry propagation",
+        "Convert result back to integer",
+        "This defeats the purpose - don't use!"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(log n)",
+        "timeExplanation": "String operations for each bit",
+        "spaceExplanation": "Binary string storage"
+      },
+      "code": {
+        "cpp": "// Not recommended - defeats purpose\n// Shown only for completeness\nint getSum(int a, int b) {\n    // Convert to strings, add, convert back\n    // This is NOT the intended solution\n    // Use bit manipulation instead!\n    string binA = bitset<32>(a).to_string();\n    string binB = bitset<32>(b).to_string();\n    \n    // Manual binary addition...\n    // Too complex and inefficient\n    \n    return a + b; // Just use + instead!\n}",
+        "java": "// Not recommended approach\npublic int getSum(int a, int b) {\n    // String-based binary addition\n    // Too complex and not the point\n    // Use bit manipulation!\n    return a + b;\n}",
+        "python": "# Not the intended solution\ndef getSum(a, b):\n    # String manipulation approach\n    # Defeats the purpose\n    return a + b",
+        "javascript": "// Not recommended\nfunction getSum(a, b) {\n    // String-based approach\n    // Not what question asks for\n    return a + b;\n}"
+      }
+    },
+    {
+      "name": "XOR and AND with Loop",
+      "order": 2,
+      "intuition": "XOR gives sum without carry. AND << 1 gives carry. Keep adding until no carry.",
+      "approach": "Iteratively compute sum and carry.",
+      "steps": [
+        "While b != 0:",
+        "  sum = a ^ b  (XOR for sum without carry)",
+        "  carry = (a & b) << 1  (AND << 1 for carry)",
+        "  a = sum",
+        "  b = carry",
+        "Return a",
+        "Example: 5 + 3",
+        "  5: 101, 3: 011",
+        "  sum: 101^011=110, carry: (101&011)<<1=010",
+        "  sum: 110^010=100, carry: (110&010)<<1=100",
+        "  sum: 100^100=000, carry: (100&100)<<1=1000",
+        "  sum: 000^1000=1000 = 8"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Loop runs until no carry, at most log(n) times",
+        "spaceExplanation": "Only sum and carry variables"
+      },
+      "code": {
+        "cpp": "int getSum(int a, int b) {\n    while (b != 0) {\n        // Sum without carry\n        int sum = a ^ b;\n        \n        // Carry\n        int carry = (a & b) << 1;\n        \n        // Update for next iteration\n        a = sum;\n        b = carry;\n    }\n    \n    return a;\n}\n\n// Example: 5 + 3\n// Iter 1: sum=101^011=110(6), carry=(101&011)<<1=010(2)\n// Iter 2: sum=110^010=100(4), carry=(110&010)<<1=100(4)\n// Iter 3: sum=100^100=000(0), carry=(100&100)<<1=1000(8)\n// Iter 4: sum=000^1000=1000(8), carry=0\n// Result: 8",
+        "java": "public int getSum(int a, int b) {\n    while (b != 0) {\n        // XOR gives sum without carry\n        int sum = a ^ b;\n        \n        // AND << 1 gives carry\n        int carry = (a & b) << 1;\n        \n        a = sum;\n        b = carry;\n    }\n    \n    return a;\n}",
+        "python": "def getSum(a, b):\n    # Python needs mask for 32-bit integers\n    mask = 0xFFFFFFFF\n    \n    while b != 0:\n        # Sum without carry\n        sum_val = (a ^ b) & mask\n        \n        # Carry\n        carry = ((a & b) << 1) & mask\n        \n        a = sum_val\n        b = carry\n    \n    # Handle negative numbers in Python\n    if a > 0x7FFFFFFF:\n        return ~(a ^ mask)\n    return a",
+        "javascript": "function getSum(a, b) {\n    while (b !== 0) {\n        // Sum without carry\n        const sum = a ^ b;\n        \n        // Carry\n        const carry = (a & b) << 1;\n        \n        a = sum;\n        b = carry;\n    }\n    \n    return a;\n}"
+      }
+    },
+    {
+      "name": "Recursive Bit Manipulation - Optimal",
+      "order": 3,
+      "intuition": "Same logic as iterative but recursive. Base case: no carry (b==0). Recurse with sum and carry.",
+      "approach": "Recursively add carry until none left.",
+      "steps": [
+        "Base case: if b == 0, return a",
+        "Compute sum without carry: a ^ b",
+        "Compute carry: (a & b) << 1",
+        "Recurse: getSum(sum, carry)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(log n)",
+        "timeExplanation": "Recursion depth is at most log(n)",
+        "spaceExplanation": "Recursion stack space"
+      },
+      "code": {
+        "cpp": "int getSum(int a, int b) {\n    // Base case: no carry\n    if (b == 0) return a;\n    \n    // Recursive case:\n    // Sum without carry: a ^ b\n    // Carry: (a & b) << 1\n    return getSum(a ^ b, (a & b) << 1);\n}\n\n// Trace for 5 + 3:\n// getSum(5, 3)\n//   = getSum(5^3, (5&3)<<1)\n//   = getSum(6, 2)\n//     = getSum(6^2, (6&2)<<1)\n//     = getSum(4, 4)\n//       = getSum(4^4, (4&4)<<1)\n//       = getSum(0, 8)\n//         = getSum(0^8, (0&8)<<1)\n//         = getSum(8, 0)\n//         = 8",
+        "java": "public int getSum(int a, int b) {\n    // Base case\n    if (b == 0) return a;\n    \n    // Recursive: sum and carry\n    return getSum(a ^ b, (a & b) << 1);\n}",
+        "python": "def getSum(a, b):\n    # Python needs 32-bit mask\n    mask = 0xFFFFFFFF\n    \n    # Base case\n    if b == 0:\n        if a > 0x7FFFFFFF:\n            return ~(a ^ mask)\n        return a\n    \n    # Recursive\n    return getSum((a ^ b) & mask, ((a & b) << 1) & mask)",
+        "javascript": "function getSum(a, b) {\n    // Base case\n    if (b === 0) return a;\n    \n    // Recursive\n    return getSum(a ^ b, (a & b) << 1);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting that XOR gives sum WITHOUT carry",
+    "Not shifting carry left (AND gives carry at same position)",
+    "Infinite loop if not updating variables correctly",
+    "In Python: not handling 32-bit integer overflow",
+    "Not understanding why we need AND for carry"
+  ],
+  "hints": [
+    "XOR (^) gives sum without considering carry",
+    "AND (&) gives positions where both bits are 1 (carry)",
+    "Shift carry left by 1 to add to next position",
+    "Repeat until no more carry (b becomes 0)",
+    "Think: how does binary addition work manually?"
+  ],
+  "followUp": [
+    "Can you do subtraction? (Add negative: a + (-b))",
+    "What about multiplication? (Repeated addition with shifts)",
+    "How to handle negative numbers? (Two's complement)",
+    "Can you optimize for specific cases? (Yes, if one is 0)",
+    "What if we can't use loops? (Use recursion)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Hulu"],
+  "tags": ["bit-manipulation", "math"],
+  "relatedProblems": [
+    "Subtract the Product and Sum of Digits",
+    "Divide Two Integers",
+    "Add Binary",
+    "Add Strings",
+    "Multiply Strings"
+  ]
+}

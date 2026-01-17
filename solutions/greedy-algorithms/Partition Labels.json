@@ -1,0 +1,157 @@
+{
+  "questionId": "LC-763",
+  "questionSlug": "partition-labels",
+  "title": "Partition Labels",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/partition-labels/",
+    "videos": [
+      {
+        "title": "Partition Labels - Greedy Two Pointer",
+        "url": "https://www.youtube.com/watch?v=B7m8UmZE-vw",
+        "channel": "NeetCode",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Partition Labels Explained",
+        "url": "https://www.youtube.com/watch?v=5cWqViq5sEk",
+        "channel": "takeUforward",
+        "duration": "13:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Partition Labels - Official Solution",
+        "url": "https://leetcode.com/problems/partition-labels/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Partition Labels - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/partition-labels/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/partition-labels/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Partition string into max parts where each char appears in only one part? Track last occurrence and extend partition!",
+  "approaches": [
+    {
+      "name": "Greedy with Last Occurrence Map (Optimal)",
+      "order": 1,
+      "intuition": "Store last index of each character. Extend current partition until we've seen all chars' last occurrences.",
+      "approach": "Map each char to its last index. Scan string, extending partition end to include last occurrence of each seen char.",
+      "steps": [
+        "Create map: last[char] = last index of char",
+        "Initialize: start = 0, end = 0, result = []",
+        "For i from 0 to n-1:",
+        "  end = max(end, last[s[i]]) (extend partition to include this char's last occurrence)",
+        "  If i == end (reached end of current partition):",
+        "    result.append(end - start + 1)",
+        "    start = i + 1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes: one for last indices, one for partitioning (26 chars = constant)",
+        "spaceExplanation": "Map stores at most 26 chars (constant space)"
+      },
+      "code": {
+        "cpp": "vector<int> partitionLabels(string s) {\n    unordered_map<char, int> last;\n    \n    // Store last occurrence of each char\n    for (int i = 0; i < s.length(); i++) {\n        last[s[i]] = i;\n    }\n    \n    vector<int> result;\n    int start = 0, end = 0;\n    \n    for (int i = 0; i < s.length(); i++) {\n        end = max(end, last[s[i]]);\n        \n        if (i == end) {\n            result.push_back(end - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n}\n\n// Example: s = \"ababcbacadefegdehijhklij\"\n// last: a->8, b->5, c->7, d->14, e->15, f->11, g->13, h->19, i->22, j->23, k->20, l->21\n// i=0: 'a', end=8\n// i=1: 'b', end=8\n// ...\n// i=8: 'a', i==end → partition [0,8] size 9\n// i=9: 'd', end=14\n// ...\n// Result: [9,7,8]",
+        "java": "public List<Integer> partitionLabels(String s) {\n    Map<Character, Integer> last = new HashMap<>();\n    \n    for (int i = 0; i < s.length(); i++) {\n        last.put(s.charAt(i), i);\n    }\n    \n    List<Integer> result = new ArrayList<>();\n    int start = 0, end = 0;\n    \n    for (int i = 0; i < s.length(); i++) {\n        end = Math.max(end, last.get(s.charAt(i)));\n        \n        if (i == end) {\n            result.add(end - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n}",
+        "python": "def partitionLabels(s: str) -> List[int]:\n    last = {c: i for i, c in enumerate(s)}\n    \n    result = []\n    start = end = 0\n    \n    for i, c in enumerate(s):\n        end = max(end, last[c])\n        \n        if i == end:\n            result.append(end - start + 1)\n            start = i + 1\n    \n    return result",
+        "javascript": "var partitionLabels = function(s) {\n    const last = new Map();\n    \n    for (let i = 0; i < s.length; i++) {\n        last.set(s[i], i);\n    }\n    \n    const result = [];\n    let start = 0, end = 0;\n    \n    for (let i = 0; i < s.length; i++) {\n        end = Math.max(end, last.get(s[i]));\n        \n        if (i === end) {\n            result.push(end - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Greedy with Array (Space Optimized)",
+      "order": 2,
+      "intuition": "Use array instead of map since only lowercase letters (26 chars). Same logic.",
+      "approach": "Array last[26] to store last occurrence. More space efficient than hash map.",
+      "steps": [
+        "Create last[26] array initialized to -1",
+        "For each char, last[c - 'a'] = index",
+        "Scan and partition same as approach 1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through string",
+        "spaceExplanation": "Array of size 26 (constant)"
+      },
+      "code": {
+        "cpp": "vector<int> partitionLabels(string s) {\n    vector<int> last(26, -1);\n    \n    for (int i = 0; i < s.length(); i++) {\n        last[s[i] - 'a'] = i;\n    }\n    \n    vector<int> result;\n    int start = 0, end = 0;\n    \n    for (int i = 0; i < s.length(); i++) {\n        end = max(end, last[s[i] - 'a']);\n        \n        if (i == end) {\n            result.push_back(end - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n}",
+        "java": "public List<Integer> partitionLabels(String s) {\n    int[] last = new int[26];\n    Arrays.fill(last, -1);\n    \n    for (int i = 0; i < s.length(); i++) {\n        last[s.charAt(i) - 'a'] = i;\n    }\n    \n    List<Integer> result = new ArrayList<>();\n    int start = 0, end = 0;\n    \n    for (int i = 0; i < s.length(); i++) {\n        end = Math.max(end, last[s.charAt(i) - 'a']);\n        \n        if (i == end) {\n            result.add(end - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n}",
+        "python": "def partitionLabels(s: str) -> List[int]:\n    last = [-1] * 26\n    \n    for i, c in enumerate(s):\n        last[ord(c) - ord('a')] = i\n    \n    result = []\n    start = end = 0\n    \n    for i, c in enumerate(s):\n        end = max(end, last[ord(c) - ord('a')])\n        \n        if i == end:\n            result.append(end - start + 1)\n            start = i + 1\n    \n    return result",
+        "javascript": "var partitionLabels = function(s) {\n    const last = new Array(26).fill(-1);\n    \n    for (let i = 0; i < s.length; i++) {\n        last[s.charCodeAt(i) - 97] = i;\n    }\n    \n    const result = [];\n    let start = 0, end = 0;\n    \n    for (let i = 0; i < s.length; i++) {\n        end = Math.max(end, last[s.charCodeAt(i) - 97]);\n        \n        if (i === end) {\n            result.push(end - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Two Pointer with Set Tracking",
+      "order": 3,
+      "intuition": "Track chars in current partition. Partition ends when all seen chars have been fully consumed.",
+      "approach": "Use set to track chars in current partition. Extend until all chars' occurrences are included.",
+      "steps": [
+        "For each position:",
+        "  Add char to current partition set",
+        "  Check if this is last occurrence of char:",
+        "    If yes, remove from set",
+        "  If set is empty: partition complete",
+        "Return partition sizes"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(26) = O(1)",
+        "timeExplanation": "Two passes: last occurrence map + partition scan",
+        "spaceExplanation": "Set stores at most 26 chars"
+      },
+      "code": {
+        "cpp": "vector<int> partitionLabels(string s) {\n    unordered_map<char, int> last;\n    for (int i = 0; i < s.length(); i++) {\n        last[s[i]] = i;\n    }\n    \n    vector<int> result;\n    unordered_set<char> currentChars;\n    int start = 0;\n    \n    for (int i = 0; i < s.length(); i++) {\n        currentChars.insert(s[i]);\n        \n        if (last[s[i]] == i) {\n            currentChars.erase(s[i]);\n        }\n        \n        if (currentChars.empty()) {\n            result.push_back(i - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n}",
+        "java": "public List<Integer> partitionLabels(String s) {\n    Map<Character, Integer> last = new HashMap<>();\n    for (int i = 0; i < s.length(); i++) {\n        last.put(s.charAt(i), i);\n    }\n    \n    List<Integer> result = new ArrayList<>();\n    Set<Character> currentChars = new HashSet<>();\n    int start = 0;\n    \n    for (int i = 0; i < s.length(); i++) {\n        currentChars.add(s.charAt(i));\n        \n        if (last.get(s.charAt(i)) == i) {\n            currentChars.remove(s.charAt(i));\n        }\n        \n        if (currentChars.isEmpty()) {\n            result.add(i - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n}",
+        "python": "def partitionLabels(s: str) -> List[int]:\n    last = {c: i for i, c in enumerate(s)}\n    \n    result = []\n    current_chars = set()\n    start = 0\n    \n    for i, c in enumerate(s):\n        current_chars.add(c)\n        \n        if last[c] == i:\n            current_chars.remove(c)\n        \n        if not current_chars:\n            result.append(i - start + 1)\n            start = i + 1\n    \n    return result",
+        "javascript": "var partitionLabels = function(s) {\n    const last = new Map();\n    for (let i = 0; i < s.length; i++) {\n        last.set(s[i], i);\n    }\n    \n    const result = [];\n    const currentChars = new Set();\n    let start = 0;\n    \n    for (let i = 0; i < s.length; i++) {\n        currentChars.add(s[i]);\n        \n        if (last.get(s[i]) === i) {\n            currentChars.delete(s[i]);\n        }\n        \n        if (currentChars.size === 0) {\n            result.push(i - start + 1);\n            start = i + 1;\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not tracking last occurrence - leads to incorrect partitions",
+    "Forgetting to update start pointer after creating partition",
+    "Using first occurrence instead of last occurrence",
+    "Not extending end to max of current end and last[char]",
+    "Off-by-one errors in partition size calculation (should be end - start + 1)",
+    "Creating partitions too early (before reaching last occurrence of all chars)"
+  ],
+  "hints": [
+    "Key insight: partition ends when we've seen last occurrence of ALL chars in current partition",
+    "First pass: store last index of each character",
+    "Second pass: extend partition end to include last occurrence of each char seen",
+    "When current index equals partition end, we can finalize this partition",
+    "Greedy works: always extend to include all occurrences of chars seen so far",
+    "Think of it as merging intervals based on char occurrences"
+  ],
+  "followUp": [
+    "What if we want minimum number of partitions? (This already gives minimum)",
+    "What if chars can appear in multiple partitions? (Different problem entirely)",
+    "Return actual partition strings instead of sizes? (Easy: just slice string)",
+    "Case-sensitive partitioning? (Need larger array/map)",
+    "Unicode characters? (Use hash map, not array)",
+    "What if we want maximum partitions? (This already gives maximum)"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Bloomberg"],
+  "tags": ["greedy", "hash-table", "two-pointers", "string"],
+  "relatedProblems": [
+    "Merge Intervals",
+    "Maximum Length of Pair Chain",
+    "Non-overlapping Intervals",
+    "Longest Substring Without Repeating Characters"
+  ]
+}

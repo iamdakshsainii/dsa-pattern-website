@@ -1,0 +1,172 @@
+{
+  "questionId": "190",
+  "questionSlug": "reverse-bits",
+  "title": "Reverse Bits",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/reverse-bits/",
+    "videos": [
+      {
+        "title": "Reverse Bits - Bit Manipulation",
+        "url": "https://www.youtube.com/watch?v=UcoN6UjAI64",
+        "channel": "NeetCode",
+        "duration": "7:15",
+        "language": "English"
+      },
+      {
+        "title": "Reverse Bits of a Number",
+        "url": "https://www.youtube.com/watch?v=ZXTZe4uhhQU",
+        "channel": "take U forward",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Reverse Bits LeetCode",
+        "url": "https://www.youtube.com/watch?v=3FDbKDzJ6CY",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Reverse Bits - LeetCode Official",
+        "url": "https://leetcode.com/problems/reverse-bits/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Write an Efficient Function to Reverse Bits",
+        "url": "https://www.geeksforgeeks.org/write-an-efficient-c-program-to-reverse-bits-of-a-number/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Reverse Bits using Bit Manipulation",
+        "url": "https://takeuforward.org/bit-manipulation/reverse-bits-of-a-number/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/reverse-bits/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/reverse-bits/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Reverse bits? Extract each bit from right, add to result from left. Or use mask and swap technique.",
+  "approaches": [
+    {
+      "name": "Extract and Build - Brute Force",
+      "order": 1,
+      "intuition": "Extract bits one by one from right, build result by adding them from left.",
+      "approach": "Loop 32 times, extract each bit, add to result.",
+      "steps": [
+        "result = 0",
+        "For i from 0 to 31:",
+        "  Extract rightmost bit of n: bit = n & 1",
+        "  Add bit to result at position (31-i): result |= (bit << (31-i))",
+        "  Right shift n: n >>= 1",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(32) = O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Fixed 32 iterations for 32-bit integer",
+        "spaceExplanation": "Only result variable"
+      },
+      "code": {
+        "cpp": "uint32_t reverseBits(uint32_t n) {\n    uint32_t result = 0;\n    \n    for (int i = 0; i < 32; i++) {\n        // Extract rightmost bit\n        int bit = n & 1;\n        \n        // Add to result at correct position\n        result |= (bit << (31 - i));\n        \n        // Move to next bit\n        n >>= 1;\n    }\n    \n    return result;\n}",
+        "java": "public int reverseBits(int n) {\n    int result = 0;\n    \n    for (int i = 0; i < 32; i++) {\n        int bit = n & 1;\n        result |= (bit << (31 - i));\n        n >>>= 1;  // Unsigned right shift\n    }\n    \n    return result;\n}",
+        "python": "def reverseBits(n):\n    result = 0\n    \n    for i in range(32):\n        # Extract rightmost bit\n        bit = n & 1\n        \n        # Add to result at position (31-i)\n        result |= (bit << (31 - i))\n        \n        # Right shift\n        n >>= 1\n    \n    return result",
+        "javascript": "function reverseBits(n) {\n    let result = 0;\n    \n    for (let i = 0; i < 32; i++) {\n        const bit = n & 1;\n        result |= (bit << (31 - i));\n        n >>>= 1;  // Unsigned right shift\n    }\n    \n    return result >>> 0;  // Ensure unsigned\n}"
+      }
+    },
+    {
+      "name": "Build Result by Left Shifting",
+      "order": 2,
+      "intuition": "Build result by shifting left and adding rightmost bit. More intuitive than calculating positions.",
+      "approach": "Shift result left, add current bit, shift n right.",
+      "steps": [
+        "result = 0",
+        "For i from 0 to 31:",
+        "  result <<= 1  (make space for new bit)",
+        "  result |= (n & 1)  (add rightmost bit)",
+        "  n >>= 1  (move to next bit)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(32) = O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Fixed 32 iterations",
+        "spaceExplanation": "Only result variable"
+      },
+      "code": {
+        "cpp": "uint32_t reverseBits(uint32_t n) {\n    uint32_t result = 0;\n    \n    for (int i = 0; i < 32; i++) {\n        // Shift result left to make room\n        result <<= 1;\n        \n        // Add current rightmost bit\n        result |= (n & 1);\n        \n        // Move to next bit\n        n >>= 1;\n    }\n    \n    return result;\n}\n\n// Example: n = 5 (00000101)\n// i=0: result=0<<1=0, 0|1=1, n=2\n// i=1: result=1<<1=2, 2|0=2, n=1\n// i=2: result=2<<1=4, 4|1=5, n=0\n// ...",
+        "java": "public int reverseBits(int n) {\n    int result = 0;\n    \n    for (int i = 0; i < 32; i++) {\n        // Make space for new bit\n        result <<= 1;\n        \n        // Add rightmost bit of n\n        result |= (n & 1);\n        \n        // Move n right\n        n >>>= 1;\n    }\n    \n    return result;\n}",
+        "python": "def reverseBits(n):\n    result = 0\n    \n    for i in range(32):\n        # Shift result left\n        result <<= 1\n        \n        # Add current bit\n        result |= (n & 1)\n        \n        # Move to next bit\n        n >>= 1\n    \n    return result\n\n# Alternative one-liner:\n# return int(bin(n)[2:].zfill(32)[::-1], 2)",
+        "javascript": "function reverseBits(n) {\n    let result = 0;\n    \n    for (let i = 0; i < 32; i++) {\n        result <<= 1;        // Shift left\n        result |= (n & 1);   // Add current bit\n        n >>>= 1;            // Move right\n    }\n    \n    return result >>> 0;  // Unsigned\n}"
+      }
+    },
+    {
+      "name": "Divide and Conquer (Mask & Swap) - Optimal",
+      "order": 3,
+      "intuition": "Reverse bits by swapping chunks: swap 16-bit halves, then 8-bit quarters, then 4-bit, 2-bit, 1-bit. Uses masks.",
+      "approach": "Iteratively swap bit chunks using masks.",
+      "steps": [
+        "Swap 16-bit halves: n = ((n >> 16) | (n << 16))",
+        "Swap 8-bit chunks: use mask 0xFF00FF00",
+        "Swap 4-bit chunks: use mask 0xF0F0F0F0",
+        "Swap 2-bit chunks: use mask 0xCCCCCCCC",
+        "Swap 1-bit pairs: use mask 0xAAAAAAAA",
+        "This is faster for repeated calls"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Fixed 5 operations regardless of input",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "uint32_t reverseBits(uint32_t n) {\n    // Swap 16-bit halves\n    n = (n >> 16) | (n << 16);\n    \n    // Swap 8-bit chunks\n    n = ((n & 0xFF00FF00) >> 8) | ((n & 0x00FF00FF) << 8);\n    \n    // Swap 4-bit chunks\n    n = ((n & 0xF0F0F0F0) >> 4) | ((n & 0x0F0F0F0F) << 4);\n    \n    // Swap 2-bit chunks\n    n = ((n & 0xCCCCCCCC) >> 2) | ((n & 0x33333333) << 2);\n    \n    // Swap 1-bit pairs\n    n = ((n & 0xAAAAAAAA) >> 1) | ((n & 0x55555555) << 1);\n    \n    return n;\n}",
+        "java": "public int reverseBits(int n) {\n    // Swap 16-bit halves\n    n = (n >>> 16) | (n << 16);\n    \n    // Swap 8-bit chunks\n    n = ((n & 0xFF00FF00) >>> 8) | ((n & 0x00FF00FF) << 8);\n    \n    // Swap 4-bit chunks\n    n = ((n & 0xF0F0F0F0) >>> 4) | ((n & 0x0F0F0F0F) << 4);\n    \n    // Swap 2-bit chunks\n    n = ((n & 0xCCCCCCCC) >>> 2) | ((n & 0x33333333) << 2);\n    \n    // Swap 1-bit pairs\n    n = ((n & 0xAAAAAAAA) >>> 1) | ((n & 0x55555555) << 1);\n    \n    return n;\n}",
+        "python": "def reverseBits(n):\n    # Swap 16-bit halves\n    n = (n >> 16) | ((n & 0xFFFF) << 16)\n    \n    # Swap 8-bit chunks\n    n = ((n & 0xFF00FF00) >> 8) | ((n & 0x00FF00FF) << 8)\n    \n    # Swap 4-bit chunks\n    n = ((n & 0xF0F0F0F0) >> 4) | ((n & 0x0F0F0F0F) << 4)\n    \n    # Swap 2-bit chunks\n    n = ((n & 0xCCCCCCCC) >> 2) | ((n & 0x33333333) << 2)\n    \n    # Swap 1-bit pairs\n    n = ((n & 0xAAAAAAAA) >> 1) | ((n & 0x55555555) << 1)\n    \n    return n & 0xFFFFFFFF  # Ensure 32-bit",
+        "javascript": "function reverseBits(n) {\n    // Swap 16-bit halves\n    n = (n >>> 16) | (n << 16);\n    \n    // Swap 8-bit chunks\n    n = ((n & 0xFF00FF00) >>> 8) | ((n & 0x00FF00FF) << 8);\n    \n    // Swap 4-bit chunks\n    n = ((n & 0xF0F0F0F0) >>> 4) | ((n & 0x0F0F0F0F) << 4);\n    \n    // Swap 2-bit chunks\n    n = ((n & 0xCCCCCCCC) >>> 2) | ((n & 0x33333333) << 2);\n    \n    // Swap 1-bit pairs\n    n = ((n & 0xAAAAAAAA) >>> 1) | ((n & 0x55555555) << 1);\n    \n    return n >>> 0;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling unsigned integers properly",
+    "Using signed right shift >> instead of unsigned >>>",
+    "Off-by-one errors in bit positions",
+    "Not returning unsigned result in JavaScript",
+    "Confusing mask patterns in divide-and-conquer"
+  ],
+  "hints": [
+    "Extract each bit from right, build result from left",
+    "Can shift result left and add current bit",
+    "For optimization: swap bit chunks using masks",
+    "Divide-and-conquer: 16-bit → 8-bit → 4-bit → 2-bit → 1-bit",
+    "Use lookup table for 8-bit chunks if called repeatedly"
+  ],
+  "followUp": [
+    "Can you reverse bits of 64-bit integer?",
+    "How to optimize for multiple calls? (Use lookup table)",
+    "Can you reverse specific range of bits?",
+    "What if you need to reverse nibbles (4 bits)?",
+    "How would you handle variable bit-width integers?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Airbnb"],
+  "tags": ["bit-manipulation", "divide-and-conquer"],
+  "relatedProblems": [
+    "Number of 1 Bits",
+    "Reverse Integer",
+    "Binary Watch",
+    "Convert Binary Number",
+    "Hamming Distance"
+  ]
+}

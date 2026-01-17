@@ -1,0 +1,170 @@
+{
+  "questionId": "79",
+  "questionSlug": "word-search",
+  "title": "Word Search",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/word-search/",
+    "videos": [
+      {
+        "title": "Word Search - Backtracking",
+        "url": "https://www.youtube.com/watch?v=pfiQ_PS1g8E",
+        "channel": "NeetCode",
+        "duration": "11:25",
+        "language": "English"
+      },
+      {
+        "title": "Word Search Explained",
+        "url": "https://www.youtube.com/watch?v=m9TrOL1ETxI",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:15",
+        "language": "English"
+      },
+      {
+        "title": "Word Search - Complete Guide",
+        "url": "https://www.youtube.com/watch?v=_rVuHM8o8Jw",
+        "channel": "take U forward",
+        "duration": "14:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Word Search - LeetCode Official",
+        "url": "https://leetcode.com/problems/word-search/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Word Search in a 2D Grid",
+        "url": "https://www.geeksforgeeks.org/search-a-word-in-a-2d-grid-of-characters/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/word-search/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/find-the-string-in-grid0111/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Search for word in 2D grid? Use DFS/Backtracking. Try each cell as starting point, explore 4 directions, mark visited cells.",
+  "approaches": [
+    {
+      "name": "Brute Force with DFS - Basic",
+      "order": 1,
+      "intuition": "Try every cell as potential start. From each cell, use DFS to explore all 4 directions. If path matches word, return true.",
+      "approach": "For each cell, start DFS. At each step, check if current character matches word[index]. If yes, explore neighbors.",
+      "steps": [
+        "For each cell (i, j) in board:",
+        "  If board[i][j] == word[0]:",
+        "    Start DFS from (i, j)",
+        "DFS(i, j, index):",
+        "  If index == word.length, return true",
+        "  If out of bounds or visited or mismatch, return false",
+        "  Mark cell as visited",
+        "  Try all 4 directions",
+        "  If any direction returns true, return true",
+        "  Unmark cell (backtrack)",
+        "  Return false"
+      ],
+      "complexity": {
+        "time": "O(m × n × 4^L)",
+        "space": "O(L)",
+        "timeExplanation": "m×n cells as starting points, each DFS explores 4^L paths where L = word length",
+        "spaceExplanation": "Recursion depth is L (word length)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool exist(vector<vector<char>>& board, string word) {\n        int m = board.size(), n = board[0].size();\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == word[0]) {\n                    if (dfs(board, word, i, j, 0)) {\n                        return true;\n                    }\n                }\n            }\n        }\n        return false;\n    }\n    \nprivate:\n    bool dfs(vector<vector<char>>& board, string& word, int i, int j, int index) {\n        if (index == word.size()) return true;\n        \n        if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size() ||\n            board[i][j] != word[index]) {\n            return false;\n        }\n        \n        char temp = board[i][j];\n        board[i][j] = '#';  // Mark as visited\n        \n        bool found = dfs(board, word, i+1, j, index+1) ||\n                     dfs(board, word, i-1, j, index+1) ||\n                     dfs(board, word, i, j+1, index+1) ||\n                     dfs(board, word, i, j-1, index+1);\n        \n        board[i][j] = temp;  // Backtrack\n        return found;\n    }\n};",
+        "java": "class Solution {\n    public boolean exist(char[][] board, String word) {\n        int m = board.length, n = board[0].length;\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == word.charAt(0)) {\n                    if (dfs(board, word, i, j, 0)) {\n                        return true;\n                    }\n                }\n            }\n        }\n        return false;\n    }\n    \n    private boolean dfs(char[][] board, String word, int i, int j, int index) {\n        if (index == word.length()) return true;\n        \n        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length ||\n            board[i][j] != word.charAt(index)) {\n            return false;\n        }\n        \n        char temp = board[i][j];\n        board[i][j] = '#';  // Mark visited\n        \n        boolean found = dfs(board, word, i+1, j, index+1) ||\n                        dfs(board, word, i-1, j, index+1) ||\n                        dfs(board, word, i, j+1, index+1) ||\n                        dfs(board, word, i, j-1, index+1);\n        \n        board[i][j] = temp;  // Backtrack\n        return found;\n    }\n}",
+        "python": "def exist(board, word):\n    m, n = len(board), len(board[0])\n    \n    def dfs(i, j, index):\n        if index == len(word):\n            return True\n        \n        if (i < 0 or i >= m or j < 0 or j >= n or \n            board[i][j] != word[index]):\n            return False\n        \n        temp = board[i][j]\n        board[i][j] = '#'  # Mark visited\n        \n        found = (dfs(i+1, j, index+1) or\n                dfs(i-1, j, index+1) or\n                dfs(i, j+1, index+1) or\n                dfs(i, j-1, index+1))\n        \n        board[i][j] = temp  # Backtrack\n        return found\n    \n    for i in range(m):\n        for j in range(n):\n            if board[i][j] == word[0]:\n                if dfs(i, j, 0):\n                    return True\n    \n    return False",
+        "javascript": "function exist(board, word) {\n    const m = board.length, n = board[0].length;\n    \n    function dfs(i, j, index) {\n        if (index === word.length) return true;\n        \n        if (i < 0 || i >= m || j < 0 || j >= n ||\n            board[i][j] !== word[index]) {\n            return false;\n        }\n        \n        const temp = board[i][j];\n        board[i][j] = '#';  // Mark visited\n        \n        const found = dfs(i+1, j, index+1) ||\n                     dfs(i-1, j, index+1) ||\n                     dfs(i, j+1, index+1) ||\n                     dfs(i, j-1, index+1);\n        \n        board[i][j] = temp;  // Backtrack\n        return found;\n    }\n    \n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            if (board[i][j] === word[0]) {\n                if (dfs(i, j, 0)) {\n                    return true;\n                }\n            }\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Direction Array - Cleaner",
+      "order": 2,
+      "intuition": "Same DFS approach but use direction arrays for cleaner code. Also add early termination optimizations.",
+      "approach": "Use direction array [dx, dy] to represent 4 directions. Add character frequency check for early termination.",
+      "steps": [
+        "directions = [[0,1], [1,0], [0,-1], [-1,0]]",
+        "Optional: Check if all characters in word exist in board",
+        "For each cell, try DFS if matches first character",
+        "In DFS, use direction array for exploring neighbors",
+        "Mark visited by modifying board temporarily"
+      ],
+      "complexity": {
+        "time": "O(m × n × 4^L)",
+        "space": "O(L)",
+        "timeExplanation": "Same as brute force, but with better constants due to early termination",
+        "spaceExplanation": "Recursion depth is L"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool exist(vector<vector<char>>& board, string word) {\n        m = board.size();\n        n = board[0].size();\n        \n        // Early termination: check character frequency\n        unordered_map<char, int> boardCount, wordCount;\n        for (auto& row : board) {\n            for (char c : row) {\n                boardCount[c]++;\n            }\n        }\n        for (char c : word) {\n            wordCount[c]++;\n            if (boardCount[c] < wordCount[c]) return false;\n        }\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == word[0] && dfs(board, word, i, j, 0)) {\n                    return true;\n                }\n            }\n        }\n        return false;\n    }\n    \nprivate:\n    int m, n;\n    int dx[4] = {0, 1, 0, -1};\n    int dy[4] = {1, 0, -1, 0};\n    \n    bool dfs(vector<vector<char>>& board, string& word, int x, int y, int index) {\n        if (index == word.size()) return true;\n        \n        if (x < 0 || x >= m || y < 0 || y >= n || \n            board[x][y] != word[index]) {\n            return false;\n        }\n        \n        char temp = board[x][y];\n        board[x][y] = '#';\n        \n        for (int i = 0; i < 4; i++) {\n            int nx = x + dx[i];\n            int ny = y + dy[i];\n            if (dfs(board, word, nx, ny, index + 1)) {\n                board[x][y] = temp;\n                return true;\n            }\n        }\n        \n        board[x][y] = temp;\n        return false;\n    }\n};",
+        "java": "class Solution {\n    private int m, n;\n    private int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}};\n    \n    public boolean exist(char[][] board, String word) {\n        m = board.length;\n        n = board[0].length;\n        \n        // Early termination check\n        Map<Character, Integer> boardCount = new HashMap<>();\n        Map<Character, Integer> wordCount = new HashMap<>();\n        \n        for (char[] row : board) {\n            for (char c : row) {\n                boardCount.put(c, boardCount.getOrDefault(c, 0) + 1);\n            }\n        }\n        \n        for (char c : word.toCharArray()) {\n            wordCount.put(c, wordCount.getOrDefault(c, 0) + 1);\n            if (boardCount.getOrDefault(c, 0) < wordCount.get(c)) {\n                return false;\n            }\n        }\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == word.charAt(0) && dfs(board, word, i, j, 0)) {\n                    return true;\n                }\n            }\n        }\n        return false;\n    }\n    \n    private boolean dfs(char[][] board, String word, int x, int y, int index) {\n        if (index == word.length()) return true;\n        \n        if (x < 0 || x >= m || y < 0 || y >= n ||\n            board[x][y] != word.charAt(index)) {\n            return false;\n        }\n        \n        char temp = board[x][y];\n        board[x][y] = '#';\n        \n        for (int[] dir : directions) {\n            if (dfs(board, word, x + dir[0], y + dir[1], index + 1)) {\n                board[x][y] = temp;\n                return true;\n            }\n        }\n        \n        board[x][y] = temp;\n        return false;\n    }\n}",
+        "python": "def exist(board, word):\n    m, n = len(board), len(board[0])\n    directions = [(0,1), (1,0), (0,-1), (-1,0)]\n    \n    # Early termination\n    from collections import Counter\n    board_count = Counter(c for row in board for c in row)\n    word_count = Counter(word)\n    \n    for char in word_count:\n        if board_count[char] < word_count[char]:\n            return False\n    \n    def dfs(x, y, index):\n        if index == len(word):\n            return True\n        \n        if (x < 0 or x >= m or y < 0 or y >= n or\n            board[x][y] != word[index]):\n            return False\n        \n        temp = board[x][y]\n        board[x][y] = '#'\n        \n        for dx, dy in directions:\n            if dfs(x + dx, y + dy, index + 1):\n                board[x][y] = temp\n                return True\n        \n        board[x][y] = temp\n        return False\n    \n    for i in range(m):\n        for j in range(n):\n            if board[i][j] == word[0] and dfs(i, j, 0):\n                return True\n    \n    return False",
+        "javascript": "function exist(board, word) {\n    const m = board.length, n = board[0].length;\n    const directions = [[0,1], [1,0], [0,-1], [-1,0]];\n    \n    // Early termination check\n    const boardCount = {};\n    const wordCount = {};\n    \n    for (const row of board) {\n        for (const c of row) {\n            boardCount[c] = (boardCount[c] || 0) + 1;\n        }\n    }\n    \n    for (const c of word) {\n        wordCount[c] = (wordCount[c] || 0) + 1;\n        if ((boardCount[c] || 0) < wordCount[c]) {\n            return false;\n        }\n    }\n    \n    function dfs(x, y, index) {\n        if (index === word.length) return true;\n        \n        if (x < 0 || x >= m || y < 0 || y >= n ||\n            board[x][y] !== word[index]) {\n            return false;\n        }\n        \n        const temp = board[x][y];\n        board[x][y] = '#';\n        \n        for (const [dx, dy] of directions) {\n            if (dfs(x + dx, y + dy, index + 1)) {\n                board[x][y] = temp;\n                return true;\n            }\n        }\n        \n        board[x][y] = temp;\n        return false;\n    }\n    \n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            if (board[i][j] === word[0] && dfs(i, j, 0)) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}"
+      }
+    },
+    {
+      "name": "Optimized Backtracking with Reverse Check - Optimal",
+      "order": 3,
+      "intuition": "If last character of word appears less frequently than first, search backwards. This can dramatically reduce search space.",
+      "approach": "Count frequency of first and last character. If last char is rarer, reverse word and search. This reduces starting points.",
+      "steps": [
+        "Count frequency of word[0] and word[last] in board",
+        "If word[last] appears less, reverse word",
+        "Perform DFS with character frequency check",
+        "Use visited marking on board itself",
+        "Early return as soon as word is found"
+      ],
+      "complexity": {
+        "time": "O(m × n × 4^L)",
+        "space": "O(L)",
+        "timeExplanation": "Same worst case, but much better average case with optimizations",
+        "spaceExplanation": "Recursion depth is L"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool exist(vector<vector<char>>& board, string word) {\n        m = board.size();\n        n = board[0].size();\n        \n        // Character frequency optimization\n        int firstCount = 0, lastCount = 0;\n        for (auto& row : board) {\n            for (char c : row) {\n                if (c == word[0]) firstCount++;\n                if (c == word.back()) lastCount++;\n            }\n        }\n        \n        // Reverse if last char is rarer\n        if (lastCount < firstCount) {\n            reverse(word.begin(), word.end());\n        }\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == word[0] && dfs(board, word, i, j, 0)) {\n                    return true;\n                }\n            }\n        }\n        return false;\n    }\n    \nprivate:\n    int m, n;\n    int dx[4] = {0, 1, 0, -1};\n    int dy[4] = {1, 0, -1, 0};\n    \n    bool dfs(vector<vector<char>>& board, string& word, int x, int y, int idx) {\n        if (idx == word.size()) return true;\n        \n        if (x < 0 || x >= m || y < 0 || y >= n || \n            board[x][y] != word[idx]) {\n            return false;\n        }\n        \n        char temp = board[x][y];\n        board[x][y] = '#';\n        \n        for (int i = 0; i < 4; i++) {\n            if (dfs(board, word, x + dx[i], y + dy[i], idx + 1)) {\n                board[x][y] = temp;\n                return true;\n            }\n        }\n        \n        board[x][y] = temp;\n        return false;\n    }\n};",
+        "java": "class Solution {\n    private int m, n;\n    private int[][] dirs = {{0,1}, {1,0}, {0,-1}, {-1,0}};\n    \n    public boolean exist(char[][] board, String word) {\n        m = board.length;\n        n = board[0].length;\n        \n        // Frequency optimization\n        int firstCount = 0, lastCount = 0;\n        for (char[] row : board) {\n            for (char c : row) {\n                if (c == word.charAt(0)) firstCount++;\n                if (c == word.charAt(word.length()-1)) lastCount++;\n            }\n        }\n        \n        // Reverse if beneficial\n        if (lastCount < firstCount) {\n            word = new StringBuilder(word).reverse().toString();\n        }\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == word.charAt(0) && dfs(board, word, i, j, 0)) {\n                    return true;\n                }\n            }\n        }\n        return false;\n    }\n    \n    private boolean dfs(char[][] board, String word, int x, int y, int idx) {\n        if (idx == word.length()) return true;\n        \n        if (x < 0 || x >= m || y < 0 || y >= n ||\n            board[x][y] != word.charAt(idx)) {\n            return false;\n        }\n        \n        char temp = board[x][y];\n        board[x][y] = '#';\n        \n        for (int[] dir : dirs) {\n            if (dfs(board, word, x + dir[0], y + dir[1], idx + 1)) {\n                board[x][y] = temp;\n                return true;\n            }\n        }\n        \n        board[x][y] = temp;\n        return false;\n    }\n}",
+        "python": "def exist(board, word):\n    m, n = len(board), len(board[0])\n    \n    # Frequency optimization\n    first_count = sum(row.count(word[0]) for row in board)\n    last_count = sum(row.count(word[-1]) for row in board)\n    \n    # Reverse if last char is rarer\n    if last_count < first_count:\n        word = word[::-1]\n    \n    def dfs(x, y, idx):\n        if idx == len(word):\n            return True\n        \n        if (x < 0 or x >= m or y < 0 or y >= n or\n            board[x][y] != word[idx]):\n            return False\n        \n        temp = board[x][y]\n        board[x][y] = '#'\n        \n        found = (dfs(x+1, y, idx+1) or\n                dfs(x-1, y, idx+1) or\n                dfs(x, y+1, idx+1) or\n                dfs(x, y-1, idx+1))\n        \n        board[x][y] = temp\n        return found\n    \n    for i in range(m):\n        for j in range(n):\n            if board[i][j] == word[0] and dfs(i, j, 0):\n                return True\n    \n    return False",
+        "javascript": "function exist(board, word) {\n    const m = board.length, n = board[0].length;\n    \n    // Frequency optimization\n    let firstCount = 0, lastCount = 0;\n    for (const row of board) {\n        for (const c of row) {\n            if (c === word[0]) firstCount++;\n            if (c === word[word.length-1]) lastCount++;\n        }\n    }\n    \n    // Reverse if beneficial\n    if (lastCount < firstCount) {\n        word = word.split('').reverse().join('');\n    }\n    \n    function dfs(x, y, idx) {\n        if (idx === word.length) return true;\n        \n        if (x < 0 || x >= m || y < 0 || y >= n ||\n            board[x][y] !== word[idx]) {\n            return false;\n        }\n        \n        const temp = board[x][y];\n        board[x][y] = '#';\n        \n        const found = dfs(x+1, y, idx+1) ||\n                     dfs(x-1, y, idx+1) ||\n                     dfs(x, y+1, idx+1) ||\n                     dfs(x, y-1, idx+1);\n        \n        board[x][y] = temp;\n        return found;\n    }\n    \n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            if (board[i][j] === word[0] && dfs(i, j, 0)) {\n                return true;\n            }\n        }\n    }\n    \n    return false;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not backtracking properly (forgetting to restore cell value)",
+    "Using separate visited array instead of modifying board (wastes space)",
+    "Not checking bounds before accessing array",
+    "Not optimizing starting position selection",
+    "Forgetting to check if word exists in board before searching",
+    "Using wrong base case in recursion"
+  ],
+  "hints": [
+    "Use DFS from each cell that matches first character",
+    "Mark cells as visited by modifying board temporarily",
+    "Check frequency of characters before searching",
+    "If last char is rarer than first, search backwards",
+    "Early termination can save significant time"
+  ],
+  "followUp": [
+    "Can you solve without modifying the board? (Use visited set, more space)",
+    "What if the board is very large? (Use Trie for multiple words)",
+    "Can you find all starting positions? (Return list of coordinates)",
+    "How to find all occurrences of word? (Continue searching after finding one)",
+    "What if we can reuse cells? (Remove visited marking, add cycle detection)"
+  ],
+  "companies": ["Microsoft", "Amazon", "Facebook", "Bloomberg", "Snapchat", "Google"],
+  "tags": ["array", "backtracking", "matrix"],
+  "relatedProblems": [
+    "Word Search II",
+    "Number of Islands",
+    "Surrounded Regions",
+    "Find All Groups of Farmland"
+  ]
+}

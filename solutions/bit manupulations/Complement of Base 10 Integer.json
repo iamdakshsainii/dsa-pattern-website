@@ -1,0 +1,175 @@
+{
+  "questionId": "1009",
+  "questionSlug": "complement-of-base-10-integer",
+  "title": "Complement of Base 10 Integer",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/complement-of-base-10-integer/",
+    "videos": [
+      {
+        "title": "Number Complement - Bit Manipulation",
+        "url": "https://www.youtube.com/watch?v=oUSqUoL_RBw",
+        "channel": "NeetCode",
+        "duration": "6:30",
+        "language": "English"
+      },
+      {
+        "title": "Complement of Base 10 Integer",
+        "url": "https://www.youtube.com/watch?v=z8TvCFL_tLk",
+        "channel": "take U forward",
+        "duration": "9:45",
+        "language": "English"
+      },
+      {
+        "title": "Number Complement LeetCode",
+        "url": "https://www.youtube.com/watch?v=US3hUF9t-yI",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "5:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Complement of Base 10 Integer - LeetCode",
+        "url": "https://leetcode.com/problems/complement-of-base-10-integer/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "1's and 2's complement",
+        "url": "https://www.geeksforgeeks.org/1s-2s-complement-binary-number/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Find Complement of a Number",
+        "url": "https://takeuforward.org/bit-manipulation/find-complement-of-number/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/complement-of-base-10-integer/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/ones-complement/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Flip bits? Create mask with all 1s (same length), XOR with number. Or use ~n + mask.",
+  "approaches": [
+    {
+      "name": "Flip Each Bit - Brute Force",
+      "order": 1,
+      "intuition": "Find number of bits, flip each bit one by one.",
+      "approach": "Count bits, flip each using XOR with 1.",
+      "steps": [
+        "Find bit length of n",
+        "result = 0",
+        "For each bit position i:",
+        "  If bit at i in n is 0:",
+        "    Set bit i in result",
+        "  Else:",
+        "    Keep bit i as 0 in result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Iterate through all bits",
+        "spaceExplanation": "Only result variable"
+      },
+      "code": {
+        "cpp": "int bitwiseComplement(int n) {\n    if (n == 0) return 1;\n    \n    // Find bit length\n    int bitLen = 0;\n    int temp = n;\n    while (temp > 0) {\n        bitLen++;\n        temp >>= 1;\n    }\n    \n    // Flip each bit\n    int result = 0;\n    for (int i = 0; i < bitLen; i++) {\n        if (((n >> i) & 1) == 0) {\n            result |= (1 << i);\n        }\n    }\n    \n    return result;\n}",
+        "java": "public int bitwiseComplement(int n) {\n    if (n == 0) return 1;\n    \n    int bitLen = 0;\n    int temp = n;\n    while (temp > 0) {\n        bitLen++;\n        temp >>= 1;\n    }\n    \n    int result = 0;\n    for (int i = 0; i < bitLen; i++) {\n        if (((n >> i) & 1) == 0) {\n            result |= (1 << i);\n        }\n    }\n    \n    return result;\n}",
+        "python": "def bitwiseComplement(n):\n    if n == 0:\n        return 1\n    \n    # Find bit length\n    bit_len = n.bit_length()\n    \n    # Flip each bit\n    result = 0\n    for i in range(bit_len):\n        if ((n >> i) & 1) == 0:\n            result |= (1 << i)\n    \n    return result",
+        "javascript": "function bitwiseComplement(n) {\n    if (n === 0) return 1;\n    \n    let bitLen = 0;\n    let temp = n;\n    while (temp > 0) {\n        bitLen++;\n        temp >>= 1;\n    }\n    \n    let result = 0;\n    for (let i = 0; i < bitLen; i++) {\n        if (((n >> i) & 1) === 0) {\n            result |= (1 << i);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Create Mask and XOR",
+      "order": 2,
+      "intuition": "Create a mask with all 1s (same length as n). XOR n with mask to flip all bits.",
+      "approach": "Build mask, XOR to flip.",
+      "steps": [
+        "If n == 0: return 1",
+        "Find bit length of n",
+        "Create mask = (1 << bitLen) - 1",
+        "  This gives all 1s of required length",
+        "  Example: bitLen=3 → mask = 1000 - 1 = 0111",
+        "Return n ^ mask"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Finding bit length takes log(n)",
+        "spaceExplanation": "Only mask variable"
+      },
+      "code": {
+        "cpp": "int bitwiseComplement(int n) {\n    if (n == 0) return 1;\n    \n    // Find bit length\n    int bitLen = 0;\n    int temp = n;\n    while (temp > 0) {\n        bitLen++;\n        temp >>= 1;\n    }\n    \n    // Create mask with all 1s\n    int mask = (1 << bitLen) - 1;\n    \n    // XOR to flip bits\n    return n ^ mask;\n}\n\n// Example: n = 5 (101)\n// bitLen = 3\n// mask = (1 << 3) - 1 = 8 - 1 = 7 (111)\n// 101 ^ 111 = 010 = 2",
+        "java": "public int bitwiseComplement(int n) {\n    if (n == 0) return 1;\n    \n    int bitLen = Integer.toBinaryString(n).length();\n    int mask = (1 << bitLen) - 1;\n    \n    return n ^ mask;\n}",
+        "python": "def bitwiseComplement(n):\n    if n == 0:\n        return 1\n    \n    # Get bit length\n    bit_len = n.bit_length()\n    \n    # Create mask\n    mask = (1 << bit_len) - 1\n    \n    # XOR to flip\n    return n ^ mask\n\n# One-liner:\n# return (1 << n.bit_length()) - 1 - n if n else 1",
+        "javascript": "function bitwiseComplement(n) {\n    if (n === 0) return 1;\n    \n    const bitLen = n.toString(2).length;\n    const mask = (1 << bitLen) - 1;\n    \n    return n ^ mask;\n}"
+      }
+    },
+    {
+      "name": "Find Highest Bit and Build Mask - Optimal",
+      "order": 3,
+      "intuition": "Find position of highest set bit. Create mask by setting all bits up to that position. XOR.",
+      "approach": "Use bit manipulation to find highest bit efficiently.",
+      "steps": [
+        "If n == 0: return 1",
+        "Find highest set bit position",
+        "Build mask efficiently:",
+        "  mask = 1",
+        "  While mask <= n:",
+        "    mask = (mask << 1) | 1",
+        "Return n ^ mask"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Build mask in log(n) steps",
+        "spaceExplanation": "Only mask variable"
+      },
+      "code": {
+        "cpp": "int bitwiseComplement(int n) {\n    if (n == 0) return 1;\n    \n    // Build mask: 1, 11, 111, 1111...\n    int mask = 1;\n    while (mask < n) {\n        mask = (mask << 1) | 1;\n    }\n    \n    // XOR to flip\n    return n ^ mask;\n}\n\n// Example: n = 5 (101)\n// mask starts at 1 (1)\n// mask = 3 (11)\n// mask = 7 (111) - now mask >= n\n// 101 ^ 111 = 010 = 2",
+        "java": "public int bitwiseComplement(int n) {\n    if (n == 0) return 1;\n    \n    int mask = 1;\n    while (mask < n) {\n        mask = (mask << 1) | 1;\n    }\n    \n    return n ^ mask;\n}",
+        "python": "def bitwiseComplement(n):\n    if n == 0:\n        return 1\n    \n    # Build mask\n    mask = 1\n    while mask < n:\n        mask = (mask << 1) | 1\n    \n    return n ^ mask\n\n# Alternative using bit_length:\n# return (1 << n.bit_length()) - 1 - n if n else 1",
+        "javascript": "function bitwiseComplement(n) {\n    if (n === 0) return 1;\n    \n    let mask = 1;\n    while (mask < n) {\n        mask = (mask << 1) | 1;\n    }\n    \n    return n ^ mask;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using ~ operator directly (flips all 32 bits, not just significant ones)",
+    "Forgetting special case n = 0",
+    "Not creating proper mask length",
+    "Confusing with two's complement",
+    "Integer overflow when creating mask"
+  ],
+  "hints": [
+    "Cannot use ~ directly as it flips all 32 bits",
+    "Need mask with same bit length as n",
+    "XOR with all 1s flips bits",
+    "Special case: n=0 returns 1",
+    "Build mask: 1→11→111→1111..."
+  ],
+  "followUp": [
+    "What if input is 64-bit?",
+    "Can you do without finding bit length first?",
+    "How to find two's complement?",
+    "What if you need complement of specific bits only?",
+    "Can you generalize for any base?"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Apple"],
+  "tags": ["bit-manipulation"],
+  "relatedProblems": [
+    "Number Complement",
+    "Reverse Bits",
+    "Hamming Distance",
+    "Binary Number with Alternating Bits",
+    "Power of Two"
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "questionId": "282",
+  "questionSlug": "expression-add-operators",
+  "title": "Expression Add Operators",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/expression-add-operators/",
+    "videos": [
+      {
+        "title": "Expression Add Operators - Backtracking",
+        "url": "https://www.youtube.com/watch?v=v05R1OOo54s",
+        "channel": "NeetCode",
+        "duration": "18:42",
+        "language": "English"
+      },
+      {
+        "title": "Expression Add Operators Explained",
+        "url": "https://www.youtube.com/watch?v=lZMh_9GqJG0",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "15:30",
+        "language": "English"
+      },
+      {
+        "title": "Expression Add Operators - Complete Solution",
+        "url": "https://www.youtube.com/watch?v=BuTj0HM3o4w",
+        "channel": "take U forward",
+        "duration": "22:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Expression Add Operators - LeetCode Official",
+        "url": "https://leetcode.com/problems/expression-add-operators/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Expression Add Operators - Detailed Explanation",
+        "url": "https://www.geeksforgeeks.org/generate-all-possible-expressions-that-evaluate-to-target/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/expression-add-operators/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all valid expressions with operators? Use backtracking. Try placing +, -, * at each position. Handle operator precedence carefully.",
+  "approaches": [
+    {
+      "name": "Backtracking with String Building - Naive",
+      "order": 1,
+      "intuition": "Generate all possible expressions by placing operators between digits, then evaluate each expression to check if it equals target.",
+      "approach": "Build expressions with operators, evaluate using eval() or expression parser. Very slow due to repeated evaluation.",
+      "steps": [
+        "Generate all expressions by backtracking",
+        "At each position, try: no operator, +, -, *",
+        "When expression complete, evaluate it",
+        "If result == target, add to result list",
+        "This approach is too slow for large inputs"
+      ],
+      "complexity": {
+        "time": "O(4^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "4 choices at each position (no-op, +, -, *), n positions, evaluation takes O(n)",
+        "spaceExplanation": "Recursion depth is n"
+      },
+      "code": {
+        "cpp": "// This approach is inefficient - shown for understanding\nvector<string> addOperators(string num, int target) {\n    vector<string> result;\n    string current = \"\";\n    backtrack(num, target, 0, current, result);\n    return result;\n}\n\nvoid backtrack(string& num, int target, int idx, string current, vector<string>& result) {\n    if (idx == num.size()) {\n        if (evaluate(current) == target) {\n            result.push_back(current);\n        }\n        return;\n    }\n    \n    // Try taking digit without operator\n    if (current.empty()) {\n        backtrack(num, target, idx + 1, current + num[idx], result);\n    } else {\n        // Try all operators\n        backtrack(num, target, idx + 1, current + \"+\" + num[idx], result);\n        backtrack(num, target, idx + 1, current + \"-\" + num[idx], result);\n        backtrack(num, target, idx + 1, current + \"*\" + num[idx], result);\n    }\n}\n\nlong evaluate(string expr) {\n    // Expression evaluation logic\n    // Not recommended - too slow\n    return 0;\n}",
+        "java": "// This approach is inefficient - shown for understanding\npublic List<String> addOperators(String num, int target) {\n    List<String> result = new ArrayList<>();\n    backtrack(num, target, 0, \"\", result);\n    return result;\n}\n\nprivate void backtrack(String num, int target, int idx, String current, List<String> result) {\n    if (idx == num.length()) {\n        if (evaluate(current) == target) {\n            result.add(current);\n        }\n        return;\n    }\n    \n    if (current.isEmpty()) {\n        backtrack(num, target, idx + 1, current + num.charAt(idx), result);\n    } else {\n        backtrack(num, target, idx + 1, current + \"+\" + num.charAt(idx), result);\n        backtrack(num, target, idx + 1, current + \"-\" + num.charAt(idx), result);\n        backtrack(num, target, idx + 1, current + \"*\" + num.charAt(idx), result);\n    }\n}\n\nprivate long evaluate(String expr) {\n    // Expression evaluation - not recommended\n    return 0;\n}",
+        "python": "# This approach is inefficient - shown for understanding\ndef addOperators(num, target):\n    result = []\n    \n    def backtrack(idx, current):\n        if idx == len(num):\n            try:\n                if eval(current) == target:\n                    result.append(current)\n            except:\n                pass\n            return\n        \n        if not current:\n            backtrack(idx + 1, current + num[idx])\n        else:\n            backtrack(idx + 1, current + '+' + num[idx])\n            backtrack(idx + 1, current + '-' + num[idx])\n            backtrack(idx + 1, current + '*' + num[idx])\n    \n    backtrack(0, '')\n    return result",
+        "javascript": "// This approach is inefficient - shown for understanding\nfunction addOperators(num, target) {\n    const result = [];\n    \n    function backtrack(idx, current) {\n        if (idx === num.length) {\n            try {\n                if (eval(current) === target) {\n                    result.push(current);\n                }\n            } catch (e) {}\n            return;\n        }\n        \n        if (current === '') {\n            backtrack(idx + 1, current + num[idx]);\n        } else {\n            backtrack(idx + 1, current + '+' + num[idx]);\n            backtrack(idx + 1, current + '-' + num[idx]);\n            backtrack(idx + 1, current + '*' + num[idx]);\n        }\n    }\n    \n    backtrack(0, '');\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Running Calculation - Better",
+      "order": 2,
+      "intuition": "Instead of building strings and evaluating, maintain running calculation. Track current value and last operand to handle multiplication correctly.",
+      "approach": "During backtracking, calculate result on the fly. For multiplication, we need to undo last addition and apply multiplication first.",
+      "steps": [
+        "backtrack(index, path, value, lastOperand):",
+        "  value = running total so far",
+        "  lastOperand = last number added/subtracted",
+        "If index == num.length:",
+        "  If value == target, add path to result",
+        "For each possible number from current position:",
+        "  If first number: backtrack with this number",
+        "  Else try +: value + num, lastOperand = +num",
+        "  Else try -: value - num, lastOperand = -num",
+        "  Else try *: value - lastOperand + (lastOperand * num)",
+        "Handle leading zeros: skip if number starts with 0"
+      ],
+      "complexity": {
+        "time": "O(4^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "4^n possible expressions, building string is O(n)",
+        "spaceExplanation": "Recursion stack depth n, path string O(n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> addOperators(string num, int target) {\n        vector<string> result;\n        backtrack(num, target, 0, \"\", 0, 0, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(string& num, int target, int index, string path, \n                   long value, long lastOperand, vector<string>& result) {\n        if (index == num.size()) {\n            if (value == target) {\n                result.push_back(path);\n            }\n            return;\n        }\n        \n        for (int i = index; i < num.size(); i++) {\n            // Skip leading zeros\n            if (i > index && num[index] == '0') break;\n            \n            string currentStr = num.substr(index, i - index + 1);\n            long current = stol(currentStr);\n            \n            if (index == 0) {\n                // First number, no operator before it\n                backtrack(num, target, i + 1, currentStr, current, current, result);\n            } else {\n                // Try +\n                backtrack(num, target, i + 1, path + \"+\" + currentStr, \n                         value + current, current, result);\n                \n                // Try -\n                backtrack(num, target, i + 1, path + \"-\" + currentStr, \n                         value - current, -current, result);\n                \n                // Try * (need to undo last operation)\n                backtrack(num, target, i + 1, path + \"*\" + currentStr, \n                         value - lastOperand + lastOperand * current, \n                         lastOperand * current, result);\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<String> addOperators(String num, int target) {\n        List<String> result = new ArrayList<>();\n        backtrack(num, target, 0, \"\", 0, 0, result);\n        return result;\n    }\n    \n    private void backtrack(String num, int target, int index, String path,\n                          long value, long lastOperand, List<String> result) {\n        if (index == num.length()) {\n            if (value == target) {\n                result.add(path);\n            }\n            return;\n        }\n        \n        for (int i = index; i < num.length(); i++) {\n            // Skip leading zeros\n            if (i > index && num.charAt(index) == '0') break;\n            \n            String currentStr = num.substring(index, i + 1);\n            long current = Long.parseLong(currentStr);\n            \n            if (index == 0) {\n                backtrack(num, target, i + 1, currentStr, current, current, result);\n            } else {\n                // Try +\n                backtrack(num, target, i + 1, path + \"+\" + currentStr,\n                         value + current, current, result);\n                \n                // Try -\n                backtrack(num, target, i + 1, path + \"-\" + currentStr,\n                         value - current, -current, result);\n                \n                // Try *\n                backtrack(num, target, i + 1, path + \"*\" + currentStr,\n                         value - lastOperand + lastOperand * current,\n                         lastOperand * current, result);\n            }\n        }\n    }\n}",
+        "python": "def addOperators(num, target):\n    result = []\n    \n    def backtrack(index, path, value, last_operand):\n        if index == len(num):\n            if value == target:\n                result.append(path)\n            return\n        \n        for i in range(index, len(num)):\n            # Skip leading zeros\n            if i > index and num[index] == '0':\n                break\n            \n            current_str = num[index:i+1]\n            current = int(current_str)\n            \n            if index == 0:\n                # First number\n                backtrack(i + 1, current_str, current, current)\n            else:\n                # Try +\n                backtrack(i + 1, path + '+' + current_str, \n                         value + current, current)\n                \n                # Try -\n                backtrack(i + 1, path + '-' + current_str,\n                         value - current, -current)\n                \n                # Try *\n                backtrack(i + 1, path + '*' + current_str,\n                         value - last_operand + last_operand * current,\n                         last_operand * current)\n    \n    backtrack(0, '', 0, 0)\n    return result",
+        "javascript": "function addOperators(num, target) {\n    const result = [];\n    \n    function backtrack(index, path, value, lastOperand) {\n        if (index === num.length) {\n            if (value === target) {\n                result.push(path);\n            }\n            return;\n        }\n        \n        for (let i = index; i < num.length; i++) {\n            // Skip leading zeros\n            if (i > index && num[index] === '0') break;\n            \n            const currentStr = num.slice(index, i + 1);\n            const current = parseInt(currentStr);\n            \n            if (index === 0) {\n                backtrack(i + 1, currentStr, current, current);\n            } else {\n                // Try +\n                backtrack(i + 1, path + '+' + currentStr,\n                         value + current, current);\n                \n                // Try -\n                backtrack(i + 1, path + '-' + currentStr,\n                         value - current, -current);\n                \n                // Try *\n                backtrack(i + 1, path + '*' + currentStr,\n                         value - lastOperand + lastOperand * current,\n                         lastOperand * current);\n            }\n        }\n    }\n    \n    backtrack(0, '', 0, 0);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Optimized Backtracking with Pruning - Optimal",
+      "order": 3,
+      "intuition": "Same as approach 2, but add pruning: if current value already exceeds target significantly, we can skip. Use StringBuilder for efficiency.",
+      "approach": "Backtracking with running calculation, optimized with early pruning and efficient string building.",
+      "steps": [
+        "Same backtracking approach",
+        "Use StringBuilder/StringBuffer for efficient string building",
+        "Add pruning: if abs(value - target) > remaining digits max value, skip",
+        "Handle overflow carefully with long type",
+        "Optimization: reuse StringBuilder by backtracking on it"
+      ],
+      "complexity": {
+        "time": "O(4^n)",
+        "space": "O(n)",
+        "timeExplanation": "4^n expressions in worst case, pruning reduces constants",
+        "spaceExplanation": "Recursion depth n, path builder O(n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> addOperators(string num, int target) {\n        vector<string> result;\n        string path;\n        backtrack(num, target, 0, path, 0, 0, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(const string& num, int target, int index, string& path,\n                   long value, long lastOperand, vector<string>& result) {\n        if (index == num.size()) {\n            if (value == target) {\n                result.push_back(path);\n            }\n            return;\n        }\n        \n        long current = 0;\n        string currentStr;\n        \n        for (int i = index; i < num.size(); i++) {\n            // Leading zero check\n            if (i > index && num[index] == '0') break;\n            \n            current = current * 10 + (num[i] - '0');\n            currentStr += num[i];\n            \n            int pathLen = path.size();\n            \n            if (index == 0) {\n                path += currentStr;\n                backtrack(num, target, i + 1, path, current, current, result);\n                path.resize(pathLen);\n            } else {\n                // Try +\n                path += \"+\" + currentStr;\n                backtrack(num, target, i + 1, path, value + current, current, result);\n                path.resize(pathLen);\n                \n                // Try -\n                path += \"-\" + currentStr;\n                backtrack(num, target, i + 1, path, value - current, -current, result);\n                path.resize(pathLen);\n                \n                // Try *\n                path += \"*\" + currentStr;\n                backtrack(num, target, i + 1, path,\n                         value - lastOperand + lastOperand * current,\n                         lastOperand * current, result);\n                path.resize(pathLen);\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<String> addOperators(String num, int target) {\n        List<String> result = new ArrayList<>();\n        StringBuilder path = new StringBuilder();\n        backtrack(num, target, 0, path, 0, 0, result);\n        return result;\n    }\n    \n    private void backtrack(String num, int target, int index, StringBuilder path,\n                          long value, long lastOperand, List<String> result) {\n        if (index == num.length()) {\n            if (value == target) {\n                result.add(path.toString());\n            }\n            return;\n        }\n        \n        long current = 0;\n        \n        for (int i = index; i < num.length(); i++) {\n            // Leading zero\n            if (i > index && num.charAt(index) == '0') break;\n            \n            current = current * 10 + (num.charAt(i) - '0');\n            String currentStr = num.substring(index, i + 1);\n            int pathLen = path.length();\n            \n            if (index == 0) {\n                path.append(currentStr);\n                backtrack(num, target, i + 1, path, current, current, result);\n                path.setLength(pathLen);\n            } else {\n                // Try +\n                path.append(\"+\").append(currentStr);\n                backtrack(num, target, i + 1, path, value + current, current, result);\n                path.setLength(pathLen);\n                \n                // Try -\n                path.append(\"-\").append(currentStr);\n                backtrack(num, target, i + 1, path, value - current, -current, result);\n                path.setLength(pathLen);\n                \n                // Try *\n                path.append(\"*\").append(currentStr);\n                backtrack(num, target, i + 1, path,\n                         value - lastOperand + lastOperand * current,\n                         lastOperand * current, result);\n                path.setLength(pathLen);\n            }\n        }\n    }\n}",
+        "python": "def addOperators(num, target):\n    result = []\n    \n    def backtrack(index, path, value, last_operand):\n        if index == len(num):\n            if value == target:\n                result.append(''.join(path))\n            return\n        \n        current = 0\n        current_str = []\n        \n        for i in range(index, len(num)):\n            # Leading zero\n            if i > index and num[index] == '0':\n                break\n            \n            current = current * 10 + int(num[i])\n            current_str.append(num[i])\n            current_str_joined = ''.join(current_str)\n            \n            if index == 0:\n                backtrack(i + 1, path + [current_str_joined], current, current)\n            else:\n                # Try +\n                backtrack(i + 1, path + ['+', current_str_joined],\n                         value + current, current)\n                \n                # Try -\n                backtrack(i + 1, path + ['-', current_str_joined],\n                         value - current, -current)\n                \n                # Try *\n                backtrack(i + 1, path + ['*', current_str_joined],\n                         value - last_operand + last_operand * current,\n                         last_operand * current)\n    \n    backtrack(0, [], 0, 0)\n    return result",
+        "javascript": "function addOperators(num, target) {\n    const result = [];\n    \n    function backtrack(index, path, value, lastOperand) {\n        if (index === num.length) {\n            if (value === target) {\n                result.push(path.join(''));\n            }\n            return;\n        }\n        \n        let current = 0;\n        const currentStr = [];\n        \n        for (let i = index; i < num.length; i++) {\n            // Leading zero\n            if (i > index && num[index] === '0') break;\n            \n            current = current * 10 + parseInt(num[i]);\n            currentStr.push(num[i]);\n            const currentStrJoined = currentStr.join('');\n            \n            if (index === 0) {\n                backtrack(i + 1, [...path, currentStrJoined], current, current);\n            } else {\n                // Try +\n                backtrack(i + 1, [...path, '+', currentStrJoined],\n                         value + current, current);\n                \n                // Try -\n                backtrack(i + 1, [...path, '-', currentStrJoined],\n                         value - current, -current);\n                \n                // Try *\n                backtrack(i + 1, [...path, '*', currentStrJoined],\n                         value - lastOperand + lastOperand * current,\n                         lastOperand * current);\n            }\n        }\n    }\n    \n    backtrack(0, [], 0, 0);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling multiplication operator precedence correctly (must undo last operation)",
+    "Forgetting to check for leading zeros (numbers can't start with 0 unless it's just 0)",
+    "Integer overflow with large numbers (use long type)",
+    "Incorrectly building multi-digit numbers",
+    "Not tracking lastOperand properly for multiplication",
+    "Using string concatenation instead of StringBuilder (performance issue)"
+  ],
+  "hints": [
+    "Track running value AND last operand added/subtracted",
+    "For multiplication: value - lastOperand + (lastOperand * current)",
+    "Skip multi-digit numbers starting with 0",
+    "Try all possible number partitions at each step",
+    "Use long to avoid overflow"
+  ],
+  "followUp": [
+    "What if we allow division operator? (Similar logic but check division by zero)",
+    "Can you optimize space further? (Use iterative approach with stack)",
+    "How to handle expressions with parentheses? (Different problem - need expression parsing)",
+    "Can you prune the search space more? (Yes, with bounds checking)",
+    "What if target can be float? (Use double instead of long)"
+  ],
+  "companies": ["Google", "Facebook", "Microsoft", "Amazon", "Uber"],
+  "tags": ["backtracking", "string", "math", "divide-and-conquer"],
+  "relatedProblems": [
+    "Different Ways to Add Parentheses",
+    "Target Sum",
+    "Basic Calculator",
+    "Basic Calculator II"
+  ]
+}

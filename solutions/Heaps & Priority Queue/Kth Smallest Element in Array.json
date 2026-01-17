@@ -1,0 +1,158 @@
+{
+  "questionId": "LC-215-V2",
+  "questionSlug": "kth-smallest-element-in-an-array",
+  "title": "Kth Smallest Element in Array",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/",
+    "videos": [
+      {
+        "title": "Kth Smallest Element Explained",
+        "url": "https://www.youtube.com/watch?v=hGK_5n81drs",
+        "channel": "NeetCode",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Kth Smallest - Multiple Approaches",
+        "url": "https://www.youtube.com/watch?v=yAs3tONaf3s",
+        "channel": "take U forward",
+        "duration": "14:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth Smallest Element - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/kth-smallest-largest-element-in-unsorted-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "QuickSelect for Kth Element",
+        "url": "https://takeuforward.org/data-structure/kth-largest-smallest-element-in-array/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Kth smallest in unsorted array? Use Max Heap (size k) or QuickSelect!",
+  "approaches": [
+    {
+      "name": "Sorting - Brute Force",
+      "order": 1,
+      "intuition": "Sort array in ascending order, return element at index k-1.",
+      "approach": "Sort entire array and pick the kth element directly.",
+      "steps": [
+        "Sort array in ascending order",
+        "Return nums[k-1] (0-indexed)",
+        "Simple but inefficient - sorts all elements",
+        "Time complexity dominated by sorting"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1) or O(n)",
+        "timeExplanation": "Sorting takes O(n log n)",
+        "spaceExplanation": "Depends on sorting algorithm used"
+      },
+      "code": {
+        "cpp": "int findKthSmallest(vector<int>& nums, int k) {\n    // Sort in ascending order\n    sort(nums.begin(), nums.end());\n    \n    // Return kth smallest (0-indexed: k-1)\n    return nums[k - 1];\n}\n\n// Example: nums = [7,10,4,3,20,15], k = 3\n// After sort: [3,4,7,10,15,20]\n// k=3 → nums[2] = 7",
+        "java": "public int findKthSmallest(int[] nums, int k) {\n    Arrays.sort(nums);\n    return nums[k - 1];\n}",
+        "python": "def findKthSmallest(nums: List[int], k: int) -> int:\n    nums.sort()\n    return nums[k - 1]\n\n# One-liner:\n# return sorted(nums)[k - 1]",
+        "javascript": "var findKthSmallest = function(nums, k) {\n    nums.sort((a, b) => a - b);\n    return nums[k - 1];\n};"
+      }
+    },
+    {
+      "name": "Max Heap (Size K) - Better",
+      "order": 2,
+      "intuition": "Maintain max heap of size k containing k smallest elements. Top of heap is kth smallest!",
+      "approach": "Add elements to max heap, keep size ≤ k by removing largest.",
+      "steps": [
+        "Create max heap",
+        "For each element in array:",
+        "  Add to heap",
+        "  If heap size > k: remove maximum",
+        "After processing all elements:",
+        "  Heap contains k smallest elements",
+        "  Top of heap is kth smallest",
+        "Key: Use MAX heap for SMALLEST, MIN heap for LARGEST!"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Process n elements, each heap operation O(log k)",
+        "spaceExplanation": "Heap stores k elements"
+      },
+      "code": {
+        "cpp": "int findKthSmallest(vector<int>& nums, int k) {\n    // Max heap of size k (use default priority_queue)\n    priority_queue<int> maxHeap;\n    \n    for (int num : nums) {\n        maxHeap.push(num);\n        \n        // Keep heap size <= k\n        if (maxHeap.size() > k) {\n            maxHeap.pop();  // Remove largest\n        }\n    }\n    \n    // Top is kth smallest\n    return maxHeap.top();\n}\n\n// Example: nums = [7,10,4,3,20,15], k = 3\n// Process 7: heap = [7]\n// Process 10: heap = [10,7]\n// Process 4: heap = [10,7,4]\n// Process 3: heap = [7,4,3] → pop 10\n// Process 20: heap = [7,4,3] → pop 20\n// Process 15: heap = [7,4,3] → pop 15\n// Result: top = 7",
+        "java": "public int findKthSmallest(int[] nums, int k) {\n    // Max heap (reverse order)\n    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());\n    \n    for (int num : nums) {\n        maxHeap.offer(num);\n        \n        if (maxHeap.size() > k) {\n            maxHeap.poll();\n        }\n    }\n    \n    return maxHeap.peek();\n}",
+        "python": "import heapq\n\ndef findKthSmallest(nums: List[int], k: int) -> int:\n    # Max heap (negate values for min heap simulation)\n    max_heap = []\n    \n    for num in nums:\n        heapq.heappush(max_heap, -num)  # Negate for max heap\n        \n        # Keep heap size <= k\n        if len(max_heap) > k:\n            heapq.heappop(max_heap)\n    \n    # Top is kth smallest (negate back)\n    return -max_heap[0]\n\n# Alternative using nsmallest:\n# return heapq.nsmallest(k, nums)[-1]",
+        "javascript": "var findKthSmallest = function(nums, k) {\n    // Using MaxPriorityQueue from @datastructures-js/priority-queue\n    const maxHeap = new MaxPriorityQueue();\n    \n    for (const num of nums) {\n        maxHeap.enqueue(num);\n        \n        if (maxHeap.size() > k) {\n            maxHeap.dequeue();\n        }\n    }\n    \n    return maxHeap.front().element;\n};"
+      }
+    },
+    {
+      "name": "QuickSelect - Optimal Average",
+      "order": 3,
+      "intuition": "QuickSelect finds kth element in average O(n) time! Partition array and recurse on correct side.",
+      "approach": "Partition around pivot, recurse only on side containing kth element.",
+      "steps": [
+        "Target index = k-1 (kth smallest, 0-indexed)",
+        "Pick pivot, partition array:",
+        "  Elements < pivot on left",
+        "  Elements > pivot on right",
+        "If pivot index == k-1: found!",
+        "If pivot index > k-1: recurse left",
+        "If pivot index < k-1: recurse right",
+        "Average O(n): n + n/2 + n/4 + ... = 2n",
+        "Use random pivot to avoid worst case"
+      ],
+      "complexity": {
+        "time": "O(n) average, O(n²) worst",
+        "space": "O(1)",
+        "timeExplanation": "Average case: partition reduces by half. Worst: bad pivot selection",
+        "spaceExplanation": "In-place algorithm, O(log n) recursion stack"
+      },
+      "code": {
+        "cpp": "int partition(vector<int>& nums, int left, int right) {\n    int pivot = nums[right];\n    int i = left;\n    \n    for (int j = left; j < right; j++) {\n        if (nums[j] < pivot) {\n            swap(nums[i], nums[j]);\n            i++;\n        }\n    }\n    \n    swap(nums[i], nums[right]);\n    return i;\n}\n\nint quickSelect(vector<int>& nums, int left, int right, int k) {\n    if (left == right) return nums[left];\n    \n    int pivotIndex = partition(nums, left, right);\n    \n    if (pivotIndex == k) {\n        return nums[k];\n    } else if (pivotIndex > k) {\n        return quickSelect(nums, left, pivotIndex - 1, k);\n    } else {\n        return quickSelect(nums, pivotIndex + 1, right, k);\n    }\n}\n\nint findKthSmallest(vector<int>& nums, int k) {\n    // Kth smallest at index k-1 (0-indexed)\n    return quickSelect(nums, 0, nums.size() - 1, k - 1);\n}\n\n// Example: nums = [7,10,4,3,20,15], k = 3\n// Target index = 2\n// After quickselect, element at index 2 is 7",
+        "java": "private int partition(int[] nums, int left, int right) {\n    int pivot = nums[right];\n    int i = left;\n    \n    for (int j = left; j < right; j++) {\n        if (nums[j] < pivot) {\n            int temp = nums[i];\n            nums[i] = nums[j];\n            nums[j] = temp;\n            i++;\n        }\n    }\n    \n    int temp = nums[i];\n    nums[i] = nums[right];\n    nums[right] = temp;\n    \n    return i;\n}\n\nprivate int quickSelect(int[] nums, int left, int right, int k) {\n    if (left == right) return nums[left];\n    \n    int pivotIndex = partition(nums, left, right);\n    \n    if (pivotIndex == k) {\n        return nums[k];\n    } else if (pivotIndex > k) {\n        return quickSelect(nums, left, pivotIndex - 1, k);\n    } else {\n        return quickSelect(nums, pivotIndex + 1, right, k);\n    }\n}\n\npublic int findKthSmallest(int[] nums, int k) {\n    return quickSelect(nums, 0, nums.length - 1, k - 1);\n}",
+        "python": "import random\n\ndef findKthSmallest(nums: List[int], k: int) -> int:\n    def partition(left, right, pivot_idx):\n        pivot = nums[pivot_idx]\n        # Move pivot to end\n        nums[pivot_idx], nums[right] = nums[right], nums[pivot_idx]\n        \n        # Partition\n        store_idx = left\n        for i in range(left, right):\n            if nums[i] < pivot:\n                nums[store_idx], nums[i] = nums[i], nums[store_idx]\n                store_idx += 1\n        \n        # Move pivot to final place\n        nums[right], nums[store_idx] = nums[store_idx], nums[right]\n        return store_idx\n    \n    def select(left, right, k_smallest):\n        if left == right:\n            return nums[left]\n        \n        # Random pivot for average O(n)\n        pivot_idx = random.randint(left, right)\n        pivot_idx = partition(left, right, pivot_idx)\n        \n        if k_smallest == pivot_idx:\n            return nums[k_smallest]\n        elif k_smallest < pivot_idx:\n            return select(left, pivot_idx - 1, k_smallest)\n        else:\n            return select(pivot_idx + 1, right, k_smallest)\n    \n    # Kth smallest at index k-1\n    return select(0, len(nums) - 1, k - 1)",
+        "javascript": "var findKthSmallest = function(nums, k) {\n    const partition = (left, right) => {\n        const pivot = nums[right];\n        let i = left;\n        \n        for (let j = left; j < right; j++) {\n            if (nums[j] < pivot) {\n                [nums[i], nums[j]] = [nums[j], nums[i]];\n                i++;\n            }\n        }\n        \n        [nums[i], nums[right]] = [nums[right], nums[i]];\n        return i;\n    };\n    \n    const quickSelect = (left, right, k) => {\n        if (left === right) return nums[left];\n        \n        const pivotIndex = partition(left, right);\n        \n        if (pivotIndex === k) {\n            return nums[k];\n        } else if (pivotIndex > k) {\n            return quickSelect(left, pivotIndex - 1, k);\n        } else {\n            return quickSelect(pivotIndex + 1, right, k);\n        }\n    };\n    \n    return quickSelect(0, nums.length - 1, k - 1);\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using min heap instead of max heap for kth smallest",
+    "Confusing kth smallest with kth largest - different index!",
+    "Off-by-one errors: k vs k-1 for 0-indexed arrays",
+    "Not randomizing pivot in QuickSelect",
+    "Forgetting to remove largest element when heap size > k",
+    "Not handling edge cases: k > n or k < 1"
+  ],
+  "hints": [
+    "Max heap of size k keeps track of k smallest elements!",
+    "QuickSelect doesn't need to sort entire array",
+    "Kth smallest = index k-1 (0-indexed)",
+    "Random pivot makes QuickSelect O(n) average",
+    "Remember: MAX heap for SMALLEST, MIN heap for LARGEST"
+  ],
+  "followUp": [
+    "What if we need multiple kth elements? (Build heap once, extract multiple times)",
+    "Can we do better than O(n)? (No, must look at all elements)",
+    "What about kth largest instead? (Use min heap or change index to n-k)",
+    "Handle duplicates? (All approaches work the same)",
+    "Stream of numbers? (Use two heaps - median problem)"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Apple"],
+  "tags": ["heap", "priority-queue", "quickselect", "divide-and-conquer", "sorting"],
+  "relatedProblems": [
+    "Kth Largest Element in Array",
+    "Find K Pairs with Smallest Sums",
+    "Top K Frequent Elements",
+    "Kth Smallest Element in Sorted Matrix"
+  ]
+}

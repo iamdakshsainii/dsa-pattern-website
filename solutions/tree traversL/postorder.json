@@ -1,0 +1,159 @@
+{
+  "questionId": "LC-145",
+  "questionSlug": "binary-tree-postorder-traversal",
+  "title": "Binary Tree Postorder Traversal",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/binary-tree-postorder-traversal/",
+    "videos": [
+      {
+        "title": "Postorder Traversal - All Methods",
+        "url": "https://www.youtube.com/watch?v=2YBhNLodD8Q",
+        "channel": "takeUforward",
+        "duration": "16:45",
+        "language": "English"
+      },
+      {
+        "title": "Binary Tree Postorder Traversal",
+        "url": "https://www.youtube.com/watch?v=QhszUQhGGlA",
+        "channel": "NeetCode",
+        "duration": "9:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Postorder Traversal - Official Solution",
+        "url": "https://leetcode.com/problems/binary-tree-postorder-traversal/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Postorder Traversal - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/postorder-traversal-of-binary-tree/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/binary-tree-postorder-traversal/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Postorder = Left → Right → Root. Process root LAST, after both children!",
+  "approaches": [
+    {
+      "name": "Recursive DFS (Simplest)",
+      "order": 1,
+      "intuition": "Postorder: visit left subtree, then right subtree, then root. Classic recursion.",
+      "approach": "Base case: null node. Otherwise: recurse left, recurse right, add root.",
+      "steps": [
+        "If node is null, return",
+        "Recursively traverse left subtree",
+        "Recursively traverse right subtree",
+        "Add node.val to result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Recursion stack depth = tree height h"
+      },
+      "code": {
+        "cpp": "void postorderHelper(TreeNode* node, vector<int>& result) {\n    if (!node) return;\n    \n    postorderHelper(node->left, result);  // Left\n    postorderHelper(node->right, result); // Right\n    result.push_back(node->val);          // Root\n}\n\nvector<int> postorderTraversal(TreeNode* root) {\n    vector<int> result;\n    postorderHelper(root, result);\n    return result;\n}\n\n// Example:    1\n//              \\\n//               2\n//              /\n//             3\n// Postorder: left(null) → right(left(3) → right(null) → 2) → 1\n// Output: [3,2,1]",
+        "java": "void postorderHelper(TreeNode node, List<Integer> result) {\n    if (node == null) return;\n    \n    postorderHelper(node.left, result);\n    postorderHelper(node.right, result);\n    result.add(node.val);\n}\n\npublic List<Integer> postorderTraversal(TreeNode root) {\n    List<Integer> result = new ArrayList<>();\n    postorderHelper(root, result);\n    return result;\n}",
+        "python": "def postorderTraversal(root: Optional[TreeNode]) -> List[int]:\n    result = []\n    \n    def postorder_helper(node):\n        if not node:\n            return\n        postorder_helper(node.left)\n        postorder_helper(node.right)\n        result.append(node.val)\n    \n    postorder_helper(root)\n    return result",
+        "javascript": "var postorderTraversal = function(root) {\n    const result = [];\n    \n    function postorderHelper(node) {\n        if (!node) return;\n        postorderHelper(node.left);\n        postorderHelper(node.right);\n        result.push(node.val);\n    }\n    \n    postorderHelper(root);\n    return result;\n};"
+      }
+    },
+    {
+      "name": "Iterative Two Stacks",
+      "order": 2,
+      "intuition": "Use two stacks. First stack does reverse postorder (Root→Right→Left), second reverses it back.",
+      "approach": "Stack1: modified preorder. Stack2: stores nodes. Pop stack2 for final result.",
+      "steps": [
+        "Push root to stack1",
+        "While stack1 not empty:",
+        "  Pop node, push to stack2",
+        "  Push left child (if exists)",
+        "  Push right child (if exists)",
+        "Pop all from stack2 to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Two stacks, each can hold up to n nodes"
+      },
+      "code": {
+        "cpp": "vector<int> postorderTraversal(TreeNode* root) {\n    vector<int> result;\n    if (!root) return result;\n    \n    stack<TreeNode*> st1, st2;\n    st1.push(root);\n    \n    while (!st1.empty()) {\n        TreeNode* node = st1.top();\n        st1.pop();\n        st2.push(node);\n        \n        // Push left then right (reverse of preorder)\n        if (node->left) st1.push(node->left);\n        if (node->right) st1.push(node->right);\n    }\n    \n    while (!st2.empty()) {\n        result.push_back(st2.top()->val);\n        st2.pop();\n    }\n    \n    return result;\n}\n\n// Example:    1\n//           /   \\\n//          2     3\n// st1: [1] → st2: [1], push 2,3 → st1: [2,3]\n// st1: [2,3] → st2: [1,3], push nothing\n// st1: [2] → st2: [1,3,2]\n// Result from st2: [2,3,1]",
+        "java": "public List<Integer> postorderTraversal(TreeNode root) {\n    List<Integer> result = new ArrayList<>();\n    if (root == null) return result;\n    \n    Stack<TreeNode> st1 = new Stack<>(), st2 = new Stack<>();\n    st1.push(root);\n    \n    while (!st1.isEmpty()) {\n        TreeNode node = st1.pop();\n        st2.push(node);\n        \n        if (node.left != null) st1.push(node.left);\n        if (node.right != null) st1.push(node.right);\n    }\n    \n    while (!st2.isEmpty()) {\n        result.add(st2.pop().val);\n    }\n    \n    return result;\n}",
+        "python": "def postorderTraversal(root: Optional[TreeNode]) -> List[int]:\n    if not root:\n        return []\n    \n    st1, st2 = [root], []\n    \n    while st1:\n        node = st1.pop()\n        st2.append(node)\n        \n        if node.left:\n            st1.append(node.left)\n        if node.right:\n            st1.append(node.right)\n    \n    result = []\n    while st2:\n        result.append(st2.pop().val)\n    \n    return result",
+        "javascript": "var postorderTraversal = function(root) {\n    if (!root) return [];\n    \n    const st1 = [root], st2 = [];\n    \n    while (st1.length > 0) {\n        const node = st1.pop();\n        st2.push(node);\n        \n        if (node.left) st1.push(node.left);\n        if (node.right) st1.push(node.right);\n    }\n    \n    const result = [];\n    while (st2.length > 0) {\n        result.push(st2.pop().val);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Iterative One Stack with Visited Tracking",
+      "order": 3,
+      "intuition": "Use single stack with tracking of visited nodes. Process node only after both children processed.",
+      "approach": "Track last visited node. Process current only if right child was just visited or doesn't exist.",
+      "steps": [
+        "stack, curr = root, lastVisited = null",
+        "While curr or stack not empty:",
+        "  While curr: push curr, go left",
+        "  Peek stack top",
+        "  If top has right child and right not visited:",
+        "    curr = top.right",
+        "  Else:",
+        "    Process top, pop, lastVisited = top",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Single stack of height h"
+      },
+      "code": {
+        "cpp": "vector<int> postorderTraversal(TreeNode* root) {\n    vector<int> result;\n    stack<TreeNode*> st;\n    TreeNode *curr = root, *lastVisited = nullptr;\n    \n    while (curr || !st.empty()) {\n        while (curr) {\n            st.push(curr);\n            curr = curr->left;\n        }\n        \n        TreeNode* top = st.top();\n        \n        if (top->right && top->right != lastVisited) {\n            curr = top->right;\n        } else {\n            result.push_back(top->val);\n            st.pop();\n            lastVisited = top;\n        }\n    }\n    \n    return result;\n}",
+        "java": "public List<Integer> postorderTraversal(TreeNode root) {\n    List<Integer> result = new ArrayList<>();\n    Stack<TreeNode> stack = new Stack<>();\n    TreeNode curr = root, lastVisited = null;\n    \n    while (curr != null || !stack.isEmpty()) {\n        while (curr != null) {\n            stack.push(curr);\n            curr = curr.left;\n        }\n        \n        TreeNode top = stack.peek();\n        \n        if (top.right != null && top.right != lastVisited) {\n            curr = top.right;\n        } else {\n            result.add(top.val);\n            stack.pop();\n            lastVisited = top;\n        }\n    }\n    \n    return result;\n}",
+        "python": "def postorderTraversal(root: Optional[TreeNode]) -> List[int]:\n    result = []\n    stack = []\n    curr = root\n    last_visited = None\n    \n    while curr or stack:\n        while curr:\n            stack.append(curr)\n            curr = curr.left\n        \n        top = stack[-1]\n        \n        if top.right and top.right != last_visited:\n            curr = top.right\n        else:\n            result.append(top.val)\n            stack.pop()\n            last_visited = top\n    \n    return result",
+        "javascript": "var postorderTraversal = function(root) {\n    const result = [];\n    const stack = [];\n    let curr = root, lastVisited = null;\n    \n    while (curr || stack.length > 0) {\n        while (curr) {\n            stack.push(curr);\n            curr = curr.left;\n        }\n        \n        const top = stack[stack.length - 1];\n        \n        if (top.right && top.right !== lastVisited) {\n            curr = top.right;\n        } else {\n            result.push(top.val);\n            stack.pop();\n            lastVisited = top;\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "In two-stack: pushing right before left (wrong order)",
+    "In one-stack: not tracking last visited node (infinite loop)",
+    "Processing node before children are done",
+    "Forgetting to handle null root",
+    "In recursive: wrong order (preorder or inorder instead)",
+    "Not understanding when to process vs when to traverse"
+  ],
+  "hints": [
+    "Postorder = Left → Right → Root (process root LAST)",
+    "Two-stack trick: reverse preorder gives postorder!",
+    "Preorder (Root→Left→Right) reversed ≈ Postorder (Left→Right→Root)",
+    "One-stack: track last visited to know when both children done",
+    "Process node only after BOTH children processed",
+    "Useful for tree deletion (delete children before parent)"
+  ],
+  "followUp": [
+    "Iterative with single stack (no visited tracking)? (Use modified approach)",
+    "Morris postorder traversal? (Most complex, rarely asked)",
+    "Reverse postorder? (Right → Left → Root, easier)",
+    "Postorder of N-ary tree? (Process all children before root)",
+    "Return kth element in postorder? (Early termination)",
+    "Serialize tree using postorder? (Useful for reconstruction)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Adobe"],
+  "tags": ["tree", "binary-tree", "depth-first-search", "stack"],
+  "relatedProblems": [
+    "Binary Tree Preorder Traversal",
+    "Binary Tree Inorder Traversal",
+    "N-ary Tree Postorder Traversal",
+    "Binary Tree Level Order Traversal"
+  ]
+}

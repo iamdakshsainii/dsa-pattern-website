@@ -1,0 +1,171 @@
+{
+  "questionId": "212",
+  "questionSlug": "word-search-ii",
+  "title": "Word Search II",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/word-search-ii/",
+    "videos": [
+      {
+        "title": "Word Search II - Trie + Backtracking",
+        "url": "https://www.youtube.com/watch?v=asbcE9mZz_U",
+        "channel": "NeetCode",
+        "duration": "16:45",
+        "language": "English"
+      },
+      {
+        "title": "Word Search II Explained",
+        "url": "https://www.youtube.com/watch?v=oP4Yhq1ZoPc",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "14:20",
+        "language": "English"
+      },
+      {
+        "title": "Word Search II - Complete Solution",
+        "url": "https://www.youtube.com/watch?v=EmvsBPfqKGE",
+        "channel": "take U forward",
+        "duration": "20:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Word Search II - LeetCode Official",
+        "url": "https://leetcode.com/problems/word-search-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Word Search II using Trie",
+        "url": "https://www.geeksforgeeks.org/boggle-find-possible-words-board-characters/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/word-search-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/boggle/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Search multiple words in 2D grid? Use Trie + DFS. Build Trie from words, DFS through board matching Trie paths.",
+  "approaches": [
+    {
+      "name": "Brute Force - Word Search for Each Word",
+      "order": 1,
+      "intuition": "Apply Word Search I solution for each word independently. Very inefficient for multiple words.",
+      "approach": "For each word, perform DFS from every cell. Extremely slow when there are many words.",
+      "steps": [
+        "For each word in words list:",
+        "  For each cell in board:",
+        "    Try DFS to find this word",
+        "  If found, add to result",
+        "Return result list",
+        "Time complexity is terrible: O(words × m×n × 4^L)"
+      ],
+      "complexity": {
+        "time": "O(W × m × n × 4^L)",
+        "space": "O(L)",
+        "timeExplanation": "W words, each requires m×n starting points, 4^L DFS paths",
+        "spaceExplanation": "Recursion depth L (max word length)"
+      },
+      "code": {
+        "cpp": "// Brute force - Not recommended\nvector<string> findWords(vector<vector<char>>& board, vector<string>& words) {\n    vector<string> result;\n    \n    for (string& word : words) {\n        if (existWord(board, word)) {\n            result.push_back(word);\n        }\n    }\n    \n    return result;\n}\n\nbool existWord(vector<vector<char>>& board, string& word) {\n    int m = board.size(), n = board[0].size();\n    \n    for (int i = 0; i < m; i++) {\n        for (int j = 0; j < n; j++) {\n            if (dfs(board, word, i, j, 0)) {\n                return true;\n            }\n        }\n    }\n    return false;\n}\n\nbool dfs(vector<vector<char>>& board, string& word, int i, int j, int idx) {\n    if (idx == word.size()) return true;\n    \n    if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size() ||\n        board[i][j] != word[idx]) {\n        return false;\n    }\n    \n    char temp = board[i][j];\n    board[i][j] = '#';\n    \n    bool found = dfs(board, word, i+1, j, idx+1) ||\n                 dfs(board, word, i-1, j, idx+1) ||\n                 dfs(board, word, i, j+1, idx+1) ||\n                 dfs(board, word, i, j-1, idx+1);\n    \n    board[i][j] = temp;\n    return found;\n}",
+        "java": "// Brute force - Not recommended\npublic List<String> findWords(char[][] board, String[] words) {\n    List<String> result = new ArrayList<>();\n    \n    for (String word : words) {\n        if (existWord(board, word)) {\n            result.add(word);\n        }\n    }\n    \n    return result;\n}\n\nprivate boolean existWord(char[][] board, String word) {\n    int m = board.length, n = board[0].length;\n    \n    for (int i = 0; i < m; i++) {\n        for (int j = 0; j < n; j++) {\n            if (dfs(board, word, i, j, 0)) {\n                return true;\n            }\n        }\n    }\n    return false;\n}",
+        "python": "# Brute force - Not recommended\ndef findWords(board, words):\n    result = []\n    \n    def exist_word(word):\n        m, n = len(board), len(board[0])\n        \n        def dfs(i, j, idx):\n            if idx == len(word):\n                return True\n            if (i < 0 or i >= m or j < 0 or j >= n or\n                board[i][j] != word[idx]):\n                return False\n            \n            temp = board[i][j]\n            board[i][j] = '#'\n            found = (dfs(i+1, j, idx+1) or dfs(i-1, j, idx+1) or\n                    dfs(i, j+1, idx+1) or dfs(i, j-1, idx+1))\n            board[i][j] = temp\n            return found\n        \n        for i in range(m):\n            for j in range(n):\n                if dfs(i, j, 0):\n                    return True\n        return False\n    \n    for word in words:\n        if exist_word(word):\n            result.append(word)\n    \n    return result",
+        "javascript": "// Brute force - Not recommended\nfunction findWords(board, words) {\n    const result = [];\n    \n    function existWord(word) {\n        const m = board.length, n = board[0].length;\n        \n        function dfs(i, j, idx) {\n            if (idx === word.length) return true;\n            if (i < 0 || i >= m || j < 0 || j >= n ||\n                board[i][j] !== word[idx]) {\n                return false;\n            }\n            \n            const temp = board[i][j];\n            board[i][j] = '#';\n            const found = dfs(i+1, j, idx+1) || dfs(i-1, j, idx+1) ||\n                         dfs(i, j+1, idx+1) || dfs(i, j-1, idx+1);\n            board[i][j] = temp;\n            return found;\n        }\n        \n        for (let i = 0; i < m; i++) {\n            for (let j = 0; j < n; j++) {\n                if (dfs(i, j, 0)) return true;\n            }\n        }\n        return false;\n    }\n    \n    for (const word of words) {\n        if (existWord(word)) result.push(word);\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Trie + Backtracking - Standard",
+      "order": 2,
+      "intuition": "Build Trie from all words. DFS through board, at each cell follow Trie paths. If reach word end in Trie, found a word.",
+      "approach": "Trie allows checking multiple words simultaneously. During DFS, traverse Trie alongside board traversal.",
+      "steps": [
+        "Build Trie from all words",
+        "For each cell in board:",
+        "  Start DFS with Trie root",
+        "DFS(cell, trieNode):",
+        "  If cell not in Trie, return",
+        "  If trieNode.isWord, add word to result",
+        "  Mark cell visited",
+        "  Explore 4 neighbors with trieNode.children[cell]",
+        "  Unmark cell"
+      ],
+      "complexity": {
+        "time": "O(m × n × 4^L)",
+        "space": "O(W × L)",
+        "timeExplanation": "m×n starting points, 4^L DFS exploration, but Trie prunes invalid paths",
+        "spaceExplanation": "Trie stores W words of average length L"
+      },
+      "code": {
+        "cpp": "class TrieNode {\npublic:\n    unordered_map<char, TrieNode*> children;\n    string word;\n};\n\nclass Solution {\npublic:\n    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {\n        // Build Trie\n        TrieNode* root = new TrieNode();\n        for (string& word : words) {\n            TrieNode* node = root;\n            for (char c : word) {\n                if (!node->children[c]) {\n                    node->children[c] = new TrieNode();\n                }\n                node = node->children[c];\n            }\n            node->word = word;\n        }\n        \n        vector<string> result;\n        int m = board.size(), n = board[0].size();\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                dfs(board, i, j, root, result);\n            }\n        }\n        \n        return result;\n    }\n    \nprivate:\n    void dfs(vector<vector<char>>& board, int i, int j, \n             TrieNode* node, vector<string>& result) {\n        char c = board[i][j];\n        \n        if (c == '#' || !node->children[c]) return;\n        \n        node = node->children[c];\n        \n        if (!node->word.empty()) {\n            result.push_back(node->word);\n            node->word = \"\";  // Avoid duplicates\n        }\n        \n        board[i][j] = '#';\n        \n        if (i > 0) dfs(board, i-1, j, node, result);\n        if (i < board.size()-1) dfs(board, i+1, j, node, result);\n        if (j > 0) dfs(board, i, j-1, node, result);\n        if (j < board[0].size()-1) dfs(board, i, j+1, node, result);\n        \n        board[i][j] = c;\n    }\n};",
+        "java": "class TrieNode {\n    Map<Character, TrieNode> children = new HashMap<>();\n    String word = null;\n}\n\nclass Solution {\n    public List<String> findWords(char[][] board, String[] words) {\n        // Build Trie\n        TrieNode root = new TrieNode();\n        for (String word : words) {\n            TrieNode node = root;\n            for (char c : word.toCharArray()) {\n                node.children.putIfAbsent(c, new TrieNode());\n                node = node.children.get(c);\n            }\n            node.word = word;\n        }\n        \n        List<String> result = new ArrayList<>();\n        int m = board.length, n = board[0].length;\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                dfs(board, i, j, root, result);\n            }\n        }\n        \n        return result;\n    }\n    \n    private void dfs(char[][] board, int i, int j, \n                     TrieNode node, List<String> result) {\n        char c = board[i][j];\n        \n        if (c == '#' || !node.children.containsKey(c)) return;\n        \n        node = node.children.get(c);\n        \n        if (node.word != null) {\n            result.add(node.word);\n            node.word = null;  // Avoid duplicates\n        }\n        \n        board[i][j] = '#';\n        \n        if (i > 0) dfs(board, i-1, j, node, result);\n        if (i < board.length-1) dfs(board, i+1, j, node, result);\n        if (j > 0) dfs(board, i, j-1, node, result);\n        if (j < board[0].length-1) dfs(board, i, j+1, node, result);\n        \n        board[i][j] = c;\n    }\n}",
+        "python": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.word = None\n\ndef findWords(board, words):\n    # Build Trie\n    root = TrieNode()\n    for word in words:\n        node = root\n        for char in word:\n            if char not in node.children:\n                node.children[char] = TrieNode()\n            node = node.children[char]\n        node.word = word\n    \n    result = []\n    m, n = len(board), len(board[0])\n    \n    def dfs(i, j, node):\n        c = board[i][j]\n        \n        if c == '#' or c not in node.children:\n            return\n        \n        node = node.children[c]\n        \n        if node.word:\n            result.append(node.word)\n            node.word = None  # Avoid duplicates\n        \n        board[i][j] = '#'\n        \n        if i > 0: dfs(i-1, j, node)\n        if i < m-1: dfs(i+1, j, node)\n        if j > 0: dfs(i, j-1, node)\n        if j < n-1: dfs(i, j+1, node)\n        \n        board[i][j] = c\n    \n    for i in range(m):\n        for j in range(n):\n            dfs(i, j, root)\n    \n    return result",
+        "javascript": "class TrieNode {\n    constructor() {\n        this.children = {};\n        this.word = null;\n    }\n}\n\nfunction findWords(board, words) {\n    // Build Trie\n    const root = new TrieNode();\n    for (const word of words) {\n        let node = root;\n        for (const char of word) {\n            if (!node.children[char]) {\n                node.children[char] = new TrieNode();\n            }\n            node = node.children[char];\n        }\n        node.word = word;\n    }\n    \n    const result = [];\n    const m = board.length, n = board[0].length;\n    \n    function dfs(i, j, node) {\n        const c = board[i][j];\n        \n        if (c === '#' || !node.children[c]) return;\n        \n        node = node.children[c];\n        \n        if (node.word) {\n            result.push(node.word);\n            node.word = null;  // Avoid duplicates\n        }\n        \n        board[i][j] = '#';\n        \n        if (i > 0) dfs(i-1, j, node);\n        if (i < m-1) dfs(i+1, j, node);\n        if (j > 0) dfs(i, j-1, node);\n        if (j < n-1) dfs(i, j+1, node);\n        \n        board[i][j] = c;\n    }\n    \n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            dfs(i, j, root);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Optimized Trie with Pruning - Optimal",
+      "order": 3,
+      "intuition": "Add Trie node removal after finding word. If a Trie node has no children after removing word, delete it to prune search space.",
+      "approach": "Same as approach 2, but actively remove Trie nodes when words are found and node becomes childless.",
+      "steps": [
+        "Build Trie with all words",
+        "DFS with Trie traversal",
+        "When word found:",
+        "  Mark word as null in Trie",
+        "  If Trie node becomes childless, remove it",
+        "This prevents revisiting paths for already-found words",
+        "Significant speedup for dense word lists"
+      ],
+      "complexity": {
+        "time": "O(m × n × 4^L)",
+        "space": "O(W × L)",
+        "timeExplanation": "Same worst case, but pruning dramatically improves average case",
+        "spaceExplanation": "Trie size, but shrinks as words are found"
+      },
+      "code": {
+        "cpp": "class TrieNode {\npublic:\n    unordered_map<char, TrieNode*> children;\n    string word;\n};\n\nclass Solution {\npublic:\n    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {\n        TrieNode* root = new TrieNode();\n        \n        // Build Trie\n        for (string& word : words) {\n            TrieNode* node = root;\n            for (char c : word) {\n                if (!node->children[c]) {\n                    node->children[c] = new TrieNode();\n                }\n                node = node->children[c];\n            }\n            node->word = word;\n        }\n        \n        vector<string> result;\n        int m = board.size(), n = board[0].size();\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                dfs(board, i, j, root, result);\n            }\n        }\n        \n        return result;\n    }\n    \nprivate:\n    void dfs(vector<vector<char>>& board, int i, int j,\n             TrieNode* parent, vector<string>& result) {\n        char c = board[i][j];\n        \n        if (c == '#' || !parent->children[c]) return;\n        \n        TrieNode* node = parent->children[c];\n        \n        if (!node->word.empty()) {\n            result.push_back(node->word);\n            node->word = \"\";  // Mark as found\n        }\n        \n        board[i][j] = '#';\n        \n        if (i > 0) dfs(board, i-1, j, node, result);\n        if (i < board.size()-1) dfs(board, i+1, j, node, result);\n        if (j > 0) dfs(board, i, j-1, node, result);\n        if (j < board[0].size()-1) dfs(board, i, j+1, node, result);\n        \n        board[i][j] = c;\n        \n        // Prune: remove node if no children and no word\n        if (node->children.empty() && node->word.empty()) {\n            parent->children.erase(c);\n        }\n    }\n};",
+        "java": "class TrieNode {\n    Map<Character, TrieNode> children = new HashMap<>();\n    String word = null;\n}\n\nclass Solution {\n    public List<String> findWords(char[][] board, String[] words) {\n        TrieNode root = new TrieNode();\n        \n        // Build Trie\n        for (String word : words) {\n            TrieNode node = root;\n            for (char c : word.toCharArray()) {\n                node.children.putIfAbsent(c, new TrieNode());\n                node = node.children.get(c);\n            }\n            node.word = word;\n        }\n        \n        List<String> result = new ArrayList<>();\n        int m = board.length, n = board[0].length;\n        \n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                dfs(board, i, j, root, result);\n            }\n        }\n        \n        return result;\n    }\n    \n    private void dfs(char[][] board, int i, int j,\n                     TrieNode parent, List<String> result) {\n        char c = board[i][j];\n        \n        if (c == '#' || !parent.children.containsKey(c)) return;\n        \n        TrieNode node = parent.children.get(c);\n        \n        if (node.word != null) {\n            result.add(node.word);\n            node.word = null;\n        }\n        \n        board[i][j] = '#';\n        \n        if (i > 0) dfs(board, i-1, j, node, result);\n        if (i < board.length-1) dfs(board, i+1, j, node, result);\n        if (j > 0) dfs(board, i, j-1, node, result);\n        if (j < board[0].length-1) dfs(board, i, j+1, node, result);\n        \n        board[i][j] = c;\n        \n        // Prune\n        if (node.children.isEmpty() && node.word == null) {\n            parent.children.remove(c);\n        }\n    }\n}",
+        "python": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.word = None\n\ndef findWords(board, words):\n    root = TrieNode()\n    \n    # Build Trie\n    for word in words:\n        node = root\n        for char in word:\n            if char not in node.children:\n                node.children[char] = TrieNode()\n            node = node.children[char]\n        node.word = word\n    \n    result = []\n    m, n = len(board), len(board[0])\n    \n    def dfs(i, j, parent):\n        c = board[i][j]\n        \n        if c == '#' or c not in parent.children:\n            return\n        \n        node = parent.children[c]\n        \n        if node.word:\n            result.append(node.word)\n            node.word = None\n        \n        board[i][j] = '#'\n        \n        if i > 0: dfs(i-1, j, node)\n        if i < m-1: dfs(i+1, j, node)\n        if j > 0: dfs(i, j-1, node)\n        if j < n-1: dfs(i, j+1, node)\n        \n        board[i][j] = c\n        \n        # Prune\n        if not node.children and not node.word:\n            del parent.children[c]\n    \n    for i in range(m):\n        for j in range(n):\n            dfs(i, j, root)\n    \n    return result",
+        "javascript": "class TrieNode {\n    constructor() {\n        this.children = {};\n        this.word = null;\n    }\n}\n\nfunction findWords(board, words) {\n    const root = new TrieNode();\n    \n    // Build Trie\n    for (const word of words) {\n        let node = root;\n        for (const char of word) {\n            if (!node.children[char]) {\n                node.children[char] = new TrieNode();\n            }\n            node = node.children[char];\n        }\n        node.word = word;\n    }\n    \n    const result = [];\n    const m = board.length, n = board[0].length;\n    \n    function dfs(i, j, parent) {\n        const c = board[i][j];\n        \n        if (c === '#' || !parent.children[c]) return;\n        \n        const node = parent.children[c];\n        \n        if (node.word) {\n            result.push(node.word);\n            node.word = null;\n        }\n        \n        board[i][j] = '#';\n        \n        if (i > 0) dfs(i-1, j, node);\n        if (i < m-1) dfs(i+1, j, node);\n        if (j > 0) dfs(i, j-1, node);\n        if (j < n-1) dfs(i, j+1, node);\n        \n        board[i][j] = c;\n        \n        // Prune\n        if (Object.keys(node.children).length === 0 && !node.word) {\n            delete parent.children[c];\n        }\n    }\n    \n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            dfs(i, j, root);\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not removing found words from Trie (causes duplicates)",
+    "Not pruning Trie nodes (performance suffers)",
+    "Building Trie incorrectly",
+    "Forgetting to restore board after DFS",
+    "Not handling duplicate words in input",
+    "Inefficient Trie node structure"
+  ],
+  "hints": [
+    "Use Trie to store all words",
+    "DFS through board while traversing Trie",
+    "Mark word as null after finding to avoid duplicates",
+    "Prune Trie nodes with no children after finding words",
+    "Modify board temporarily to mark visited cells"
+  ],
+  "followUp": [
+    "What if board is very large? (Stream processing, divide board)",
+    "Can you optimize Trie space? (Use arrays instead of maps for 26 letters)",
+    "How to handle very long words? (Iterative DFS with stack)",
+    "What if words can overlap? (Already handled, multiple words can share paths)",
+    "Can you parallelize the search? (Yes, partition board and use threading)"
+  ],
+  "companies": ["Google", "Microsoft", "Amazon", "Facebook", "Airbnb", "Uber"],
+  "tags": ["array", "backtracking", "trie", "matrix"],
+  "relatedProblems": [
+    "Word Search",
+    "Implement Trie",
+    "Design Add and Search Words Data Structure",
+    "Unique Paths III"
+  ]
+}

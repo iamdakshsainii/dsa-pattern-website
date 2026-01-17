@@ -1,0 +1,173 @@
+{
+  "questionId": "132",
+  "questionSlug": "palindrome-partitioning-ii",
+  "title": "Palindrome Partitioning II",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/palindrome-partitioning-ii/",
+    "videos": [
+      {
+        "title": "Palindrome Partitioning II - DP",
+        "url": "https://www.youtube.com/watch?v=qmTtAbOTqcg",
+        "channel": "NeetCode",
+        "duration": "18:30",
+        "language": "English"
+      },
+      {
+        "title": "Minimum Cuts for Palindrome",
+        "url": "https://www.youtube.com/watch?v=lDYIvtBVmgo",
+        "channel": "Tushar Roy",
+        "duration": "22:15",
+        "language": "English"
+      },
+      {
+        "title": "Palindrome Partitioning 2 Explained",
+        "url": "https://www.youtube.com/watch?v=WBgsABoClE0",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "16:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Palindrome Partitioning II - LeetCode Official",
+        "url": "https://leetcode.com/problems/palindrome-partitioning-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Minimum Palindrome Partitioning",
+        "url": "https://www.geeksforgeeks.org/palindrome-partitioning-dp-17/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "DP Solution Explained",
+        "url": "https://takeuforward.org/data-structure/palindrome-partitioning-ii/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/palindrome-partitioning-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/palindromic-patitioning4845/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find minimum cuts with palindrome constraint? Use DP. Check palindromes with 2D DP, then compute min cuts.",
+  "approaches": [
+    {
+      "name": "Recursion with Memoization",
+      "order": 1,
+      "intuition": "At each position, try all cuts. If substring is palindrome, recurse. Memoize min cuts from each position.",
+      "approach": "Recursive solution with memoization to find minimum cuts.",
+      "steps": [
+        "isPalindrome(i, j): check if s[i:j+1] is palindrome",
+        "minCuts(start):",
+        "  If start == n, return 0",
+        "  If memoized, return",
+        "  For end from start to n-1:",
+        "    If s[start:end+1] is palindrome:",
+        "      result = min(result, 1 + minCuts(end + 1))",
+        "  Memoize and return"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(n²)",
+        "timeExplanation": "O(n) states, each tries O(n) cuts, each palindrome check O(n)",
+        "spaceExplanation": "Memo O(n), palindrome cache O(n²)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minCut(string s) {\n        int n = s.length();\n        vector<int> memo(n, -1);\n        vector<vector<int>> isPalin(n, vector<int>(n, -1));\n        return solve(s, 0, memo, isPalin) - 1;\n    }\n    \nprivate:\n    int solve(string& s, int start, vector<int>& memo, vector<vector<int>>& isPalin) {\n        if (start == s.length()) return 0;\n        if (memo[start] != -1) return memo[start];\n        \n        int minCuts = INT_MAX;\n        for (int end = start; end < s.length(); end++) {\n            if (isPalindrome(s, start, end, isPalin)) {\n                minCuts = min(minCuts, 1 + solve(s, end + 1, memo, isPalin));\n            }\n        }\n        \n        return memo[start] = minCuts;\n    }\n    \n    bool isPalindrome(string& s, int i, int j, vector<vector<int>>& isPalin) {\n        if (isPalin[i][j] != -1) return isPalin[i][j];\n        \n        int left = i, right = j;\n        while (left < right) {\n            if (s[left++] != s[right--]) {\n                return isPalin[i][j] = 0;\n            }\n        }\n        return isPalin[i][j] = 1;\n    }\n};",
+        "java": "class Solution {\n    public int minCut(String s) {\n        int n = s.length();\n        int[] memo = new int[n];\n        int[][] isPalin = new int[n][n];\n        \n        for (int i = 0; i < n; i++) {\n            Arrays.fill(isPalin[i], -1);\n            memo[i] = -1;\n        }\n        \n        return solve(s, 0, memo, isPalin) - 1;\n    }\n    \n    private int solve(String s, int start, int[] memo, int[][] isPalin) {\n        if (start == s.length()) return 0;\n        if (memo[start] != -1) return memo[start];\n        \n        int minCuts = Integer.MAX_VALUE;\n        for (int end = start; end < s.length(); end++) {\n            if (isPalindrome(s, start, end, isPalin)) {\n                minCuts = Math.min(minCuts, 1 + solve(s, end + 1, memo, isPalin));\n            }\n        }\n        \n        return memo[start] = minCuts;\n    }\n    \n    private boolean isPalindrome(String s, int i, int j, int[][] isPalin) {\n        if (isPalin[i][j] != -1) return isPalin[i][j] == 1;\n        \n        int left = i, right = j;\n        while (left < right) {\n            if (s.charAt(left++) != s.charAt(right--)) {\n                isPalin[i][j] = 0;\n                return false;\n            }\n        }\n        isPalin[i][j] = 1;\n        return true;\n    }\n}",
+        "python": "def minCut(s):\n    n = len(s)\n    memo = {}\n    palin_cache = {}\n    \n    def is_palindrome(i, j):\n        if (i, j) in palin_cache:\n            return palin_cache[(i, j)]\n        \n        left, right = i, j\n        while left < right:\n            if s[left] != s[right]:\n                palin_cache[(i, j)] = False\n                return False\n            left += 1\n            right -= 1\n        \n        palin_cache[(i, j)] = True\n        return True\n    \n    def solve(start):\n        if start == n:\n            return 0\n        if start in memo:\n            return memo[start]\n        \n        min_cuts = float('inf')\n        for end in range(start, n):\n            if is_palindrome(start, end):\n                min_cuts = min(min_cuts, 1 + solve(end + 1))\n        \n        memo[start] = min_cuts\n        return min_cuts\n    \n    return solve(0) - 1",
+        "javascript": "function minCut(s) {\n    const n = s.length;\n    const memo = new Map();\n    const palinCache = new Map();\n    \n    function isPalindrome(i, j) {\n        const key = `${i},${j}`;\n        if (palinCache.has(key)) return palinCache.get(key);\n        \n        let left = i, right = j;\n        while (left < right) {\n            if (s[left++] !== s[right--]) {\n                palinCache.set(key, false);\n                return false;\n            }\n        }\n        palinCache.set(key, true);\n        return true;\n    }\n    \n    function solve(start) {\n        if (start === n) return 0;\n        if (memo.has(start)) return memo.get(start);\n        \n        let minCuts = Infinity;\n        for (let end = start; end < n; end++) {\n            if (isPalindrome(start, end)) {\n                minCuts = Math.min(minCuts, 1 + solve(end + 1));\n            }\n        }\n        \n        memo.set(start, minCuts);\n        return minCuts;\n    }\n    \n    return solve(0) - 1;\n}"
+      }
+    },
+    {
+      "name": "DP with Precomputed Palindromes",
+      "order": 2,
+      "intuition": "First build 2D table of all palindromes. Then use DP to compute minimum cuts.",
+      "approach": "Two-phase DP: build palindrome table, then compute min cuts.",
+      "steps": [
+        "Phase 1 - Build palindrome table:",
+        "  isPalin[i][j] = true if s[i:j+1] is palindrome",
+        "  Use DP: isPalin[i][j] = (s[i]==s[j] && isPalin[i+1][j-1])",
+        "Phase 2 - Compute min cuts:",
+        "  dp[i] = min cuts for s[0:i+1]",
+        "  dp[i] = min(dp[j] + 1) for all j where s[j+1:i+1] is palindrome",
+        "Return dp[n-1]"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n²)",
+        "timeExplanation": "O(n²) to build palindrome table, O(n²) for DP",
+        "spaceExplanation": "Palindrome table O(n²), DP array O(n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minCut(string s) {\n        int n = s.length();\n        vector<vector<bool>> isPalin(n, vector<bool>(n, false));\n        \n        // Build palindrome table\n        for (int i = 0; i < n; i++) {\n            isPalin[i][i] = true;\n        }\n        \n        for (int len = 2; len <= n; len++) {\n            for (int i = 0; i <= n - len; i++) {\n                int j = i + len - 1;\n                if (s[i] == s[j]) {\n                    isPalin[i][j] = (len == 2) || isPalin[i + 1][j - 1];\n                }\n            }\n        }\n        \n        // Compute min cuts\n        vector<int> dp(n, INT_MAX);\n        for (int i = 0; i < n; i++) {\n            if (isPalin[0][i]) {\n                dp[i] = 0;\n            } else {\n                for (int j = 0; j < i; j++) {\n                    if (isPalin[j + 1][i]) {\n                        dp[i] = min(dp[i], dp[j] + 1);\n                    }\n                }\n            }\n        }\n        \n        return dp[n - 1];\n    }\n};",
+        "java": "class Solution {\n    public int minCut(String s) {\n        int n = s.length();\n        boolean[][] isPalin = new boolean[n][n];\n        \n        for (int i = 0; i < n; i++) {\n            isPalin[i][i] = true;\n        }\n        \n        for (int len = 2; len <= n; len++) {\n            for (int i = 0; i <= n - len; i++) {\n                int j = i + len - 1;\n                if (s.charAt(i) == s.charAt(j)) {\n                    isPalin[i][j] = (len == 2) || isPalin[i + 1][j - 1];\n                }\n            }\n        }\n        \n        int[] dp = new int[n];\n        Arrays.fill(dp, Integer.MAX_VALUE);\n        \n        for (int i = 0; i < n; i++) {\n            if (isPalin[0][i]) {\n                dp[i] = 0;\n            } else {\n                for (int j = 0; j < i; j++) {\n                    if (isPalin[j + 1][i]) {\n                        dp[i] = Math.min(dp[i], dp[j] + 1);\n                    }\n                }\n            }\n        }\n        \n        return dp[n - 1];\n    }\n}",
+        "python": "def minCut(s):\n    n = len(s)\n    is_palin = [[False] * n for _ in range(n)]\n    \n    # Build palindrome table\n    for i in range(n):\n        is_palin[i][i] = True\n    \n    for length in range(2, n + 1):\n        for i in range(n - length + 1):\n            j = i + length - 1\n            if s[i] == s[j]:\n                is_palin[i][j] = (length == 2) or is_palin[i + 1][j - 1]\n    \n    # Compute min cuts\n    dp = [float('inf')] * n\n    for i in range(n):\n        if is_palin[0][i]:\n            dp[i] = 0\n        else:\n            for j in range(i):\n                if is_palin[j + 1][i]:\n                    dp[i] = min(dp[i], dp[j] + 1)\n    \n    return dp[n - 1]",
+        "javascript": "function minCut(s) {\n    const n = s.length;\n    const isPalin = Array(n).fill(null).map(() => Array(n).fill(false));\n    \n    for (let i = 0; i < n; i++) {\n        isPalin[i][i] = true;\n    }\n    \n    for (let len = 2; len <= n; len++) {\n        for (let i = 0; i <= n - len; i++) {\n            const j = i + len - 1;\n            if (s[i] === s[j]) {\n                isPalin[i][j] = (len === 2) || isPalin[i + 1][j - 1];\n            }\n        }\n    }\n    \n    const dp = new Array(n).fill(Infinity);\n    for (let i = 0; i < n; i++) {\n        if (isPalin[0][i]) {\n            dp[i] = 0;\n        } else {\n            for (let j = 0; j < i; j++) {\n                if (isPalin[j + 1][i]) {\n                    dp[i] = Math.min(dp[i], dp[j] + 1);\n                }\n            }\n        }\n    }\n    \n    return dp[n - 1];\n}"
+      }
+    },
+    {
+      "name": "Optimized DP - Expand Around Center",
+      "order": 3,
+      "intuition": "Instead of O(n²) palindrome table, expand around each center while building min cuts. More space efficient.",
+      "approach": "Expand palindromes from each center and update min cuts simultaneously.",
+      "steps": [
+        "dp[i] = min cuts for s[0:i+1]",
+        "For each center (both odd and even length):",
+        "  Expand outward while palindrome",
+        "  Update dp[right] = min(dp[right], dp[left-1] + 1)",
+        "Return dp[n-1]"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "O(n) centers, each expands up to O(n)",
+        "spaceExplanation": "Only DP array O(n), no palindrome table"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int minCut(string s) {\n        int n = s.length();\n        vector<int> dp(n);\n        iota(dp.begin(), dp.end(), 0); // dp[i] = i initially\n        \n        for (int center = 0; center < n; center++) {\n            // Odd length palindromes\n            int left = center, right = center;\n            while (left >= 0 && right < n && s[left] == s[right]) {\n                dp[right] = (left == 0) ? 0 : min(dp[right], dp[left - 1] + 1);\n                left--;\n                right++;\n            }\n            \n            // Even length palindromes\n            left = center;\n            right = center + 1;\n            while (left >= 0 && right < n && s[left] == s[right]) {\n                dp[right] = (left == 0) ? 0 : min(dp[right], dp[left - 1] + 1);\n                left--;\n                right++;\n            }\n        }\n        \n        return dp[n - 1];\n    }\n};",
+        "java": "class Solution {\n    public int minCut(String s) {\n        int n = s.length();\n        int[] dp = new int[n];\n        \n        for (int i = 0; i < n; i++) {\n            dp[i] = i;\n        }\n        \n        for (int center = 0; center < n; center++) {\n            // Odd length\n            int left = center, right = center;\n            while (left >= 0 && right < n && s.charAt(left) == s.charAt(right)) {\n                dp[right] = (left == 0) ? 0 : Math.min(dp[right], dp[left - 1] + 1);\n                left--;\n                right++;\n            }\n            \n            // Even length\n            left = center;\n            right = center + 1;\n            while (left >= 0 && right < n && s.charAt(left) == s.charAt(right)) {\n                dp[right] = (left == 0) ? 0 : Math.min(dp[right], dp[left - 1] + 1);\n                left--;\n                right++;\n            }\n        }\n        \n        return dp[n - 1];\n    }\n}",
+        "python": "def minCut(s):\n    n = len(s)\n    dp = list(range(n))  # dp[i] = i initially\n    \n    for center in range(n):\n        # Odd length palindromes\n        left, right = center, center\n        while left >= 0 and right < n and s[left] == s[right]:\n            dp[right] = 0 if left == 0 else min(dp[right], dp[left - 1] + 1)\n            left -= 1\n            right += 1\n        \n        # Even length palindromes\n        left, right = center, center + 1\n        while left >= 0 and right < n and s[left] == s[right]:\n            dp[right] = 0 if left == 0 else min(dp[right], dp[left - 1] + 1)\n            left -= 1\n            right += 1\n    \n    return dp[n - 1]",
+        "javascript": "function minCut(s) {\n    const n = s.length;\n    const dp = Array.from({length: n}, (_, i) => i);\n    \n    for (let center = 0; center < n; center++) {\n        // Odd length\n        let left = center, right = center;\n        while (left >= 0 && right < n && s[left] === s[right]) {\n            dp[right] = (left === 0) ? 0 : Math.min(dp[right], dp[left - 1] + 1);\n            left--;\n            right++;\n        }\n        \n        // Even length\n        left = center;\n        right = center + 1;\n        while (left >= 0 && right < n && s[left] === s[right]) {\n            dp[right] = (left === 0) ? 0 : Math.min(dp[right], dp[left - 1] + 1);\n            left--;\n            right++;\n        }\n    }\n    \n    return dp[n - 1];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling entire string being palindrome (return 0)",
+    "Off-by-one in DP transitions",
+    "Inefficient palindrome checking (not caching)",
+    "Wrong DP definition (counting partitions instead of cuts)",
+    "Not initializing DP array correctly"
+  ],
+  "hints": [
+    "Min cuts = min partitions - 1",
+    "First build palindrome lookup table",
+    "dp[i] = min cuts for substring s[0:i+1]",
+    "For each i, try all j where s[j+1:i+1] is palindrome",
+    "Can optimize space by expanding around centers"
+  ],
+  "followUp": [
+    "Can you print one optimal partitioning? (Track parent pointers)",
+    "What if we need all optimal partitionings? (Backtrack with DP)",
+    "Can you do it in O(n) space? (Use expand around center approach)",
+    "What if we want maximum cuts? (n - 1 always, split every character)",
+    "How to handle very long strings? (Same algorithms, just bigger arrays)"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple"],
+  "tags": ["dynamic-programming", "string"],
+  "relatedProblems": [
+    "Palindrome Partitioning",
+    "Word Break II",
+    "Longest Palindromic Substring",
+    "Partition Equal Subset Sum"
+  ]
+}

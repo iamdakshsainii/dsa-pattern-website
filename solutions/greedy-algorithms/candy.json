@@ -1,0 +1,159 @@
+{
+  "questionId": "LC-135",
+  "questionSlug": "candy",
+  "title": "Candy",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/candy/",
+    "videos": [
+      {
+        "title": "Candy - Two Pass Greedy Solution",
+        "url": "https://www.youtube.com/watch?v=h6_lIwZYHQw",
+        "channel": "NeetCode",
+        "duration": "13:20",
+        "language": "English"
+      },
+      {
+        "title": "Candy Problem Explained",
+        "url": "https://www.youtube.com/watch?v=1IzCRCcK17A",
+        "channel": "takeUforward",
+        "duration": "15:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Candy - Official Solution",
+        "url": "https://leetcode.com/problems/candy/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Candy - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/distributing-candies-according-to-ratings/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/candy/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Distribution based on neighbor comparison? Two-pass greedy: left-to-right then right-to-left!",
+  "approaches": [
+    {
+      "name": "Two Pass Greedy (Optimal)",
+      "order": 1,
+      "intuition": "Process left-to-right for increasing ratings, then right-to-left for decreasing ratings. Take maximum from both passes.",
+      "approach": "First pass: ensure each child has more candy than left neighbor if rating higher. Second pass: ensure more than right neighbor. Take max.",
+      "steps": [
+        "Initialize candies[n] with all 1s (everyone gets at least 1)",
+        "Left-to-right pass:",
+        "  For i from 1 to n-1:",
+        "    If ratings[i] > ratings[i-1]:",
+        "      candies[i] = candies[i-1] + 1",
+        "Right-to-left pass:",
+        "  For i from n-2 down to 0:",
+        "    If ratings[i] > ratings[i+1]:",
+        "      candies[i] = max(candies[i], candies[i+1] + 1)",
+        "Return sum(candies)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes through array",
+        "spaceExplanation": "Candies array of size n"
+      },
+      "code": {
+        "cpp": "int candy(vector<int>& ratings) {\n    int n = ratings.size();\n    if (n == 0) return 0;\n    \n    vector<int> candies(n, 1);\n    \n    // Left to right: handle increasing sequences\n    for (int i = 1; i < n; i++) {\n        if (ratings[i] > ratings[i - 1]) {\n            candies[i] = candies[i - 1] + 1;\n        }\n    }\n    \n    // Right to left: handle decreasing sequences\n    for (int i = n - 2; i >= 0; i--) {\n        if (ratings[i] > ratings[i + 1]) {\n            candies[i] = max(candies[i], candies[i + 1] + 1);\n        }\n    }\n    \n    return accumulate(candies.begin(), candies.end(), 0);\n}",
+        "java": "public int candy(int[] ratings) {\n    int n = ratings.length;\n    if (n == 0) return 0;\n    \n    int[] candies = new int[n];\n    Arrays.fill(candies, 1);\n    \n    for (int i = 1; i < n; i++) {\n        if (ratings[i] > ratings[i - 1]) {\n            candies[i] = candies[i - 1] + 1;\n        }\n    }\n    \n    for (int i = n - 2; i >= 0; i--) {\n        if (ratings[i] > ratings[i + 1]) {\n            candies[i] = Math.max(candies[i], candies[i + 1] + 1);\n        }\n    }\n    \n    int total = 0;\n    for (int c : candies) total += c;\n    return total;\n}",
+        "python": "def candy(ratings: List[int]) -> int:\n    n = len(ratings)\n    if n == 0:\n        return 0\n    \n    candies = [1] * n\n    \n    # Left to right\n    for i in range(1, n):\n        if ratings[i] > ratings[i - 1]:\n            candies[i] = candies[i - 1] + 1\n    \n    # Right to left\n    for i in range(n - 2, -1, -1):\n        if ratings[i] > ratings[i + 1]:\n            candies[i] = max(candies[i], candies[i + 1] + 1)\n    \n    return sum(candies)",
+        "javascript": "var candy = function(ratings) {\n    const n = ratings.length;\n    if (n === 0) return 0;\n    \n    const candies = new Array(n).fill(1);\n    \n    for (let i = 1; i < n; i++) {\n        if (ratings[i] > ratings[i - 1]) {\n            candies[i] = candies[i - 1] + 1;\n        }\n    }\n    \n    for (let i = n - 2; i >= 0; i--) {\n        if (ratings[i] > ratings[i + 1]) {\n            candies[i] = Math.max(candies[i], candies[i + 1] + 1);\n        }\n    }\n    \n    return candies.reduce((a, b) => a + b, 0);\n};"
+      }
+    },
+    {
+      "name": "One Pass with Peak-Valley",
+      "order": 2,
+      "intuition": "Detect peaks and valleys, calculate candies based on slopes. More complex but O(1) space possible.",
+      "approach": "Track increasing/decreasing sequences, handle peaks specially.",
+      "steps": [
+        "Iterate through ratings",
+        "Track up/down slopes",
+        "At peaks/valleys, calculate candies based on slope lengths",
+        "Handle edge cases for consecutive equal ratings"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass",
+        "spaceExplanation": "Constant space (more complex logic)"
+      },
+      "code": {
+        "cpp": "int candy(vector<int>& ratings) {\n    int n = ratings.size();\n    if (n <= 1) return n;\n    \n    int candies = 1;\n    int up = 0, down = 0, peak = 0;\n    \n    for (int i = 1; i < n; i++) {\n        if (ratings[i] > ratings[i - 1]) {\n            up++;\n            down = 0;\n            peak = up;\n            candies += up + 1;\n        } else if (ratings[i] < ratings[i - 1]) {\n            down++;\n            up = 0;\n            candies += down + (down >= peak ? 1 : 0);\n        } else {\n            up = down = peak = 0;\n            candies += 1;\n        }\n    }\n    \n    return candies;\n}",
+        "java": "public int candy(int[] ratings) {\n    int n = ratings.length;\n    if (n <= 1) return n;\n    \n    int candies = 1;\n    int up = 0, down = 0, peak = 0;\n    \n    for (int i = 1; i < n; i++) {\n        if (ratings[i] > ratings[i - 1]) {\n            up++;\n            down = 0;\n            peak = up;\n            candies += up + 1;\n        } else if (ratings[i] < ratings[i - 1]) {\n            down++;\n            up = 0;\n            candies += down + (down >= peak ? 1 : 0);\n        } else {\n            up = down = peak = 0;\n            candies += 1;\n        }\n    }\n    \n    return candies;\n}",
+        "python": "def candy(ratings: List[int]) -> int:\n    n = len(ratings)\n    if n <= 1:\n        return n\n    \n    candies = 1\n    up = down = peak = 0\n    \n    for i in range(1, n):\n        if ratings[i] > ratings[i - 1]:\n            up += 1\n            down = 0\n            peak = up\n            candies += up + 1\n        elif ratings[i] < ratings[i - 1]:\n            down += 1\n            up = 0\n            candies += down + (1 if down >= peak else 0)\n        else:\n            up = down = peak = 0\n            candies += 1\n    \n    return candies",
+        "javascript": "var candy = function(ratings) {\n    const n = ratings.length;\n    if (n <= 1) return n;\n    \n    let candies = 1;\n    let up = 0, down = 0, peak = 0;\n    \n    for (let i = 1; i < n; i++) {\n        if (ratings[i] > ratings[i - 1]) {\n            up++;\n            down = 0;\n            peak = up;\n            candies += up + 1;\n        } else if (ratings[i] < ratings[i - 1]) {\n            down++;\n            up = 0;\n            candies += down + (down >= peak ? 1 : 0);\n        } else {\n            up = down = peak = 0;\n            candies += 1;\n        }\n    }\n    \n    return candies;\n};"
+      }
+    },
+    {
+      "name": "Brute Force with Multiple Passes",
+      "order": 3,
+      "intuition": "Keep updating candies until no more updates needed. Not efficient.",
+      "approach": "Repeatedly scan array, update candies when constraint violated.",
+      "steps": [
+        "Initialize candies[n] = [1,1,...,1]",
+        "changed = true",
+        "While changed:",
+        "  changed = false",
+        "  For each child i:",
+        "    If rating > neighbor and candy <= neighbor:",
+        "      candies[i] = neighbor + 1",
+        "      changed = true",
+        "Return sum"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "May need multiple passes until convergence",
+        "spaceExplanation": "Candies array"
+      },
+      "code": {
+        "cpp": "int candy(vector<int>& ratings) {\n    int n = ratings.size();\n    vector<int> candies(n, 1);\n    \n    bool changed = true;\n    while (changed) {\n        changed = false;\n        for (int i = 0; i < n; i++) {\n            if (i > 0 && ratings[i] > ratings[i-1] && candies[i] <= candies[i-1]) {\n                candies[i] = candies[i-1] + 1;\n                changed = true;\n            }\n            if (i < n-1 && ratings[i] > ratings[i+1] && candies[i] <= candies[i+1]) {\n                candies[i] = candies[i+1] + 1;\n                changed = true;\n            }\n        }\n    }\n    \n    return accumulate(candies.begin(), candies.end(), 0);\n}",
+        "java": "public int candy(int[] ratings) {\n    int n = ratings.length;\n    int[] candies = new int[n];\n    Arrays.fill(candies, 1);\n    \n    boolean changed = true;\n    while (changed) {\n        changed = false;\n        for (int i = 0; i < n; i++) {\n            if (i > 0 && ratings[i] > ratings[i-1] && candies[i] <= candies[i-1]) {\n                candies[i] = candies[i-1] + 1;\n                changed = true;\n            }\n            if (i < n-1 && ratings[i] > ratings[i+1] && candies[i] <= candies[i+1]) {\n                candies[i] = candies[i+1] + 1;\n                changed = true;\n            }\n        }\n    }\n    \n    int total = 0;\n    for (int c : candies) total += c;\n    return total;\n}",
+        "python": "def candy(ratings: List[int]) -> int:\n    n = len(ratings)\n    candies = [1] * n\n    \n    changed = True\n    while changed:\n        changed = False\n        for i in range(n):\n            if i > 0 and ratings[i] > ratings[i-1] and candies[i] <= candies[i-1]:\n                candies[i] = candies[i-1] + 1\n                changed = True\n            if i < n-1 and ratings[i] > ratings[i+1] and candies[i] <= candies[i+1]:\n                candies[i] = candies[i+1] + 1\n                changed = True\n    \n    return sum(candies)",
+        "javascript": "var candy = function(ratings) {\n    const n = ratings.length;\n    const candies = new Array(n).fill(1);\n    \n    let changed = true;\n    while (changed) {\n        changed = false;\n        for (let i = 0; i < n; i++) {\n            if (i > 0 && ratings[i] > ratings[i-1] && candies[i] <= candies[i-1]) {\n                candies[i] = candies[i-1] + 1;\n                changed = true;\n            }\n            if (i < n-1 && ratings[i] > ratings[i+1] && candies[i] <= candies[i+1]) {\n                candies[i] = candies[i+1] + 1;\n                changed = true;\n            }\n        }\n    }\n    \n    return candies.reduce((a, b) => a + b, 0);\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Single pass only (need two passes or complex slope tracking)",
+    "Not using max() in second pass (must respect both constraints)",
+    "Forgetting to handle equal ratings (they're independent)",
+    "Not initializing all candies to 1 (everyone needs at least 1)",
+    "Comparing with both neighbors in one pass (creates dependencies)"
+  ],
+  "hints": [
+    "Everyone gets at least 1 candy",
+    "Two constraints: left neighbor and right neighbor",
+    "Process each constraint separately then combine",
+    "Left-to-right handles increasing sequences",
+    "Right-to-left handles decreasing sequences",
+    "Use max() to satisfy both constraints simultaneously"
+  ],
+  "followUp": [
+    "O(1) space solution? (Possible with peak-valley approach but complex)",
+    "What if ratings can be equal? (Already handled - independent)",
+    "Circular arrangement? (Different problem, needs modification)",
+    "Maximum candies for any child? (Find peaks in rating array)",
+    "Different comparison rules? (Modify constraint checking logic)"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Apple"],
+  "tags": ["greedy", "array"],
+  "relatedProblems": [
+    "Queue Reconstruction by Height",
+    "Partition Labels",
+    "Candy Distribution"
+  ]
+}

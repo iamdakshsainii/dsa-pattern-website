@@ -1,0 +1,173 @@
+{
+  "questionId": "LC-973",
+  "questionSlug": "k-closest-points-to-origin",
+  "title": "K Closest Points to Origin",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/k-closest-points-to-origin/",
+    "videos": [
+      {
+        "title": "K Closest Points to Origin - Max Heap",
+        "url": "https://www.youtube.com/watch?v=eaYX0Ee0Kcg",
+        "channel": "NeetCode",
+        "duration": "10:45",
+        "language": "English"
+      },
+      {
+        "title": "K Closest Points using QuickSelect",
+        "url": "https://www.youtube.com/watch?v=XC0yq5TQR98",
+        "channel": "take U forward",
+        "duration": "15:30",
+        "language": "English"
+      },
+      {
+        "title": "K Closest Points Solution",
+        "url": "https://www.youtube.com/watch?v=9jkB1-fOG7E",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "K Closest Points - Official Solution",
+        "url": "https://leetcode.com/problems/k-closest-points-to-origin/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "K Closest Points to Origin",
+        "url": "https://www.geeksforgeeks.org/find-k-closest-points-to-the-origin/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "QuickSelect Approach",
+        "url": "https://takeuforward.org/data-structure/k-closest-points-to-origin/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/k-closest-points-to-origin/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "K closest/smallest distances? Use Max Heap (size k) or QuickSelect!",
+  "approaches": [
+    {
+      "name": "Sorting - Brute Force",
+      "order": 1,
+      "intuition": "Calculate distances for all points, sort by distance, take first k.",
+      "approach": "Sort all points by Euclidean distance from origin.",
+      "steps": [
+        "Calculate distance for each point: √(x² + y²)",
+        "Actually, can skip √ and use x² + y² for comparison!",
+        "Sort points by distance",
+        "Return first k points",
+        "Simple but sorts all n points"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n) or O(1)",
+        "timeExplanation": "Sorting n points dominates",
+        "spaceExplanation": "Depends on sorting algorithm, O(1) for in-place sort"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {\n    // Sort by distance from origin\n    sort(points.begin(), points.end(), [](const vector<int>& a, const vector<int>& b) {\n        // Compare squared distances (avoid sqrt)\n        return a[0]*a[0] + a[1]*a[1] < b[0]*b[0] + b[1]*b[1];\n    });\n    \n    // Return first k points\n    return vector<vector<int>>(points.begin(), points.begin() + k);\n}\n\n// Example: points = [[1,3],[-2,2]], k = 1\n// Distances: 1²+3²=10, (-2)²+2²=8\n// After sort: [[-2,2],[1,3]]\n// Return: [[-2,2]]",
+        "java": "public int[][] kClosest(int[][] points, int k) {\n    Arrays.sort(points, (a, b) -> {\n        int dist1 = a[0] * a[0] + a[1] * a[1];\n        int dist2 = b[0] * b[0] + b[1] * b[1];\n        return dist1 - dist2;\n    });\n    \n    return Arrays.copyOfRange(points, 0, k);\n}",
+        "python": "def kClosest(points: List[List[int]], k: int) -> List[List[int]]:\n    # Sort by squared distance\n    points.sort(key=lambda p: p[0]**2 + p[1]**2)\n    return points[:k]\n\n# One-liner:\n# return sorted(points, key=lambda p: p[0]**2 + p[1]**2)[:k]",
+        "javascript": "var kClosest = function(points, k) {\n    points.sort((a, b) => {\n        const dist1 = a[0] * a[0] + a[1] * a[1];\n        const dist2 = b[0] * b[0] + b[1] * b[1];\n        return dist1 - dist2;\n    });\n    \n    return points.slice(0, k);\n};"
+      }
+    },
+    {
+      "name": "Max Heap (Size K) - Better",
+      "order": 2,
+      "intuition": "Maintain max heap of size k with k closest points. Top has furthest among k closest!",
+      "approach": "Use max heap to track k points with smallest distances.",
+      "steps": [
+        "Create max heap (ordered by distance)",
+        "For each point:",
+        "  Calculate squared distance",
+        "  Add (distance, point) to heap",
+        "  If heap size > k: remove maximum",
+        "After processing all points:",
+        "  Heap contains k closest points",
+        "Extract all points from heap",
+        "Only k elements in heap at any time!"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Process n points, each heap operation O(log k)",
+        "spaceExplanation": "Heap stores k points"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {\n    // Max heap: pair<distance, point_index>\n    priority_queue<pair<int, int>> maxHeap;\n    \n    for (int i = 0; i < points.size(); i++) {\n        int dist = points[i][0]*points[i][0] + points[i][1]*points[i][1];\n        maxHeap.push({dist, i});\n        \n        // Keep heap size <= k\n        if (maxHeap.size() > k) {\n            maxHeap.pop();\n        }\n    }\n    \n    // Extract k closest points\n    vector<vector<int>> result;\n    while (!maxHeap.empty()) {\n        result.push_back(points[maxHeap.top().second]);\n        maxHeap.pop();\n    }\n    \n    return result;\n}\n\n// Example: points = [[3,3],[5,-1],[-2,4]], k = 2\n// Process [3,3]: dist=18, heap=[(18,0)]\n// Process [5,-1]: dist=26, heap=[(26,1),(18,0)]\n// Process [-2,4]: dist=20, heap=[(20,2),(18,0)] → pop 26\n// Result: [[3,3],[-2,4]]",
+        "java": "public int[][] kClosest(int[][] points, int k) {\n    PriorityQueue<int[]> maxHeap = new PriorityQueue<>(\n        (a, b) -> Integer.compare(\n            b[0]*b[0] + b[1]*b[1],\n            a[0]*a[0] + a[1]*a[1]\n        )\n    );\n    \n    for (int[] point : points) {\n        maxHeap.offer(point);\n        \n        if (maxHeap.size() > k) {\n            maxHeap.poll();\n        }\n    }\n    \n    int[][] result = new int[k][2];\n    int i = 0;\n    while (!maxHeap.isEmpty()) {\n        result[i++] = maxHeap.poll();\n    }\n    \n    return result;\n}",
+        "python": "import heapq\n\ndef kClosest(points: List[List[int]], k: int) -> List[List[int]]:\n    # Max heap (negate distances)\n    max_heap = []\n    \n    for x, y in points:\n        dist = -(x*x + y*y)  # Negate for max heap\n        heapq.heappush(max_heap, (dist, x, y))\n        \n        if len(max_heap) > k:\n            heapq.heappop(max_heap)\n    \n    # Extract points\n    return [[x, y] for dist, x, y in max_heap]\n\n# Alternative using nsmallest:\n# return heapq.nsmallest(k, points, key=lambda p: p[0]**2 + p[1]**2)",
+        "javascript": "var kClosest = function(points, k) {\n    // Using MaxPriorityQueue\n    const maxHeap = new MaxPriorityQueue({\n        priority: (p) => p[0] * p[0] + p[1] * p[1]\n    });\n    \n    for (const point of points) {\n        maxHeap.enqueue(point);\n        \n        if (maxHeap.size() > k) {\n            maxHeap.dequeue();\n        }\n    }\n    \n    return maxHeap.toArray().map(x => x.element);\n};"
+      }
+    },
+    {
+      "name": "QuickSelect - Optimal Average",
+      "order": 3,
+      "intuition": "Don't need exact ordering! QuickSelect finds k smallest in average O(n) time.",
+      "approach": "Partition points by distance, recurse on side containing k smallest.",
+      "steps": [
+        "Target: kth smallest distance point",
+        "Pick pivot point, partition array:",
+        "  Points closer than pivot on left",
+        "  Points farther than pivot on right",
+        "If pivot index == k: done! First k points are answer",
+        "If pivot index > k: recurse left",
+        "If pivot index < k: recurse right",
+        "Average O(n): n + n/2 + n/4 + ... = 2n",
+        "Don't need full sorting!"
+      ],
+      "complexity": {
+        "time": "O(n) average, O(n²) worst",
+        "space": "O(1)",
+        "timeExplanation": "Average: partition halves problem. Worst: bad pivots",
+        "spaceExplanation": "In-place partitioning, O(log n) recursion"
+      },
+      "code": {
+        "cpp": "int distance(const vector<int>& point) {\n    return point[0]*point[0] + point[1]*point[1];\n}\n\nint partition(vector<vector<int>>& points, int left, int right) {\n    int pivotDist = distance(points[right]);\n    int i = left;\n    \n    for (int j = left; j < right; j++) {\n        if (distance(points[j]) < pivotDist) {\n            swap(points[i], points[j]);\n            i++;\n        }\n    }\n    \n    swap(points[i], points[right]);\n    return i;\n}\n\nvoid quickSelect(vector<vector<int>>& points, int left, int right, int k) {\n    if (left >= right) return;\n    \n    int pivotIndex = partition(points, left, right);\n    \n    if (pivotIndex == k) {\n        return; // Found! First k points are closest\n    } else if (pivotIndex > k) {\n        quickSelect(points, left, pivotIndex - 1, k);\n    } else {\n        quickSelect(points, pivotIndex + 1, right, k);\n    }\n}\n\nvector<vector<int>> kClosest(vector<vector<int>>& points, int k) {\n    quickSelect(points, 0, points.size() - 1, k);\n    return vector<vector<int>>(points.begin(), points.begin() + k);\n}\n\n// Example: points = [[3,3],[5,-1],[-2,4]], k = 2\n// QuickSelect partitions to put 2 smallest distances first\n// Result: first 2 points (order doesn't matter)",
+        "java": "private int distance(int[] point) {\n    return point[0] * point[0] + point[1] * point[1];\n}\n\nprivate int partition(int[][] points, int left, int right) {\n    int pivotDist = distance(points[right]);\n    int i = left;\n    \n    for (int j = left; j < right; j++) {\n        if (distance(points[j]) < pivotDist) {\n            int[] temp = points[i];\n            points[i] = points[j];\n            points[j] = temp;\n            i++;\n        }\n    }\n    \n    int[] temp = points[i];\n    points[i] = points[right];\n    points[right] = temp;\n    \n    return i;\n}\n\nprivate void quickSelect(int[][] points, int left, int right, int k) {\n    if (left >= right) return;\n    \n    int pivotIndex = partition(points, left, right);\n    \n    if (pivotIndex == k) {\n        return;\n    } else if (pivotIndex > k) {\n        quickSelect(points, left, pivotIndex - 1, k);\n    } else {\n        quickSelect(points, pivotIndex + 1, right, k);\n    }\n}\n\npublic int[][] kClosest(int[][] points, int k) {\n    quickSelect(points, 0, points.length - 1, k);\n    return Arrays.copyOfRange(points, 0, k);\n}",
+        "python": "import random\n\ndef kClosest(points: List[List[int]], k: int) -> List[List[int]]:\n    def distance(point):\n        return point[0]**2 + point[1]**2\n    \n    def partition(left, right, pivot_idx):\n        pivot_dist = distance(points[pivot_idx])\n        # Move pivot to end\n        points[pivot_idx], points[right] = points[right], points[pivot_idx]\n        \n        store_idx = left\n        for i in range(left, right):\n            if distance(points[i]) < pivot_dist:\n                points[store_idx], points[i] = points[i], points[store_idx]\n                store_idx += 1\n        \n        # Move pivot to final place\n        points[right], points[store_idx] = points[store_idx], points[right]\n        return store_idx\n    \n    def select(left, right, k):\n        if left == right:\n            return\n        \n        # Random pivot for average O(n)\n        pivot_idx = random.randint(left, right)\n        pivot_idx = partition(left, right, pivot_idx)\n        \n        if pivot_idx == k:\n            return\n        elif pivot_idx > k:\n            select(left, pivot_idx - 1, k)\n        else:\n            select(pivot_idx + 1, right, k)\n    \n    select(0, len(points) - 1, k)\n    return points[:k]",
+        "javascript": "var kClosest = function(points, k) {\n    const distance = (point) => point[0] * point[0] + point[1] * point[1];\n    \n    const partition = (left, right) => {\n        const pivotDist = distance(points[right]);\n        let i = left;\n        \n        for (let j = left; j < right; j++) {\n            if (distance(points[j]) < pivotDist) {\n                [points[i], points[j]] = [points[j], points[i]];\n                i++;\n            }\n        }\n        \n        [points[i], points[right]] = [points[right], points[i]];\n        return i;\n    };\n    \n    const quickSelect = (left, right, k) => {\n        if (left >= right) return;\n        \n        const pivotIndex = partition(left, right);\n        \n        if (pivotIndex === k) {\n            return;\n        } else if (pivotIndex > k) {\n            quickSelect(left, pivotIndex - 1, k);\n        } else {\n            quickSelect(pivotIndex + 1, right, k);\n        }\n    };\n    \n    quickSelect(0, points.length - 1, k);\n    return points.slice(0, k);\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using min heap instead of max heap (less efficient)",
+    "Calculating actual √ distance (unnecessary, use squared distance)",
+    "Not randomizing pivot in QuickSelect (worst case O(n²))",
+    "Forgetting that QuickSelect modifies input array",
+    "Heap storing all n points instead of just k",
+    "Integer overflow when calculating distance (use long if needed)"
+  ],
+  "hints": [
+    "Don't need actual distance, x²+y² sufficient for comparison",
+    "Max heap keeps k smallest distances by removing largest",
+    "QuickSelect finds kth element without full sorting",
+    "Random pivot makes QuickSelect O(n) average case",
+    "Order of k closest points doesn't matter in result"
+  ],
+  "followUp": [
+    "What if k equals n? (Return all points, no processing needed)",
+    "Can we do better than O(n)? (No, must examine all points)",
+    "What if points keep coming? (Use max heap, update dynamically)",
+    "3D points instead of 2D? (Same approaches, distance = x²+y²+z²)",
+    "K furthest points instead? (Use min heap of size k)"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Apple", "Uber", "LinkedIn"],
+  "tags": ["heap", "priority-queue", "quickselect", "divide-and-conquer", "sorting", "geometry"],
+  "relatedProblems": [
+    "Kth Largest Element in Array",
+    "Top K Frequent Elements",
+    "Top K Frequent Words",
+    "K Closest Points to Origin II",
+    "Find K Pairs with Smallest Sums"
+  ]
+}

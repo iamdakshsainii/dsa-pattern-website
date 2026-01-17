@@ -1,0 +1,133 @@
+{
+  "questionId": "LC-455",
+  "questionSlug": "assign-cookies",
+  "title": "Assign Cookies",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/assign-cookies/",
+    "videos": [
+      {
+        "title": "Assign Cookies - Greedy Two Pointer",
+        "url": "https://www.youtube.com/watch?v=DIX2p7vb9co",
+        "channel": "NeetCode",
+        "duration": "6:30",
+        "language": "English"
+      },
+      {
+        "title": "Assign Cookies Explained",
+        "url": "https://www.youtube.com/watch?v=ZqhnzAJw-I0",
+        "channel": "Nick White",
+        "duration": "8:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Assign Cookies - Official Solution",
+        "url": "https://leetcode.com/problems/assign-cookies/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Assign Cookies - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/assign-cookies/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/assign-cookies/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Maximize assignments with constraints? Sort both arrays and use greedy two-pointer approach!",
+  "approaches": [
+    {
+      "name": "Greedy Two Pointer (Optimal)",
+      "order": 1,
+      "intuition": "Sort both children's greed and cookie sizes. Assign smallest sufficient cookie to each child greedily.",
+      "approach": "Sort both arrays. Use two pointers: try to satisfy each child with smallest possible cookie that works.",
+      "steps": [
+        "Sort greed factor array (children's requirements)",
+        "Sort cookie size array",
+        "Initialize two pointers: child = 0, cookie = 0",
+        "While child < n and cookie < m:",
+        "  If cookie[cookie] >= greed[child]:",
+        "    Satisfy this child, increment both pointers",
+        "  Else:",
+        "    Try next larger cookie, increment cookie pointer",
+        "Return count of satisfied children"
+      ],
+      "complexity": {
+        "time": "O(n log n + m log m)",
+        "space": "O(1)",
+        "timeExplanation": "Sorting children O(n log n) + sorting cookies O(m log m) + two-pointer traversal O(n+m)",
+        "spaceExplanation": "Only using constant extra space (ignoring sorting space)"
+      },
+      "code": {
+        "cpp": "int findContentChildren(vector<int>& g, vector<int>& s) {\n    sort(g.begin(), g.end());\n    sort(s.begin(), s.end());\n    \n    int child = 0, cookie = 0;\n    int n = g.size(), m = s.size();\n    \n    while (child < n && cookie < m) {\n        if (s[cookie] >= g[child]) {\n            // Cookie satisfies child\n            child++;\n        }\n        // Move to next cookie regardless\n        cookie++;\n    }\n    \n    return child;\n}\n\n// Example: g = [1,2,3], s = [1,1]\n// After sort: g = [1,2,3], s = [1,1]\n// child=0, cookie=0: s[0]=1 >= g[0]=1 ✓ → child=1, cookie=1\n// child=1, cookie=1: s[1]=1 >= g[1]=2 ✗ → cookie=2\n// cookie=2 >= m, stop\n// Return 1 (only first child satisfied)\n\n// Example: g = [1,2], s = [1,2,3]\n// After sort: g = [1,2], s = [1,2,3]\n// child=0, cookie=0: s[0]=1 >= g[0]=1 ✓ → child=1, cookie=1\n// child=1, cookie=1: s[1]=2 >= g[1]=2 ✓ → child=2, cookie=2\n// child=2 >= n, stop\n// Return 2 (both children satisfied)",
+        "java": "public int findContentChildren(int[] g, int[] s) {\n    Arrays.sort(g);\n    Arrays.sort(s);\n    \n    int child = 0, cookie = 0;\n    int n = g.length, m = s.length;\n    \n    while (child < n && cookie < m) {\n        if (s[cookie] >= g[child]) {\n            child++;\n        }\n        cookie++;\n    }\n    \n    return child;\n}",
+        "python": "def findContentChildren(g: List[int], s: List[int]) -> int:\n    g.sort()\n    s.sort()\n    \n    child = 0\n    cookie = 0\n    \n    while child < len(g) and cookie < len(s):\n        if s[cookie] >= g[child]:\n            child += 1\n        cookie += 1\n    \n    return child",
+        "javascript": "var findContentChildren = function(g, s) {\n    g.sort((a, b) => a - b);\n    s.sort((a, b) => a - b);\n    \n    let child = 0, cookie = 0;\n    \n    while (child < g.length && cookie < s.length) {\n        if (s[cookie] >= g[child]) {\n            child++;\n        }\n        cookie++;\n    }\n    \n    return child;\n};"
+      }
+    },
+    {
+      "name": "Greedy with For Loop",
+      "order": 2,
+      "intuition": "Same greedy approach but using for loop to iterate cookies, track satisfied children count.",
+      "approach": "Sort both arrays. For each cookie, try to satisfy next unsatisfied child if possible.",
+      "steps": [
+        "Sort both arrays",
+        "Initialize child pointer = 0",
+        "For each cookie in sorted order:",
+        "  If child < n and cookie >= greed[child]:",
+        "    Satisfy child, increment child pointer",
+        "Return child (count of satisfied children)"
+      ],
+      "complexity": {
+        "time": "O(n log n + m log m)",
+        "space": "O(1)",
+        "timeExplanation": "Same as two-pointer approach",
+        "spaceExplanation": "Constant extra space"
+      },
+      "code": {
+        "cpp": "int findContentChildren(vector<int>& g, vector<int>& s) {\n    sort(g.begin(), g.end());\n    sort(s.begin(), s.end());\n    \n    int child = 0;\n    int n = g.size();\n    \n    for (int cookie : s) {\n        if (child < n && cookie >= g[child]) {\n            child++;\n        }\n    }\n    \n    return child;\n}",
+        "java": "public int findContentChildren(int[] g, int[] s) {\n    Arrays.sort(g);\n    Arrays.sort(s);\n    \n    int child = 0;\n    \n    for (int cookie : s) {\n        if (child < g.length && cookie >= g[child]) {\n            child++;\n        }\n    }\n    \n    return child;\n}",
+        "python": "def findContentChildren(g: List[int], s: List[int]) -> int:\n    g.sort()\n    s.sort()\n    \n    child = 0\n    \n    for cookie in s:\n        if child < len(g) and cookie >= g[child]:\n            child += 1\n    \n    return child",
+        "javascript": "var findContentChildren = function(g, s) {\n    g.sort((a, b) => a - b);\n    s.sort((a, b) => a - b);\n    \n    let child = 0;\n    \n    for (const cookie of s) {\n        if (child < g.length && cookie >= g[child]) {\n            child++;\n        }\n    }\n    \n    return child;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not sorting the arrays first (greedy only works on sorted data here)",
+    "Trying to assign largest cookies first (wastes cookies on easy-to-satisfy children)",
+    "Using nested loops O(n*m) instead of two-pointer O(n+m)",
+    "Forgetting to increment cookie pointer when cookie doesn't satisfy child",
+    "Checking s[cookie] > g[child] instead of >= (equal size should satisfy)",
+    "Not handling empty arrays (edge cases)"
+  ],
+  "hints": [
+    "Greedy strategy: give smallest sufficient cookie to each child",
+    "Why sort? To match smallest needs with smallest cookies efficiently",
+    "Why this greedy works: if small cookie can't satisfy small greed, it won't satisfy larger greed",
+    "Two pointers avoid nested loops: O(n+m) instead of O(n*m)",
+    "Each cookie can only be used once",
+    "Goal is to maximize satisfied children, not minimize cookies used"
+  ],
+  "followUp": [
+    "What if each cookie can satisfy multiple children? (Different problem - need different approach)",
+    "What if we want to minimize cookies used? (Same algorithm works)",
+    "Can we do better than O(n log n)? (No, need sorting for greedy to work)",
+    "What if greed factors or cookies are pre-sorted? (Skip sorting, O(n+m) only)",
+    "What if we must satisfy children in given order? (Can't use greedy, might need DP)",
+    "Multiple types of cookies with different satisfaction? (More complex assignment problem)"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook"],
+  "tags": ["greedy", "two-pointers", "array", "sorting"],
+  "relatedProblems": [
+    "Two Sum",
+    "Container With Most Water",
+    "Maximum Matching of Players With Trainers"
+  ]
+}

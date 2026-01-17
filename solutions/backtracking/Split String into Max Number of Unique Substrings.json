@@ -1,0 +1,157 @@
+{
+  "questionId": "1593",
+  "questionSlug": "split-a-string-into-the-max-number-of-unique-substrings",
+  "title": "Split String into Max Number of Unique Substrings",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/split-a-string-into-the-max-number-of-unique-substrings/",
+    "videos": [
+      {
+        "title": "Split String - Backtracking",
+        "url": "https://www.youtube.com/watch?v=SyBFVaNA6k0",
+        "channel": "NeetCode",
+        "duration": "12:20",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Unique Substrings",
+        "url": "https://www.youtube.com/watch?v=hXKHfQPz7BI",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "10:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Split String - LeetCode Official",
+        "url": "https://leetcode.com/problems/split-a-string-into-the-max-number-of-unique-substrings/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Backtracking Solution",
+        "url": "https://www.geeksforgeeks.org/split-string-maximum-number-unique-substring/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/split-a-string-into-the-max-number-of-unique-substrings/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Find maximum splits with uniqueness constraint? Use backtracking with set to track used substrings.",
+  "approaches": [
+    {
+      "name": "Backtracking - Try All Splits",
+      "order": 1,
+      "intuition": "At each position, try all possible substrings. Add to set if unique, recurse, then backtrack.",
+      "approach": "Use backtracking with a set to track used substrings.",
+      "steps": [
+        "backtrack(start, used):",
+        "  If start == s.length, return used.size()",
+        "  maxSplit = 0",
+        "  For end from start+1 to s.length:",
+        "    substring = s[start:end]",
+        "    If substring not in used:",
+        "      Add to used",
+        "      maxSplit = max(maxSplit, backtrack(end, used))",
+        "      Remove from used",
+        "Return maxSplit"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "Try all 2^n ways to split string, each substring takes O(n)",
+        "spaceExplanation": "Set size O(n), recursion depth O(n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxUniqueSplit(string s) {\n        unordered_set<string> used;\n        return backtrack(s, 0, used);\n    }\n    \nprivate:\n    int backtrack(string& s, int start, unordered_set<string>& used) {\n        if (start == s.length()) return 0;\n        \n        int maxSplit = 0;\n        for (int end = start + 1; end <= s.length(); end++) {\n            string substring = s.substr(start, end - start);\n            \n            if (used.find(substring) == used.end()) {\n                used.insert(substring);\n                maxSplit = max(maxSplit, 1 + backtrack(s, end, used));\n                used.erase(substring);\n            }\n        }\n        \n        return maxSplit;\n    }\n};",
+        "java": "class Solution {\n    public int maxUniqueSplit(String s) {\n        Set<String> used = new HashSet<>();\n        return backtrack(s, 0, used);\n    }\n    \n    private int backtrack(String s, int start, Set<String> used) {\n        if (start == s.length()) return 0;\n        \n        int maxSplit = 0;\n        for (int end = start + 1; end <= s.length(); end++) {\n            String substring = s.substring(start, end);\n            \n            if (!used.contains(substring)) {\n                used.add(substring);\n                maxSplit = Math.max(maxSplit, 1 + backtrack(s, end, used));\n                used.remove(substring);\n            }\n        }\n        \n        return maxSplit;\n    }\n}",
+        "python": "def maxUniqueSplit(s):\n    def backtrack(start, used):\n        if start == len(s):\n            return 0\n        \n        max_split = 0\n        for end in range(start + 1, len(s) + 1):\n            substring = s[start:end]\n            \n            if substring not in used:\n                used.add(substring)\n                max_split = max(max_split, 1 + backtrack(end, used))\n                used.remove(substring)\n        \n        return max_split\n    \n    return backtrack(0, set())",
+        "javascript": "function maxUniqueSplit(s) {\n    function backtrack(start, used) {\n        if (start === s.length) return 0;\n        \n        let maxSplit = 0;\n        for (let end = start + 1; end <= s.length; end++) {\n            const substring = s.substring(start, end);\n            \n            if (!used.has(substring)) {\n                used.add(substring);\n                maxSplit = Math.max(maxSplit, 1 + backtrack(end, used));\n                used.delete(substring);\n            }\n        }\n        \n        return maxSplit;\n    }\n    \n    return backtrack(0, new Set());\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Pruning",
+      "order": 2,
+      "intuition": "Add pruning: if remaining characters + current splits can't beat best, skip. Also try shorter substrings first.",
+      "approach": "Same backtracking but with early termination when impossible to improve.",
+      "steps": [
+        "Track maxResult globally",
+        "backtrack(start, used):",
+        "  If start == n, update maxResult",
+        "  remaining = n - start",
+        "  If used.size() + remaining <= maxResult, return (prune)",
+        "  Try all splits with pruning",
+        "Return maxResult"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "Same worst case but significantly faster in practice",
+        "spaceExplanation": "Set and recursion stack"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxUniqueSplit(string s) {\n        unordered_set<string> used;\n        int maxResult = 0;\n        backtrack(s, 0, used, maxResult);\n        return maxResult;\n    }\n    \nprivate:\n    void backtrack(string& s, int start, unordered_set<string>& used, int& maxResult) {\n        if (start == s.length()) {\n            maxResult = max(maxResult, (int)used.size());\n            return;\n        }\n        \n        // Pruning: if we can't improve, skip\n        int remaining = s.length() - start;\n        if (used.size() + remaining <= maxResult) return;\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            string substring = s.substr(start, end - start);\n            \n            if (used.find(substring) == used.end()) {\n                used.insert(substring);\n                backtrack(s, end, used, maxResult);\n                used.erase(substring);\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    private int maxResult = 0;\n    \n    public int maxUniqueSplit(String s) {\n        Set<String> used = new HashSet<>();\n        backtrack(s, 0, used);\n        return maxResult;\n    }\n    \n    private void backtrack(String s, int start, Set<String> used) {\n        if (start == s.length()) {\n            maxResult = Math.max(maxResult, used.size());\n            return;\n        }\n        \n        int remaining = s.length() - start;\n        if (used.size() + remaining <= maxResult) return;\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            String substring = s.substring(start, end);\n            \n            if (!used.contains(substring)) {\n                used.add(substring);\n                backtrack(s, end, used);\n                used.remove(substring);\n            }\n        }\n    }\n}",
+        "python": "def maxUniqueSplit(s):\n    max_result = [0]\n    \n    def backtrack(start, used):\n        if start == len(s):\n            max_result[0] = max(max_result[0], len(used))\n            return\n        \n        remaining = len(s) - start\n        if len(used) + remaining <= max_result[0]:\n            return\n        \n        for end in range(start + 1, len(s) + 1):\n            substring = s[start:end]\n            \n            if substring not in used:\n                used.add(substring)\n                backtrack(end, used)\n                used.remove(substring)\n    \n    backtrack(0, set())\n    return max_result[0]",
+        "javascript": "function maxUniqueSplit(s) {\n    let maxResult = 0;\n    \n    function backtrack(start, used) {\n        if (start === s.length) {\n            maxResult = Math.max(maxResult, used.size);\n            return;\n        }\n        \n        const remaining = s.length - start;\n        if (used.size + remaining <= maxResult) return;\n        \n        for (let end = start + 1; end <= s.length; end++) {\n            const substring = s.substring(start, end);\n            \n            if (!used.has(substring)) {\n                used.add(substring);\n                backtrack(end, used);\n                used.delete(substring);\n            }\n        }\n    }\n    \n    backtrack(0, new Set());\n    return maxResult;\n}"
+      }
+    },
+    {
+      "name": "Optimized - Try Shorter Substrings First",
+      "order": 3,
+      "intuition": "Trying shorter substrings first increases chances of more splits, finding better solutions earlier.",
+      "approach": "Prioritize shorter splits to maximize count early, enabling better pruning.",
+      "steps": [
+        "Same as approach 2",
+        "But iterate from start+1 (shortest) to end (longest)",
+        "This naturally tries to maximize split count",
+        "Better pruning as maxResult increases faster"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(n)",
+        "timeExplanation": "Same complexity but much better practical performance",
+        "spaceExplanation": "Set and recursion"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int maxUniqueSplit(string s) {\n        unordered_set<string> used;\n        int maxResult = 0;\n        backtrack(s, 0, used, maxResult);\n        return maxResult;\n    }\n    \nprivate:\n    void backtrack(string& s, int start, unordered_set<string>& used, int& maxResult) {\n        if (start == s.length()) {\n            maxResult = max(maxResult, (int)used.size());\n            return;\n        }\n        \n        int remaining = s.length() - start;\n        if (used.size() + remaining <= maxResult) return;\n        \n        // Try shorter substrings first for better pruning\n        for (int len = 1; len <= remaining; len++) {\n            string substring = s.substr(start, len);\n            \n            if (used.find(substring) == used.end()) {\n                used.insert(substring);\n                backtrack(s, start + len, used, maxResult);\n                used.erase(substring);\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    private int maxResult = 0;\n    \n    public int maxUniqueSplit(String s) {\n        Set<String> used = new HashSet<>();\n        backtrack(s, 0, used);\n        return maxResult;\n    }\n    \n    private void backtrack(String s, int start, Set<String> used) {\n        if (start == s.length()) {\n            maxResult = Math.max(maxResult, used.size());\n            return;\n        }\n        \n        int remaining = s.length() - start;\n        if (used.size() + remaining <= maxResult) return;\n        \n        for (int len = 1; len <= remaining; len++) {\n            String substring = s.substring(start, start + len);\n            \n            if (!used.contains(substring)) {\n                used.add(substring);\n                backtrack(s, start + len, used);\n                used.remove(substring);\n            }\n        }\n    }\n}",
+        "python": "def maxUniqueSplit(s):\n    max_result = [0]\n    \n    def backtrack(start, used):\n        if start == len(s):\n            max_result[0] = max(max_result[0], len(used))\n            return\n        \n        remaining = len(s) - start\n        if len(used) + remaining <= max_result[0]:\n            return\n        \n        for length in range(1, remaining + 1):\n            substring = s[start:start + length]\n            \n            if substring not in used:\n                used.add(substring)\n                backtrack(start + length, used)\n                used.remove(substring)\n    \n    backtrack(0, set())\n    return max_result[0]",
+        "javascript": "function maxUniqueSplit(s) {\n    let maxResult = 0;\n    \n    function backtrack(start, used) {\n        if (start === s.length) {\n            maxResult = Math.max(maxResult, used.size);\n            return;\n        }\n        \n        const remaining = s.length - start;\n        if (used.size + remaining <= maxResult) return;\n        \n        for (let len = 1; len <= remaining; len++) {\n            const substring = s.substring(start, start + len);\n            \n            if (!used.has(substring)) {\n                used.add(substring);\n                backtrack(start + len, used);\n                used.delete(substring);\n            }\n        }\n    }\n    \n    backtrack(0, new Set());\n    return maxResult;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not removing substring from set when backtracking",
+    "Trying to use DP (doesn't work well due to uniqueness constraint)",
+    "Not considering single character splits",
+    "Forgetting to track maximum across all branches",
+    "Not pruning when impossible to improve"
+  ],
+  "hints": [
+    "Use backtracking to try all possible splits",
+    "Track used substrings in a set",
+    "At each position, try all substring lengths",
+    "Prune when remaining + current can't beat best",
+    "Try shorter substrings first for better performance"
+  ],
+  "followUp": [
+    "What if we want to minimize unique substrings? (Same approach, track min)",
+    "Can you print one optimal split? (Store path along with count)",
+    "What if we can reuse substrings? (Remove uniqueness constraint, becomes trivial)",
+    "How to handle very long strings? (Pruning becomes critical)",
+    "Can you use DP? (Not easily due to uniqueness constraint)"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft"],
+  "tags": ["backtracking", "string", "hash-table"],
+  "relatedProblems": [
+    "Word Break II",
+    "Palindrome Partitioning",
+    "Partition Equal Subset Sum",
+    "Unique Substrings in Wraparound String"
+  ]
+}

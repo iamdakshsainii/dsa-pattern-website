@@ -1,0 +1,168 @@
+{
+  "questionId": "remove-last-set-bit",
+  "questionSlug": "remove-last-set-bit",
+  "title": "Remove Last Set Bit",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://practice.geeksforgeeks.org/problems/set-the-rightmost-unset-bit/",
+    "videos": [
+      {
+        "title": "Bit Manipulation Basics - Remove Last Set Bit",
+        "url": "https://www.youtube.com/watch?v=5rtVTYAk9KQ",
+        "channel": "take U forward",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "Brian Kernighan's Algorithm",
+        "url": "https://www.youtube.com/watch?v=g6xOb0x1JYo",
+        "channel": "Nick White",
+        "duration": "6:30",
+        "language": "English"
+      },
+      {
+        "title": "Bit Manipulation Tricks",
+        "url": "https://www.youtube.com/watch?v=efL86JCONH0",
+        "channel": "Abdul Bari",
+        "duration": "12:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Turn off the rightmost set bit",
+        "url": "https://www.geeksforgeeks.org/turn-off-the-rightmost-set-bit/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Brian Kernighan's Algorithm",
+        "url": "https://takeuforward.org/data-structure/bit-manipulation-basic-operations/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Bit Manipulation Tricks",
+        "url": "https://www.techiedelight.com/bit-manipulation-interview-questions/",
+        "source": "Techie Delight"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/set-the-rightmost-unset-bit/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Number of 1 Bits (Related)",
+        "url": "https://leetcode.com/problems/number-of-1-bits/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Remove rightmost 1? Use n & (n - 1). This is Brian Kernighan's algorithm.",
+  "approaches": [
+    {
+      "name": "Iterate and Find - Brute Force",
+      "order": 1,
+      "intuition": "Iterate through bits from right to left. Find first set bit and clear it.",
+      "approach": "Check each bit position, clear the first set bit found.",
+      "steps": [
+        "Iterate from bit position 0 to 31 (for 32-bit integer)",
+        "For each position i:",
+        "  Check if bit is set: (n & (1 << i)) != 0",
+        "  If set, clear it: n = n & ~(1 << i)",
+        "  Break",
+        "Return n"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "May need to check up to log(n) bits",
+        "spaceExplanation": "No extra space used"
+      },
+      "code": {
+        "cpp": "int removeLastSetBit(int n) {\n    for (int i = 0; i < 32; i++) {\n        if ((n & (1 << i)) != 0) {\n            n = n & ~(1 << i);\n            break;\n        }\n    }\n    return n;\n}",
+        "java": "public int removeLastSetBit(int n) {\n    for (int i = 0; i < 32; i++) {\n        if ((n & (1 << i)) != 0) {\n            n = n & ~(1 << i);\n            break;\n        }\n    }\n    return n;\n}",
+        "python": "def removeLastSetBit(n):\n    for i in range(32):\n        if (n & (1 << i)) != 0:\n            n = n & ~(1 << i)\n            break\n    return n",
+        "javascript": "function removeLastSetBit(n) {\n    for (let i = 0; i < 32; i++) {\n        if ((n & (1 << i)) !== 0) {\n            n = n & ~(1 << i);\n            break;\n        }\n    }\n    return n;\n}"
+      }
+    },
+    {
+      "name": "Find Position then Clear",
+      "order": 2,
+      "intuition": "Find position of rightmost set bit using (n & -n), then clear it.",
+      "approach": "Use two's complement property to isolate rightmost bit.",
+      "steps": [
+        "rightmost = n & -n  (isolates rightmost set bit)",
+        "Find position: log2(rightmost) or count trailing zeros",
+        "Clear that bit: n = n & ~(1 << position)",
+        "Return n"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Constant time bitwise operations",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "int removeLastSetBit(int n) {\n    if (n == 0) return 0;\n    \n    // Isolate rightmost set bit\n    int rightmost = n & -n;\n    \n    // Find position (or just XOR to clear)\n    int position = __builtin_ctz(rightmost); // count trailing zeros\n    \n    return n & ~(1 << position);\n}",
+        "java": "public int removeLastSetBit(int n) {\n    if (n == 0) return 0;\n    \n    int rightmost = n & -n;\n    int position = Integer.numberOfTrailingZeros(rightmost);\n    \n    return n & ~(1 << position);\n}",
+        "python": "def removeLastSetBit(n):\n    if n == 0:\n        return 0\n    \n    rightmost = n & -n\n    position = (rightmost - 1).bit_length()\n    \n    return n & ~(1 << position)",
+        "javascript": "function removeLastSetBit(n) {\n    if (n === 0) return 0;\n    \n    const rightmost = n & -n;\n    const position = Math.log2(rightmost);\n    \n    return n & ~(1 << position);\n}"
+      }
+    },
+    {
+      "name": "Brian Kernighan's Algorithm - Optimal",
+      "order": 3,
+      "intuition": "n & (n - 1) directly removes the rightmost set bit. Most elegant solution.",
+      "approach": "Use the magical property: n & (n - 1) clears the lowest set bit.",
+      "steps": [
+        "return n & (n - 1)",
+        "Why it works:",
+        "  n - 1 flips all bits after rightmost set bit",
+        "  AND operation clears the rightmost set bit"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Single bitwise AND operation",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "int removeLastSetBit(int n) {\n    return n & (n - 1);\n}\n\n// Example:\n// n = 12 (binary: 1100)\n// n - 1 = 11 (binary: 1011)\n// n & (n-1) = 1000 (8 in decimal)",
+        "java": "public int removeLastSetBit(int n) {\n    return n & (n - 1);\n}\n\n// Example:\n// n = 12 (1100)\n// n - 1 = 11 (1011)\n// 1100 & 1011 = 1000 (8)",
+        "python": "def removeLastSetBit(n):\n    return n & (n - 1)\n\n# Example:\n# n = 12 (binary: 1100)\n# n - 1 = 11 (binary: 1011)\n# n & (n-1) = 8 (binary: 1000)",
+        "javascript": "function removeLastSetBit(n) {\n    return n & (n - 1);\n}\n\n// Example:\n// n = 12 (binary: 1100)\n// n - 1 = 11 (binary: 1011)\n// 12 & 11 = 8 (binary: 1000)"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling n = 0 (result should be 0)",
+    "Confusing rightmost set bit with leftmost",
+    "Using right shift without proper masking",
+    "Forgetting two's complement for negative numbers",
+    "Not understanding why n & (n-1) works"
+  ],
+  "hints": [
+    "The magic formula is: n & (n - 1)",
+    "n - 1 flips all bits from rightmost 1 to the end",
+    "AND with n clears the rightmost 1",
+    "Example: 12 (1100) → 8 (1000)",
+    "This is Brian Kernighan's algorithm"
+  ],
+  "followUp": [
+    "How to remove the leftmost set bit? (Use MSB finding algorithm)",
+    "Can you count total set bits efficiently? (Use n & (n-1) repeatedly)",
+    "How to get only the rightmost set bit? (Use n & -n)",
+    "What if we need to toggle instead of remove? (Use XOR: n ^ (n & -n))",
+    "How does this relate to power of 2 check? (Power of 2 if n & (n-1) == 0)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple"],
+  "tags": ["bit-manipulation"],
+  "relatedProblems": [
+    "Number of 1 Bits",
+    "Power of Two",
+    "Counting Bits",
+    "Single Number",
+    "Bitwise AND of Numbers Range"
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "questionId": "LC-215",
+  "questionSlug": "kth-largest-element-in-an-array",
+  "title": "Kth Largest Element in Array",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+    "videos": [
+      {
+        "title": "Kth Largest Element - Multiple Solutions",
+        "url": "https://www.youtube.com/watch?v=XEmy13g1Qxc",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Kth Largest using QuickSelect",
+        "url": "https://www.youtube.com/watch?v=BP7GCALO2v8",
+        "channel": "take U forward",
+        "duration": "16:30",
+        "language": "English"
+      },
+      {
+        "title": "Kth Largest Element Solution",
+        "url": "https://www.youtube.com/watch?v=hGK_5n81drs",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth Largest Element - LeetCode Official",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "K largest elements in an array",
+        "url": "https://www.geeksforgeeks.org/k-largestor-smallest-elements-in-an-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "QuickSelect Algorithm",
+        "url": "https://takeuforward.org/data-structure/kth-largest-smallest-element-in-array/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/kth-largest-element/1",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Kth largest/smallest in unsorted array? Use Min Heap (size k) or QuickSelect!",
+  "approaches": [
+    {
+      "name": "Sorting - Brute Force",
+      "order": 1,
+      "intuition": "Sort array in descending order, return element at index k-1.",
+      "approach": "Sort entire array, pick kth element.",
+      "steps": [
+        "Sort array in descending order",
+        "Return nums[k-1]",
+        "Simple but does unnecessary work",
+        "Sorts all n elements when we only need kth"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1) or O(n)",
+        "timeExplanation": "Sorting takes O(n log n)",
+        "spaceExplanation": "O(1) if in-place sort, O(n) for languages like Python/JS"
+      },
+      "code": {
+        "cpp": "int findKthLargest(vector<int>& nums, int k) {\n    // Sort in descending order\n    sort(nums.begin(), nums.end(), greater<int>());\n    \n    // Return kth largest (0-indexed: k-1)\n    return nums[k - 1];\n}\n\n// Example: nums = [3,2,1,5,6,4], k = 2\n// After sort: [6,5,4,3,2,1]\n// k=2 → nums[1] = 5",
+        "java": "public int findKthLargest(int[] nums, int k) {\n    Arrays.sort(nums);\n    return nums[nums.length - k];\n}",
+        "python": "def findKthLargest(nums: List[int], k: int) -> int:\n    # Sort in descending order\n    nums.sort(reverse=True)\n    return nums[k - 1]\n\n# One-liner:\n# return sorted(nums, reverse=True)[k - 1]",
+        "javascript": "var findKthLargest = function(nums, k) {\n    nums.sort((a, b) => b - a);\n    return nums[k - 1];\n};"
+      }
+    },
+    {
+      "name": "Min Heap (Size K) - Better",
+      "order": 2,
+      "intuition": "Maintain min heap of size k containing k largest elements. Top of heap is kth largest!",
+      "approach": "Add elements to min heap, keep size ≤ k by removing smallest.",
+      "steps": [
+        "Create min heap",
+        "For each element in array:",
+        "  Add to heap",
+        "  If heap size > k: remove minimum",
+        "After processing all elements:",
+        "  Heap contains k largest elements",
+        "  Top of heap is kth largest",
+        "Only k elements in heap at any time!"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Process n elements, each heap operation O(log k)",
+        "spaceExplanation": "Heap stores k elements"
+      },
+      "code": {
+        "cpp": "int findKthLargest(vector<int>& nums, int k) {\n    // Min heap of size k\n    priority_queue<int, vector<int>, greater<int>> minHeap;\n    \n    for (int num : nums) {\n        minHeap.push(num);\n        \n        // Keep heap size <= k\n        if (minHeap.size() > k) {\n            minHeap.pop();\n        }\n    }\n    \n    // Top is kth largest\n    return minHeap.top();\n}\n\n// Example: nums = [3,2,1,5,6,4], k = 2\n// Process 3: heap = [3]\n// Process 2: heap = [2,3]\n// Process 1: heap = [2,3] → pop 1\n// Process 5: heap = [3,5] → pop 2\n// Process 6: heap = [5,6] → pop 3\n// Process 4: heap = [5,6] → pop 4\n// Result: top = 5",
+        "java": "public int findKthLargest(int[] nums, int k) {\n    PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n    \n    for (int num : nums) {\n        minHeap.offer(num);\n        \n        if (minHeap.size() > k) {\n            minHeap.poll();\n        }\n    }\n    \n    return minHeap.peek();\n}",
+        "python": "import heapq\n\ndef findKthLargest(nums: List[int], k: int) -> int:\n    # Min heap of size k\n    min_heap = []\n    \n    for num in nums:\n        heapq.heappush(min_heap, num)\n        \n        # Keep heap size <= k\n        if len(min_heap) > k:\n            heapq.heappop(min_heap)\n    \n    # Top is kth largest\n    return min_heap[0]\n\n# Alternative using nlargest:\n# return heapq.nlargest(k, nums)[-1]",
+        "javascript": "var findKthLargest = function(nums, k) {\n    // Using MinPriorityQueue from @datastructures-js/priority-queue\n    const minHeap = new MinPriorityQueue();\n    \n    for (const num of nums) {\n        minHeap.enqueue(num);\n        \n        if (minHeap.size() > k) {\n            minHeap.dequeue();\n        }\n    }\n    \n    return minHeap.front().element;\n};"
+      }
+    },
+    {
+      "name": "QuickSelect - Optimal Average",
+      "order": 3,
+      "intuition": "QuickSelect is like QuickSort but only recurse on one partition. Average O(n)! Find element at position n-k (since we want kth largest).",
+      "approach": "Partition array around pivot, recurse on correct partition.",
+      "steps": [
+        "Target index = n - k (kth largest from end)",
+        "Pick pivot, partition array:",
+        "  Elements < pivot on left",
+        "  Elements > pivot on right",
+        "If pivot index == target: found!",
+        "If pivot index > target: recurse left",
+        "If pivot index < target: recurse right",
+        "Average O(n): n + n/2 + n/4 + ... = 2n",
+        "Worst case O(n²) if bad pivots (rare with random)"
+      ],
+      "complexity": {
+        "time": "O(n) average, O(n²) worst",
+        "space": "O(1)",
+        "timeExplanation": "Average case: partition reduces problem by half each time. Worst: already sorted",
+        "spaceExplanation": "In-place algorithm"
+      },
+      "code": {
+        "cpp": "int partition(vector<int>& nums, int left, int right) {\n    int pivot = nums[right];\n    int i = left;\n    \n    for (int j = left; j < right; j++) {\n        if (nums[j] < pivot) {\n            swap(nums[i], nums[j]);\n            i++;\n        }\n    }\n    \n    swap(nums[i], nums[right]);\n    return i;\n}\n\nint quickSelect(vector<int>& nums, int left, int right, int k) {\n    if (left == right) return nums[left];\n    \n    int pivotIndex = partition(nums, left, right);\n    \n    if (pivotIndex == k) {\n        return nums[k];\n    } else if (pivotIndex > k) {\n        return quickSelect(nums, left, pivotIndex - 1, k);\n    } else {\n        return quickSelect(nums, pivotIndex + 1, right, k);\n    }\n}\n\nint findKthLargest(vector<int>& nums, int k) {\n    int n = nums.size();\n    // Kth largest = (n-k)th smallest (0-indexed)\n    return quickSelect(nums, 0, n - 1, n - k);\n}\n\n// Example: nums = [3,2,1,5,6,4], k = 2\n// Target index = 6-2 = 4 (0-indexed)\n// After quickselect, element at index 4 is 5",
+        "java": "private int partition(int[] nums, int left, int right) {\n    int pivot = nums[right];\n    int i = left;\n    \n    for (int j = left; j < right; j++) {\n        if (nums[j] < pivot) {\n            int temp = nums[i];\n            nums[i] = nums[j];\n            nums[j] = temp;\n            i++;\n        }\n    }\n    \n    int temp = nums[i];\n    nums[i] = nums[right];\n    nums[right] = temp;\n    \n    return i;\n}\n\nprivate int quickSelect(int[] nums, int left, int right, int k) {\n    if (left == right) return nums[left];\n    \n    int pivotIndex = partition(nums, left, right);\n    \n    if (pivotIndex == k) {\n        return nums[k];\n    } else if (pivotIndex > k) {\n        return quickSelect(nums, left, pivotIndex - 1, k);\n    } else {\n        return quickSelect(nums, pivotIndex + 1, right, k);\n    }\n}\n\npublic int findKthLargest(int[] nums, int k) {\n    int n = nums.length;\n    return quickSelect(nums, 0, n - 1, n - k);\n}",
+        "python": "import random\n\ndef findKthLargest(nums: List[int], k: int) -> int:\n    def partition(left, right, pivot_idx):\n        pivot = nums[pivot_idx]\n        # Move pivot to end\n        nums[pivot_idx], nums[right] = nums[right], nums[pivot_idx]\n        \n        # Partition\n        store_idx = left\n        for i in range(left, right):\n            if nums[i] < pivot:\n                nums[store_idx], nums[i] = nums[i], nums[store_idx]\n                store_idx += 1\n        \n        # Move pivot to final place\n        nums[right], nums[store_idx] = nums[store_idx], nums[right]\n        return store_idx\n    \n    def select(left, right, k_smallest):\n        if left == right:\n            return nums[left]\n        \n        # Random pivot for average O(n)\n        pivot_idx = random.randint(left, right)\n        pivot_idx = partition(left, right, pivot_idx)\n        \n        if k_smallest == pivot_idx:\n            return nums[k_smallest]\n        elif k_smallest < pivot_idx:\n            return select(left, pivot_idx - 1, k_smallest)\n        else:\n            return select(pivot_idx + 1, right, k_smallest)\n    \n    n = len(nums)\n    # Kth largest = (n-k)th smallest\n    return select(0, n - 1, n - k)",
+        "javascript": "var findKthLargest = function(nums, k) {\n    const partition = (left, right) => {\n        const pivot = nums[right];\n        let i = left;\n        \n        for (let j = left; j < right; j++) {\n            if (nums[j] < pivot) {\n                [nums[i], nums[j]] = [nums[j], nums[i]];\n                i++;\n            }\n        }\n        \n        [nums[i], nums[right]] = [nums[right], nums[i]];\n        return i;\n    };\n    \n    const quickSelect = (left, right, k) => {\n        if (left === right) return nums[left];\n        \n        const pivotIndex = partition(left, right);\n        \n        if (pivotIndex === k) {\n            return nums[k];\n        } else if (pivotIndex > k) {\n            return quickSelect(left, pivotIndex - 1, k);\n        } else {\n            return quickSelect(pivotIndex + 1, right, k);\n        }\n    };\n    \n    const n = nums.length;\n    return quickSelect(0, n - 1, n - k);\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using max heap instead of min heap (less efficient)",
+    "Confusing kth largest with kth smallest - index should be n-k",
+    "Not randomizing pivot in QuickSelect (leads to worst case)",
+    "Off-by-one errors in indexing (k vs k-1)",
+    "Modifying input array without asking if allowed",
+    "Not handling edge cases: k > n or k < 1"
+  ],
+  "hints": [
+    "Min heap of size k keeps track of k largest elements efficiently",
+    "QuickSelect is like binary search but on partitioned array",
+    "Kth largest = (n-k)th smallest when 0-indexed",
+    "Random pivot selection makes QuickSelect O(n) average case",
+    "Don't sort if you only need one element!"
+  ],
+  "followUp": [
+    "What if array is too large for memory? (External sorting or streaming with heap)",
+    "Can we do better than O(n)? (No, must examine all elements)",
+    "What if k changes frequently? (Build max heap once, extract k times)",
+    "Find kth smallest instead? (Use max heap of size k, or change index)",
+    "What if duplicates are present? (All approaches still work)"
+  ],
+  "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Apple", "Bloomberg", "Adobe"],
+  "tags": ["heap", "priority-queue", "quickselect", "divide-and-conquer", "sorting"],
+  "relatedProblems": [
+    "Kth Smallest Element in Sorted Matrix",
+    "Top K Frequent Elements",
+    "Third Maximum Number",
+    "Find Median from Data Stream",
+    "Kth Largest Element in a Stream"
+  ]
+}

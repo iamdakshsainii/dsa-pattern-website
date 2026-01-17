@@ -1,0 +1,168 @@
+{
+  "questionId": "LC-102",
+  "questionSlug": "binary-tree-level-order-traversal",
+  "title": "Binary Tree Level Order Traversal",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+    "videos": [
+      {
+        "title": "Level Order Traversal - BFS Explained",
+        "url": "https://www.youtube.com/watch?v=EoAsWbO7sqg",
+        "channel": "takeUforward",
+        "duration": "11:25",
+        "language": "English"
+      },
+      {
+        "title": "Binary Tree Level Order Traversal",
+        "url": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
+        "channel": "NeetCode",
+        "duration": "7:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Level Order Traversal - Official Solution",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Level Order Traversal - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/level-order-tree-traversal/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Level by level traversal? Use BFS with queue! Track level sizes.",
+  "approaches": [
+    {
+      "name": "BFS with Queue (Optimal)",
+      "order": 1,
+      "intuition": "Process nodes level by level using queue. Track current level size to group nodes.",
+      "approach": "Queue stores nodes. For each level, process all nodes in queue (size at start of level).",
+      "steps": [
+        "If root is null, return []",
+        "Queue with root, result = []",
+        "While queue not empty:",
+        "  levelSize = queue.size()",
+        "  currentLevel = []",
+        "  For i in range(levelSize):",
+        "    Pop node, add to currentLevel",
+        "    Enqueue left and right children",
+        "  Add currentLevel to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Queue holds at most w nodes (max width of tree)"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> levelOrder(TreeNode* root) {\n    vector<vector<int>> result;\n    if (!root) return result;\n    \n    queue<TreeNode*> q;\n    q.push(root);\n    \n    while (!q.empty()) {\n        int levelSize = q.size();\n        vector<int> currentLevel;\n        \n        for (int i = 0; i < levelSize; i++) {\n            TreeNode* node = q.front();\n            q.pop();\n            currentLevel.push_back(node->val);\n            \n            if (node->left) q.push(node->left);\n            if (node->right) q.push(node->right);\n        }\n        \n        result.push_back(currentLevel);\n    }\n    \n    return result;\n}\n\n// Example:      3\n//             /   \\\n//            9    20\n//               /   \\\n//              15    7\n// Level 0: [3]\n// Level 1: [9, 20]\n// Level 2: [15, 7]\n// Output: [[3],[9,20],[15,7]]",
+        "java": "public List<List<Integer>> levelOrder(TreeNode root) {\n    List<List<Integer>> result = new ArrayList<>();\n    if (root == null) return result;\n    \n    Queue<TreeNode> queue = new LinkedList<>();\n    queue.offer(root);\n    \n    while (!queue.isEmpty()) {\n        int levelSize = queue.size();\n        List<Integer> currentLevel = new ArrayList<>();\n        \n        for (int i = 0; i < levelSize; i++) {\n            TreeNode node = queue.poll();\n            currentLevel.add(node.val);\n            \n            if (node.left != null) queue.offer(node.left);\n            if (node.right != null) queue.offer(node.right);\n        }\n        \n        result.add(currentLevel);\n    }\n    \n    return result;\n}",
+        "python": "def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:\n    if not root:\n        return []\n    \n    result = []\n    queue = deque([root])\n    \n    while queue:\n        level_size = len(queue)\n        current_level = []\n        \n        for _ in range(level_size):\n            node = queue.popleft()\n            current_level.append(node.val)\n            \n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        \n        result.append(current_level)\n    \n    return result",
+        "javascript": "var levelOrder = function(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root];\n    \n    while (queue.length > 0) {\n        const levelSize = queue.length;\n        const currentLevel = [];\n        \n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift();\n            currentLevel.push(node.val);\n            \n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        \n        result.push(currentLevel);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "BFS with Level Delimiter (Null Marker)",
+      "order": 2,
+      "intuition": "Use null as level separator in queue. When we see null, current level is complete.",
+      "approach": "Add null after each level. When popped, add current level to result and add another null.",
+      "steps": [
+        "Queue with root and null",
+        "currentLevel = []",
+        "While queue not empty:",
+        "  Pop node",
+        "  If node is null:",
+        "    Add currentLevel to result, reset currentLevel",
+        "    If queue not empty: add null (next level separator)",
+        "  Else:",
+        "    Add node to currentLevel",
+        "    Enqueue children",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(w)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Queue holds nodes + nulls"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> levelOrder(TreeNode* root) {\n    vector<vector<int>> result;\n    if (!root) return result;\n    \n    queue<TreeNode*> q;\n    q.push(root);\n    q.push(nullptr);  // Level delimiter\n    \n    vector<int> currentLevel;\n    \n    while (!q.empty()) {\n        TreeNode* node = q.front();\n        q.pop();\n        \n        if (!node) {\n            result.push_back(currentLevel);\n            currentLevel.clear();\n            if (!q.empty()) q.push(nullptr);\n        } else {\n            currentLevel.push_back(node->val);\n            if (node->left) q.push(node->left);\n            if (node->right) q.push(node->right);\n        }\n    }\n    \n    return result;\n}",
+        "java": "public List<List<Integer>> levelOrder(TreeNode root) {\n    List<List<Integer>> result = new ArrayList<>();\n    if (root == null) return result;\n    \n    Queue<TreeNode> queue = new LinkedList<>();\n    queue.offer(root);\n    queue.offer(null);\n    \n    List<Integer> currentLevel = new ArrayList<>();\n    \n    while (!queue.isEmpty()) {\n        TreeNode node = queue.poll();\n        \n        if (node == null) {\n            result.add(new ArrayList<>(currentLevel));\n            currentLevel.clear();\n            if (!queue.isEmpty()) queue.offer(null);\n        } else {\n            currentLevel.add(node.val);\n            if (node.left != null) queue.offer(node.left);\n            if (node.right != null) queue.offer(node.right);\n        }\n    }\n    \n    return result;\n}",
+        "python": "def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:\n    if not root:\n        return []\n    \n    result = []\n    queue = deque([root, None])\n    current_level = []\n    \n    while queue:\n        node = queue.popleft()\n        \n        if node is None:\n            result.append(current_level)\n            current_level = []\n            if queue:\n                queue.append(None)\n        else:\n            current_level.append(node.val)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n    \n    return result",
+        "javascript": "var levelOrder = function(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const queue = [root, null];\n    let currentLevel = [];\n    \n    while (queue.length > 0) {\n        const node = queue.shift();\n        \n        if (node === null) {\n            result.push([...currentLevel]);\n            currentLevel = [];\n            if (queue.length > 0) queue.push(null);\n        } else {\n            currentLevel.push(node.val);\n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Recursive DFS with Level Tracking",
+      "order": 3,
+      "intuition": "DFS but track level number. Add nodes to result[level]. Ensure result has enough sublists.",
+      "approach": "Recursive DFS with level parameter. Create new level list when needed.",
+      "steps": [
+        "Helper(node, level, result):",
+        "  If node is null: return",
+        "  If result.size() <= level: add new list",
+        "  Add node.val to result[level]",
+        "  Recurse left with level+1",
+        "  Recurse right with level+1",
+        "Call helper(root, 0, result)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Recursion stack depth h"
+      },
+      "code": {
+        "cpp": "void levelOrderHelper(TreeNode* node, int level, vector<vector<int>>& result) {\n    if (!node) return;\n    \n    if (result.size() <= level) {\n        result.push_back(vector<int>());\n    }\n    \n    result[level].push_back(node->val);\n    \n    levelOrderHelper(node->left, level + 1, result);\n    levelOrderHelper(node->right, level + 1, result);\n}\n\nvector<vector<int>> levelOrder(TreeNode* root) {\n    vector<vector<int>> result;\n    levelOrderHelper(root, 0, result);\n    return result;\n}",
+        "java": "void levelOrderHelper(TreeNode node, int level, List<List<Integer>> result) {\n    if (node == null) return;\n    \n    if (result.size() <= level) {\n        result.add(new ArrayList<>());\n    }\n    \n    result.get(level).add(node.val);\n    \n    levelOrderHelper(node.left, level + 1, result);\n    levelOrderHelper(node.right, level + 1, result);\n}\n\npublic List<List<Integer>> levelOrder(TreeNode root) {\n    List<List<Integer>> result = new ArrayList<>();\n    levelOrderHelper(root, 0, result);\n    return result;\n}",
+        "python": "def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:\n    result = []\n    \n    def helper(node, level):\n        if not node:\n            return\n        \n        if len(result) <= level:\n            result.append([])\n        \n        result[level].append(node.val)\n        \n        helper(node.left, level + 1)\n        helper(node.right, level + 1)\n    \n    helper(root, 0)\n    return result",
+        "javascript": "var levelOrder = function(root) {\n    const result = [];\n    \n    function helper(node, level) {\n        if (!node) return;\n        \n        if (result.length <= level) {\n            result.push([]);\n        }\n        \n        result[level].push(node.val);\n        \n        helper(node.left, level + 1);\n        helper(node.right, level + 1);\n    }\n    \n    helper(root, 0);\n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not capturing level size before processing (queue grows during iteration)",
+    "Forgetting to check for null root",
+    "In null-delimiter: infinite loop if not checking queue.empty() before adding null",
+    "In DFS: not creating new level list when result.size() <= level",
+    "Using shift() in JavaScript (O(n), slow for large queues)",
+    "Processing wrong number of nodes per level"
+  ],
+  "hints": [
+    "BFS naturally processes level by level!",
+    "Key: capture queue.size() BEFORE processing level",
+    "This size tells us exactly how many nodes in current level",
+    "Alternative: use null/None as level delimiter",
+    "DFS works too: track level number and group by level",
+    "BFS approach is more intuitive for level-order"
+  ],
+  "followUp": [
+    "Bottom-up level order? (Reverse result or use stack)",
+    "Zigzag level order? (Reverse alternate levels)",
+    "Right side view? (Take last element of each level)",
+    "Left side view? (Take first element of each level)",
+    "Level with maximum sum? (Track max while traversing)",
+    "Average of each level? (Sum divided by count per level)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "LinkedIn"],
+  "tags": ["tree", "binary-tree", "breadth-first-search", "queue"],
+  "relatedProblems": [
+    "Binary Tree Zigzag Level Order Traversal",
+    "Binary Tree Right Side View",
+    "Binary Tree Level Order Traversal II",
+    "Average of Levels in Binary Tree"
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "questionId": "GFG-NMEET",
+  "questionSlug": "n-meetings-in-one-room",
+  "title": "N Meetings in One Room",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/",
+    "videos": [
+      {
+        "title": "N Meetings in One Room - Greedy",
+        "url": "https://www.youtube.com/watch?v=II6ziNnub1Q",
+        "channel": "takeUforward",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Activity Selection Problem",
+        "url": "https://www.youtube.com/watch?v=ZlJF2-fAGGE",
+        "channel": "Abdul Bari",
+        "duration": "14:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "N Meetings in One Room - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/find-maximum-meetings-in-one-room/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Activity Selection Problem",
+        "url": "https://www.geeksforgeeks.org/activity-selection-problem-greedy-algo-1/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/n-meetings-in-one-room/0",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Maximize non-overlapping intervals? Sort by end time, greedily select earliest ending!",
+  "approaches": [
+    {
+      "name": "Greedy - Sort by End Time (Optimal)",
+      "order": 1,
+      "intuition": "Sort meetings by end time. Greedily select meeting that ends earliest and doesn't overlap with previous.",
+      "approach": "Sort by end time, iterate and select meeting if start >= previous end.",
+      "steps": [
+        "Create pairs of (start, end, index)",
+        "Sort by end time (if tie, by start time)",
+        "Initialize count = 0, lastEnd = 0",
+        "For each meeting:",
+        "  If meeting.start > lastEnd:",
+        "    count++",
+        "    lastEnd = meeting.end",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting takes O(n log n), iteration O(n)",
+        "spaceExplanation": "Storing meeting tuples"
+      },
+      "code": {
+        "cpp": "int maxMeetings(int start[], int end[], int n) {\n    vector<pair<int, int>> meetings;\n    \n    for (int i = 0; i < n; i++) {\n        meetings.push_back({end[i], start[i]});\n    }\n    \n    // Sort by end time\n    sort(meetings.begin(), meetings.end());\n    \n    int count = 1;\n    int lastEnd = meetings[0].first;\n    \n    for (int i = 1; i < n; i++) {\n        if (meetings[i].second > lastEnd) {\n            count++;\n            lastEnd = meetings[i].first;\n        }\n    }\n    \n    return count;\n}",
+        "java": "public int maxMeetings(int start[], int end[], int n) {\n    int[][] meetings = new int[n][2];\n    \n    for (int i = 0; i < n; i++) {\n        meetings[i][0] = end[i];\n        meetings[i][1] = start[i];\n    }\n    \n    Arrays.sort(meetings, (a, b) -> a[0] - b[0]);\n    \n    int count = 1;\n    int lastEnd = meetings[0][0];\n    \n    for (int i = 1; i < n; i++) {\n        if (meetings[i][1] > lastEnd) {\n            count++;\n            lastEnd = meetings[i][0];\n        }\n    }\n    \n    return count;\n}",
+        "python": "def maxMeetings(start, end, n):\n    meetings = [(end[i], start[i]) for i in range(n)]\n    meetings.sort()\n    \n    count = 1\n    last_end = meetings[0][0]\n    \n    for i in range(1, n):\n        if meetings[i][1] > last_end:\n            count += 1\n            last_end = meetings[i][0]\n    \n    return count",
+        "javascript": "function maxMeetings(start, end, n) {\n    const meetings = [];\n    \n    for (let i = 0; i < n; i++) {\n        meetings.push([end[i], start[i]]);\n    }\n    \n    meetings.sort((a, b) => a[0] - b[0]);\n    \n    let count = 1;\n    let lastEnd = meetings[0][0];\n    \n    for (let i = 1; i < n; i++) {\n        if (meetings[i][1] > lastEnd) {\n            count++;\n            lastEnd = meetings[i][0];\n        }\n    }\n    \n    return count;\n}"
+      }
+    },
+    {
+      "name": "Greedy with Meeting IDs",
+      "order": 2,
+      "intuition": "Same greedy approach but track which meetings are selected.",
+      "approach": "Sort by end time with original indices, track selected meetings.",
+      "steps": [
+        "Create tuples (start, end, index)",
+        "Sort by end time",
+        "Track selected meeting indices",
+        "Return count or list of selected meetings"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting and iteration",
+        "spaceExplanation": "Store meetings and result"
+      },
+      "code": {
+        "cpp": "struct Meeting {\n    int start, end, pos;\n};\n\nbool compare(Meeting a, Meeting b) {\n    if (a.end == b.end)\n        return a.pos < b.pos;\n    return a.end < b.end;\n}\n\nvector<int> maxMeetings(int start[], int end[], int n) {\n    vector<Meeting> meetings(n);\n    \n    for (int i = 0; i < n; i++) {\n        meetings[i] = {start[i], end[i], i + 1};\n    }\n    \n    sort(meetings.begin(), meetings.end(), compare);\n    \n    vector<int> result;\n    result.push_back(meetings[0].pos);\n    int lastEnd = meetings[0].end;\n    \n    for (int i = 1; i < n; i++) {\n        if (meetings[i].start > lastEnd) {\n            result.push_back(meetings[i].pos);\n            lastEnd = meetings[i].end;\n        }\n    }\n    \n    return result;\n}",
+        "java": "class Meeting {\n    int start, end, pos;\n    Meeting(int s, int e, int p) {\n        start = s; end = e; pos = p;\n    }\n}\n\npublic List<Integer> maxMeetings(int start[], int end[], int n) {\n    Meeting[] meetings = new Meeting[n];\n    \n    for (int i = 0; i < n; i++) {\n        meetings[i] = new Meeting(start[i], end[i], i + 1);\n    }\n    \n    Arrays.sort(meetings, (a, b) -> {\n        if (a.end == b.end) return a.pos - b.pos;\n        return a.end - b.end;\n    });\n    \n    List<Integer> result = new ArrayList<>();\n    result.add(meetings[0].pos);\n    int lastEnd = meetings[0].end;\n    \n    for (int i = 1; i < n; i++) {\n        if (meetings[i].start > lastEnd) {\n            result.add(meetings[i].pos);\n            lastEnd = meetings[i].end;\n        }\n    }\n    \n    return result;\n}",
+        "python": "def maxMeetings(start, end, n):\n    meetings = [(start[i], end[i], i + 1) for i in range(n)]\n    meetings.sort(key=lambda x: (x[1], x[2]))\n    \n    result = [meetings[0][2]]\n    last_end = meetings[0][1]\n    \n    for i in range(1, n):\n        if meetings[i][0] > last_end:\n            result.append(meetings[i][2])\n            last_end = meetings[i][1]\n    \n    return result",
+        "javascript": "function maxMeetings(start, end, n) {\n    const meetings = [];\n    \n    for (let i = 0; i < n; i++) {\n        meetings.push({ start: start[i], end: end[i], pos: i + 1 });\n    }\n    \n    meetings.sort((a, b) => {\n        if (a.end === b.end) return a.pos - b.pos;\n        return a.end - b.end;\n    });\n    \n    const result = [meetings[0].pos];\n    let lastEnd = meetings[0].end;\n    \n    for (let i = 1; i < n; i++) {\n        if (meetings[i].start > lastEnd) {\n            result.push(meetings[i].pos);\n            lastEnd = meetings[i].end;\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Sorting by start time instead of end time (wrong greedy choice)",
+    "Using start >= lastEnd instead of start > lastEnd (off-by-one overlap)",
+    "Not handling ties in end times properly",
+    "Trying DP when greedy works (over-complicating)",
+    "Forgetting to initialize count = 1 (first meeting always selected)"
+  ],
+  "hints": [
+    "Classic activity selection problem",
+    "Greedy works: always pick meeting that ends earliest",
+    "Why end time? Leaves maximum room for future meetings",
+    "Sort by end time, then iterate once",
+    "Check if current start > previous end (non-overlapping)",
+    "First meeting in sorted order always selected"
+  ],
+  "followUp": [
+    "Return actual meeting indices? (Track in tuple)",
+    "Multiple rooms available? (Different problem - meeting rooms II)",
+    "Weighted meetings (priorities)? (Need DP, greedy won't work)",
+    "What if some meetings are mandatory? (Constraint satisfaction problem)",
+    "Minimize rooms needed? (Meeting Rooms II problem)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Adobe"],
+  "tags": ["greedy", "sorting", "intervals"],
+  "relatedProblems": [
+    "Meeting Rooms",
+    "Meeting Rooms II",
+    "Non-overlapping Intervals",
+    "Minimum Number of Arrows to Burst Balloons"
+  ]
+}

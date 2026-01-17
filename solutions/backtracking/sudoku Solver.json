@@ -1,0 +1,179 @@
+{
+  "questionId": "37",
+  "questionSlug": "sudoku-solver",
+  "title": "Sudoku Solver",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/sudoku-solver/",
+    "videos": [
+      {
+        "title": "Sudoku Solver - Backtracking",
+        "url": "https://www.youtube.com/watch?v=FWAIf_EVUKE",
+        "channel": "NeetCode",
+        "duration": "15:22",
+        "language": "English"
+      },
+      {
+        "title": "Solve Sudoku with Backtracking",
+        "url": "https://www.youtube.com/watch?v=Zq4upTEaQyM",
+        "channel": "Tushar Roy",
+        "duration": "19:45",
+        "language": "English"
+      },
+      {
+        "title": "Sudoku Solver Explained",
+        "url": "https://www.youtube.com/watch?v=uyetDh-DyDg",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "12:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sudoku Solver - LeetCode Official",
+        "url": "https://leetcode.com/problems/sudoku-solver/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Sudoku Solving Algorithm",
+        "url": "https://www.geeksforgeeks.org/sudoku-backtracking-7/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Backtracking Algorithm for Sudoku",
+        "url": "https://takeuforward.org/data-structure/sudoku-solver/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/sudoku-solver/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/solve-the-sudoku/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Fill a grid with constraints? Use backtracking. Try each number 1-9, check validity, recurse.",
+  "approaches": [
+    {
+      "name": "Naive Backtracking - Try All Possibilities",
+      "order": 1,
+      "intuition": "For each empty cell, try numbers 1-9. Check if valid, recurse. If stuck, backtrack.",
+      "approach": "Simple backtracking without optimization. Try all numbers for each cell.",
+      "steps": [
+        "Find next empty cell (with '.')",
+        "If no empty cell, puzzle solved, return true",
+        "For num from 1 to 9:",
+        "  If num is valid in current cell:",
+        "    Place num",
+        "    Recursively solve rest",
+        "    If successful, return true",
+        "    Otherwise, remove num (backtrack)",
+        "Return false (no solution found)"
+      ],
+      "complexity": {
+        "time": "O(9^(n*n))",
+        "space": "O(n*n)",
+        "timeExplanation": "Worst case: try all 9 numbers for each of n*n cells",
+        "spaceExplanation": "Recursion stack depth proportional to empty cells"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void solveSudoku(vector<vector<char>>& board) {\n        solve(board);\n    }\n    \nprivate:\n    bool solve(vector<vector<char>>& board) {\n        for (int row = 0; row < 9; row++) {\n            for (int col = 0; col < 9; col++) {\n                if (board[row][col] == '.') {\n                    for (char num = '1'; num <= '9'; num++) {\n                        if (isValid(board, row, col, num)) {\n                            board[row][col] = num;\n                            \n                            if (solve(board)) return true;\n                            \n                            board[row][col] = '.'; // backtrack\n                        }\n                    }\n                    return false;\n                }\n            }\n        }\n        return true;\n    }\n    \n    bool isValid(vector<vector<char>>& board, int row, int col, char num) {\n        for (int i = 0; i < 9; i++) {\n            if (board[row][i] == num) return false;\n            if (board[i][col] == num) return false;\n            if (board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == num) return false;\n        }\n        return true;\n    }\n};",
+        "java": "class Solution {\n    public void solveSudoku(char[][] board) {\n        solve(board);\n    }\n    \n    private boolean solve(char[][] board) {\n        for (int row = 0; row < 9; row++) {\n            for (int col = 0; col < 9; col++) {\n                if (board[row][col] == '.') {\n                    for (char num = '1'; num <= '9'; num++) {\n                        if (isValid(board, row, col, num)) {\n                            board[row][col] = num;\n                            \n                            if (solve(board)) return true;\n                            \n                            board[row][col] = '.';\n                        }\n                    }\n                    return false;\n                }\n            }\n        }\n        return true;\n    }\n    \n    private boolean isValid(char[][] board, int row, int col, char num) {\n        for (int i = 0; i < 9; i++) {\n            if (board[row][i] == num) return false;\n            if (board[i][col] == num) return false;\n            if (board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == num) return false;\n        }\n        return true;\n    }\n}",
+        "python": "def solveSudoku(board):\n    def is_valid(row, col, num):\n        for i in range(9):\n            if board[row][i] == num: return False\n            if board[i][col] == num: return False\n            if board[3 * (row // 3) + i // 3][3 * (col // 3) + i % 3] == num: return False\n        return True\n    \n    def solve():\n        for row in range(9):\n            for col in range(9):\n                if board[row][col] == '.':\n                    for num in '123456789':\n                        if is_valid(row, col, num):\n                            board[row][col] = num\n                            \n                            if solve(): return True\n                            \n                            board[row][col] = '.'\n                    return False\n        return True\n    \n    solve()",
+        "javascript": "function solveSudoku(board) {\n    function isValid(row, col, num) {\n        for (let i = 0; i < 9; i++) {\n            if (board[row][i] === num) return false;\n            if (board[i][col] === num) return false;\n            if (board[Math.floor(row / 3) * 3 + Math.floor(i / 3)][Math.floor(col / 3) * 3 + i % 3] === num) return false;\n        }\n        return true;\n    }\n    \n    function solve() {\n        for (let row = 0; row < 9; row++) {\n            for (let col = 0; col < 9; col++) {\n                if (board[row][col] === '.') {\n                    for (let num = 1; num <= 9; num++) {\n                        const char = num.toString();\n                        if (isValid(row, col, char)) {\n                            board[row][col] = char;\n                            \n                            if (solve()) return true;\n                            \n                            board[row][col] = '.';\n                        }\n                    }\n                    return false;\n                }\n            }\n        }\n        return true;\n    }\n    \n    solve();\n}"
+      }
+    },
+    {
+      "name": "Backtracking with HashSet Validation",
+      "order": 2,
+      "intuition": "Use sets to track numbers in rows, columns, and boxes for O(1) validity check.",
+      "approach": "Maintain sets for each row, column, and 3x3 box. Check membership in O(1).",
+      "steps": [
+        "Initialize sets for rows, cols, boxes",
+        "Populate sets with existing numbers",
+        "For each empty cell:",
+        "  Try numbers 1-9",
+        "  Check if num not in row/col/box sets (O(1))",
+        "  Add to sets, recurse",
+        "  If fails, remove from sets (backtrack)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(9^m)",
+        "space": "O(n*n)",
+        "timeExplanation": "m = number of empty cells, try 9 numbers for each",
+        "spaceExplanation": "Sets for rows, cols, boxes + recursion stack"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void solveSudoku(vector<vector<char>>& board) {\n        vector<unordered_set<char>> rows(9), cols(9), boxes(9);\n        \n        for (int i = 0; i < 9; i++) {\n            for (int j = 0; j < 9; j++) {\n                if (board[i][j] != '.') {\n                    char num = board[i][j];\n                    rows[i].insert(num);\n                    cols[j].insert(num);\n                    boxes[(i / 3) * 3 + j / 3].insert(num);\n                }\n            }\n        }\n        \n        solve(board, rows, cols, boxes, 0, 0);\n    }\n    \nprivate:\n    bool solve(vector<vector<char>>& board, vector<unordered_set<char>>& rows,\n               vector<unordered_set<char>>& cols, vector<unordered_set<char>>& boxes,\n               int row, int col) {\n        if (row == 9) return true;\n        if (col == 9) return solve(board, rows, cols, boxes, row + 1, 0);\n        if (board[row][col] != '.') return solve(board, rows, cols, boxes, row, col + 1);\n        \n        int boxIdx = (row / 3) * 3 + col / 3;\n        \n        for (char num = '1'; num <= '9'; num++) {\n            if (rows[row].count(num) || cols[col].count(num) || boxes[boxIdx].count(num))\n                continue;\n            \n            board[row][col] = num;\n            rows[row].insert(num);\n            cols[col].insert(num);\n            boxes[boxIdx].insert(num);\n            \n            if (solve(board, rows, cols, boxes, row, col + 1)) return true;\n            \n            board[row][col] = '.';\n            rows[row].erase(num);\n            cols[col].erase(num);\n            boxes[boxIdx].erase(num);\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public void solveSudoku(char[][] board) {\n        Set<Character>[] rows = new HashSet[9];\n        Set<Character>[] cols = new HashSet[9];\n        Set<Character>[] boxes = new HashSet[9];\n        \n        for (int i = 0; i < 9; i++) {\n            rows[i] = new HashSet<>();\n            cols[i] = new HashSet<>();\n            boxes[i] = new HashSet<>();\n        }\n        \n        for (int i = 0; i < 9; i++) {\n            for (int j = 0; j < 9; j++) {\n                if (board[i][j] != '.') {\n                    char num = board[i][j];\n                    rows[i].add(num);\n                    cols[j].add(num);\n                    boxes[(i / 3) * 3 + j / 3].add(num);\n                }\n            }\n        }\n        \n        solve(board, rows, cols, boxes, 0, 0);\n    }\n    \n    private boolean solve(char[][] board, Set<Character>[] rows, \n                         Set<Character>[] cols, Set<Character>[] boxes,\n                         int row, int col) {\n        if (row == 9) return true;\n        if (col == 9) return solve(board, rows, cols, boxes, row + 1, 0);\n        if (board[row][col] != '.') return solve(board, rows, cols, boxes, row, col + 1);\n        \n        int boxIdx = (row / 3) * 3 + col / 3;\n        \n        for (char num = '1'; num <= '9'; num++) {\n            if (rows[row].contains(num) || cols[col].contains(num) || boxes[boxIdx].contains(num))\n                continue;\n            \n            board[row][col] = num;\n            rows[row].add(num);\n            cols[col].add(num);\n            boxes[boxIdx].add(num);\n            \n            if (solve(board, rows, cols, boxes, row, col + 1)) return true;\n            \n            board[row][col] = '.';\n            rows[row].remove(num);\n            cols[col].remove(num);\n            boxes[boxIdx].remove(num);\n        }\n        \n        return false;\n    }\n}",
+        "python": "def solveSudoku(board):\n    rows = [set() for _ in range(9)]\n    cols = [set() for _ in range(9)]\n    boxes = [set() for _ in range(9)]\n    \n    for i in range(9):\n        for j in range(9):\n            if board[i][j] != '.':\n                num = board[i][j]\n                rows[i].add(num)\n                cols[j].add(num)\n                boxes[(i // 3) * 3 + j // 3].add(num)\n    \n    def solve(row, col):\n        if row == 9:\n            return True\n        if col == 9:\n            return solve(row + 1, 0)\n        if board[row][col] != '.':\n            return solve(row, col + 1)\n        \n        box_idx = (row // 3) * 3 + col // 3\n        \n        for num in '123456789':\n            if num in rows[row] or num in cols[col] or num in boxes[box_idx]:\n                continue\n            \n            board[row][col] = num\n            rows[row].add(num)\n            cols[col].add(num)\n            boxes[box_idx].add(num)\n            \n            if solve(row, col + 1):\n                return True\n            \n            board[row][col] = '.'\n            rows[row].remove(num)\n            cols[col].remove(num)\n            boxes[box_idx].remove(num)\n        \n        return False\n    \n    solve(0, 0)",
+        "javascript": "function solveSudoku(board) {\n    const rows = Array(9).fill(null).map(() => new Set());\n    const cols = Array(9).fill(null).map(() => new Set());\n    const boxes = Array(9).fill(null).map(() => new Set());\n    \n    for (let i = 0; i < 9; i++) {\n        for (let j = 0; j < 9; j++) {\n            if (board[i][j] !== '.') {\n                const num = board[i][j];\n                rows[i].add(num);\n                cols[j].add(num);\n                boxes[Math.floor(i / 3) * 3 + Math.floor(j / 3)].add(num);\n            }\n        }\n    }\n    \n    function solve(row, col) {\n        if (row === 9) return true;\n        if (col === 9) return solve(row + 1, 0);\n        if (board[row][col] !== '.') return solve(row, col + 1);\n        \n        const boxIdx = Math.floor(row / 3) * 3 + Math.floor(col / 3);\n        \n        for (let num = 1; num <= 9; num++) {\n            const char = num.toString();\n            if (rows[row].has(char) || cols[col].has(char) || boxes[boxIdx].has(char))\n                continue;\n            \n            board[row][col] = char;\n            rows[row].add(char);\n            cols[col].add(char);\n            boxes[boxIdx].add(char);\n            \n            if (solve(row, col + 1)) return true;\n            \n            board[row][col] = '.';\n            rows[row].delete(char);\n            cols[col].delete(char);\n            boxes[boxIdx].delete(char);\n        }\n        \n        return false;\n    }\n    \n    solve(0, 0);\n}"
+      }
+    },
+    {
+      "name": "Optimized Backtracking with Bit Manipulation - Optimal",
+      "order": 3,
+      "intuition": "Use bitmasks instead of sets for even faster validity checks. Each bit represents a number 1-9.",
+      "approach": "Use integers as bitmasks. Check and update in O(1) with bitwise operations.",
+      "steps": [
+        "Use 3 arrays of 9 integers for rows, cols, boxes",
+        "Each integer is a bitmask where bit i = 1 if number i is used",
+        "Initialize bitmasks with existing numbers",
+        "For each empty cell:",
+        "  For num 1-9:",
+        "    Check if (rows[r] | cols[c] | boxes[b]) & (1 << num) == 0",
+        "    Set bits, recurse",
+        "    Clear bits if backtrack",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(9^m)",
+        "space": "O(1)",
+        "timeExplanation": "m = empty cells, but much faster constants than approach 2",
+        "spaceExplanation": "Only 27 integers for bitmasks, recursion stack O(m)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    void solveSudoku(vector<vector<char>>& board) {\n        int rows[9] = {0}, cols[9] = {0}, boxes[9] = {0};\n        \n        for (int i = 0; i < 9; i++) {\n            for (int j = 0; j < 9; j++) {\n                if (board[i][j] != '.') {\n                    int num = board[i][j] - '0';\n                    int bit = 1 << num;\n                    rows[i] |= bit;\n                    cols[j] |= bit;\n                    boxes[(i / 3) * 3 + j / 3] |= bit;\n                }\n            }\n        }\n        \n        solve(board, rows, cols, boxes, 0, 0);\n    }\n    \nprivate:\n    bool solve(vector<vector<char>>& board, int rows[], int cols[], int boxes[],\n               int row, int col) {\n        if (row == 9) return true;\n        if (col == 9) return solve(board, rows, cols, boxes, row + 1, 0);\n        if (board[row][col] != '.') return solve(board, rows, cols, boxes, row, col + 1);\n        \n        int boxIdx = (row / 3) * 3 + col / 3;\n        \n        for (int num = 1; num <= 9; num++) {\n            int bit = 1 << num;\n            if ((rows[row] | cols[col] | boxes[boxIdx]) & bit) continue;\n            \n            board[row][col] = '0' + num;\n            rows[row] |= bit;\n            cols[col] |= bit;\n            boxes[boxIdx] |= bit;\n            \n            if (solve(board, rows, cols, boxes, row, col + 1)) return true;\n            \n            board[row][col] = '.';\n            rows[row] ^= bit;\n            cols[col] ^= bit;\n            boxes[boxIdx] ^= bit;\n        }\n        \n        return false;\n    }\n};",
+        "java": "class Solution {\n    public void solveSudoku(char[][] board) {\n        int[] rows = new int[9];\n        int[] cols = new int[9];\n        int[] boxes = new int[9];\n        \n        for (int i = 0; i < 9; i++) {\n            for (int j = 0; j < 9; j++) {\n                if (board[i][j] != '.') {\n                    int num = board[i][j] - '0';\n                    int bit = 1 << num;\n                    rows[i] |= bit;\n                    cols[j] |= bit;\n                    boxes[(i / 3) * 3 + j / 3] |= bit;\n                }\n            }\n        }\n        \n        solve(board, rows, cols, boxes, 0, 0);\n    }\n    \n    private boolean solve(char[][] board, int[] rows, int[] cols, int[] boxes,\n                         int row, int col) {\n        if (row == 9) return true;\n        if (col == 9) return solve(board, rows, cols, boxes, row + 1, 0);\n        if (board[row][col] != '.') return solve(board, rows, cols, boxes, row, col + 1);\n        \n        int boxIdx = (row / 3) * 3 + col / 3;\n        \n        for (int num = 1; num <= 9; num++) {\n            int bit = 1 << num;\n            if (((rows[row] | cols[col] | boxes[boxIdx]) & bit) != 0) continue;\n            \n            board[row][col] = (char)('0' + num);\n            rows[row] |= bit;\n            cols[col] |= bit;\n            boxes[boxIdx] |= bit;\n            \n            if (solve(board, rows, cols, boxes, row, col + 1)) return true;\n            \n            board[row][col] = '.';\n            rows[row] ^= bit;\n            cols[col] ^= bit;\n            boxes[boxIdx] ^= bit;\n        }\n        \n        return false;\n    }\n}",
+        "python": "def solveSudoku(board):\n    rows = [0] * 9\n    cols = [0] * 9\n    boxes = [0] * 9\n    \n    for i in range(9):\n        for j in range(9):\n            if board[i][j] != '.':\n                num = int(board[i][j])\n                bit = 1 << num\n                rows[i] |= bit\n                cols[j] |= bit\n                boxes[(i // 3) * 3 + j // 3] |= bit\n    \n    def solve(row, col):\n        if row == 9:\n            return True\n        if col == 9:\n            return solve(row + 1, 0)\n        if board[row][col] != '.':\n            return solve(row, col + 1)\n        \n        box_idx = (row // 3) * 3 + col // 3\n        \n        for num in range(1, 10):\n            bit = 1 << num\n            if (rows[row] | cols[col] | boxes[box_idx]) & bit:\n                continue\n            \n            board[row][col] = str(num)\n            rows[row] |= bit\n            cols[col] |= bit\n            boxes[box_idx] |= bit\n            \n            if solve(row, col + 1):\n                return True\n            \n            board[row][col] = '.'\n            rows[row] ^= bit\n            cols[col] ^= bit\n            boxes[box_idx] ^= bit\n        \n        return False\n    \n    solve(0, 0)",
+        "javascript": "function solveSudoku(board) {\n    const rows = new Array(9).fill(0);\n    const cols = new Array(9).fill(0);\n    const boxes = new Array(9).fill(0);\n    \n    for (let i = 0; i < 9; i++) {\n        for (let j = 0; j < 9; j++) {\n            if (board[i][j] !== '.') {\n                const num = parseInt(board[i][j]);\n                const bit = 1 << num;\n                rows[i] |= bit;\n                cols[j] |= bit;\n                boxes[Math.floor(i / 3) * 3 + Math.floor(j / 3)] |= bit;\n            }\n        }\n    }\n    \n    function solve(row, col) {\n        if (row === 9) return true;\n        if (col === 9) return solve(row + 1, 0);\n        if (board[row][col] !== '.') return solve(row, col + 1);\n        \n        const boxIdx = Math.floor(row / 3) * 3 + Math.floor(col / 3);\n        \n        for (let num = 1; num <= 9; num++) {\n            const bit = 1 << num;\n            if ((rows[row] | cols[col] | boxes[boxIdx]) & bit) continue;\n            \n            board[row][col] = num.toString();\n            rows[row] |= bit;\n            cols[col] |= bit;\n            boxes[boxIdx] |= bit;\n            \n            if (solve(row, col + 1)) return true;\n            \n            board[row][col] = '.';\n            rows[row] ^= bit;\n            cols[col] ^= bit;\n            boxes[boxIdx] ^= bit;\n        }\n        \n        return false;\n    }\n    \n    solve(0, 0);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking all three constraints (row, column, AND 3x3 box)",
+    "Box index calculation error: should be (row/3)*3 + col/3",
+    "Forgetting to backtrack (restore '.' when recursion fails)",
+    "Not handling the base case correctly (when all cells filled)",
+    "Modifying the board in-place without proper cleanup"
+  ],
+  "hints": [
+    "Use backtracking: try a number, recurse, backtrack if fails",
+    "Check validity: number not in row, column, or 3x3 box",
+    "Box index formula: (row / 3) * 3 + col / 3",
+    "Process cells left to right, top to bottom",
+    "Use bitmasks for O(1) validity check (optimal)"
+  ],
+  "followUp": [
+    "Can you count number of solutions? (Continue backtracking instead of stopping)",
+    "What if there are multiple solutions? (Return all by continuing backtracking)",
+    "Can you validate if a Sudoku is solvable? (Yes, run solver and check if solution found)",
+    "How to optimize for cells with fewer possibilities? (Choose cell with minimum candidates first)",
+    "Can you use constraint propagation? (Yes, Dancing Links / DLX algorithm)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Uber"],
+  "tags": ["array", "backtracking", "matrix"],
+  "relatedProblems": [
+    "Valid Sudoku",
+    "N-Queens",
+    "N-Queens II",
+    "Unique Paths III"
+  ]
+}

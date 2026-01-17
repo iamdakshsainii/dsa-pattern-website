@@ -1,0 +1,157 @@
+{
+  "questionId": "526",
+  "questionSlug": "beautiful-arrangement",
+  "title": "Beautiful Arrangement",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/beautiful-arrangement/",
+    "videos": [
+      {
+        "title": "Beautiful Arrangement - Backtracking",
+        "url": "https://www.youtube.com/watch?v=DseXgROQZmg",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Beautiful Arrangement Explained",
+        "url": "https://www.youtube.com/watch?v=rH_ZZ2cYPWk",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Beautiful Arrangement - LeetCode Official",
+        "url": "https://leetcode.com/problems/beautiful-arrangement/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Beautiful Arrangement Solutions",
+        "url": "https://www.geeksforgeeks.org/beautiful-arrangement/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/beautiful-arrangement/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all permutations with divisibility constraint? Use backtracking with visited array.",
+  "approaches": [
+    {
+      "name": "Backtracking - Try All Numbers",
+      "order": 1,
+      "intuition": "At each position, try all unused numbers. Check if number satisfies divisibility condition with position.",
+      "approach": "Build arrangement position by position using backtracking.",
+      "steps": [
+        "backtrack(pos):",
+        "  If pos > n, found valid arrangement, count++",
+        "  For num from 1 to n:",
+        "    If num not used AND (num % pos == 0 OR pos % num == 0):",
+        "      Mark num as used",
+        "      backtrack(pos + 1)",
+        "      Unmark num (backtrack)",
+        "Return total count"
+      ],
+      "complexity": {
+        "time": "O(n!)",
+        "space": "O(n)",
+        "timeExplanation": "Try all n! permutations in worst case",
+        "spaceExplanation": "Visited array O(n), recursion depth O(n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countArrangement(int n) {\n        vector<bool> visited(n + 1, false);\n        return backtrack(1, n, visited);\n    }\n    \nprivate:\n    int backtrack(int pos, int n, vector<bool>& visited) {\n        if (pos > n) return 1;\n        \n        int count = 0;\n        for (int num = 1; num <= n; num++) {\n            if (!visited[num] && (num % pos == 0 || pos % num == 0)) {\n                visited[num] = true;\n                count += backtrack(pos + 1, n, visited);\n                visited[num] = false;\n            }\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int countArrangement(int n) {\n        boolean[] visited = new boolean[n + 1];\n        return backtrack(1, n, visited);\n    }\n    \n    private int backtrack(int pos, int n, boolean[] visited) {\n        if (pos > n) return 1;\n        \n        int count = 0;\n        for (int num = 1; num <= n; num++) {\n            if (!visited[num] && (num % pos == 0 || pos % num == 0)) {\n                visited[num] = true;\n                count += backtrack(pos + 1, n, visited);\n                visited[num] = false;\n            }\n        }\n        \n        return count;\n    }\n}",
+        "python": "def countArrangement(n):\n    visited = [False] * (n + 1)\n    \n    def backtrack(pos):\n        if pos > n:\n            return 1\n        \n        count = 0\n        for num in range(1, n + 1):\n            if not visited[num] and (num % pos == 0 or pos % num == 0):\n                visited[num] = True\n                count += backtrack(pos + 1)\n                visited[num] = False\n        \n        return count\n    \n    return backtrack(1)",
+        "javascript": "function countArrangement(n) {\n    const visited = new Array(n + 1).fill(false);\n    \n    function backtrack(pos) {\n        if (pos > n) return 1;\n        \n        let count = 0;\n        for (let num = 1; num <= n; num++) {\n            if (!visited[num] && (num % pos === 0 || pos % num === 0)) {\n                visited[num] = true;\n                count += backtrack(pos + 1);\n                visited[num] = false;\n            }\n        }\n        \n        return count;\n    }\n    \n    return backtrack(1);\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Bitmask",
+      "order": 2,
+      "intuition": "Use bitmask instead of boolean array to represent visited numbers. Enables memoization.",
+      "approach": "Use integer bitmask to track visited numbers, allowing state caching.",
+      "steps": [
+        "backtrack(pos, mask):",
+        "  If pos > n, return 1",
+        "  count = 0",
+        "  For each unset bit i in mask:",
+        "    If num i satisfies condition:",
+        "      count += backtrack(pos + 1, mask | (1 << i))",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n × 2^n)",
+        "space": "O(2^n)",
+        "timeExplanation": "With memoization: n positions × 2^n states",
+        "spaceExplanation": "Memo table O(2^n)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countArrangement(int n) {\n        unordered_map<int, int> memo;\n        return backtrack(1, n, 0, memo);\n    }\n    \nprivate:\n    int backtrack(int pos, int n, int mask, unordered_map<int, int>& memo) {\n        if (pos > n) return 1;\n        \n        int key = (pos << 16) | mask;\n        if (memo.count(key)) return memo[key];\n        \n        int count = 0;\n        for (int num = 1; num <= n; num++) {\n            if ((mask & (1 << num)) == 0 && (num % pos == 0 || pos % num == 0)) {\n                count += backtrack(pos + 1, n, mask | (1 << num), memo);\n            }\n        }\n        \n        memo[key] = count;\n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int countArrangement(int n) {\n        Map<Integer, Integer> memo = new HashMap<>();\n        return backtrack(1, n, 0, memo);\n    }\n    \n    private int backtrack(int pos, int n, int mask, Map<Integer, Integer> memo) {\n        if (pos > n) return 1;\n        \n        int key = (pos << 16) | mask;\n        if (memo.containsKey(key)) return memo.get(key);\n        \n        int count = 0;\n        for (int num = 1; num <= n; num++) {\n            if ((mask & (1 << num)) == 0 && (num % pos == 0 || pos % num == 0)) {\n                count += backtrack(pos + 1, n, mask | (1 << num), memo);\n            }\n        }\n        \n        memo.put(key, count);\n        return count;\n    }\n}",
+        "python": "def countArrangement(n):\n    memo = {}\n    \n    def backtrack(pos, mask):\n        if pos > n:\n            return 1\n        \n        key = (pos, mask)\n        if key in memo:\n            return memo[key]\n        \n        count = 0\n        for num in range(1, n + 1):\n            if not (mask & (1 << num)) and (num % pos == 0 or pos % num == 0):\n                count += backtrack(pos + 1, mask | (1 << num))\n        \n        memo[key] = count\n        return count\n    \n    return backtrack(1, 0)",
+        "javascript": "function countArrangement(n) {\n    const memo = new Map();\n    \n    function backtrack(pos, mask) {\n        if (pos > n) return 1;\n        \n        const key = (pos << 16) | mask;\n        if (memo.has(key)) return memo.get(key);\n        \n        let count = 0;\n        for (let num = 1; num <= n; num++) {\n            if ((mask & (1 << num)) === 0 && (num % pos === 0 || pos % num === 0)) {\n                count += backtrack(pos + 1, mask | (1 << num));\n            }\n        }\n        \n        memo.set(key, count);\n        return count;\n    }\n    \n    return backtrack(1, 0);\n}"
+      }
+    },
+    {
+      "name": "Optimized - Build from End to Start",
+      "order": 3,
+      "intuition": "Build arrangement from position n to 1. Later positions have fewer valid choices, so prune earlier.",
+      "approach": "Backtrack from position n down to 1, pruning search space more effectively.",
+      "steps": [
+        "backtrack(pos) where pos starts at n:",
+        "  If pos == 0, return 1",
+        "  For each unused number:",
+        "    If satisfies condition:",
+        "      count += backtrack(pos - 1)",
+        "Building backwards often finds dead ends faster"
+      ],
+      "complexity": {
+        "time": "O(n!)",
+        "space": "O(n)",
+        "timeExplanation": "Same worst case, but better pruning in practice",
+        "spaceExplanation": "Visited array + recursion"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int countArrangement(int n) {\n        vector<bool> visited(n + 1, false);\n        return backtrack(n, n, visited);\n    }\n    \nprivate:\n    int backtrack(int pos, int n, vector<bool>& visited) {\n        if (pos == 0) return 1;\n        \n        int count = 0;\n        for (int num = 1; num <= n; num++) {\n            if (!visited[num] && (num % pos == 0 || pos % num == 0)) {\n                visited[num] = true;\n                count += backtrack(pos - 1, n, visited);\n                visited[num] = false;\n            }\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int countArrangement(int n) {\n        boolean[] visited = new boolean[n + 1];\n        return backtrack(n, n, visited);\n    }\n    \n    private int backtrack(int pos, int n, boolean[] visited) {\n        if (pos == 0) return 1;\n        \n        int count = 0;\n        for (int num = 1; num <= n; num++) {\n            if (!visited[num] && (num % pos == 0 || pos % num == 0)) {\n                visited[num] = true;\n                count += backtrack(pos - 1, n, visited);\n                visited[num] = false;\n            }\n        }\n        \n        return count;\n    }\n}",
+        "python": "def countArrangement(n):\n    visited = [False] * (n + 1)\n    \n    def backtrack(pos):\n        if pos == 0:\n            return 1\n        \n        count = 0\n        for num in range(1, n + 1):\n            if not visited[num] and (num % pos == 0 or pos % num == 0):\n                visited[num] = True\n                count += backtrack(pos - 1)\n                visited[num] = False\n        \n        return count\n    \n    return backtrack(n)",
+        "javascript": "function countArrangement(n) {\n    const visited = new Array(n + 1).fill(false);\n    \n    function backtrack(pos) {\n        if (pos === 0) return 1;\n        \n        let count = 0;\n        for (let num = 1; num <= n; num++) {\n            if (!visited[num] && (num % pos === 0 || pos % num === 0)) {\n                visited[num] = true;\n                count += backtrack(pos - 1);\n                visited[num] = false;\n            }\n        }\n        \n        return count;\n    }\n    \n    return backtrack(n);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting OR condition (both num % pos AND pos % num)",
+    "Not handling 1-indexed correctly (positions are 1 to n)",
+    "Forgetting to unmark visited in backtracking",
+    "Off-by-one in base case (should be pos > n or pos == 0)",
+    "Not considering both divisibility directions"
+  ],
+  "hints": [
+    "Beautiful if: num % pos == 0 OR pos % num == 0",
+    "Use backtracking to try all permutations",
+    "Track visited numbers with boolean array or bitmask",
+    "Build position by position (1 to n or n to 1)",
+    "Memoization possible with bitmask representation"
+  ],
+  "followUp": [
+    "Can you print all beautiful arrangements? (Change count to list)",
+    "What if condition changes to num % pos == 0 AND pos % num == 0? (Much fewer solutions)",
+    "How to optimize for large n? (Bitmask DP with memoization)",
+    "Can you find kth beautiful arrangement? (Generate in order)",
+    "What's the maximum count for any n? (Depends on n, grows factorially)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook"],
+  "tags": ["backtracking", "bit-manipulation", "dynamic-programming"],
+  "relatedProblems": [
+    "Permutations",
+    "N-Queens",
+    "Beautiful Arrangement II",
+    "Combination Sum"
+  ]
+}

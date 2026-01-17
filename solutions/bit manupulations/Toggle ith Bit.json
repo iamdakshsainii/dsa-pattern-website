@@ -1,0 +1,169 @@
+{
+  "questionId": "toggle-ith-bit",
+  "questionSlug": "toggle-ith-bit",
+  "title": "Toggle ith Bit",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://practice.geeksforgeeks.org/problems/toggle-bits-given-range/",
+    "videos": [
+      {
+        "title": "Bit Manipulation - Toggle Bits",
+        "url": "https://www.youtube.com/watch?v=5rtVTYAk9KQ",
+        "channel": "take U forward",
+        "duration": "10:20",
+        "language": "English"
+      },
+      {
+        "title": "Toggle ith Bit Explained",
+        "url": "https://www.youtube.com/watch?v=efL86JCONH0",
+        "channel": "Abdul Bari",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "XOR Bit Manipulation",
+        "url": "https://www.youtube.com/watch?v=kRBXzAo76qk",
+        "channel": "CS Dojo",
+        "duration": "12:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Toggle bits in a given range",
+        "url": "https://www.geeksforgeeks.org/toggle-bits-given-range/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Bit Manipulation Basics",
+        "url": "https://takeuforward.org/data-structure/bit-manipulation-basic-operations/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "XOR Properties and Applications",
+        "url": "https://www.techiedelight.com/bit-manipulation-interview-questions/",
+        "source": "Techie Delight"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/toggle-bits-given-range/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Flipping an Image (Related)",
+        "url": "https://leetcode.com/problems/flipping-an-image/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Toggle (flip) a bit? Use XOR with 1 at that position: n ^ (1 << i)",
+  "approaches": [
+    {
+      "name": "Check Then Set/Clear - Brute Force",
+      "order": 1,
+      "intuition": "First check if bit is set. If set, clear it. If clear, set it.",
+      "approach": "Use conditional logic to determine operation.",
+      "steps": [
+        "Check if ith bit is set: (n & (1 << i)) != 0",
+        "If set:",
+        "  Clear it: n = n & ~(1 << i)",
+        "Else:",
+        "  Set it: n = n | (1 << i)",
+        "Return n"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Constant time operations",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "int toggleIthBit(int n, int i) {\n    if ((n & (1 << i)) != 0) {\n        // Bit is set, clear it\n        return n & ~(1 << i);\n    } else {\n        // Bit is clear, set it\n        return n | (1 << i);\n    }\n}",
+        "java": "public int toggleIthBit(int n, int i) {\n    if ((n & (1 << i)) != 0) {\n        return n & ~(1 << i);\n    } else {\n        return n | (1 << i);\n    }\n}",
+        "python": "def toggleIthBit(n, i):\n    if (n & (1 << i)) != 0:\n        return n & ~(1 << i)\n    else:\n        return n | (1 << i)",
+        "javascript": "function toggleIthBit(n, i) {\n    if ((n & (1 << i)) !== 0) {\n        return n & ~(1 << i);\n    } else {\n        return n | (1 << i);\n    }\n}"
+      }
+    },
+    {
+      "name": "Using Subtraction",
+      "order": 2,
+      "intuition": "Toggle by adding or subtracting power of 2 based on current state.",
+      "approach": "Add (1 << i) if bit is 0, subtract if bit is 1.",
+      "steps": [
+        "Check if bit is set",
+        "If set: n = n - (1 << i)",
+        "Else: n = n + (1 << i)",
+        "Return n"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Constant time",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "int toggleIthBit(int n, int i) {\n    int mask = 1 << i;\n    if ((n & mask) != 0) {\n        return n - mask;  // Bit is set, subtract\n    } else {\n        return n + mask;  // Bit is clear, add\n    }\n}",
+        "java": "public int toggleIthBit(int n, int i) {\n    int mask = 1 << i;\n    if ((n & mask) != 0) {\n        return n - mask;\n    } else {\n        return n + mask;\n    }\n}",
+        "python": "def toggleIthBit(n, i):\n    mask = 1 << i\n    if (n & mask) != 0:\n        return n - mask\n    else:\n        return n + mask",
+        "javascript": "function toggleIthBit(n, i) {\n    const mask = 1 << i;\n    if ((n & mask) !== 0) {\n        return n - mask;\n    } else {\n        return n + mask;\n    }\n}"
+      }
+    },
+    {
+      "name": "XOR Operation - Optimal",
+      "order": 3,
+      "intuition": "XOR with 1 flips a bit. 0 XOR 1 = 1, 1 XOR 1 = 0. Perfect for toggling!",
+      "approach": "Use XOR with a mask that has 1 at position i.",
+      "steps": [
+        "Create mask: mask = 1 << i",
+        "Return: n ^ mask",
+        "XOR properties:",
+        "  0 ^ 1 = 1 (sets bit)",
+        "  1 ^ 1 = 0 (clears bit)"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Single XOR operation",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "int toggleIthBit(int n, int i) {\n    return n ^ (1 << i);\n}\n\n// Example:\n// n = 5 (binary: 0101), i = 1\n// mask = 1 << 1 = 2 (binary: 0010)\n// 0101 ^ 0010 = 0111 = 7",
+        "java": "public int toggleIthBit(int n, int i) {\n    return n ^ (1 << i);\n}\n\n// Example:\n// n = 5 (0101), i = 1\n// 1 << 1 = 2 (0010)\n// 5 ^ 2 = 7 (0111)",
+        "python": "def toggleIthBit(n, i):\n    return n ^ (1 << i)\n\n# Example:\n# n = 5 (binary: 0101), i = 1\n# mask = 1 << 1 = 2 (binary: 0010)\n# 5 ^ 2 = 7 (binary: 0111)",
+        "javascript": "function toggleIthBit(n, i) {\n    return n ^ (1 << i);\n}\n\n// Example:\n// n = 5 (binary: 0101), i = 1\n// mask = 1 << 1 = 2 (binary: 0010)\n// 5 ^ 2 = 7 (binary: 0111)"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using OR instead of XOR (only sets, doesn't toggle)",
+    "Using AND instead of XOR (only clears, doesn't toggle)",
+    "Forgetting to shift: n ^ 1 only toggles LSB",
+    "Off-by-one error in bit position (0-indexed vs 1-indexed)",
+    "Not handling edge cases like i >= 32"
+  ],
+  "hints": [
+    "XOR is your friend for toggling",
+    "Formula: n ^ (1 << i)",
+    "XOR with 1 flips a bit",
+    "0 XOR 1 = 1, 1 XOR 1 = 0",
+    "Create mask with 1 at position i: (1 << i)"
+  ],
+  "followUp": [
+    "How to toggle multiple bits at once? (Create multi-bit mask)",
+    "How to toggle all bits? (Use NOT operator: ~n)",
+    "How to toggle bits in a range [L, R]? (Create range mask)",
+    "What's the difference between toggle, set, and clear? (XOR vs OR vs AND)",
+    "How to check if a bit was toggled? (Compare before and after)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple"],
+  "tags": ["bit-manipulation"],
+  "relatedProblems": [
+    "Number of 1 Bits",
+    "Flipping an Image",
+    "Single Number",
+    "Reverse Bits",
+    "Power of Two"
+  ]
+}

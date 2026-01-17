@@ -1,0 +1,174 @@
+{
+  "questionId": "rat-in-maze",
+  "questionSlug": "rat-in-a-maze",
+  "title": "Rat in a Maze",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://practice.geeksforgeeks.org/problems/rat-in-a-maze-problem/",
+    "videos": [
+      {
+        "title": "Rat in a Maze - All Paths",
+        "url": "https://www.youtube.com/watch?v=bLGZhJlt4y0",
+        "channel": "take U forward",
+        "duration": "25:15",
+        "language": "English"
+      },
+      {
+        "title": "Rat in Maze Problem Explained",
+        "url": "https://www.youtube.com/watch?v=bLGZhJlt4y0",
+        "channel": "Aditya Verma",
+        "duration": "18:30",
+        "language": "English"
+      },
+      {
+        "title": "Backtracking - Rat in a Maze",
+        "url": "https://www.youtube.com/watch?v=K9ZhOUHBpbM",
+        "channel": "Abdul Bari",
+        "duration": "22:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Rat in a Maze - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/rat-in-a-maze-backtracking-2/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Rat in a Maze Problem",
+        "url": "https://takeuforward.org/data-structure/rat-in-a-maze/",
+        "source": "takeuforward"
+      },
+      {
+        "title": "Backtracking Maze Solver",
+        "url": "https://www.techiedelight.com/rat-in-a-maze/",
+        "source": "Techie Delight"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/rat-in-a-maze-problem/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Similar on LeetCode - Unique Paths",
+        "url": "https://leetcode.com/problems/unique-paths-iii/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Find all paths in a matrix? Use backtracking with 4 directions. Mark visited, explore, unmark.",
+  "approaches": [
+    {
+      "name": "Backtracking - All 4 Directions",
+      "order": 1,
+      "intuition": "Try moving in all 4 directions (D, L, R, U). Mark visited to avoid cycles. Backtrack when stuck.",
+      "approach": "Use backtracking to explore all valid paths from (0,0) to (n-1,n-1).",
+      "steps": [
+        "Start at (0, 0) with empty path",
+        "If reached (n-1, n-1), add path to result",
+        "Try all 4 directions: Down, Left, Right, Up",
+        "For each direction:",
+        "  Check if next cell is valid (in bounds, not visited, value = 1)",
+        "  Mark current cell as visited",
+        "  Add direction to path ('D', 'L', 'R', 'U')",
+        "  Recursively explore from next cell",
+        "  Backtrack: unmark visited, remove direction",
+        "Return all collected paths"
+      ],
+      "complexity": {
+        "time": "O(4^(n²))",
+        "space": "O(n²)",
+        "timeExplanation": "At each cell, try 4 directions, up to n² cells to visit",
+        "spaceExplanation": "Visited matrix O(n²), recursion depth O(n²)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> findPath(vector<vector<int>> &mat) {\n        int n = mat.size();\n        vector<string> result;\n        \n        if (mat[0][0] == 0 || mat[n-1][n-1] == 0) return result;\n        \n        vector<vector<int>> visited(n, vector<int>(n, 0));\n        string path = \"\";\n        \n        solve(0, 0, n, mat, visited, path, result);\n        return result;\n    }\n    \nprivate:\n    void solve(int row, int col, int n, vector<vector<int>>& mat,\n               vector<vector<int>>& visited, string path, vector<string>& result) {\n        if (row == n - 1 && col == n - 1) {\n            result.push_back(path);\n            return;\n        }\n        \n        visited[row][col] = 1;\n        \n        // Down\n        if (row + 1 < n && !visited[row + 1][col] && mat[row + 1][col] == 1) {\n            solve(row + 1, col, n, mat, visited, path + 'D', result);\n        }\n        \n        // Left\n        if (col - 1 >= 0 && !visited[row][col - 1] && mat[row][col - 1] == 1) {\n            solve(row, col - 1, n, mat, visited, path + 'L', result);\n        }\n        \n        // Right\n        if (col + 1 < n && !visited[row][col + 1] && mat[row][col + 1] == 1) {\n            solve(row, col + 1, n, mat, visited, path + 'R', result);\n        }\n        \n        // Up\n        if (row - 1 >= 0 && !visited[row - 1][col] && mat[row - 1][col] == 1) {\n            solve(row - 1, col, n, mat, visited, path + 'U', result);\n        }\n        \n        visited[row][col] = 0; // backtrack\n    }\n};",
+        "java": "class Solution {\n    public ArrayList<String> findPath(int[][] mat) {\n        int n = mat.length;\n        ArrayList<String> result = new ArrayList<>();\n        \n        if (mat[0][0] == 0 || mat[n-1][n-1] == 0) return result;\n        \n        boolean[][] visited = new boolean[n][n];\n        solve(0, 0, n, mat, visited, \"\", result);\n        \n        return result;\n    }\n    \n    private void solve(int row, int col, int n, int[][] mat,\n                      boolean[][] visited, String path, ArrayList<String> result) {\n        if (row == n - 1 && col == n - 1) {\n            result.add(path);\n            return;\n        }\n        \n        visited[row][col] = true;\n        \n        // Down\n        if (row + 1 < n && !visited[row + 1][col] && mat[row + 1][col] == 1) {\n            solve(row + 1, col, n, mat, visited, path + 'D', result);\n        }\n        \n        // Left\n        if (col - 1 >= 0 && !visited[row][col - 1] && mat[row][col - 1] == 1) {\n            solve(row, col - 1, n, mat, visited, path + 'L', result);\n        }\n        \n        // Right\n        if (col + 1 < n && !visited[row][col + 1] && mat[row][col + 1] == 1) {\n            solve(row, col + 1, n, mat, visited, path + 'R', result);\n        }\n        \n        // Up\n        if (row - 1 >= 0 && !visited[row - 1][col] && mat[row - 1][col] == 1) {\n            solve(row - 1, col, n, mat, visited, path + 'U', result);\n        }\n        \n        visited[row][col] = false;\n    }\n}",
+        "python": "def findPath(mat):\n    n = len(mat)\n    result = []\n    \n    if mat[0][0] == 0 or mat[n-1][n-1] == 0:\n        return result\n    \n    visited = [[False] * n for _ in range(n)]\n    \n    def solve(row, col, path):\n        if row == n - 1 and col == n - 1:\n            result.append(path)\n            return\n        \n        visited[row][col] = True\n        \n        # Down\n        if row + 1 < n and not visited[row + 1][col] and mat[row + 1][col] == 1:\n            solve(row + 1, col, path + 'D')\n        \n        # Left\n        if col - 1 >= 0 and not visited[row][col - 1] and mat[row][col - 1] == 1:\n            solve(row, col - 1, path + 'L')\n        \n        # Right\n        if col + 1 < n and not visited[row][col + 1] and mat[row][col + 1] == 1:\n            solve(row, col + 1, path + 'R')\n        \n        # Up\n        if row - 1 >= 0 and not visited[row - 1][col] and mat[row - 1][col] == 1:\n            solve(row - 1, col, path + 'U')\n        \n        visited[row][col] = False\n    \n    solve(0, 0, '')\n    return result",
+        "javascript": "function findPath(mat) {\n    const n = mat.length;\n    const result = [];\n    \n    if (mat[0][0] === 0 || mat[n-1][n-1] === 0) return result;\n    \n    const visited = Array(n).fill(null).map(() => Array(n).fill(false));\n    \n    function solve(row, col, path) {\n        if (row === n - 1 && col === n - 1) {\n            result.push(path);\n            return;\n        }\n        \n        visited[row][col] = true;\n        \n        // Down\n        if (row + 1 < n && !visited[row + 1][col] && mat[row + 1][col] === 1) {\n            solve(row + 1, col, path + 'D');\n        }\n        \n        // Left\n        if (col - 1 >= 0 && !visited[row][col - 1] && mat[row][col - 1] === 1) {\n            solve(row, col - 1, path + 'L');\n        }\n        \n        // Right\n        if (col + 1 < n && !visited[row][col + 1] && mat[row][col + 1] === 1) {\n            solve(row, col + 1, path + 'R');\n        }\n        \n        // Up\n        if (row - 1 >= 0 && !visited[row - 1][col] && mat[row - 1][col] === 1) {\n            solve(row - 1, col, path + 'U');\n        }\n        \n        visited[row][col] = false;\n    }\n    \n    solve(0, 0, '');\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Direction Arrays - Cleaner",
+      "order": 2,
+      "intuition": "Use arrays to represent 4 directions. Makes code cleaner and easier to extend to 8 directions.",
+      "approach": "Store direction offsets in arrays. Loop through directions instead of writing 4 separate blocks.",
+      "steps": [
+        "Define: dr = [-1, 0, 0, 1], dc = [0, -1, 1, 0]",
+        "Define: dir = ['U', 'L', 'R', 'D']",
+        "For each of 4 directions:",
+        "  newRow = row + dr[i], newCol = col + dc[i]",
+        "  If valid, recurse with dir[i] appended to path",
+        "Same backtracking logic as approach 1"
+      ],
+      "complexity": {
+        "time": "O(4^(n²))",
+        "space": "O(n²)",
+        "timeExplanation": "Same as approach 1",
+        "spaceExplanation": "Same as approach 1"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> findPath(vector<vector<int>> &mat) {\n        int n = mat.size();\n        vector<string> result;\n        \n        if (mat[0][0] == 0 || mat[n-1][n-1] == 0) return result;\n        \n        vector<vector<int>> visited(n, vector<int>(n, 0));\n        string path = \"\";\n        \n        solve(0, 0, n, mat, visited, path, result);\n        return result;\n    }\n    \nprivate:\n    int dr[4] = {1, 0, 0, -1};\n    int dc[4] = {0, -1, 1, 0};\n    char dir[4] = {'D', 'L', 'R', 'U'};\n    \n    void solve(int row, int col, int n, vector<vector<int>>& mat,\n               vector<vector<int>>& visited, string path, vector<string>& result) {\n        if (row == n - 1 && col == n - 1) {\n            result.push_back(path);\n            return;\n        }\n        \n        visited[row][col] = 1;\n        \n        for (int i = 0; i < 4; i++) {\n            int newRow = row + dr[i];\n            int newCol = col + dc[i];\n            \n            if (newRow >= 0 && newRow < n && newCol >= 0 && newCol < n &&\n                !visited[newRow][newCol] && mat[newRow][newCol] == 1) {\n                solve(newRow, newCol, n, mat, visited, path + dir[i], result);\n            }\n        }\n        \n        visited[row][col] = 0;\n    }\n};",
+        "java": "class Solution {\n    private int[] dr = {1, 0, 0, -1};\n    private int[] dc = {0, -1, 1, 0};\n    private char[] dir = {'D', 'L', 'R', 'U'};\n    \n    public ArrayList<String> findPath(int[][] mat) {\n        int n = mat.length;\n        ArrayList<String> result = new ArrayList<>();\n        \n        if (mat[0][0] == 0 || mat[n-1][n-1] == 0) return result;\n        \n        boolean[][] visited = new boolean[n][n];\n        solve(0, 0, n, mat, visited, \"\", result);\n        \n        return result;\n    }\n    \n    private void solve(int row, int col, int n, int[][] mat,\n                      boolean[][] visited, String path, ArrayList<String> result) {\n        if (row == n - 1 && col == n - 1) {\n            result.add(path);\n            return;\n        }\n        \n        visited[row][col] = true;\n        \n        for (int i = 0; i < 4; i++) {\n            int newRow = row + dr[i];\n            int newCol = col + dc[i];\n            \n            if (newRow >= 0 && newRow < n && newCol >= 0 && newCol < n &&\n                !visited[newRow][newCol] && mat[newRow][newCol] == 1) {\n                solve(newRow, newCol, n, mat, visited, path + dir[i], result);\n            }\n        }\n        \n        visited[row][col] = false;\n    }\n}",
+        "python": "def findPath(mat):\n    n = len(mat)\n    result = []\n    \n    if mat[0][0] == 0 or mat[n-1][n-1] == 0:\n        return result\n    \n    visited = [[False] * n for _ in range(n)]\n    \n    dr = [1, 0, 0, -1]\n    dc = [0, -1, 1, 0]\n    directions = ['D', 'L', 'R', 'U']\n    \n    def solve(row, col, path):\n        if row == n - 1 and col == n - 1:\n            result.append(path)\n            return\n        \n        visited[row][col] = True\n        \n        for i in range(4):\n            new_row = row + dr[i]\n            new_col = col + dc[i]\n            \n            if (0 <= new_row < n and 0 <= new_col < n and\n                not visited[new_row][new_col] and mat[new_row][new_col] == 1):\n                solve(new_row, new_col, path + directions[i])\n        \n        visited[row][col] = False\n    \n    solve(0, 0, '')\n    return result",
+        "javascript": "function findPath(mat) {\n    const n = mat.length;\n    const result = [];\n    \n    if (mat[0][0] === 0 || mat[n-1][n-1] === 0) return result;\n    \n    const visited = Array(n).fill(null).map(() => Array(n).fill(false));\n    const dr = [1, 0, 0, -1];\n    const dc = [0, -1, 1, 0];\n    const directions = ['D', 'L', 'R', 'U'];\n    \n    function solve(row, col, path) {\n        if (row === n - 1 && col === n - 1) {\n            result.push(path);\n            return;\n        }\n        \n        visited[row][col] = true;\n        \n        for (let i = 0; i < 4; i++) {\n            const newRow = row + dr[i];\n            const newCol = col + dc[i];\n            \n            if (newRow >= 0 && newRow < n && newCol >= 0 && newCol < n &&\n                !visited[newRow][newCol] && mat[newRow][newCol] === 1) {\n                solve(newRow, newCol, path + directions[i]);\n            }\n        }\n        \n        visited[row][col] = false;\n    }\n    \n    solve(0, 0, '');\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Optimized - Lexicographically Sorted Paths",
+      "order": 3,
+      "intuition": "Process directions in alphabetical order (D, L, R, U) to get lexicographically sorted results automatically.",
+      "approach": "Same as approach 2, but directions already in alphabetical order, ensuring sorted output.",
+      "steps": [
+        "Use direction arrays: dr = [1, 0, 0, -1], dc = [0, -1, 1, 0]",
+        "dir = ['D', 'L', 'R', 'U'] - already alphabetical",
+        "Process in this order automatically gives sorted paths",
+        "No need to sort at the end",
+        "Same backtracking logic"
+      ],
+      "complexity": {
+        "time": "O(4^(n²))",
+        "space": "O(n²)",
+        "timeExplanation": "Same exploring time, no sorting needed",
+        "spaceExplanation": "Visited array and recursion stack"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> findPath(vector<vector<int>> &mat) {\n        int n = mat.size();\n        vector<string> result;\n        \n        if (mat[0][0] == 0 || mat[n-1][n-1] == 0) return result;\n        \n        vector<vector<int>> visited(n, vector<int>(n, 0));\n        solve(0, 0, n, mat, visited, \"\", result);\n        \n        return result; // Already sorted due to DLRU order\n    }\n    \nprivate:\n    int dr[4] = {1, 0, 0, -1};  // D, L, R, U\n    int dc[4] = {0, -1, 1, 0};  // Alphabetical order\n    char dir[4] = {'D', 'L', 'R', 'U'};\n    \n    void solve(int row, int col, int n, vector<vector<int>>& mat,\n               vector<vector<int>>& visited, string path, vector<string>& result) {\n        if (row == n - 1 && col == n - 1) {\n            result.push_back(path);\n            return;\n        }\n        \n        visited[row][col] = 1;\n        \n        for (int i = 0; i < 4; i++) {\n            int newRow = row + dr[i];\n            int newCol = col + dc[i];\n            \n            if (newRow >= 0 && newRow < n && newCol >= 0 && newCol < n &&\n                !visited[newRow][newCol] && mat[newRow][newCol] == 1) {\n                solve(newRow, newCol, n, mat, visited, path + dir[i], result);\n            }\n        }\n        \n        visited[row][col] = 0;\n    }\n};",
+        "java": "class Solution {\n    private int[] dr = {1, 0, 0, -1};\n    private int[] dc = {0, -1, 1, 0};\n    private char[] dir = {'D', 'L', 'R', 'U'};\n    \n    public ArrayList<String> findPath(int[][] mat) {\n        int n = mat.length;\n        ArrayList<String> result = new ArrayList<>();\n        \n        if (mat[0][0] == 0 || mat[n-1][n-1] == 0) return result;\n        \n        boolean[][] visited = new boolean[n][n];\n        solve(0, 0, n, mat, visited, \"\", result);\n        \n        return result;\n    }\n    \n    private void solve(int row, int col, int n, int[][] mat,\n                      boolean[][] visited, String path, ArrayList<String> result) {\n        if (row == n - 1 && col == n - 1) {\n            result.add(path);\n            return;\n        }\n        \n        visited[row][col] = true;\n        \n        for (int i = 0; i < 4; i++) {\n            int newRow = row + dr[i];\n            int newCol = col + dc[i];\n            \n            if (newRow >= 0 && newRow < n && newCol >= 0 && newCol < n &&\n                !visited[newRow][newCol] && mat[newRow][newCol] == 1) {\n                solve(newRow, newCol, n, mat, visited, path + dir[i], result);\n            }\n        }\n        \n        visited[row][col] = false;\n    }\n}",
+        "python": "def findPath(mat):\n    n = len(mat)\n    result = []\n    \n    if mat[0][0] == 0 or mat[n-1][n-1] == 0:\n        return result\n    \n    visited = [[False] * n for _ in range(n)]\n    \n    # Already in alphabetical order\n    dr = [1, 0, 0, -1]\n    dc = [0, -1, 1, 0]\n    directions = ['D', 'L', 'R', 'U']\n    \n    def solve(row, col, path):\n        if row == n - 1 and col == n - 1:\n            result.append(path)\n            return\n        \n        visited[row][col] = True\n        \n        for i in range(4):\n            new_row = row + dr[i]\n            new_col = col + dc[i]\n            \n            if (0 <= new_row < n and 0 <= new_col < n and\n                not visited[new_row][new_col] and mat[new_row][new_col] == 1):\n                solve(new_row, new_col, path + directions[i])\n        \n        visited[row][col] = False\n    \n    solve(0, 0, '')\n    return result",
+        "javascript": "function findPath(mat) {\n    const n = mat.length;\n    const result = [];\n    \n    if (mat[0][0] === 0 || mat[n-1][n-1] === 0) return result;\n    \n    const visited = Array(n).fill(null).map(() => Array(n).fill(false));\n    const dr = [1, 0, 0, -1];\n    const dc = [0, -1, 1, 0];\n    const directions = ['D', 'L', 'R', 'U'];\n    \n    function solve(row, col, path) {\n        if (row === n - 1 && col === n - 1) {\n            result.push(path);\n            return;\n        }\n        \n        visited[row][col] = true;\n        \n        for (let i = 0; i < 4; i++) {\n            const newRow = row + dr[i];\n            const newCol = col + dc[i];\n            \n            if (newRow >= 0 && newRow < n && newCol >= 0 && newCol < n &&\n                !visited[newRow][newCol] && mat[newRow][newCol] === 1) {\n                solve(newRow, newCol, path + directions[i]);\n            }\n        }\n        \n        visited[row][col] = false;\n    }\n    \n    solve(0, 0, '');\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to mark cells as visited (leads to infinite loops)",
+    "Not unmarking cells when backtracking (wrong paths)",
+    "Not checking if start/end cells are blocked (mat[0][0] == 0)",
+    "Wrong direction order (expected lexicographically sorted: DLRU)",
+    "Boundary check errors (newRow < n, not newRow <= n)"
+  ],
+  "hints": [
+    "Use backtracking: try direction, recurse, backtrack",
+    "Mark visited to avoid cycles",
+    "Check 4 directions: Down, Left, Right, Up (DLRU for sorted output)",
+    "Base case: reached (n-1, n-1)",
+    "Don't forget to unmark visited when backtracking"
+  ],
+  "followUp": [
+    "What if we need only one path? (Stop at first path found)",
+    "What if we can move diagonally? (Add 4 more directions)",
+    "Can you count paths without generating them? (Yes, DP approach)",
+    "What if there are obstacles we can remove? (Modified problem, BFS better)",
+    "How to find shortest path? (Use BFS instead of backtracking)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Flipkart", "Samsung"],
+  "tags": ["backtracking", "matrix", "recursion"],
+  "relatedProblems": [
+    "Unique Paths",
+    "Unique Paths II",
+    "Unique Paths III",
+    "Word Search"
+  ]
+}

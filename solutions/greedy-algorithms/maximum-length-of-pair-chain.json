@@ -1,0 +1,158 @@
+{
+  "questionId": "LC-646",
+  "questionSlug": "maximum-length-of-pair-chain",
+  "title": "Maximum Length of Pair Chain",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-length-of-pair-chain/",
+    "videos": [
+      {
+        "title": "Maximum Length of Pair Chain - Greedy Approach",
+        "url": "https://www.youtube.com/watch?v=3FmBPUorAKQ",
+        "channel": "NeetCode",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Maximum Length of Pair Chain Explained",
+        "url": "https://www.youtube.com/watch?v=fVlwvXBqfJo",
+        "channel": "takeUforward",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Maximum Length of Pair Chain - Official Solution",
+        "url": "https://leetcode.com/problems/maximum-length-of-pair-chain/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Maximum Length of Pair Chain - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/maximum-length-chain-of-pairs/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/maximum-length-of-pair-chain/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Chain of pairs with conditions? Sort by end point and greedily pick non-overlapping!",
+  "approaches": [
+    {
+      "name": "Greedy - Sort by End (Optimal)",
+      "order": 1,
+      "intuition": "Sort pairs by second element. Greedily pick pairs where first > last picked second. Similar to Activity Selection.",
+      "approach": "Sort by end point, then greedily select pairs that don't overlap with previously selected pair.",
+      "steps": [
+        "Sort pairs by second element (ending point)",
+        "Initialize count = 0, last_end = INT_MIN",
+        "For each pair [a, b]:",
+        "  If a > last_end (can chain):",
+        "    count++",
+        "    last_end = b",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "timeExplanation": "Sorting dominates, iteration is O(n)",
+        "spaceExplanation": "No extra space (sorting in-place or O(1) variables)"
+      },
+      "code": {
+        "cpp": "int findLongestChain(vector<vector<int>>& pairs) {\n    // Sort by second element (end point)\n    sort(pairs.begin(), pairs.end(), [](const auto& a, const auto& b) {\n        return a[1] < b[1];\n    });\n    \n    int count = 0;\n    int lastEnd = INT_MIN;\n    \n    for (const auto& pair : pairs) {\n        if (pair[0] > lastEnd) {\n            count++;\n            lastEnd = pair[1];\n        }\n    }\n    \n    return count;\n}\n\n// Example: [[1,2],[2,3],[3,4]]\n// After sort by end: [[1,2],[2,3],[3,4]]\n// Pick [1,2]: count=1, lastEnd=2\n// [2,3]: 2>2? No, skip\n// [3,4]: 3>2? Yes, count=2, lastEnd=4\n// Return 2",
+        "java": "public int findLongestChain(int[][] pairs) {\n    Arrays.sort(pairs, (a, b) -> a[1] - b[1]);\n    \n    int count = 0;\n    int lastEnd = Integer.MIN_VALUE;\n    \n    for (int[] pair : pairs) {\n        if (pair[0] > lastEnd) {\n            count++;\n            lastEnd = pair[1];\n        }\n    }\n    \n    return count;\n}",
+        "python": "def findLongestChain(pairs: List[List[int]]) -> int:\n    pairs.sort(key=lambda x: x[1])\n    \n    count = 0\n    last_end = float('-inf')\n    \n    for a, b in pairs:\n        if a > last_end:\n            count += 1\n            last_end = b\n    \n    return count",
+        "javascript": "var findLongestChain = function(pairs) {\n    pairs.sort((a, b) => a[1] - b[1]);\n    \n    let count = 0;\n    let lastEnd = -Infinity;\n    \n    for (const [a, b] of pairs) {\n        if (a > lastEnd) {\n            count++;\n            lastEnd = b;\n        }\n    }\n    \n    return count;\n};"
+      }
+    },
+    {
+      "name": "Dynamic Programming - Sort by Start",
+      "order": 2,
+      "intuition": "Sort by first element. Use DP where dp[i] = max chain ending at pair i.",
+      "approach": "DP approach similar to Longest Increasing Subsequence but for pairs.",
+      "steps": [
+        "Sort pairs by first element",
+        "dp[i] = max chain length ending at pair i",
+        "For each i:",
+        "  dp[i] = 1 (at least this pair alone)",
+        "  For each j < i:",
+        "    If pairs[j][1] < pairs[i][0]: dp[i] = max(dp[i], dp[j] + 1)",
+        "Return max(dp)"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(n)",
+        "timeExplanation": "Nested loops for DP",
+        "spaceExplanation": "DP array"
+      },
+      "code": {
+        "cpp": "int findLongestChain(vector<vector<int>>& pairs) {\n    sort(pairs.begin(), pairs.end());\n    int n = pairs.size();\n    vector<int> dp(n, 1);\n    \n    for (int i = 1; i < n; i++) {\n        for (int j = 0; j < i; j++) {\n            if (pairs[j][1] < pairs[i][0]) {\n                dp[i] = max(dp[i], dp[j] + 1);\n            }\n        }\n    }\n    \n    return *max_element(dp.begin(), dp.end());\n}\n\n// Example: [[1,2],[2,3],[3,4]]\n// dp[0] = 1 (just [1,2])\n// dp[1] = 1 ([2,3] alone, can't chain with [1,2])\n// dp[2] = max(dp[0]+1, dp[1]+1) = 2 ([1,2]->[3,4] or [2,3]->[3,4])\n// Return 2",
+        "java": "public int findLongestChain(int[][] pairs) {\n    Arrays.sort(pairs, (a, b) -> a[0] - b[0]);\n    int n = pairs.length;\n    int[] dp = new int[n];\n    Arrays.fill(dp, 1);\n    \n    for (int i = 1; i < n; i++) {\n        for (int j = 0; j < i; j++) {\n            if (pairs[j][1] < pairs[i][0]) {\n                dp[i] = Math.max(dp[i], dp[j] + 1);\n            }\n        }\n    }\n    \n    return Arrays.stream(dp).max().getAsInt();\n}",
+        "python": "def findLongestChain(pairs: List[List[int]]) -> int:\n    pairs.sort()\n    n = len(pairs)\n    dp = [1] * n\n    \n    for i in range(1, n):\n        for j in range(i):\n            if pairs[j][1] < pairs[i][0]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    \n    return max(dp)",
+        "javascript": "var findLongestChain = function(pairs) {\n    pairs.sort((a, b) => a[0] - b[0]);\n    const n = pairs.length;\n    const dp = new Array(n).fill(1);\n    \n    for (let i = 1; i < n; i++) {\n        for (let j = 0; j < i; j++) {\n            if (pairs[j][1] < pairs[i][0]) {\n                dp[i] = Math.max(dp[i], dp[j] + 1);\n            }\n        }\n    }\n    \n    return Math.max(...dp);\n};"
+      }
+    },
+    {
+      "name": "DP with Binary Search (LIS-style)",
+      "order": 3,
+      "intuition": "Optimize DP using binary search similar to Longest Increasing Subsequence O(n log n) approach.",
+      "approach": "Maintain array of smallest ending values for chains of each length.",
+      "steps": [
+        "Sort pairs by first element",
+        "Maintain tails[] where tails[i] = smallest second value of chain with length i+1",
+        "For each pair:",
+        "  Binary search position in tails",
+        "  Update tails[pos] = min(tails[pos], pair[1])",
+        "Return length of tails"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting + binary search for each element",
+        "spaceExplanation": "Tails array"
+      },
+      "code": {
+        "cpp": "int findLongestChain(vector<vector<int>>& pairs) {\n    sort(pairs.begin(), pairs.end());\n    vector<int> tails;\n    \n    for (const auto& pair : pairs) {\n        int left = 0, right = tails.size();\n        \n        // Find position where pair can extend chain\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (tails[mid] < pair[0]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        if (left == tails.size()) {\n            tails.push_back(pair[1]);\n        } else {\n            tails[left] = min(tails[left], pair[1]);\n        }\n    }\n    \n    return tails.size();\n}",
+        "java": "public int findLongestChain(int[][] pairs) {\n    Arrays.sort(pairs, (a, b) -> a[0] - b[0]);\n    List<Integer> tails = new ArrayList<>();\n    \n    for (int[] pair : pairs) {\n        int left = 0, right = tails.size();\n        \n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (tails.get(mid) < pair[0]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        if (left == tails.size()) {\n            tails.add(pair[1]);\n        } else {\n            tails.set(left, Math.min(tails.get(left), pair[1]));\n        }\n    }\n    \n    return tails.size();\n}",
+        "python": "def findLongestChain(pairs: List[List[int]]) -> int:\n    pairs.sort()\n    tails = []\n    \n    for a, b in pairs:\n        left, right = 0, len(tails)\n        \n        while left < right:\n            mid = (left + right) // 2\n            if tails[mid] < a:\n                left = mid + 1\n            else:\n                right = mid\n        \n        if left == len(tails):\n            tails.append(b)\n        else:\n            tails[left] = min(tails[left], b)\n    \n    return len(tails)",
+        "javascript": "var findLongestChain = function(pairs) {\n    pairs.sort((a, b) => a[0] - b[0]);\n    const tails = [];\n    \n    for (const [a, b] of pairs) {\n        let left = 0, right = tails.length;\n        \n        while (left < right) {\n            const mid = Math.floor((left + right) / 2);\n            if (tails[mid] < a) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        \n        if (left === tails.length) {\n            tails.push(b);\n        } else {\n            tails[left] = Math.min(tails[left], b);\n        }\n    }\n    \n    return tails.length;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Sorting by first element instead of second (greedy needs sort by end)",
+    "Using >= instead of > for chain condition (must be strictly greater)",
+    "Forgetting to initialize lastEnd properly (use INT_MIN or -infinity)",
+    "In DP: comparing wrong elements (pairs[j][1] vs pairs[i][0])",
+    "Not handling single pair case correctly",
+    "Confusing this with interval merging (different problem)"
+  ],
+  "hints": [
+    "This is similar to Activity Selection problem",
+    "Greedy: always pick pair with earliest ending point that can be chained",
+    "Sort by second element (ending point) for greedy approach",
+    "For DP: think Longest Increasing Subsequence but for pairs",
+    "Key condition: pairs[j][1] < pairs[i][0] to chain",
+    "Greedy O(n log n) beats DP O(n²) here!"
+  ],
+  "followUp": [
+    "What if pairs can overlap partially? (Different chaining rule)",
+    "Return the actual chain, not just length? (Track parent pointers)",
+    "3D tuples instead of pairs? (Generalize to higher dimensions)",
+    "Online algorithm (pairs arrive one by one)? (More complex greedy)",
+    "Weighted pairs (maximize total weight)? (Weighted activity selection)"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook"],
+  "tags": ["greedy", "dynamic-programming", "sorting", "array"],
+  "relatedProblems": [
+    "Longest Increasing Subsequence",
+    "Non-overlapping Intervals",
+    "Russian Doll Envelopes",
+    "Activity Selection Problem"
+  ]
+}

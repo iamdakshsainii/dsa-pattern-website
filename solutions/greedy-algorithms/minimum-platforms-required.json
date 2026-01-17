@@ -1,0 +1,160 @@
+{
+  "questionId": "GFG-MINPLAT",
+  "questionSlug": "minimum-platforms-required",
+  "title": "Minimum Number of Platforms Required",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/meeting-rooms-ii/",
+    "videos": [
+      {
+        "title": "Minimum Platforms Required - Two Pointer",
+        "url": "https://www.youtube.com/watch?v=dxVcMDI7vyI",
+        "channel": "takeUforward",
+        "duration": "12:20",
+        "language": "English"
+      },
+      {
+        "title": "Minimum Platforms Explained",
+        "url": "https://www.youtube.com/watch?v=AsGzwR_FWok",
+        "channel": "Pepcoding",
+        "duration": "15:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Minimum Platforms - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/minimum-number-platforms-required-railwaybus-station/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Meeting Rooms II - LeetCode",
+        "url": "https://leetcode.com/problems/meeting-rooms-ii/solution/",
+        "source": "LeetCode"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/minimum-platforms/0",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Maximum overlapping intervals? Sort arrivals and departures separately, use two pointers!",
+  "approaches": [
+    {
+      "name": "Two Pointer (Sort Separately) - Optimal",
+      "order": 1,
+      "intuition": "Sort arrivals and departures separately. Use two pointers to track active trains. Maximum active = minimum platforms needed.",
+      "approach": "Sort both arrays independently. Use pointers to simulate train arrivals/departures chronologically.",
+      "steps": [
+        "Sort arrival times",
+        "Sort departure times",
+        "Initialize i=0, j=0, platforms=0, maxPlatforms=0",
+        "While i < n:",
+        "  If arrival[i] <= departure[j]:",
+        "    Train arrives, platforms++",
+        "    i++",
+        "  Else:",
+        "    Train departs, platforms--",
+        "    j++",
+        "  maxPlatforms = max(maxPlatforms, platforms)",
+        "Return maxPlatforms"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "timeExplanation": "Sorting both arrays O(n log n), two-pointer scan O(n)",
+        "spaceExplanation": "Constant space (ignoring sorting space)"
+      },
+      "code": {
+        "cpp": "int findPlatform(int arr[], int dep[], int n) {\n    sort(arr, arr + n);\n    sort(dep, dep + n);\n    \n    int platforms = 0, maxPlatforms = 0;\n    int i = 0, j = 0;\n    \n    while (i < n) {\n        if (arr[i] <= dep[j]) {\n            platforms++;\n            i++;\n        } else {\n            platforms--;\n            j++;\n        }\n        \n        maxPlatforms = max(maxPlatforms, platforms);\n    }\n    \n    return maxPlatforms;\n}\n\n// Example: arr = [900, 940, 950], dep = [910, 1200, 1120]\n// After sort: arr = [900, 940, 950], dep = [910, 1120, 1200]\n// i=0, j=0: 900 <= 910 → platforms=1, i=1, max=1\n// i=1, j=0: 940 > 910 → platforms=0, j=1, max=1\n// i=1, j=1: 940 <= 1120 → platforms=1, i=2, max=1\n// i=2, j=1: 950 <= 1120 → platforms=2, i=3, max=2\n// Return 2",
+        "java": "public int findPlatform(int arr[], int dep[], int n) {\n    Arrays.sort(arr);\n    Arrays.sort(dep);\n    \n    int platforms = 0, maxPlatforms = 0;\n    int i = 0, j = 0;\n    \n    while (i < n) {\n        if (arr[i] <= dep[j]) {\n            platforms++;\n            i++;\n        } else {\n            platforms--;\n            j++;\n        }\n        \n        maxPlatforms = Math.max(maxPlatforms, platforms);\n    }\n    \n    return maxPlatforms;\n}",
+        "python": "def findPlatform(arr, dep, n):\n    arr.sort()\n    dep.sort()\n    \n    platforms = 0\n    max_platforms = 0\n    i = 0\n    j = 0\n    \n    while i < n:\n        if arr[i] <= dep[j]:\n            platforms += 1\n            i += 1\n        else:\n            platforms -= 1\n            j += 1\n        \n        max_platforms = max(max_platforms, platforms)\n    \n    return max_platforms",
+        "javascript": "function findPlatform(arr, dep, n) {\n    arr.sort((a, b) => a - b);\n    dep.sort((a, b) => a - b);\n    \n    let platforms = 0, maxPlatforms = 0;\n    let i = 0, j = 0;\n    \n    while (i < n) {\n        if (arr[i] <= dep[j]) {\n            platforms++;\n            i++;\n        } else {\n            platforms--;\n            j++;\n        }\n        \n        maxPlatforms = Math.max(maxPlatforms, platforms);\n    }\n    \n    return maxPlatforms;\n}"
+      }
+    },
+    {
+      "name": "Events Array (Sweep Line)",
+      "order": 2,
+      "intuition": "Create events for arrivals (+1) and departures (-1). Sort by time, process events to track maximum active trains.",
+      "approach": "Merge arrivals and departures as events, sort, sweep through tracking active count.",
+      "steps": [
+        "Create events: (time, type) where type: +1 arrival, -1 departure",
+        "Sort events by time (arrivals before departures if same time)",
+        "Scan events, track active trains",
+        "Return maximum active seen"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Creating 2n events, sorting them",
+        "spaceExplanation": "Events array of size 2n"
+      },
+      "code": {
+        "cpp": "int findPlatform(int arr[], int dep[], int n) {\n    vector<pair<int, int>> events;\n    \n    for (int i = 0; i < n; i++) {\n        events.push_back({arr[i], 1});   // Arrival\n        events.push_back({dep[i], -1});  // Departure\n    }\n    \n    // Sort by time, arrivals before departures if same time\n    sort(events.begin(), events.end(), [](auto& a, auto& b) {\n        if (a.first == b.first) return a.second > b.second;\n        return a.first < b.first;\n    });\n    \n    int platforms = 0, maxPlatforms = 0;\n    \n    for (auto& event : events) {\n        platforms += event.second;\n        maxPlatforms = max(maxPlatforms, platforms);\n    }\n    \n    return maxPlatforms;\n}",
+        "java": "public int findPlatform(int arr[], int dep[], int n) {\n    int[][] events = new int[2 * n][2];\n    \n    for (int i = 0; i < n; i++) {\n        events[2 * i] = new int[]{arr[i], 1};\n        events[2 * i + 1] = new int[]{dep[i], -1};\n    }\n    \n    Arrays.sort(events, (a, b) -> {\n        if (a[0] == b[0]) return b[1] - a[1];\n        return a[0] - b[0];\n    });\n    \n    int platforms = 0, maxPlatforms = 0;\n    \n    for (int[] event : events) {\n        platforms += event[1];\n        maxPlatforms = Math.max(maxPlatforms, platforms);\n    }\n    \n    return maxPlatforms;\n}",
+        "python": "def findPlatform(arr, dep, n):\n    events = []\n    \n    for i in range(n):\n        events.append((arr[i], 1))   # Arrival\n        events.append((dep[i], -1))  # Departure\n    \n    # Sort by time, arrivals before departures\n    events.sort(key=lambda x: (x[0], -x[1]))\n    \n    platforms = 0\n    max_platforms = 0\n    \n    for time, change in events:\n        platforms += change\n        max_platforms = max(max_platforms, platforms)\n    \n    return max_platforms",
+        "javascript": "function findPlatform(arr, dep, n) {\n    const events = [];\n    \n    for (let i = 0; i < n; i++) {\n        events.push([arr[i], 1]);   // Arrival\n        events.push([dep[i], -1]);  // Departure\n    }\n    \n    events.sort((a, b) => {\n        if (a[0] === b[0]) return b[1] - a[1];\n        return a[0] - b[0];\n    });\n    \n    let platforms = 0, maxPlatforms = 0;\n    \n    for (const [time, change] of events) {\n        platforms += change;\n        maxPlatforms = Math.max(maxPlatforms, platforms);\n    }\n    \n    return maxPlatforms;\n}"
+      }
+    },
+    {
+      "name": "Priority Queue (Min Heap)",
+      "order": 3,
+      "intuition": "Sort by arrival time. Use min heap to track departure times of active trains. Heap size = platforms needed.",
+      "approach": "Process trains by arrival. Add departure to heap. Remove departures before current arrival.",
+      "steps": [
+        "Create pairs of (arrival, departure)",
+        "Sort by arrival time",
+        "Initialize min heap (departure times)",
+        "For each train:",
+        "  Remove all departures <= current arrival from heap",
+        "  Add current departure to heap",
+        "  maxPlatforms = max(maxPlatforms, heap.size())",
+        "Return maxPlatforms"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sorting + n heap operations",
+        "spaceExplanation": "Heap can store up to n elements"
+      },
+      "code": {
+        "cpp": "int findPlatform(int arr[], int dep[], int n) {\n    vector<pair<int, int>> trains;\n    for (int i = 0; i < n; i++) {\n        trains.push_back({arr[i], dep[i]});\n    }\n    \n    sort(trains.begin(), trains.end());\n    \n    priority_queue<int, vector<int>, greater<int>> minHeap;\n    int maxPlatforms = 0;\n    \n    for (auto& train : trains) {\n        while (!minHeap.empty() && minHeap.top() < train.first) {\n            minHeap.pop();\n        }\n        \n        minHeap.push(train.second);\n        maxPlatforms = max(maxPlatforms, (int)minHeap.size());\n    }\n    \n    return maxPlatforms;\n}",
+        "java": "public int findPlatform(int arr[], int dep[], int n) {\n    int[][] trains = new int[n][2];\n    for (int i = 0; i < n; i++) {\n        trains[i] = new int[]{arr[i], dep[i]};\n    }\n    \n    Arrays.sort(trains, (a, b) -> a[0] - b[0]);\n    \n    PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n    int maxPlatforms = 0;\n    \n    for (int[] train : trains) {\n        while (!minHeap.isEmpty() && minHeap.peek() < train[0]) {\n            minHeap.poll();\n        }\n        \n        minHeap.offer(train[1]);\n        maxPlatforms = Math.max(maxPlatforms, minHeap.size());\n    }\n    \n    return maxPlatforms;\n}",
+        "python": "import heapq\n\ndef findPlatform(arr, dep, n):\n    trains = sorted(zip(arr, dep))\n    \n    min_heap = []\n    max_platforms = 0\n    \n    for arrival, departure in trains:\n        while min_heap and min_heap[0] < arrival:\n            heapq.heappop(min_heap)\n        \n        heapq.heappush(min_heap, departure)\n        max_platforms = max(max_platforms, len(min_heap))\n    \n    return max_platforms",
+        "javascript": "function findPlatform(arr, dep, n) {\n    const trains = [];\n    for (let i = 0; i < n; i++) {\n        trains.push([arr[i], dep[i]]);\n    }\n    \n    trains.sort((a, b) => a[0] - b[0]);\n    \n    const minHeap = new MinPriorityQueue();\n    let maxPlatforms = 0;\n    \n    for (const [arrival, departure] of trains) {\n        while (minHeap.size() > 0 && minHeap.front().element < arrival) {\n            minHeap.dequeue();\n        }\n        \n        minHeap.enqueue(departure);\n        maxPlatforms = Math.max(maxPlatforms, minHeap.size());\n    }\n    \n    return maxPlatforms;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using arrival[i] < departure[j] instead of <= (trains can overlap at same time)",
+    "Not sorting both arrays independently (maintaining pairing is wrong)",
+    "Trying to track which train uses which platform (unnecessary)",
+    "In sweep line: not prioritizing arrivals before departures at same time",
+    "Forgetting edge case: all trains at same time (need n platforms)"
+  ],
+  "hints": [
+    "Don't need to track individual train-platform assignment",
+    "Only need maximum concurrent trains at any point",
+    "Sort arrivals and departures separately is key insight",
+    "Two-pointer simulates timeline chronologically",
+    "When arrival <= departure, platform needed",
+    "When departure < arrival, platform freed"
+  ],
+  "followUp": [
+    "Return which trains use which platforms? (More complex assignment problem)",
+    "Trains have different durations? (Same approach works)",
+    "Cost per platform? (Find minimum platforms, multiply by cost)",
+    "Some platforms reserved? (Constraint on available platforms)",
+    "Real-time platform allocation? (Online algorithm needed)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Flipkart", "Paytm"],
+  "tags": ["greedy", "sorting", "two-pointers", "heap"],
+  "relatedProblems": [
+    "Meeting Rooms II",
+    "Car Pooling",
+    "Maximum Number of Events That Can Be Attended"
+  ]
+}

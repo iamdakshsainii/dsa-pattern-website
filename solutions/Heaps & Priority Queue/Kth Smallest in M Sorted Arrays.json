@@ -1,0 +1,175 @@
+{
+  "questionId": "GFG-KthSmallestMArrays",
+  "questionSlug": "kth-smallest-in-m-sorted-arrays",
+  "title": "Kth Smallest in M Sorted Arrays",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+    "videos": [
+      {
+        "title": "Kth Smallest Element in Sorted Matrix | Heap",
+        "url": "https://www.youtube.com/watch?v=ijS2Xn3RKAE",
+        "channel": "NeetCode",
+        "duration": "11:25",
+        "language": "English"
+      },
+      {
+        "title": "Merge K Sorted Arrays using Min Heap",
+        "url": "https://www.youtube.com/watch?v=l8CuET0jlDU",
+        "channel": "take U forward",
+        "duration": "18:45",
+        "language": "English"
+      },
+      {
+        "title": "Kth Smallest in M Sorted Arrays",
+        "url": "https://www.youtube.com/watch?v=zLEaVN_qANo",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "13:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth smallest element in a row-wise and column-wise sorted 2D array",
+        "url": "https://www.geeksforgeeks.org/kth-smallest-element-in-a-row-wise-and-column-wise-sorted-2d-array/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Merge K Sorted Arrays",
+        "url": "https://www.geeksforgeeks.org/merge-k-sorted-arrays/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Find Kth Smallest Element",
+        "url": "https://takeuforward.org/data-structure/kth-largest-smallest-element-in-array/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/kth-element-in-matrix/1",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Find K Pairs on LeetCode",
+        "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "M sorted arrays + find Kth smallest? Use Min Heap with (value, array_index, element_index) tuples!",
+  "approaches": [
+    {
+      "name": "Merge All Arrays - Brute Force",
+      "order": 1,
+      "intuition": "Merge all M arrays into one, sort it, return kth element. Simple but inefficient.",
+      "approach": "Combine all arrays, sort, pick kth element.",
+      "steps": [
+        "Create empty result array",
+        "Add all elements from all M arrays to result",
+        "Sort the result array",
+        "Return result[k-1] (0-indexed)",
+        "Works but wastes time sorting everything"
+      ],
+      "complexity": {
+        "time": "O(N log N) where N = total elements",
+        "space": "O(N)",
+        "timeExplanation": "Sorting all N elements takes O(N log N)",
+        "spaceExplanation": "Store all elements in one array"
+      },
+      "code": {
+        "cpp": "int kthSmallest(vector<vector<int>>& arrays, int k) {\n    vector<int> merged;\n    \n    // Merge all arrays\n    for (auto& arr : arrays) {\n        for (int num : arr) {\n            merged.push_back(num);\n        }\n    }\n    \n    // Sort merged array\n    sort(merged.begin(), merged.end());\n    \n    // Return kth smallest (0-indexed)\n    return merged[k - 1];\n}\n\n// Example: arrays = [[1,5,9], [2,6,10], [3,7,11]], k = 5\n// merged = [1,5,9,2,6,10,3,7,11]\n// After sort: [1,2,3,5,6,7,9,10,11]\n// k=5 → merged[4] = 6",
+        "java": "public int kthSmallest(int[][] arrays, int k) {\n    List<Integer> merged = new ArrayList<>();\n    \n    for (int[] arr : arrays) {\n        for (int num : arr) {\n            merged.add(num);\n        }\n    }\n    \n    Collections.sort(merged);\n    \n    return merged.get(k - 1);\n}",
+        "python": "def kthSmallest(arrays: List[List[int]], k: int) -> int:\n    # Merge all arrays\n    merged = []\n    for arr in arrays:\n        merged.extend(arr)\n    \n    # Sort\n    merged.sort()\n    \n    # Return kth smallest (0-indexed)\n    return merged[k - 1]\n\n# More Pythonic:\n# merged = sorted([num for arr in arrays for num in arr])\n# return merged[k - 1]",
+        "javascript": "var kthSmallest = function(arrays, k) {\n    const merged = [];\n    \n    for (const arr of arrays) {\n        merged.push(...arr);\n    }\n    \n    merged.sort((a, b) => a - b);\n    \n    return merged[k - 1];\n};"
+      }
+    },
+    {
+      "name": "Min Heap with Pointers - Optimal",
+      "order": 2,
+      "intuition": "Use min heap to track smallest unprocessed element from each array. Extract k times to get kth smallest. Only processes k elements!",
+      "approach": "Initialize heap with first element from each array. Extract min k times.",
+      "steps": [
+        "Create min heap",
+        "Push (value, arrayIndex, elementIndex) for first element of each array",
+        "Extract min k-1 times:",
+        "  Pop smallest element",
+        "  If that array has more elements, push next element",
+        "The kth extraction is the answer",
+        "Only processes k elements instead of all N!"
+      ],
+      "complexity": {
+        "time": "O(k log M)",
+        "space": "O(M)",
+        "timeExplanation": "Extract k times, each operation takes O(log M) where M = number of arrays",
+        "spaceExplanation": "Heap stores at most M elements (one from each array)"
+      },
+      "code": {
+        "cpp": "int kthSmallest(vector<vector<int>>& arrays, int k) {\n    // Min heap: {value, arrayIndex, elementIndex}\n    priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> minHeap;\n    \n    // Initialize heap with first element from each array\n    for (int i = 0; i < arrays.size(); i++) {\n        if (!arrays[i].empty()) {\n            minHeap.push({arrays[i][0], i, 0});\n        }\n    }\n    \n    int count = 0;\n    int result = 0;\n    \n    // Extract k times\n    while (!minHeap.empty() && count < k) {\n        auto top = minHeap.top();\n        minHeap.pop();\n        \n        result = top[0];\n        int arrIdx = top[1];\n        int eleIdx = top[2];\n        \n        count++;\n        \n        // If current array has more elements, add next\n        if (eleIdx + 1 < arrays[arrIdx].size()) {\n            minHeap.push({arrays[arrIdx][eleIdx + 1], arrIdx, eleIdx + 1});\n        }\n    }\n    \n    return result;\n}\n\n// Example trace: [[1,5,9], [2,6,10], [3,7,11]], k=5\n// Heap: [(1,0,0), (2,1,0), (3,2,0)]\n// Extract 1: pop (1,0,0), push (5,0,1) → count=1\n// Extract 2: pop (2,1,0), push (6,1,1) → count=2\n// Extract 3: pop (3,2,0), push (7,2,1) → count=3\n// Extract 4: pop (5,0,1), push (9,0,2) → count=4\n// Extract 5: pop (6,1,1), push (10,1,2) → count=5, result=6",
+        "java": "public int kthSmallest(int[][] arrays, int k) {\n    PriorityQueue<int[]> minHeap = new PriorityQueue<>(\n        (a, b) -> a[0] - b[0]\n    );\n    \n    // Add first element from each array\n    for (int i = 0; i < arrays.length; i++) {\n        if (arrays[i].length > 0) {\n            minHeap.offer(new int[]{arrays[i][0], i, 0});\n        }\n    }\n    \n    int count = 0;\n    int result = 0;\n    \n    while (!minHeap.isEmpty() && count < k) {\n        int[] top = minHeap.poll();\n        result = top[0];\n        int arrIdx = top[1];\n        int eleIdx = top[2];\n        \n        count++;\n        \n        if (eleIdx + 1 < arrays[arrIdx].length) {\n            minHeap.offer(new int[]{\n                arrays[arrIdx][eleIdx + 1], \n                arrIdx, \n                eleIdx + 1\n            });\n        }\n    }\n    \n    return result;\n}",
+        "python": "import heapq\n\ndef kthSmallest(arrays: List[List[int]], k: int) -> int:\n    # Min heap: (value, arrayIndex, elementIndex)\n    min_heap = []\n    \n    # Initialize with first element from each array\n    for i, arr in enumerate(arrays):\n        if arr:\n            heapq.heappush(min_heap, (arr[0], i, 0))\n    \n    result = 0\n    count = 0\n    \n    # Extract k times\n    while min_heap and count < k:\n        value, arr_idx, ele_idx = heapq.heappop(min_heap)\n        result = value\n        count += 1\n        \n        # Add next element from same array if exists\n        if ele_idx + 1 < len(arrays[arr_idx]):\n            heapq.heappush(min_heap, (\n                arrays[arr_idx][ele_idx + 1],\n                arr_idx,\n                ele_idx + 1\n            ))\n    \n    return result",
+        "javascript": "var kthSmallest = function(arrays, k) {\n    // Min heap implementation\n    const minHeap = new MinPriorityQueue({ priority: x => x[0] });\n    \n    // Add first element from each array\n    for (let i = 0; i < arrays.length; i++) {\n        if (arrays[i].length > 0) {\n            minHeap.enqueue([arrays[i][0], i, 0]);\n        }\n    }\n    \n    let count = 0;\n    let result = 0;\n    \n    while (!minHeap.isEmpty() && count < k) {\n        const [value, arrIdx, eleIdx] = minHeap.dequeue().element;\n        result = value;\n        count++;\n        \n        if (eleIdx + 1 < arrays[arrIdx].length) {\n            minHeap.enqueue([\n                arrays[arrIdx][eleIdx + 1],\n                arrIdx,\n                eleIdx + 1\n            ]);\n        }\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Binary Search on Answer - Advanced",
+      "order": 3,
+      "intuition": "Binary search on value range [min, max]. For each mid, count elements ≤ mid. If count ≥ k, search lower; else search higher.",
+      "approach": "Binary search on answer space with counting function.",
+      "steps": [
+        "Find min (first element of first array)",
+        "Find max (last element of last array)",
+        "Binary search on [min, max]:",
+        "  For mid value, count elements ≤ mid in all arrays",
+        "  If count ≥ k: answer could be mid or smaller → right = mid - 1",
+        "  Else: need larger value → left = mid + 1",
+        "Return left after search completes",
+        "Counting uses binary search in each array"
+      ],
+      "complexity": {
+        "time": "O(M * log N * log(max - min))",
+        "space": "O(1)",
+        "timeExplanation": "Binary search on range O(log(max-min)), for each mid count in M arrays using binary search O(M log N)",
+        "spaceExplanation": "Only variables used"
+      },
+      "code": {
+        "cpp": "int countLessOrEqual(vector<vector<int>>& arrays, int target) {\n    int count = 0;\n    for (auto& arr : arrays) {\n        // Binary search to find count of elements <= target\n        count += upper_bound(arr.begin(), arr.end(), target) - arr.begin();\n    }\n    return count;\n}\n\nint kthSmallest(vector<vector<int>>& arrays, int k) {\n    int left = arrays[0][0];  // Min possible value\n    int right = arrays[arrays.size() - 1].back();  // Max possible value\n    \n    while (left < right) {\n        int mid = left + (right - left) / 2;\n        int count = countLessOrEqual(arrays, mid);\n        \n        if (count < k) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    \n    return left;\n}\n\n// Example: [[1,5,9], [2,6,10], [3,7,11]], k=5\n// left=1, right=11\n// mid=6: count elements ≤6 → [1,5],[2,6],[3] = 5 elements\n// count=5 >= k=5 → right=6\n// Continue until left=right=6",
+        "java": "private int countLessOrEqual(int[][] arrays, int target) {\n    int count = 0;\n    for (int[] arr : arrays) {\n        int left = 0, right = arr.length;\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (arr[mid] <= target) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        count += left;\n    }\n    return count;\n}\n\npublic int kthSmallest(int[][] arrays, int k) {\n    int left = arrays[0][0];\n    int right = arrays[arrays.length - 1][arrays[arrays.length - 1].length - 1];\n    \n    while (left < right) {\n        int mid = left + (right - left) / 2;\n        int count = countLessOrEqual(arrays, mid);\n        \n        if (count < k) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    \n    return left;\n}",
+        "python": "import bisect\n\ndef kthSmallest(arrays: List[List[int]], k: int) -> int:\n    def countLessOrEqual(target):\n        count = 0\n        for arr in arrays:\n            # Binary search: count elements <= target\n            count += bisect.bisect_right(arr, target)\n        return count\n    \n    left = arrays[0][0]\n    right = arrays[-1][-1]\n    \n    while left < right:\n        mid = (left + right) // 2\n        count = countLessOrEqual(mid)\n        \n        if count < k:\n            left = mid + 1\n        else:\n            right = mid\n    \n    return left",
+        "javascript": "var kthSmallest = function(arrays, k) {\n    const countLessOrEqual = (target) => {\n        let count = 0;\n        for (const arr of arrays) {\n            // Binary search\n            let left = 0, right = arr.length;\n            while (left < right) {\n                const mid = Math.floor((left + right) / 2);\n                if (arr[mid] <= target) {\n                    left = mid + 1;\n                } else {\n                    right = mid;\n                }\n            }\n            count += left;\n        }\n        return count;\n    };\n    \n    let left = arrays[0][0];\n    let right = arrays[arrays.length - 1][arrays[arrays.length - 1].length - 1];\n    \n    while (left < right) {\n        const mid = Math.floor((left + right) / 2);\n        const count = countLessOrEqual(mid);\n        \n        if (count < k) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    \n    return left;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using max heap instead of min heap",
+    "Forgetting to handle empty arrays",
+    "Not storing array and element indices in heap tuples",
+    "Off-by-one error: returning result[k] instead of result[k-1]",
+    "In binary search approach, not handling when kth element doesn't exist in arrays",
+    "Heap comparison on entire tuple instead of just value"
+  ],
+  "hints": [
+    "Think about merge k sorted lists - similar pattern!",
+    "Min heap can track the smallest unprocessed element efficiently",
+    "Store (value, arrayIndex, elementIndex) in heap for tracking",
+    "Only need to extract k elements, not process all N",
+    "Binary search on answer: count elements ≤ mid, check if count ≥ k"
+  ],
+  "followUp": [
+    "What if arrays have different lengths? (Same approach works)",
+    "Find median of M sorted arrays? (Use kth smallest with k = total/2)",
+    "What if some arrays are empty? (Check before adding to heap)",
+    "Can we optimize space further? (Binary search approach uses O(1) space)",
+    "What if M is very large (millions)? (Binary search approach scales better)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Bloomberg"],
+  "tags": ["heap", "priority-queue", "merge-k-sorted", "binary-search"],
+  "relatedProblems": [
+    "Merge K Sorted Lists",
+    "Kth Smallest Element in Sorted Matrix",
+    "Find K Pairs with Smallest Sums",
+    "Smallest Range Covering Elements from K Lists",
+    "Kth Largest Element"
+  ]
+}

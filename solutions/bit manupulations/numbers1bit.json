@@ -1,0 +1,176 @@
+{
+  "questionId": "LC-191",
+  "questionSlug": "number-of-1-bits",
+  "title": "Number of 1 Bits",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/number-of-1-bits/",
+    "videos": [
+      {
+        "title": "Number of 1 Bits - Bit Manipulation",
+        "url": "https://www.youtube.com/watch?v=5Km3utixwZs",
+        "channel": "NeetCode",
+        "duration": "5:30",
+        "language": "English"
+      },
+      {
+        "title": "Count Set Bits | Hamming Weight",
+        "url": "https://www.youtube.com/watch?v=g6OxU-hRGtY",
+        "channel": "take U forward",
+        "duration": "12:15",
+        "language": "English"
+      },
+      {
+        "title": "Number of 1 Bits Solution",
+        "url": "https://www.youtube.com/watch?v=zKj3aqNoy0E",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Number of 1 Bits - LeetCode Official",
+        "url": "https://leetcode.com/problems/number-of-1-bits/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Count set bits in an integer",
+        "url": "https://www.geeksforgeeks.org/count-set-bits-in-an-integer/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Brian Kernighan's Algorithm",
+        "url": "https://takeuforward.org/interviews/strivers-sde-sheet-top-coding-interview-problems/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/number-of-1-bits/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/set-bits0143/1",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Count set bits? Use Brian Kernighan's n & (n-1) to remove rightmost 1 bit each iteration!",
+  "approaches": [
+    {
+      "name": "Check Each Bit - Brute Force",
+      "order": 1,
+      "intuition": "Check all 32 bits one by one using right shift and AND with 1.",
+      "approach": "Iterate through all bits, check if each bit is set using (n >> i) & 1.",
+      "steps": [
+        "count = 0",
+        "For i from 0 to 31:",
+        "  If (n >> i) & 1 == 1:",
+        "    count++",
+        "Return count",
+        "Checks all 32 bits even if only few are set"
+      ],
+      "complexity": {
+        "time": "O(32) = O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Always check 32 bits for 32-bit integer",
+        "spaceExplanation": "Only count variable used"
+      },
+      "code": {
+        "cpp": "int hammingWeight(uint32_t n) {\n    int count = 0;\n    \n    // Check all 32 bits\n    for (int i = 0; i < 32; i++) {\n        // Check if i-th bit is set\n        if ((n >> i) & 1) {\n            count++;\n        }\n    }\n    \n    return count;\n}\n\n// Alternative: shift n instead of using i\n// while (n) {\n//     count += n & 1;\n//     n >>= 1;\n// }",
+        "java": "public int hammingWeight(int n) {\n    int count = 0;\n    \n    for (int i = 0; i < 32; i++) {\n        if (((n >> i) & 1) == 1) {\n            count++;\n        }\n    }\n    \n    return count;\n}",
+        "python": "def hammingWeight(n: int) -> int:\n    count = 0\n    \n    # Check all 32 bits\n    for i in range(32):\n        # Check if i-th bit is set\n        if (n >> i) & 1:\n            count += 1\n    \n    return count\n\n# Python built-in:\n# return bin(n).count('1')",
+        "javascript": "var hammingWeight = function(n) {\n    let count = 0;\n    \n    for (let i = 0; i < 32; i++) {\n        if ((n >> i) & 1) {\n            count++;\n        }\n    }\n    \n    return count;\n};"
+      }
+    },
+    {
+      "name": "Shift and Count - Better",
+      "order": 2,
+      "intuition": "Keep right-shifting n and counting set bits. Stop when n becomes 0.",
+      "approach": "Repeatedly check LSB using n & 1, then right shift n until n becomes 0.",
+      "steps": [
+        "count = 0",
+        "While n > 0:",
+        "  If n & 1 == 1:",
+        "    count++",
+        "  n >>= 1  (right shift)",
+        "Return count",
+        "Stops early if leading zeros"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Loops for number of bits in n, stops when n=0",
+        "spaceExplanation": "Only count variable"
+      },
+      "code": {
+        "cpp": "int hammingWeight(uint32_t n) {\n    int count = 0;\n    \n    while (n > 0) {\n        count += n & 1;  // Add 1 if LSB is set\n        n >>= 1;         // Right shift\n    }\n    \n    return count;\n}\n\n// Example: n = 11 (1011)\n// Iteration 1: 1011 & 1 = 1, count=1, n=101\n// Iteration 2: 101 & 1 = 1, count=2, n=10\n// Iteration 3: 10 & 1 = 0, count=2, n=1\n// Iteration 4: 1 & 1 = 1, count=3, n=0",
+        "java": "public int hammingWeight(int n) {\n    int count = 0;\n    \n    while (n != 0) {\n        count += n & 1;\n        n >>>= 1;  // Unsigned right shift\n    }\n    \n    return count;\n}",
+        "python": "def hammingWeight(n: int) -> int:\n    count = 0\n    \n    while n > 0:\n        count += n & 1  # Add 1 if LSB is set\n        n >>= 1         # Right shift\n    \n    return count",
+        "javascript": "var hammingWeight = function(n) {\n    let count = 0;\n    \n    while (n !== 0) {\n        count += n & 1;\n        n >>>= 1;  // Unsigned right shift\n    }\n    \n    return count;\n};"
+      }
+    },
+    {
+      "name": "Brian Kernighan's Algorithm - Optimal",
+      "order": 3,
+      "intuition": "n & (n-1) removes the rightmost set bit! Count how many times we can do this until n becomes 0. Runs only k times where k = number of set bits.",
+      "approach": "Use bit trick: n & (n-1) clears rightmost 1 bit each time.",
+      "steps": [
+        "count = 0",
+        "While n > 0:",
+        "  n = n & (n-1)  // Remove rightmost 1",
+        "  count++",
+        "Return count",
+        "Magic: n & (n-1) flips rightmost 1 to 0",
+        "Example: 12 (1100) & 11 (1011) = 8 (1000)",
+        "Only loops k times for k set bits!"
+      ],
+      "complexity": {
+        "time": "O(k) where k = number of set bits",
+        "space": "O(1)",
+        "timeExplanation": "Only loops for each set bit, not all bits",
+        "spaceExplanation": "Only count variable"
+      },
+      "code": {
+        "cpp": "int hammingWeight(uint32_t n) {\n    int count = 0;\n    \n    while (n > 0) {\n        n &= (n - 1);  // Remove rightmost 1 bit\n        count++;\n    }\n    \n    return count;\n}\n\n// Why n & (n-1) removes rightmost 1?\n// n   = ...1000  (rightmost 1 at position i)\n// n-1 = ...0111  (borrows from position i, flips everything after)\n// n & (n-1) = ...0000 (clears rightmost 1 and all bits after)\n//\n// Example: n = 12 (1100)\n// Iteration 1: 1100 & 1011 = 1000, count=1\n// Iteration 2: 1000 & 0111 = 0000, count=2\n// Result: 2 set bits",
+        "java": "public int hammingWeight(int n) {\n    int count = 0;\n    \n    while (n != 0) {\n        n &= (n - 1);  // Brian Kernighan's trick\n        count++;\n    }\n    \n    return count;\n}",
+        "python": "def hammingWeight(n: int) -> int:\n    count = 0\n    \n    while n > 0:\n        n &= (n - 1)  # Remove rightmost set bit\n        count += 1\n    \n    return count\n\n# Example trace: n = 11 (1011)\n# Iteration 1: 1011 & 1010 = 1010, count=1\n# Iteration 2: 1010 & 1001 = 1000, count=2  \n# Iteration 3: 1000 & 0111 = 0000, count=3\n# Result: 3",
+        "javascript": "var hammingWeight = function(n) {\n    let count = 0;\n    \n    while (n !== 0) {\n        n &= (n - 1);  // Clear rightmost 1 bit\n        count++;\n    }\n    \n    return count;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not using unsigned right shift (>>>) in Java/JavaScript for negative numbers",
+    "Not understanding why n & (n-1) removes rightmost set bit",
+    "Using signed right shift (>>) instead of unsigned (>>>) which can cause infinite loops with negative numbers",
+    "Checking all 32 bits when Brian Kernighan's is more efficient",
+    "Forgetting edge case: n = 0 (should return 0)"
+  ],
+  "hints": [
+    "What happens when you subtract 1 from a number? Rightmost 1 becomes 0, all 0s after it become 1s",
+    "n & (n-1) clears the rightmost set bit",
+    "Brian Kernighan's algorithm only loops for each set bit",
+    "For n=12 (1100): 12 & 11 = 1100 & 1011 = 1000",
+    "Built-in functions: __builtin_popcount() in C++, Integer.bitCount() in Java"
+  ],
+  "followUp": [
+    "How to count set bits in range [L, R]? (XOR properties or DP)",
+    "What if we need to count set bits for many numbers? (Precompute for 0-255, use lookup)",
+    "How many numbers from 0 to n have k set bits? (Combinatorics)",
+    "Find position of rightmost set bit? (n & -n or n & ~(n-1))",
+    "Count total set bits from 1 to n? (DP or pattern recognition)"
+  ],
+  "companies": ["Microsoft", "Amazon", "Google", "Facebook", "Apple", "Adobe", "Bloomberg"],
+  "tags": ["bit-manipulation", "brian-kernighan", "hamming-weight"],
+  "relatedProblems": [
+    "Reverse Bits",
+    "Power of Two",
+    "Counting Bits",
+    "Binary Watch",
+    "Hamming Distance",
+    "Total Hamming Distance"
+  ]
+}

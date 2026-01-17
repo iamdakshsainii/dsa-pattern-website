@@ -1,0 +1,171 @@
+{
+  "questionId": "342",
+  "questionSlug": "power-of-four",
+  "title": "Check if Power of Four",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/power-of-four/",
+    "videos": [
+      {
+        "title": "Power of Four - Bit Manipulation",
+        "url": "https://www.youtube.com/watch?v=TlNKBFiFgV0",
+        "channel": "NeetCode",
+        "duration": "6:15",
+        "language": "English"
+      },
+      {
+        "title": "Check Power of Four - Complete Guide",
+        "url": "https://www.youtube.com/watch?v=2yCBcNANWNE",
+        "channel": "take U forward",
+        "duration": "11:20",
+        "language": "English"
+      },
+      {
+        "title": "Power of Four LeetCode",
+        "url": "https://www.youtube.com/watch?v=NfkB-QcqTns",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "7:40",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Power of Four - LeetCode Official",
+        "url": "https://leetcode.com/problems/power-of-four/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Check if number is power of 4",
+        "url": "https://www.geeksforgeeks.org/check-if-a-number-is-a-power-of-4/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Power of Four using Bit Manipulation",
+        "url": "https://takeuforward.org/bit-manipulation/check-if-number-is-power-of-4/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/power-of-four/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/power-of-4/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Power of 4? Must be power of 2 AND set bit at even position. Use n & (n-1) == 0 && n % 3 == 1.",
+  "approaches": [
+    {
+      "name": "Repeated Division by 4 - Brute Force",
+      "order": 1,
+      "intuition": "If n is power of 4, we can keep dividing by 4 until we reach 1. Any remainder means not power of 4.",
+      "approach": "Divide by 4 repeatedly, check remainders.",
+      "steps": [
+        "If n <= 0: return false",
+        "While n > 1:",
+        "  If n % 4 != 0: return false (not divisible by 4)",
+        "  n = n / 4",
+        "Return true (reached 1)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Divide by 4 repeatedly, log₄(n) divisions",
+        "spaceExplanation": "Only variable n"
+      },
+      "code": {
+        "cpp": "bool isPowerOfFour(int n) {\n    if (n <= 0) return false;\n    while (n > 1) {\n        if (n % 4 != 0) return false;\n        n /= 4;\n    }\n    return true;\n}",
+        "java": "public boolean isPowerOfFour(int n) {\n    if (n <= 0) return false;\n    while (n > 1) {\n        if (n % 4 != 0) return false;\n        n /= 4;\n    }\n    return true;\n}",
+        "python": "def isPowerOfFour(n):\n    if n <= 0:\n        return False\n    while n > 1:\n        if n % 4 != 0:\n            return False\n        n //= 4\n    return True",
+        "javascript": "function isPowerOfFour(n) {\n    if (n <= 0) return false;\n    while (n > 1) {\n        if (n % 4 !== 0) return false;\n        n = Math.floor(n / 4);\n    }\n    return true;\n}"
+      }
+    },
+    {
+      "name": "Power of 2 + Check Bit Position",
+      "order": 2,
+      "intuition": "Power of 4 must be power of 2 AND have set bit at even position (0, 2, 4, ...). Check both conditions.",
+      "approach": "First check power of 2, then verify bit position.",
+      "steps": [
+        "If n <= 0: return false",
+        "Check if power of 2: n & (n-1) == 0",
+        "Count trailing zeros (bit position)",
+        "If count is even, it's power of 4",
+        "Powers of 4: 1(bit 0), 4(bit 2), 16(bit 4), 64(bit 6)"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Count trailing zeros, at most log(n) iterations",
+        "spaceExplanation": "Only count variable"
+      },
+      "code": {
+        "cpp": "bool isPowerOfFour(int n) {\n    if (n <= 0) return false;\n    // Check if power of 2\n    if ((n & (n - 1)) != 0) return false;\n    \n    // Count trailing zeros (bit position)\n    int count = 0;\n    while ((n & 1) == 0) {\n        count++;\n        n >>= 1;\n    }\n    // Bit position must be even\n    return count % 2 == 0;\n}",
+        "java": "public boolean isPowerOfFour(int n) {\n    if (n <= 0) return false;\n    // Check if power of 2\n    if ((n & (n - 1)) != 0) return false;\n    \n    // Count trailing zeros\n    int count = 0;\n    while ((n & 1) == 0) {\n        count++;\n        n >>= 1;\n    }\n    return count % 2 == 0;\n}",
+        "python": "def isPowerOfFour(n):\n    if n <= 0:\n        return False\n    # Check if power of 2\n    if (n & (n - 1)) != 0:\n        return False\n    \n    # Count trailing zeros\n    count = 0\n    while (n & 1) == 0:\n        count += 1\n        n >>= 1\n    return count % 2 == 0",
+        "javascript": "function isPowerOfFour(n) {\n    if (n <= 0) return false;\n    // Check if power of 2\n    if ((n & (n - 1)) !== 0) return false;\n    \n    // Count trailing zeros\n    let count = 0;\n    while ((n & 1) === 0) {\n        count++;\n        n >>= 1;\n    }\n    return count % 2 === 0;\n}"
+      }
+    },
+    {
+      "name": "Optimal Bit Manipulation (n % 3 == 1)",
+      "order": 3,
+      "intuition": "Power of 4 is power of 2 AND when divided by 3, remainder is 1. This is because 4^k ≡ 1 (mod 3) always.",
+      "approach": "Check power of 2, then check n % 3 == 1.",
+      "steps": [
+        "Check n > 0",
+        "Check n & (n-1) == 0 (power of 2)",
+        "Check n % 3 == 1",
+        "Mathematical proof:",
+        "  4 ≡ 1 (mod 3), so 4^k ≡ 1^k ≡ 1 (mod 3)",
+        "  Powers of 2 that are NOT powers of 4 give remainder 2",
+        "  2 ≡ 2 (mod 3), 8 ≡ 2 (mod 3), 32 ≡ 2 (mod 3)"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Three constant-time operations",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "bool isPowerOfFour(int n) {\n    // Three conditions:\n    // 1. n > 0\n    // 2. n is power of 2: n & (n-1) == 0\n    // 3. n % 3 == 1 (math property of powers of 4)\n    return n > 0 && (n & (n - 1)) == 0 && n % 3 == 1;\n}\n\n// Why n % 3 == 1?\n// 4^0 = 1 % 3 = 1 ✓\n// 4^1 = 4 % 3 = 1 ✓\n// 4^2 = 16 % 3 = 1 ✓\n// But 2^1 = 2 % 3 = 2 ✗\n// 2^3 = 8 % 3 = 2 ✗",
+        "java": "public boolean isPowerOfFour(int n) {\n    // Power of 4 properties:\n    // 1. Must be positive\n    // 2. Must be power of 2 (one set bit)\n    // 3. When divided by 3, remainder is 1\n    return n > 0 && (n & (n - 1)) == 0 && n % 3 == 1;\n}\n\n// Mathematical insight:\n// 4 ≡ 1 (mod 3)\n// So 4^k ≡ 1^k ≡ 1 (mod 3) for all k ≥ 0\n// But 2^(2k+1) ≡ 2 (mod 3)",
+        "python": "def isPowerOfFour(n):\n    # Three checks:\n    # 1. n > 0 (positive)\n    # 2. n & (n-1) == 0 (power of 2)\n    # 3. n % 3 == 1 (distinguishes power of 4)\n    return n > 0 and (n & (n - 1)) == 0 and n % 3 == 1\n\n# Examples:\n# 1: 1 % 3 = 1 ✓ (4^0)\n# 4: 4 % 3 = 1 ✓ (4^1)\n# 16: 16 % 3 = 1 ✓ (4^2)\n# 2: 2 % 3 = 2 ✗ (2^1, not 4^k)\n# 8: 8 % 3 = 2 ✗ (2^3, not 4^k)",
+        "javascript": "function isPowerOfFour(n) {\n    // Optimal O(1) solution:\n    // 1. n > 0 (positive number)\n    // 2. n & (n-1) === 0 (power of 2)\n    // 3. n % 3 === 1 (power of 4 property)\n    return n > 0 && (n & (n - 1)) === 0 && n % 3 === 1;\n}\n\n// Why this works:\n// Powers of 4: 1, 4, 16, 64, 256...\n// 1%3=1, 4%3=1, 16%3=1, 64%3=1 ✓\n// Powers of 2 (not 4): 2, 8, 32, 128...\n// 2%3=2, 8%3=2, 32%3=2 ✗"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Only checking power of 2 (2, 8, 32 are power of 2 but NOT power of 4)",
+    "Not understanding why n % 3 == 1 works",
+    "Forgetting n > 0 check",
+    "Confusing with power of 2 condition",
+    "Not handling edge cases like n = 1 (which is 4^0)"
+  ],
+  "hints": [
+    "Power of 4 is also power of 2, but not all powers of 2 are powers of 4",
+    "Powers of 4: 1, 4, 16, 64, 256 (binary: 1, 100, 10000, 1000000)",
+    "Set bit is always at even position (0, 2, 4, 6, ...)",
+    "Mathematical property: 4^k ≡ 1 (mod 3) for all k ≥ 0",
+    "Combine: n & (n-1) == 0 AND n % 3 == 1"
+  ],
+  "followUp": [
+    "Check if power of 3? (Keep dividing by 3, or use log)",
+    "Check if power of any k? (Generalize the approach)",
+    "Can you avoid modulo operation? (Use bit mask 0x55555555)",
+    "Find next power of 4 greater than n?",
+    "Count powers of 4 in range [L, R]?"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple", "Bloomberg"],
+  "tags": ["bit-manipulation", "math"],
+  "relatedProblems": [
+    "Power of Two",
+    "Power of Three",
+    "Number of 1 Bits",
+    "Count Set Bits",
+    "Binary Number with Alternating Bits"
+  ]
+}

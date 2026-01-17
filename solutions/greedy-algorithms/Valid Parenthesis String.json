@@ -1,0 +1,162 @@
+{
+  "questionId": "LC-678",
+  "questionSlug": "valid-parenthesis-string",
+  "title": "Valid Parenthesis String",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/valid-parenthesis-string/",
+    "videos": [
+      {
+        "title": "Valid Parenthesis String - Greedy Two Pass",
+        "url": "https://www.youtube.com/watch?v=KuE_Cn3xhxI",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "Valid Parenthesis String Explained",
+        "url": "https://www.youtube.com/watch?v=cHT6sG_hUZI",
+        "channel": "takeUforward",
+        "duration": "12:40",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Valid Parenthesis String - Official Solution",
+        "url": "https://leetcode.com/problems/valid-parenthesis-string/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Valid Parenthesis String - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/check-valid-parenthesis-string/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/valid-parenthesis-string/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Parenthesis with wildcards? Track min/max possible open brackets or use two-pass greedy!",
+  "approaches": [
+    {
+      "name": "Greedy Two Pass (Optimal)",
+      "order": 1,
+      "intuition": "Check left-to-right treating * as ), then right-to-left treating * as (. Both must balance.",
+      "approach": "First pass: ensure no unmatched ). Second pass: ensure no unmatched (. Both passes must succeed.",
+      "steps": [
+        "Left-to-right pass (check for unmatched )):",
+        "  balance = 0",
+        "  For each char:",
+        "    If '(' or '*': balance++",
+        "    Else ')': balance--",
+        "    If balance < 0: return false (unmatched ))",
+        "Right-to-left pass (check for unmatched ():",
+        "  balance = 0",
+        "  For each char (reversed):",
+        "    If ')' or '*': balance++",
+        "    Else '(': balance--",
+        "    If balance < 0: return false (unmatched ()",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through string",
+        "spaceExplanation": "Constant space"
+      },
+      "code": {
+        "cpp": "bool checkValidString(string s) {\n    int balance = 0;\n    \n    // Left to right: check no unmatched ')'\n    for (char c : s) {\n        if (c == '(' || c == '*') {\n            balance++;\n        } else {\n            balance--;\n        }\n        if (balance < 0) return false;\n    }\n    \n    balance = 0;\n    \n    // Right to left: check no unmatched '('\n    for (int i = s.length() - 1; i >= 0; i--) {\n        if (s[i] == ')' || s[i] == '*') {\n            balance++;\n        } else {\n            balance--;\n        }\n        if (balance < 0) return false;\n    }\n    \n    return true;\n}\n\n// Example: s = \"(*)\"\n// L->R: balance: 1,2,1 → valid\n// R->L: balance: 1,2,1 → valid\n// Return true\n\n// Example: s = \")(\"\n// L->R: balance: -1 → return false",
+        "java": "public boolean checkValidString(String s) {\n    int balance = 0;\n    \n    for (char c : s.toCharArray()) {\n        if (c == '(' || c == '*') {\n            balance++;\n        } else {\n            balance--;\n        }\n        if (balance < 0) return false;\n    }\n    \n    balance = 0;\n    \n    for (int i = s.length() - 1; i >= 0; i--) {\n        if (s.charAt(i) == ')' || s.charAt(i) == '*') {\n            balance++;\n        } else {\n            balance--;\n        }\n        if (balance < 0) return false;\n    }\n    \n    return true;\n}",
+        "python": "def checkValidString(s: str) -> bool:\n    balance = 0\n    \n    # Left to right\n    for c in s:\n        if c in '(*':\n            balance += 1\n        else:\n            balance -= 1\n        if balance < 0:\n            return False\n    \n    balance = 0\n    \n    # Right to left\n    for c in reversed(s):\n        if c in ')*':\n            balance += 1\n        else:\n            balance -= 1\n        if balance < 0:\n            return False\n    \n    return True",
+        "javascript": "var checkValidString = function(s) {\n    let balance = 0;\n    \n    for (const c of s) {\n        if (c === '(' || c === '*') {\n            balance++;\n        } else {\n            balance--;\n        }\n        if (balance < 0) return false;\n    }\n    \n    balance = 0;\n    \n    for (let i = s.length - 1; i >= 0; i--) {\n        if (s[i] === ')' || s[i] === '*') {\n            balance++;\n        } else {\n            balance--;\n        }\n        if (balance < 0) return false;\n    }\n    \n    return true;\n};"
+      }
+    },
+    {
+      "name": "Greedy with Min/Max Range",
+      "order": 2,
+      "intuition": "Track range of possible open brackets count. Min = treat * as ), max = treat * as (. Range must stay valid.",
+      "approach": "Maintain [min, max] range of possible open bracket counts. Update based on each character.",
+      "steps": [
+        "Initialize min=0, max=0",
+        "For each char:",
+        "  If '(': min++, max++",
+        "  Else if ')': min--, max--",
+        "  Else '*': min--, max++ (can be ), empty, or ()",
+        "  If max < 0: return false (too many ))",
+        "  If min < 0: min = 0 (allow * as empty)",
+        "Return min == 0 (can have 0 open brackets)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass",
+        "spaceExplanation": "Two variables"
+      },
+      "code": {
+        "cpp": "bool checkValidString(string s) {\n    int minOpen = 0, maxOpen = 0;\n    \n    for (char c : s) {\n        if (c == '(') {\n            minOpen++;\n            maxOpen++;\n        } else if (c == ')') {\n            minOpen--;\n            maxOpen--;\n        } else { // '*'\n            minOpen--;  // Treat as ')' for min\n            maxOpen++;  // Treat as '(' for max\n        }\n        \n        if (maxOpen < 0) return false;  // Too many ')'\n        if (minOpen < 0) minOpen = 0;   // Can use '*' as empty\n    }\n    \n    return minOpen == 0;\n}\n\n// Example: s = \"(*)\"\n// c='(': min=1, max=1\n// c='*': min=0, max=2\n// c=')': min=-1→0, max=1\n// Return min==0 → true",
+        "java": "public boolean checkValidString(String s) {\n    int minOpen = 0, maxOpen = 0;\n    \n    for (char c : s.toCharArray()) {\n        if (c == '(') {\n            minOpen++;\n            maxOpen++;\n        } else if (c == ')') {\n            minOpen--;\n            maxOpen--;\n        } else {\n            minOpen--;\n            maxOpen++;\n        }\n        \n        if (maxOpen < 0) return false;\n        if (minOpen < 0) minOpen = 0;\n    }\n    \n    return minOpen == 0;\n}",
+        "python": "def checkValidString(s: str) -> bool:\n    min_open = 0\n    max_open = 0\n    \n    for c in s:\n        if c == '(':\n            min_open += 1\n            max_open += 1\n        elif c == ')':\n            min_open -= 1\n            max_open -= 1\n        else:  # '*'\n            min_open -= 1\n            max_open += 1\n        \n        if max_open < 0:\n            return False\n        if min_open < 0:\n            min_open = 0\n    \n    return min_open == 0",
+        "javascript": "var checkValidString = function(s) {\n    let minOpen = 0, maxOpen = 0;\n    \n    for (const c of s) {\n        if (c === '(') {\n            minOpen++;\n            maxOpen++;\n        } else if (c === ')') {\n            minOpen--;\n            maxOpen--;\n        } else {\n            minOpen--;\n            maxOpen++;\n        }\n        \n        if (maxOpen < 0) return false;\n        if (minOpen < 0) minOpen = 0;\n    }\n    \n    return minOpen === 0;\n};"
+      }
+    },
+    {
+      "name": "Dynamic Programming",
+      "order": 3,
+      "intuition": "DP to check if substring [i, j] is valid. Try all possible * interpretations.",
+      "approach": "Bottom-up DP checking all substrings.",
+      "steps": [
+        "dp[i][j] = true if s[i...j] is valid",
+        "Base: dp[i][i] = (s[i] == '*')",
+        "Recurrence: try matching i with j, or split at k",
+        "Return dp[0][n-1]"
+      ],
+      "complexity": {
+        "time": "O(n³)",
+        "space": "O(n²)",
+        "timeExplanation": "Three nested loops",
+        "spaceExplanation": "2D DP table"
+      },
+      "code": {
+        "cpp": "bool checkValidString(string s) {\n    int n = s.length();\n    vector<vector<bool>> dp(n, vector<bool>(n, false));\n    \n    for (int i = 0; i < n; i++) {\n        if (s[i] == '*') dp[i][i] = true;\n    }\n    \n    for (int len = 2; len <= n; len++) {\n        for (int i = 0; i <= n - len; i++) {\n            int j = i + len - 1;\n            \n            if ((s[i] == '(' || s[i] == '*') && (s[j] == ')' || s[j] == '*')) {\n                if (len == 2 || dp[i+1][j-1]) {\n                    dp[i][j] = true;\n                    continue;\n                }\n            }\n            \n            for (int k = i; k < j; k++) {\n                if (dp[i][k] && dp[k+1][j]) {\n                    dp[i][j] = true;\n                    break;\n                }\n            }\n        }\n    }\n    \n    return dp[0][n-1];\n}",
+        "java": "public boolean checkValidString(String s) {\n    int n = s.length();\n    boolean[][] dp = new boolean[n][n];\n    \n    for (int i = 0; i < n; i++) {\n        if (s.charAt(i) == '*') dp[i][i] = true;\n    }\n    \n    for (int len = 2; len <= n; len++) {\n        for (int i = 0; i <= n - len; i++) {\n            int j = i + len - 1;\n            \n            if ((s.charAt(i) == '(' || s.charAt(i) == '*') && \n                (s.charAt(j) == ')' || s.charAt(j) == '*')) {\n                if (len == 2 || dp[i+1][j-1]) {\n                    dp[i][j] = true;\n                    continue;\n                }\n            }\n            \n            for (int k = i; k < j; k++) {\n                if (dp[i][k] && dp[k+1][j]) {\n                    dp[i][j] = true;\n                    break;\n                }\n            }\n        }\n    }\n    \n    return dp[0][n-1];\n}",
+        "python": "def checkValidString(s: str) -> bool:\n    n = len(s)\n    dp = [[False] * n for _ in range(n)]\n    \n    for i in range(n):\n        if s[i] == '*':\n            dp[i][i] = True\n    \n    for length in range(2, n + 1):\n        for i in range(n - length + 1):\n            j = i + length - 1\n            \n            if (s[i] in '(*') and (s[j] in ')*'):\n                if length == 2 or dp[i+1][j-1]:\n                    dp[i][j] = True\n                    continue\n            \n            for k in range(i, j):\n                if dp[i][k] and dp[k+1][j]:\n                    dp[i][j] = True\n                    break\n    \n    return dp[0][n-1]",
+        "javascript": "var checkValidString = function(s) {\n    const n = s.length;\n    const dp = Array(n).fill(null).map(() => Array(n).fill(false));\n    \n    for (let i = 0; i < n; i++) {\n        if (s[i] === '*') dp[i][i] = true;\n    }\n    \n    for (let len = 2; len <= n; len++) {\n        for (let i = 0; i <= n - len; i++) {\n            const j = i + len - 1;\n            \n            if ((s[i] === '(' || s[i] === '*') && (s[j] === ')' || s[j] === '*')) {\n                if (len === 2 || dp[i+1][j-1]) {\n                    dp[i][j] = true;\n                    continue;\n                }\n            }\n            \n            for (let k = i; k < j; k++) {\n                if (dp[i][k] && dp[k+1][j]) {\n                    dp[i][j] = true;\n                    break;\n                }\n            }\n        }\n    }\n    \n    return dp[0][n-1];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Only checking one direction (need both left-to-right and right-to-left)",
+    "In min/max approach: not resetting min to 0 when negative",
+    "Treating * only as ( or only as ) (it can be empty too)",
+    "Not checking maxOpen < 0 (allows too many ))",
+    "Confusing min==0 with max==0 at end (need min==0)",
+    "Forgetting edge case: empty string (valid)"
+  ],
+  "hints": [
+    "* can be (, ), or empty - need to handle all cases",
+    "Two-pass greedy: first check for ), second check for (",
+    "Min/max range: track possible open bracket counts",
+    "maxOpen < 0 means too many ) at this point",
+    "minOpen < 0 is okay (can use * as empty)",
+    "Final check: minOpen == 0 (can balance all brackets)"
+  ],
+  "followUp": [
+    "Multiple types of brackets with wildcards? (More complex state tracking)",
+    "Return one valid interpretation of *? (Backtracking needed)",
+    "Count valid interpretations? (DP with counting)",
+    "Online validation (streaming)? (Need different approach)",
+    "Maximum nesting depth? (Track depth separately)"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Microsoft"],
+  "tags": ["greedy", "string", "stack", "dynamic-programming"],
+  "relatedProblems": [
+    "Valid Parentheses",
+    "Longest Valid Parentheses",
+    "Remove Invalid Parentheses"
+  ]
+}

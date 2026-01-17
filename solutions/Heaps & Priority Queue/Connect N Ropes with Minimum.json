@@ -1,0 +1,168 @@
+{
+  "questionId": "GFG-CONNECT-ROPES",
+  "questionSlug": "minimum-cost-of-ropes",
+  "title": "Connect N Ropes with Minimum Cost",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/minimum-cost-to-connect-sticks/",
+    "videos": [
+      {
+        "title": "Minimum Cost to Connect Ropes/Sticks",
+        "url": "https://www.youtube.com/watch?v=_k_c9lqKzNc",
+        "channel": "take U forward",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Connect Ropes Min Cost - Greedy + Heap",
+        "url": "https://www.youtube.com/watch?v=HHd3pwWXCk4",
+        "channel": "Nick White",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Connect n Ropes with Minimum Cost",
+        "url": "https://www.geeksforgeeks.org/connect-n-ropes-minimum-cost/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Minimum Cost to Connect Sticks - Official",
+        "url": "https://leetcode.com/problems/minimum-cost-to-connect-sticks/solution/",
+        "source": "LeetCode"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/minimum-cost-of-ropes/1",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/minimum-cost-to-connect-sticks/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Minimize cost by combining smallest first? Use min heap for greedy approach!",
+  "approaches": [
+    {
+      "name": "Brute Force - Try All Combinations",
+      "order": 1,
+      "intuition": "Try all possible ways to connect ropes, track minimum cost. Exponential!",
+      "approach": "Recursively try connecting every pair of ropes.",
+      "steps": [
+        "Base case: 1 rope left → cost = 0",
+        "Try connecting every pair (i, j):",
+        "  New rope = ropes[i] + ropes[j]",
+        "  Cost = new rope length",
+        "  Remove i and j, add new rope",
+        "  Recurse with remaining ropes",
+        "  Track minimum total cost",
+        "Exponential time - not practical!"
+      ],
+      "complexity": {
+        "time": "O(n! * n)",
+        "space": "O(n)",
+        "timeExplanation": "Try all permutations of connections",
+        "spaceExplanation": "Recursion stack depth O(n)"
+      },
+      "code": {
+        "cpp": "// Not recommended - just for understanding\nint connectRopesRecursive(vector<int> ropes) {\n    if (ropes.size() == 1) return 0;\n    \n    int minCost = INT_MAX;\n    \n    // Try every pair\n    for (int i = 0; i < ropes.size(); i++) {\n        for (int j = i + 1; j < ropes.size(); j++) {\n            int newRope = ropes[i] + ropes[j];\n            int cost = newRope;\n            \n            vector<int> remaining;\n            for (int k = 0; k < ropes.size(); k++) {\n                if (k != i && k != j) {\n                    remaining.push_back(ropes[k]);\n                }\n            }\n            remaining.push_back(newRope);\n            \n            cost += connectRopesRecursive(remaining);\n            minCost = min(minCost, cost);\n        }\n    }\n    \n    return minCost;\n}\n\n// Example: ropes = [4,3,2,6]\n// Too slow for practical use!",
+        "java": "// Brute force - not recommended\npublic int connectRopes(List<Integer> ropes) {\n    if (ropes.size() == 1) return 0;\n    \n    int minCost = Integer.MAX_VALUE;\n    \n    for (int i = 0; i < ropes.size(); i++) {\n        for (int j = i + 1; j < ropes.size(); j++) {\n            int newRope = ropes.get(i) + ropes.get(j);\n            List<Integer> remaining = new ArrayList<>();\n            \n            for (int k = 0; k < ropes.size(); k++) {\n                if (k != i && k != j) {\n                    remaining.add(ropes.get(k));\n                }\n            }\n            remaining.add(newRope);\n            \n            int cost = newRope + connectRopes(remaining);\n            minCost = Math.min(minCost, cost);\n        }\n    }\n    \n    return minCost;\n}",
+        "python": "def connectRopes(ropes: List[int]) -> int:\n    if len(ropes) == 1:\n        return 0\n    \n    min_cost = float('inf')\n    \n    for i in range(len(ropes)):\n        for j in range(i + 1, len(ropes)):\n            new_rope = ropes[i] + ropes[j]\n            remaining = [ropes[k] for k in range(len(ropes)) if k != i and k != j]\n            remaining.append(new_rope)\n            \n            cost = new_rope + connectRopes(remaining)\n            min_cost = min(min_cost, cost)\n    \n    return min_cost\n\n# Too slow for large inputs!",
+        "javascript": "var connectRopes = function(ropes) {\n    if (ropes.length === 1) return 0;\n    \n    let minCost = Infinity;\n    \n    for (let i = 0; i < ropes.length; i++) {\n        for (let j = i + 1; j < ropes.length; j++) {\n            const newRope = ropes[i] + ropes[j];\n            const remaining = ropes.filter((_, k) => k !== i && k !== j);\n            remaining.push(newRope);\n            \n            const cost = newRope + connectRopes(remaining);\n            minCost = Math.min(minCost, cost);\n        }\n    }\n    \n    return minCost;\n};"
+      }
+    },
+    {
+      "name": "Sorting (Greedy) - Better",
+      "order": 2,
+      "intuition": "Greedy: always connect two smallest ropes first! Sort after each connection.",
+      "approach": "Sort, connect two smallest, add result back, repeat.",
+      "steps": [
+        "Sort ropes array",
+        "While more than 1 rope:",
+        "  Take two smallest ropes (first two)",
+        "  Connect them: newRope = rope1 + rope2",
+        "  Add cost: totalCost += newRope",
+        "  Add newRope back to array",
+        "  Re-sort array",
+        "Return total cost",
+        "Correct but slow due to repeated sorting!"
+      ],
+      "complexity": {
+        "time": "O(n² log n)",
+        "space": "O(1)",
+        "timeExplanation": "n-1 iterations, each with O(n log n) sort",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "int connectRopes(vector<int>& ropes) {\n    int totalCost = 0;\n    \n    while (ropes.size() > 1) {\n        // Sort to get two smallest\n        sort(ropes.begin(), ropes.end());\n        \n        // Connect two smallest\n        int first = ropes[0];\n        int second = ropes[1];\n        int newRope = first + second;\n        \n        totalCost += newRope;\n        \n        // Remove first two, add new rope\n        ropes.erase(ropes.begin(), ropes.begin() + 2);\n        ropes.push_back(newRope);\n    }\n    \n    return totalCost;\n}\n\n// Example: ropes = [4,3,2,6]\n// Sort: [2,3,4,6]\n// Connect 2+3=5, cost=5, ropes=[4,5,6]\n// Connect 4+5=9, cost=5+9=14, ropes=[6,9]\n// Connect 6+9=15, cost=14+15=29",
+        "java": "public int connectRopes(int[] ropes) {\n    List<Integer> ropeList = new ArrayList<>();\n    for (int rope : ropes) {\n        ropeList.add(rope);\n    }\n    \n    int totalCost = 0;\n    \n    while (ropeList.size() > 1) {\n        Collections.sort(ropeList);\n        \n        int first = ropeList.remove(0);\n        int second = ropeList.remove(0);\n        int newRope = first + second;\n        \n        totalCost += newRope;\n        ropeList.add(newRope);\n    }\n    \n    return totalCost;\n}",
+        "python": "def connectRopes(ropes: List[int]) -> int:\n    total_cost = 0\n    \n    while len(ropes) > 1:\n        ropes.sort()\n        \n        first = ropes.pop(0)\n        second = ropes.pop(0)\n        new_rope = first + second\n        \n        total_cost += new_rope\n        ropes.append(new_rope)\n    \n    return total_cost",
+        "javascript": "var connectRopes = function(ropes) {\n    let totalCost = 0;\n    \n    while (ropes.length > 1) {\n        ropes.sort((a, b) => a - b);\n        \n        const first = ropes.shift();\n        const second = ropes.shift();\n        const newRope = first + second;\n        \n        totalCost += newRope;\n        ropes.push(newRope);\n    }\n    \n    return totalCost;\n};"
+      }
+    },
+    {
+      "name": "Min Heap (Priority Queue) - Optimal",
+      "order": 3,
+      "intuition": "Greedy with min heap! Always connect two smallest ropes in O(log n) time.",
+      "approach": "Use min heap to efficiently get and add smallest ropes.",
+      "steps": [
+        "Add all ropes to min heap",
+        "While heap has more than 1 rope:",
+        "  Extract two smallest ropes (2 x O(log n))",
+        "  Connect them: newRope = rope1 + rope2",
+        "  Add cost: totalCost += newRope",
+        "  Add newRope back to heap (O(log n))",
+        "Return total cost",
+        "Each iteration: 3 heap operations = O(log n)",
+        "Total: O(n log n) - optimal!"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Build heap O(n) + (n-1) iterations × 3 heap ops O(log n)",
+        "spaceExplanation": "Min heap stores all n ropes initially"
+      },
+      "code": {
+        "cpp": "int connectRopes(vector<int>& ropes) {\n    // Min heap\n    priority_queue<int, vector<int>, greater<int>> minHeap(ropes.begin(), ropes.end());\n    \n    int totalCost = 0;\n    \n    while (minHeap.size() > 1) {\n        // Extract two smallest\n        int first = minHeap.top();\n        minHeap.pop();\n        \n        int second = minHeap.top();\n        minHeap.pop();\n        \n        // Connect them\n        int newRope = first + second;\n        totalCost += newRope;\n        \n        // Add back to heap\n        minHeap.push(newRope);\n    }\n    \n    return totalCost;\n}\n\n// Example: ropes = [4,3,2,6]\n// Heap: [2,3,4,6]\n// Extract 2,3 → connect 5, cost=5, heap=[4,5,6]\n// Extract 4,5 → connect 9, cost=14, heap=[6,9]\n// Extract 6,9 → connect 15, cost=29, heap=[15]\n// Total cost: 29",
+        "java": "public int connectRopes(int[] ropes) {\n    PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n    \n    for (int rope : ropes) {\n        minHeap.offer(rope);\n    }\n    \n    int totalCost = 0;\n    \n    while (minHeap.size() > 1) {\n        int first = minHeap.poll();\n        int second = minHeap.poll();\n        \n        int newRope = first + second;\n        totalCost += newRope;\n        \n        minHeap.offer(newRope);\n    }\n    \n    return totalCost;\n}",
+        "python": "import heapq\n\ndef connectRopes(ropes: List[int]) -> int:\n    # Convert to min heap\n    heapq.heapify(ropes)\n    \n    total_cost = 0\n    \n    while len(ropes) > 1:\n        # Extract two smallest\n        first = heapq.heappop(ropes)\n        second = heapq.heappop(ropes)\n        \n        # Connect them\n        new_rope = first + second\n        total_cost += new_rope\n        \n        # Add back to heap\n        heapq.heappush(ropes, new_rope)\n    \n    return total_cost",
+        "javascript": "var connectRopes = function(ropes) {\n    const minHeap = new MinPriorityQueue();\n    \n    for (const rope of ropes) {\n        minHeap.enqueue(rope);\n    }\n    \n    let totalCost = 0;\n    \n    while (minHeap.size() > 1) {\n        const first = minHeap.dequeue().element;\n        const second = minHeap.dequeue().element;\n        \n        const newRope = first + second;\n        totalCost += newRope;\n        \n        minHeap.enqueue(newRope);\n    }\n    \n    return totalCost;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using max heap instead of min heap (wrong greedy choice)",
+    "Forgetting to add new rope back to heap/array",
+    "Not understanding why greedy (always pick smallest) works",
+    "Sorting entire array repeatedly instead of using heap",
+    "Counting cost incorrectly (should be sum of all connections)",
+    "Off-by-one in loop condition (should run n-1 times)"
+  ],
+  "hints": [
+    "Greedy approach: always connect two smallest ropes",
+    "Why greedy works: smaller ropes contribute to more connections",
+    "Min heap gives smallest two in O(log n) instead of O(n log n) sort",
+    "Each connection reduces rope count by 1 (n → n-1 → ... → 1)",
+    "Total connections = n-1, each adds its length to cost"
+  ],
+  "followUp": [
+    "What if ropes can't be broken? (Same approach works)",
+    "Can we do better than O(n log n)? (No, need ordered structure)",
+    "What if we want to maximize cost? (Use max heap, connect largest first)",
+    "Prove why greedy is optimal? (Huffman coding proof applies)",
+    "What if costs are different for different ropes? (Min heap with custom comparator)"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook"],
+  "tags": ["heap", "priority-queue", "greedy", "huffman-coding"],
+  "relatedProblems": [
+    "Huffman Encoding",
+    "Minimize Deviation in Array",
+    "Merge K Sorted Lists",
+    "Minimum Cost Tree From Leaf Values"
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "questionId": "LC-451",
+  "questionSlug": "sort-characters-by-frequency",
+  "title": "Sort Characters By Frequency",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/sort-characters-by-frequency/",
+    "videos": [
+      {
+        "title": "Sort Characters By Frequency",
+        "url": "https://www.youtube.com/watch?v=b-1t5kXPi6U",
+        "channel": "NeetCode",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Sort Characters by Frequency Explained",
+        "url": "https://www.youtube.com/watch?v=PGPCNYzXv5o",
+        "channel": "Nick White",
+        "duration": "7:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sort Characters By Frequency - Official",
+        "url": "https://leetcode.com/problems/sort-characters-by-frequency/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Sort Characters by Frequency",
+        "url": "https://www.geeksforgeeks.org/sort-characters-by-frequency/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/sort-characters-by-frequency/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Sort by frequency? Count frequencies → Max Heap or Bucket Sort!",
+  "approaches": [
+    {
+      "name": "HashMap + Sorting",
+      "order": 1,
+      "intuition": "Count character frequencies, sort by frequency descending, build result string.",
+      "approach": "Build frequency map, sort characters by frequency, construct output.",
+      "steps": [
+        "Count character frequencies using HashMap",
+        "Create list of (char, frequency) pairs",
+        "Sort by frequency in descending order",
+        "Build result string: repeat each char by its frequency",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n + k log k)",
+        "space": "O(n + k)",
+        "timeExplanation": "O(n) to count + O(k log k) to sort k unique chars",
+        "spaceExplanation": "HashMap O(k) + result string O(n)"
+      },
+      "code": {
+        "cpp": "string frequencySort(string s) {\n    // Count frequencies\n    unordered_map<char, int> freq;\n    for (char c : s) {\n        freq[c]++;\n    }\n    \n    // Create vector of pairs\n    vector<pair<int, char>> freqVec;\n    for (auto& p : freq) {\n        freqVec.push_back({p.second, p.first}); // {frequency, char}\n    }\n    \n    // Sort by frequency descending\n    sort(freqVec.rbegin(), freqVec.rend());\n    \n    // Build result\n    string result;\n    for (auto& p : freqVec) {\n        result.append(p.first, p.second); // Append char p.first times\n    }\n    \n    return result;\n}\n\n// Example: s = \"tree\"\n// freq = {t:1, r:1, e:2}\n// After sort: [(2,'e'), (1,'t'), (1,'r')]\n// Result: \"eert\" or \"eetr\"",
+        "java": "public String frequencySort(String s) {\n    Map<Character, Integer> freq = new HashMap<>();\n    for (char c : s.toCharArray()) {\n        freq.put(c, freq.getOrDefault(c, 0) + 1);\n    }\n    \n    List<Character> chars = new ArrayList<>(freq.keySet());\n    chars.sort((a, b) -> freq.get(b) - freq.get(a));\n    \n    StringBuilder result = new StringBuilder();\n    for (char c : chars) {\n        int count = freq.get(c);\n        for (int i = 0; i < count; i++) {\n            result.append(c);\n        }\n    }\n    \n    return result.toString();\n}",
+        "python": "def frequencySort(s: str) -> str:\n    from collections import Counter\n    \n    # Count frequencies\n    freq = Counter(s)\n    \n    # Sort by frequency descending\n    sorted_chars = sorted(freq.items(), key=lambda x: x[1], reverse=True)\n    \n    # Build result\n    result = []\n    for char, count in sorted_chars:\n        result.append(char * count)\n    \n    return ''.join(result)\n\n# One-liner:\n# return ''.join(c * count for c, count in Counter(s).most_common())",
+        "javascript": "var frequencySort = function(s) {\n    const freq = new Map();\n    for (const c of s) {\n        freq.set(c, (freq.get(c) || 0) + 1);\n    }\n    \n    const sorted = Array.from(freq.entries())\n        .sort((a, b) => b[1] - a[1]);\n    \n    let result = '';\n    for (const [char, count] of sorted) {\n        result += char.repeat(count);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Max Heap",
+      "order": 2,
+      "intuition": "Use max heap to get characters in frequency order. Always extract most frequent first!",
+      "approach": "Count frequencies, add all to max heap, extract in order.",
+      "steps": [
+        "Count character frequencies using HashMap",
+        "Add all (frequency, char) to max heap",
+        "While heap not empty:",
+        "  Extract max frequency character",
+        "  Append to result frequency times",
+        "Return result",
+        "Heap automatically sorts by frequency!"
+      ],
+      "complexity": {
+        "time": "O(n + k log k)",
+        "space": "O(n + k)",
+        "timeExplanation": "O(n) count + O(k log k) heap operations for k unique chars",
+        "spaceExplanation": "HashMap O(k) + Heap O(k) + result O(n)"
+      },
+      "code": {
+        "cpp": "string frequencySort(string s) {\n    // Count frequencies\n    unordered_map<char, int> freq;\n    for (char c : s) {\n        freq[c]++;\n    }\n    \n    // Max heap: pair<frequency, char>\n    priority_queue<pair<int, char>> maxHeap;\n    for (auto& p : freq) {\n        maxHeap.push({p.second, p.first});\n    }\n    \n    // Build result\n    string result;\n    while (!maxHeap.empty()) {\n        auto [count, ch] = maxHeap.top();\n        maxHeap.pop();\n        result.append(count, ch);\n    }\n    \n    return result;\n}\n\n// Example: s = \"tree\"\n// freq = {t:1, r:1, e:2}\n// maxHeap: (2,'e'), (1,'t'), (1,'r')\n// Extract in order: \"eert\"",
+        "java": "public String frequencySort(String s) {\n    Map<Character, Integer> freq = new HashMap<>();\n    for (char c : s.toCharArray()) {\n        freq.put(c, freq.getOrDefault(c, 0) + 1);\n    }\n    \n    PriorityQueue<Map.Entry<Character, Integer>> maxHeap = \n        new PriorityQueue<>((a, b) -> b.getValue() - a.getValue());\n    \n    maxHeap.addAll(freq.entrySet());\n    \n    StringBuilder result = new StringBuilder();\n    while (!maxHeap.isEmpty()) {\n        Map.Entry<Character, Integer> entry = maxHeap.poll();\n        char c = entry.getKey();\n        int count = entry.getValue();\n        for (int i = 0; i < count; i++) {\n            result.append(c);\n        }\n    }\n    \n    return result.toString();\n}",
+        "python": "import heapq\nfrom collections import Counter\n\ndef frequencySort(s: str) -> str:\n    # Count frequencies\n    freq = Counter(s)\n    \n    # Max heap (negate frequencies)\n    max_heap = [(-count, char) for char, count in freq.items()]\n    heapq.heapify(max_heap)\n    \n    # Build result\n    result = []\n    while max_heap:\n        count, char = heapq.heappop(max_heap)\n        result.append(char * (-count))\n    \n    return ''.join(result)",
+        "javascript": "var frequencySort = function(s) {\n    const freq = new Map();\n    for (const c of s) {\n        freq.set(c, (freq.get(c) || 0) + 1);\n    }\n    \n    const maxHeap = new MaxPriorityQueue({\n        priority: (x) => x[1]\n    });\n    \n    for (const [char, count] of freq.entries()) {\n        maxHeap.enqueue([char, count]);\n    }\n    \n    let result = '';\n    while (maxHeap.size() > 0) {\n        const [char, count] = maxHeap.dequeue().element;\n        result += char.repeat(count);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Bucket Sort - Optimal O(n)",
+      "order": 3,
+      "intuition": "Frequency range is [1, n]. Use buckets indexed by frequency! Collect from highest frequency buckets.",
+      "approach": "Count frequencies, create buckets, fill buckets, build result from end.",
+      "steps": [
+        "Count character frequencies using HashMap",
+        "Create array of buckets: bucket[i] = chars with frequency i",
+        "Max frequency possible = n (all same char)",
+        "For each (char, freq): add char to bucket[freq]",
+        "Iterate buckets from n down to 1:",
+        "  For each char in bucket: append freq times to result",
+        "Return result",
+        "No sorting! O(n) time"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "O(n) count + O(n) bucket fill + O(n) result build = O(n)",
+        "spaceExplanation": "HashMap O(k) + buckets O(n) + result O(n)"
+      },
+      "code": {
+        "cpp": "string frequencySort(string s) {\n    int n = s.length();\n    \n    // Count frequencies\n    unordered_map<char, int> freq;\n    for (char c : s) {\n        freq[c]++;\n    }\n    \n    // Create buckets: bucket[i] = chars with frequency i\n    vector<vector<char>> bucket(n + 1);\n    for (auto& p : freq) {\n        bucket[p.second].push_back(p.first);\n    }\n    \n    // Build result from highest frequency\n    string result;\n    for (int i = n; i >= 1; i--) {\n        for (char c : bucket[i]) {\n            result.append(i, c); // Append c i times\n        }\n    }\n    \n    return result;\n}\n\n// Example: s = \"tree\"\n// freq = {t:1, r:1, e:2}\n// bucket[1] = ['t', 'r']\n// bucket[2] = ['e']\n// Result: \"ee\" + \"t\" + \"r\" = \"eetr\"",
+        "java": "public String frequencySort(String s) {\n    Map<Character, Integer> freq = new HashMap<>();\n    for (char c : s.toCharArray()) {\n        freq.put(c, freq.getOrDefault(c, 0) + 1);\n    }\n    \n    List<Character>[] bucket = new List[s.length() + 1];\n    for (int i = 0; i <= s.length(); i++) {\n        bucket[i] = new ArrayList<>();\n    }\n    \n    for (Map.Entry<Character, Integer> entry : freq.entrySet()) {\n        bucket[entry.getValue()].add(entry.getKey());\n    }\n    \n    StringBuilder result = new StringBuilder();\n    for (int i = bucket.length - 1; i >= 1; i--) {\n        for (char c : bucket[i]) {\n            for (int j = 0; j < i; j++) {\n                result.append(c);\n            }\n        }\n    }\n    \n    return result.toString();\n}",
+        "python": "def frequencySort(s: str) -> str:\n    from collections import Counter\n    \n    # Count frequencies\n    freq = Counter(s)\n    \n    # Create buckets\n    n = len(s)\n    bucket = [[] for _ in range(n + 1)]\n    \n    for char, count in freq.items():\n        bucket[count].append(char)\n    \n    # Build result from high to low frequency\n    result = []\n    for i in range(n, 0, -1):\n        for char in bucket[i]:\n            result.append(char * i)\n    \n    return ''.join(result)",
+        "javascript": "var frequencySort = function(s) {\n    const freq = new Map();\n    for (const c of s) {\n        freq.set(c, (freq.get(c) || 0) + 1);\n    }\n    \n    const bucket = Array.from({length: s.length + 1}, () => []);\n    \n    for (const [char, count] of freq.entries()) {\n        bucket[count].push(char);\n    }\n    \n    let result = '';\n    for (let i = bucket.length - 1; i >= 1; i--) {\n        for (const char of bucket[i]) {\n            result += char.repeat(i);\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling ties correctly (multiple chars with same frequency)",
+    "Forgetting bucket size should be n+1 (frequency can be n)",
+    "Using min heap instead of max heap",
+    "Not building result string efficiently (string concatenation in loop)",
+    "Sorting entire string instead of just unique characters",
+    "Not considering that any order is valid for same frequency chars"
+  ],
+  "hints": [
+    "Count frequencies first - always step 1!",
+    "Frequency range is [1, n] - perfect for bucket sort",
+    "Max heap automatically orders by frequency",
+    "Bucket sort is O(n) - optimal for this problem",
+    "Use StringBuilder/append for efficient string building"
+  ],
+  "followUp": [
+    "What if string is very large? (Streaming with HashMap)",
+    "Can we do better than O(n)? (No, must read all characters)",
+    "What if we want stable sort (preserve relative order)? (Add index to comparator)",
+    "Handle Unicode characters? (All approaches work the same)",
+    "What if multiple valid answers? (Return any valid answer)"
+  ],
+  "companies": ["Amazon", "Google", "Microsoft", "Facebook", "Bloomberg"],
+  "tags": ["heap", "priority-queue", "hash-table", "string", "bucket-sort", "counting"],
+  "relatedProblems": [
+    "Top K Frequent Elements",
+    "Top K Frequent Words",
+    "First Unique Character in a String",
+    "Sort Array by Increasing Frequency"
+  ]
+}

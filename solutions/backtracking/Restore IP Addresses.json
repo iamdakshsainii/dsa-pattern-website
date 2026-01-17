@@ -1,0 +1,175 @@
+{
+  "questionId": "93",
+  "questionSlug": "restore-ip-addresses",
+  "title": "Restore IP Addresses",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/restore-ip-addresses/",
+    "videos": [
+      {
+        "title": "Restore IP Addresses - Backtracking",
+        "url": "https://www.youtube.com/watch?v=61tN4YEdiTM",
+        "channel": "NeetCode",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "IP Address Restoration",
+        "url": "https://www.youtube.com/watch?v=KU7Ae2513h0",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:20",
+        "language": "English"
+      },
+      {
+        "title": "Restore IP - Complete Guide",
+        "url": "https://www.youtube.com/watch?v=_c_XZWuMm_Y",
+        "channel": "Tushar Roy",
+        "duration": "15:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Restore IP Addresses - LeetCode Official",
+        "url": "https://leetcode.com/problems/restore-ip-addresses/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "IP Address Backtracking",
+        "url": "https://www.geeksforgeeks.org/program-generate-possible-valid-ip-addresses-given-string/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Restore IP Solutions",
+        "url": "https://takeuforward.org/data-structure/restore-ip-addresses/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/restore-ip-addresses/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/generate-ip-addresses/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Generate all valid combinations with fixed parts? Use backtracking. Try 1-3 digit segments, validate each.",
+  "approaches": [
+    {
+      "name": "Backtracking - Try All Segment Lengths",
+      "order": 1,
+      "intuition": "IP has 4 parts, each 0-255. Backtrack: try 1, 2, 3 digits for each part, validate, recurse.",
+      "approach": "Use backtracking to build IP address segment by segment.",
+      "steps": [
+        "backtrack(start, segments):",
+        "  If segments.length == 4:",
+        "    If start == s.length, add IP to result",
+        "    Return",
+        "  For len from 1 to 3:",
+        "    If start + len > s.length, break",
+        "    segment = s[start:start+len]",
+        "    If isValid(segment):",
+        "      backtrack(start + len, segments + [segment])",
+        "isValid: no leading zeros (except '0'), value <= 255"
+      ],
+      "complexity": {
+        "time": "O(3^4 × n) = O(n)",
+        "space": "O(1)",
+        "timeExplanation": "At most 3 choices per segment, 4 segments, each validation O(n)",
+        "spaceExplanation": "Recursion depth is constant 4, result storage not counted"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        vector<string> result;\n        vector<string> segments;\n        backtrack(s, 0, segments, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(string& s, int start, vector<string>& segments, vector<string>& result) {\n        if (segments.size() == 4) {\n            if (start == s.length()) {\n                result.push_back(segments[0] + \".\" + segments[1] + \".\" + segments[2] + \".\" + segments[3]);\n            }\n            return;\n        }\n        \n        for (int len = 1; len <= 3 && start + len <= s.length(); len++) {\n            string segment = s.substr(start, len);\n            if (isValid(segment)) {\n                segments.push_back(segment);\n                backtrack(s, start + len, segments, result);\n                segments.pop_back();\n            }\n        }\n    }\n    \n    bool isValid(string& segment) {\n        if (segment.length() > 1 && segment[0] == '0') return false;\n        int val = stoi(segment);\n        return val >= 0 && val <= 255;\n    }\n};",
+        "java": "class Solution {\n    public List<String> restoreIpAddresses(String s) {\n        List<String> result = new ArrayList<>();\n        List<String> segments = new ArrayList<>();\n        backtrack(s, 0, segments, result);\n        return result;\n    }\n    \n    private void backtrack(String s, int start, List<String> segments, List<String> result) {\n        if (segments.size() == 4) {\n            if (start == s.length()) {\n                result.add(String.join(\".\", segments));\n            }\n            return;\n        }\n        \n        for (int len = 1; len <= 3 && start + len <= s.length(); len++) {\n            String segment = s.substring(start, start + len);\n            if (isValid(segment)) {\n                segments.add(segment);\n                backtrack(s, start + len, segments, result);\n                segments.remove(segments.size() - 1);\n            }\n        }\n    }\n    \n    private boolean isValid(String segment) {\n        if (segment.length() > 1 && segment.charAt(0) == '0') return false;\n        int val = Integer.parseInt(segment);\n        return val >= 0 && val <= 255;\n    }\n}",
+        "python": "def restoreIpAddresses(s):\n    result = []\n    \n    def is_valid(segment):\n        if len(segment) > 1 and segment[0] == '0':\n            return False\n        return 0 <= int(segment) <= 255\n    \n    def backtrack(start, segments):\n        if len(segments) == 4:\n            if start == len(s):\n                result.append('.'.join(segments))\n            return\n        \n        for length in range(1, 4):\n            if start + length > len(s):\n                break\n            \n            segment = s[start:start + length]\n            if is_valid(segment):\n                backtrack(start + length, segments + [segment])\n    \n    backtrack(0, [])\n    return result",
+        "javascript": "function restoreIpAddresses(s) {\n    const result = [];\n    \n    function isValid(segment) {\n        if (segment.length > 1 && segment[0] === '0') return false;\n        const val = parseInt(segment);\n        return val >= 0 && val <= 255;\n    }\n    \n    function backtrack(start, segments) {\n        if (segments.length === 4) {\n            if (start === s.length) {\n                result.push(segments.join('.'));\n            }\n            return;\n        }\n        \n        for (let len = 1; len <= 3 && start + len <= s.length; len++) {\n            const segment = s.substring(start, start + len);\n            if (isValid(segment)) {\n                backtrack(start + len, [...segments, segment]);\n            }\n        }\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Early Pruning",
+      "order": 2,
+      "intuition": "Add pruning: check if remaining digits can form remaining segments before recursing.",
+      "approach": "Same backtracking but skip impossible branches early.",
+      "steps": [
+        "Before recursing, check:",
+        "  remaining = s.length - start",
+        "  segmentsLeft = 4 - segments.size()",
+        "  If remaining < segmentsLeft or remaining > segmentsLeft * 3, return",
+        "This prunes impossible cases early"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "At most 3^4 = 81 combinations, each O(1) with pruning",
+        "spaceExplanation": "Constant recursion depth"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        vector<string> result;\n        vector<string> segments;\n        backtrack(s, 0, segments, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(string& s, int start, vector<string>& segments, vector<string>& result) {\n        if (segments.size() == 4) {\n            if (start == s.length()) {\n                result.push_back(segments[0] + \".\" + segments[1] + \".\" + segments[2] + \".\" + segments[3]);\n            }\n            return;\n        }\n        \n        // Pruning\n        int remaining = s.length() - start;\n        int segmentsLeft = 4 - segments.size();\n        if (remaining < segmentsLeft || remaining > segmentsLeft * 3) return;\n        \n        for (int len = 1; len <= 3 && start + len <= s.length(); len++) {\n            string segment = s.substr(start, len);\n            if (isValid(segment)) {\n                segments.push_back(segment);\n                backtrack(s, start + len, segments, result);\n                segments.pop_back();\n            }\n        }\n    }\n    \n    bool isValid(string& segment) {\n        if (segment.length() > 1 && segment[0] == '0') return false;\n        int val = stoi(segment);\n        return val >= 0 && val <= 255;\n    }\n};",
+        "java": "class Solution {\n    public List<String> restoreIpAddresses(String s) {\n        List<String> result = new ArrayList<>();\n        List<String> segments = new ArrayList<>();\n        backtrack(s, 0, segments, result);\n        return result;\n    }\n    \n    private void backtrack(String s, int start, List<String> segments, List<String> result) {\n        if (segments.size() == 4) {\n            if (start == s.length()) {\n                result.add(String.join(\".\", segments));\n            }\n            return;\n        }\n        \n        int remaining = s.length() - start;\n        int segmentsLeft = 4 - segments.size();\n        if (remaining < segmentsLeft || remaining > segmentsLeft * 3) return;\n        \n        for (int len = 1; len <= 3 && start + len <= s.length(); len++) {\n            String segment = s.substring(start, start + len);\n            if (isValid(segment)) {\n                segments.add(segment);\n                backtrack(s, start + len, segments, result);\n                segments.remove(segments.size() - 1);\n            }\n        }\n    }\n    \n    private boolean isValid(String segment) {\n        if (segment.length() > 1 && segment.charAt(0) == '0') return false;\n        int val = Integer.parseInt(segment);\n        return val >= 0 && val <= 255;\n    }\n}",
+        "python": "def restoreIpAddresses(s):\n    result = []\n    \n    def is_valid(segment):\n        if len(segment) > 1 and segment[0] == '0':\n            return False\n        return 0 <= int(segment) <= 255\n    \n    def backtrack(start, segments):\n        if len(segments) == 4:\n            if start == len(s):\n                result.append('.'.join(segments))\n            return\n        \n        # Pruning\n        remaining = len(s) - start\n        segments_left = 4 - len(segments)\n        if remaining < segments_left or remaining > segments_left * 3:\n            return\n        \n        for length in range(1, 4):\n            if start + length > len(s):\n                break\n            \n            segment = s[start:start + length]\n            if is_valid(segment):\n                backtrack(start + length, segments + [segment])\n    \n    backtrack(0, [])\n    return result",
+        "javascript": "function restoreIpAddresses(s) {\n    const result = [];\n    \n    function isValid(segment) {\n        if (segment.length > 1 && segment[0] === '0') return false;\n        const val = parseInt(segment);\n        return val >= 0 && val <= 255;\n    }\n    \n    function backtrack(start, segments) {\n        if (segments.length === 4) {\n            if (start === s.length) {\n                result.push(segments.join('.'));\n            }\n            return;\n        }\n        \n        const remaining = s.length - start;\n        const segmentsLeft = 4 - segments.length;\n        if (remaining < segmentsLeft || remaining > segmentsLeft * 3) return;\n        \n        for (let len = 1; len <= 3 && start + len <= s.length; len++) {\n            const segment = s.substring(start, start + len);\n            if (isValid(segment)) {\n                backtrack(start + len, [...segments, segment]);\n            }\n        }\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Iterative with 3 Loops - Optimal",
+      "order": 3,
+      "intuition": "Since exactly 4 segments needed, use 3 nested loops for 3 dots. Check all placements.",
+      "approach": "Use 3 nested loops to place 3 dots, creating 4 segments.",
+      "steps": [
+        "For i from 1 to min(3, n-3):  // First dot position",
+        "  For j from i+1 to min(i+3, n-2):  // Second dot",
+        "    For k from j+1 to min(j+3, n-1):  // Third dot",
+        "      If all 4 segments are valid:",
+        "        Add IP to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "At most 3 × 3 × 3 = 27 iterations, each O(1)",
+        "spaceExplanation": "No extra space except result"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        vector<string> result;\n        int n = s.length();\n        \n        for (int i = 1; i <= min(3, n - 3); i++) {\n            for (int j = i + 1; j <= min(i + 3, n - 2); j++) {\n                for (int k = j + 1; k <= min(j + 3, n - 1); k++) {\n                    string s1 = s.substr(0, i);\n                    string s2 = s.substr(i, j - i);\n                    string s3 = s.substr(j, k - j);\n                    string s4 = s.substr(k);\n                    \n                    if (isValid(s1) && isValid(s2) && isValid(s3) && isValid(s4)) {\n                        result.push_back(s1 + \".\" + s2 + \".\" + s3 + \".\" + s4);\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n    \nprivate:\n    bool isValid(string s) {\n        if (s.empty() || s.length() > 3) return false;\n        if (s.length() > 1 && s[0] == '0') return false;\n        int val = stoi(s);\n        return val >= 0 && val <= 255;\n    }\n};",
+        "java": "class Solution {\n    public List<String> restoreIpAddresses(String s) {\n        List<String> result = new ArrayList<>();\n        int n = s.length();\n        \n        for (int i = 1; i <= Math.min(3, n - 3); i++) {\n            for (int j = i + 1; j <= Math.min(i + 3, n - 2); j++) {\n                for (int k = j + 1; k <= Math.min(j + 3, n - 1); k++) {\n                    String s1 = s.substring(0, i);\n                    String s2 = s.substring(i, j);\n                    String s3 = s.substring(j, k);\n                    String s4 = s.substring(k);\n                    \n                    if (isValid(s1) && isValid(s2) && isValid(s3) && isValid(s4)) {\n                        result.add(s1 + \".\" + s2 + \".\" + s3 + \".\" + s4);\n                    }\n                }\n            }\n        }\n        \n        return result;\n    }\n    \n    private boolean isValid(String s) {\n        if (s.isEmpty() || s.length() > 3) return false;\n        if (s.length() > 1 && s.charAt(0) == '0') return false;\n        int val = Integer.parseInt(s);\n        return val >= 0 && val <= 255;\n    }\n}",
+        "python": "def restoreIpAddresses(s):\n    def is_valid(segment):\n        if not segment or len(segment) > 3:\n            return False\n        if len(segment) > 1 and segment[0] == '0':\n            return False\n        return 0 <= int(segment) <= 255\n    \n    result = []\n    n = len(s)\n    \n    for i in range(1, min(4, n - 2)):\n        for j in range(i + 1, min(i + 4, n - 1)):\n            for k in range(j + 1, min(j + 4, n)):\n                s1, s2, s3, s4 = s[:i], s[i:j], s[j:k], s[k:]\n                \n                if is_valid(s1) and is_valid(s2) and is_valid(s3) and is_valid(s4):\n                    result.append(f\"{s1}.{s2}.{s3}.{s4}\")\n    \n    return result",
+        "javascript": "function restoreIpAddresses(s) {\n    function isValid(segment) {\n        if (!segment || segment.length > 3) return false;\n        if (segment.length > 1 && segment[0] === '0') return false;\n        const val = parseInt(segment);\n        return val >= 0 && val <= 255;\n    }\n    \n    const result = [];\n    const n = s.length;\n    \n    for (let i = 1; i <= Math.min(3, n - 3); i++) {\n        for (let j = i + 1; j <= Math.min(i + 3, n - 2); j++) {\n            for (let k = j + 1; k <= Math.min(j + 3, n - 1); k++) {\n                const s1 = s.substring(0, i);\n                const s2 = s.substring(i, j);\n                const s3 = s.substring(j, k);\n                const s4 = s.substring(k);\n                \n                if (isValid(s1) && isValid(s2) && isValid(s3) && isValid(s4)) {\n                    result.push(`${s1}.${s2}.${s3}.${s4}`);\n                }\n            }\n        }\n    }\n    \n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling leading zeros (\"01\" is invalid)",
+    "Forgetting that \"0\" is valid but \"00\" or \"01\" are not",
+    "Not checking segment value <= 255",
+    "Off-by-one in loop bounds",
+    "Not ensuring exactly 4 segments are formed",
+    "Not pruning when remaining digits can't form valid segments"
+  ],
+  "hints": [
+    "IP address has exactly 4 segments separated by dots",
+    "Each segment: 0-255, no leading zeros except \"0\"",
+    "Try 1, 2, or 3 digits for each segment",
+    "Use backtracking or 3 nested loops",
+    "Prune: remaining chars must fit in remaining segments"
+  ],
+  "followUp": [
+    "Can you restore IPv6 addresses? (Similar but hexadecimal, different rules)",
+    "What if we need to count valid IPs? (Same approach, just count)",
+    "Can you do it without backtracking? (Yes, 3 nested loops)",
+    "How to handle invalid input? (Return empty list)",
+    "What if string length > 12? (Impossible to form valid IP)"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple", "LinkedIn"],
+  "tags": ["string", "backtracking"],
+  "relatedProblems": [
+    "IP to CIDR",
+    "Validate IP Address",
+    "Generate Parentheses",
+    "Letter Combinations of Phone Number"
+  ]
+}

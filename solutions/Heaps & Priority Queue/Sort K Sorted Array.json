@@ -1,0 +1,156 @@
+{
+  "questionId": "GFG-SORT-K",
+  "questionSlug": "sort-k-sorted-array",
+  "title": "Sort K Sorted Array (Nearly Sorted)",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/sort-k-sorted-array/",
+    "videos": [
+      {
+        "title": "Sort Nearly Sorted Array - Min Heap",
+        "url": "https://www.youtube.com/watch?v=yQ84lk-EXTQ",
+        "channel": "take U forward",
+        "duration": "10:25",
+        "language": "English"
+      },
+      {
+        "title": "Sort K Sorted Array Explained",
+        "url": "https://www.youtube.com/watch?v=dYfM6J1y0mU",
+        "channel": "Coding Decoded",
+        "duration": "8:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Sort K Sorted Array - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/nearly-sorted-algorithm/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Nearly Sorted Array - InterviewBit",
+        "url": "https://www.interviewbit.com/blog/sort-nearly-sorted-array/",
+        "source": "InterviewBit"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/nearly-sorted-algorithm/0",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Array nearly sorted (elements at most k positions away)? Use size k+1 min heap!",
+  "approaches": [
+    {
+      "name": "Min Heap (Size k+1) - Optimal",
+      "order": 1,
+      "intuition": "Each element is at most k positions from its sorted position. Use heap of size k+1 to maintain smallest elements in window.",
+      "approach": "Maintain min heap of k+1 elements. Extract min to output, add next element. This ensures correct ordering.",
+      "steps": [
+        "Create min heap of size k+1",
+        "Add first k+1 elements to heap",
+        "For remaining elements:",
+        "  Extract min from heap (this is next sorted element)",
+        "  Add current element to heap",
+        "After loop, extract all remaining from heap",
+        "Result array is sorted"
+      ],
+      "complexity": {
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "n elements, each heap operation O(log k) since heap size is k+1",
+        "spaceExplanation": "Heap stores k+1 elements"
+      },
+      "code": {
+        "cpp": "vector<int> sortKSorted(vector<int>& arr, int k) {\n    int n = arr.size();\n    vector<int> result;\n    \n    // Min heap of size k+1\n    priority_queue<int, vector<int>, greater<int>> minHeap;\n    \n    // Add first k+1 elements\n    for (int i = 0; i <= k && i < n; i++) {\n        minHeap.push(arr[i]);\n    }\n    \n    // Process remaining elements\n    for (int i = k + 1; i < n; i++) {\n        result.push_back(minHeap.top());\n        minHeap.pop();\n        minHeap.push(arr[i]);\n    }\n    \n    // Extract remaining elements\n    while (!minHeap.empty()) {\n        result.push_back(minHeap.top());\n        minHeap.pop();\n    }\n    \n    return result;\n}\n\n// Example: arr = [6, 5, 3, 2, 8, 10, 9], k = 3\n// Heap after first k+1: [2, 3, 5, 6]\n// Extract 2, add 8: [3, 5, 6, 8], result = [2]\n// Extract 3, add 10: [5, 6, 8, 10], result = [2, 3]\n// Extract 5, add 9: [6, 8, 9, 10], result = [2, 3, 5]\n// Extract all: result = [2, 3, 5, 6, 8, 9, 10]",
+        "java": "public int[] sortKSorted(int[] arr, int k) {\n    int n = arr.length;\n    int[] result = new int[n];\n    \n    PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n    \n    int index = 0;\n    \n    // Add first k+1 elements\n    for (int i = 0; i <= k && i < n; i++) {\n        minHeap.offer(arr[i]);\n    }\n    \n    // Process remaining\n    for (int i = k + 1; i < n; i++) {\n        result[index++] = minHeap.poll();\n        minHeap.offer(arr[i]);\n    }\n    \n    // Extract remaining\n    while (!minHeap.isEmpty()) {\n        result[index++] = minHeap.poll();\n    }\n    \n    return result;\n}",
+        "python": "import heapq\n\ndef sortKSorted(arr: List[int], k: int) -> List[int]:\n    n = len(arr)\n    result = []\n    \n    # Min heap\n    min_heap = []\n    \n    # Add first k+1 elements\n    for i in range(min(k + 1, n)):\n        heapq.heappush(min_heap, arr[i])\n    \n    # Process remaining\n    for i in range(k + 1, n):\n        result.append(heapq.heappop(min_heap))\n        heapq.heappush(min_heap, arr[i])\n    \n    # Extract remaining\n    while min_heap:\n        result.append(heapq.heappop(min_heap))\n    \n    return result",
+        "javascript": "var sortKSorted = function(arr, k) {\n    const n = arr.length;\n    const result = [];\n    const minHeap = new MinPriorityQueue();\n    \n    // Add first k+1 elements\n    for (let i = 0; i <= k && i < n; i++) {\n        minHeap.enqueue(arr[i]);\n    }\n    \n    // Process remaining\n    for (let i = k + 1; i < n; i++) {\n        result.push(minHeap.dequeue().element);\n        minHeap.enqueue(arr[i]);\n    }\n    \n    // Extract remaining\n    while (minHeap.size() > 0) {\n        result.push(minHeap.dequeue().element);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Insertion Sort - Simple but Slower",
+      "order": 2,
+      "intuition": "Since elements are at most k positions away, insertion sort with limited comparisons works.",
+      "approach": "Modified insertion sort: for each element, only compare with previous k elements (or until sorted position found).",
+      "steps": [
+        "For i from 1 to n-1:",
+        "  Store current element",
+        "  j = i - 1",
+        "  Shift elements while j >= max(0, i-k) and arr[j] > current:",
+        "    arr[j+1] = arr[j]",
+        "    j--",
+        "  arr[j+1] = current",
+        "Return arr"
+      ],
+      "complexity": {
+        "time": "O(nk)",
+        "space": "O(1)",
+        "timeExplanation": "For each element, compare with at most k previous elements",
+        "spaceExplanation": "In-place sorting"
+      },
+      "code": {
+        "cpp": "vector<int> sortKSorted(vector<int>& arr, int k) {\n    int n = arr.size();\n    \n    for (int i = 1; i < n; i++) {\n        int current = arr[i];\n        int j = i - 1;\n        \n        // Shift elements, but only check up to k positions back\n        while (j >= max(0, i - k - 1) && arr[j] > current) {\n            arr[j + 1] = arr[j];\n            j--;\n        }\n        \n        arr[j + 1] = current;\n    }\n    \n    return arr;\n}\n\n// Example: arr = [3, 2, 1, 5, 4], k = 2\n// i=1: current=2, shift 3, arr = [2, 3, 1, 5, 4]\n// i=2: current=1, shift 3,2, arr = [1, 2, 3, 5, 4]\n// i=3: current=5, no shift, arr = [1, 2, 3, 5, 4]\n// i=4: current=4, shift 5, arr = [1, 2, 3, 4, 5]",
+        "java": "public int[] sortKSorted(int[] arr, int k) {\n    int n = arr.length;\n    \n    for (int i = 1; i < n; i++) {\n        int current = arr[i];\n        int j = i - 1;\n        \n        while (j >= Math.max(0, i - k - 1) && arr[j] > current) {\n            arr[j + 1] = arr[j];\n            j--;\n        }\n        \n        arr[j + 1] = current;\n    }\n    \n    return arr;\n}",
+        "python": "def sortKSorted(arr: List[int], k: int) -> List[int]:\n    n = len(arr)\n    \n    for i in range(1, n):\n        current = arr[i]\n        j = i - 1\n        \n        # Shift elements\n        while j >= max(0, i - k - 1) and arr[j] > current:\n            arr[j + 1] = arr[j]\n            j -= 1\n        \n        arr[j + 1] = current\n    \n    return arr",
+        "javascript": "var sortKSorted = function(arr, k) {\n    const n = arr.length;\n    \n    for (let i = 1; i < n; i++) {\n        const current = arr[i];\n        let j = i - 1;\n        \n        while (j >= Math.max(0, i - k - 1) && arr[j] > current) {\n            arr[j + 1] = arr[j];\n            j--;\n        }\n        \n        arr[j + 1] = current;\n    }\n    \n    return arr;\n};"
+      }
+    },
+    {
+      "name": "Standard Sort - Baseline",
+      "order": 3,
+      "intuition": "Ignore the 'k-sorted' property and just sort normally. Works but doesn't leverage the constraint.",
+      "approach": "Use built-in sort. Simple but not optimal for this specific problem.",
+      "steps": [
+        "Call sort(arr.begin(), arr.end())",
+        "Return sorted array"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(1) or O(log n)",
+        "timeExplanation": "Standard sort complexity",
+        "spaceExplanation": "Depends on sort implementation (quicksort uses O(log n) stack)"
+      },
+      "code": {
+        "cpp": "vector<int> sortKSorted(vector<int>& arr, int k) {\n    sort(arr.begin(), arr.end());\n    return arr;\n}\n\n// Simple but doesn't use k-sorted property\n// O(n log n) instead of optimal O(n log k)",
+        "java": "public int[] sortKSorted(int[] arr, int k) {\n    Arrays.sort(arr);\n    return arr;\n}",
+        "python": "def sortKSorted(arr: List[int], k: int) -> List[int]:\n    return sorted(arr)",
+        "javascript": "var sortKSorted = function(arr, k) {\n    return arr.sort((a, b) => a - b);\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using heap of size k instead of k+1 (need k+1 to ensure correctness)",
+    "Not understanding why heap size is k+1: element can be k positions away in either direction",
+    "Forgetting to extract all remaining heap elements at the end",
+    "In insertion sort: comparing with all previous elements instead of just k",
+    "Thinking k-sorted means array is already sorted (it's nearly sorted)",
+    "Using standard sort O(n log n) when O(n log k) is possible"
+  ],
+  "hints": [
+    "K-sorted means each element is at most k positions from its final sorted position",
+    "For any position i, the correct element must be within range [i-k, i+k]",
+    "Heap of size k+1 guarantees we always have the next minimum element",
+    "Why k+1? Consider element at position i: could be anywhere in [i-k, i+k], that's 2k+1 positions, but we need k+1 lookahead",
+    "Heap approach is optimal: O(n log k) when k << n",
+    "If k = n, this becomes regular sorting O(n log n)"
+  ],
+  "followUp": [
+    "What if k varies for different elements? (Need different approach, can't use fixed heap)",
+    "Can we do better than O(n log k)? (No, need to examine all elements)",
+    "What if k = 0? (Array already sorted, return as-is)",
+    "What if k = n? (Use regular sort O(n log n))",
+    "In-place sorting possible? (Heap approach needs O(k) extra space, insertion sort is in-place)",
+    "What's the minimum k for given array? (Find max displacement of elements)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Uber"],
+  "tags": ["heap", "priority-queue", "sorting", "array"],
+  "relatedProblems": [
+    "Kth Largest Element in Array",
+    "Merge K Sorted Lists",
+    "Find K Closest Elements",
+    "Sliding Window Maximum"
+  ]
+}

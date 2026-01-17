@@ -1,0 +1,185 @@
+{
+  "questionId": "52",
+  "questionSlug": "n-queens-ii",
+  "title": "N-Queens II",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/n-queens-ii/",
+    "videos": [
+      {
+        "title": "N-Queens II - Count Solutions",
+        "url": "https://www.youtube.com/watch?v=wGbuCyNpxIg",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      },
+      {
+        "title": "N-Queens II Explained",
+        "url": "https://www.youtube.com/watch?v=xouin83ebxE",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "N-Queens Count - Optimized",
+        "url": "https://www.youtube.com/watch?v=i05Ju7AftcM",
+        "channel": "take U forward",
+        "duration": "15:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "N-Queens II - LeetCode Official",
+        "url": "https://leetcode.com/problems/n-queens-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "N Queen Problem",
+        "url": "https://www.geeksforgeeks.org/n-queen-problem-backtracking-3/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Count N-Queens Solutions",
+        "url": "https://takeuforward.org/data-structure/n-queen-problem-return-all-distinct-solutions-to-the-n-queens-puzzle/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/n-queens-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/n-queen-problem/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Count valid placements? Same as N-Queens but simpler - just count, don't build solutions. Use backtracking with counter.",
+  "approaches": [
+    {
+      "name": "Backtracking with O(n) Validation - Basic",
+      "order": 1,
+      "intuition": "Same as N-Queens, but don't store board configurations. Just count when we successfully place n queens.",
+      "approach": "Backtrack row by row, validate positions in O(n), increment counter when solution found.",
+      "steps": [
+        "count = 0",
+        "backtrack(row, queens):",
+        "  queens = list of (row, col) for placed queens",
+        "  If row == n:",
+        "    count++",
+        "    Return",
+        "  For each col:",
+        "    If isSafe(row, col, queens):",
+        "      Add (row, col) to queens",
+        "      backtrack(row + 1, queens)",
+        "      Remove last queen",
+        "isSafe: check conflicts with existing queens"
+      ],
+      "complexity": {
+        "time": "O(n! × n)",
+        "space": "O(n)",
+        "timeExplanation": "n! placements, O(n) validation for each",
+        "spaceExplanation": "Recursion depth n, queens list size n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        vector<int> queens;  // queens[i] = column of queen in row i\n        return backtrack(0, queens, n);\n    }\n    \nprivate:\n    int backtrack(int row, vector<int>& queens, int n) {\n        if (row == n) {\n            return 1;\n        }\n        \n        int count = 0;\n        for (int col = 0; col < n; col++) {\n            if (isSafe(row, col, queens)) {\n                queens.push_back(col);\n                count += backtrack(row + 1, queens, n);\n                queens.pop_back();\n            }\n        }\n        \n        return count;\n    }\n    \n    bool isSafe(int row, int col, vector<int>& queens) {\n        for (int i = 0; i < queens.size(); i++) {\n            int prevCol = queens[i];\n            // Check same column\n            if (prevCol == col) return false;\n            // Check diagonals\n            if (abs(row - i) == abs(col - prevCol)) return false;\n        }\n        return true;\n    }\n};",
+        "java": "class Solution {\n    public int totalNQueens(int n) {\n        List<Integer> queens = new ArrayList<>();\n        return backtrack(0, queens, n);\n    }\n    \n    private int backtrack(int row, List<Integer> queens, int n) {\n        if (row == n) {\n            return 1;\n        }\n        \n        int count = 0;\n        for (int col = 0; col < n; col++) {\n            if (isSafe(row, col, queens)) {\n                queens.add(col);\n                count += backtrack(row + 1, queens, n);\n                queens.remove(queens.size() - 1);\n            }\n        }\n        \n        return count;\n    }\n    \n    private boolean isSafe(int row, int col, List<Integer> queens) {\n        for (int i = 0; i < queens.size(); i++) {\n            int prevCol = queens.get(i);\n            if (prevCol == col) return false;\n            if (Math.abs(row - i) == Math.abs(col - prevCol)) return false;\n        }\n        return true;\n    }\n}",
+        "python": "def totalNQueens(n):\n    def backtrack(row, queens):\n        if row == n:\n            return 1\n        \n        count = 0\n        for col in range(n):\n            if is_safe(row, col, queens):\n                queens.append(col)\n                count += backtrack(row + 1, queens)\n                queens.pop()\n        \n        return count\n    \n    def is_safe(row, col, queens):\n        for i, prev_col in enumerate(queens):\n            if prev_col == col:  # Same column\n                return False\n            if abs(row - i) == abs(col - prev_col):  # Diagonal\n                return False\n        return True\n    \n    return backtrack(0, [])",
+        "javascript": "function totalNQueens(n) {\n    function backtrack(row, queens) {\n        if (row === n) {\n            return 1;\n        }\n        \n        let count = 0;\n        for (let col = 0; col < n; col++) {\n            if (isSafe(row, col, queens)) {\n                queens.push(col);\n                count += backtrack(row + 1, queens);\n                queens.pop();\n            }\n        }\n        \n        return count;\n    }\n    \n    function isSafe(row, col, queens) {\n        for (let i = 0; i < queens.length; i++) {\n            const prevCol = queens[i];\n            if (prevCol === col) return false;\n            if (Math.abs(row - i) === Math.abs(col - prevCol)) return false;\n        }\n        return true;\n    }\n    \n    return backtrack(0, []);\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Sets - Better",
+      "order": 2,
+      "intuition": "Use sets to track occupied columns and diagonals for O(1) validation. Much faster than O(n) checking.",
+      "approach": "Same as N-Queens with sets, but only count solutions instead of building board strings.",
+      "steps": [
+        "cols, diag1, diag2 = sets for conflicts",
+        "backtrack(row):",
+        "  If row == n: return 1",
+        "  count = 0",
+        "  For each col:",
+        "    If no conflict (O(1) check):",
+        "      Add to sets",
+        "      count += backtrack(row + 1)",
+        "      Remove from sets",
+        "  Return count"
+      ],
+      "complexity": {
+        "time": "O(n!)",
+        "space": "O(n)",
+        "timeExplanation": "n! placements, O(1) validation",
+        "spaceExplanation": "3 sets of size n, recursion depth n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        unordered_set<int> cols, diag1, diag2;\n        return backtrack(0, cols, diag1, diag2, n);\n    }\n    \nprivate:\n    int backtrack(int row,\n                  unordered_set<int>& cols,\n                  unordered_set<int>& diag1,\n                  unordered_set<int>& diag2,\n                  int n) {\n        if (row == n) {\n            return 1;\n        }\n        \n        int count = 0;\n        for (int col = 0; col < n; col++) {\n            if (cols.count(col) || \n                diag1.count(row - col) || \n                diag2.count(row + col)) {\n                continue;\n            }\n            \n            cols.insert(col);\n            diag1.insert(row - col);\n            diag2.insert(row + col);\n            \n            count += backtrack(row + 1, cols, diag1, diag2, n);\n            \n            cols.erase(col);\n            diag1.erase(row - col);\n            diag2.erase(row + col);\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int totalNQueens(int n) {\n        Set<Integer> cols = new HashSet<>();\n        Set<Integer> diag1 = new HashSet<>();\n        Set<Integer> diag2 = new HashSet<>();\n        return backtrack(0, cols, diag1, diag2, n);\n    }\n    \n    private int backtrack(int row,\n                         Set<Integer> cols,\n                         Set<Integer> diag1,\n                         Set<Integer> diag2,\n                         int n) {\n        if (row == n) {\n            return 1;\n        }\n        \n        int count = 0;\n        for (int col = 0; col < n; col++) {\n            if (cols.contains(col) ||\n                diag1.contains(row - col) ||\n                diag2.contains(row + col)) {\n                continue;\n            }\n            \n            cols.add(col);\n            diag1.add(row - col);\n            diag2.add(row + col);\n            \n            count += backtrack(row + 1, cols, diag1, diag2, n);\n            \n            cols.remove(col);\n            diag1.remove(row - col);\n            diag2.remove(row + col);\n        }\n        \n        return count;\n    }\n}",
+        "python": "def totalNQueens(n):\n    def backtrack(row, cols, diag1, diag2):\n        if row == n:\n            return 1\n        \n        count = 0\n        for col in range(n):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            \n            cols.add(col)\n            diag1.add(row - col)\n            diag2.add(row + col)\n            \n            count += backtrack(row + 1, cols, diag1, diag2)\n            \n            cols.remove(col)\n            diag1.remove(row - col)\n            diag2.remove(row + col)\n        \n        return count\n    \n    return backtrack(0, set(), set(), set())",
+        "javascript": "function totalNQueens(n) {\n    function backtrack(row, cols, diag1, diag2) {\n        if (row === n) {\n            return 1;\n        }\n        \n        let count = 0;\n        for (let col = 0; col < n; col++) {\n            if (cols.has(col) ||\n                diag1.has(row - col) ||\n                diag2.has(row + col)) {\n                continue;\n            }\n            \n            cols.add(col);\n            diag1.add(row - col);\n            diag2.add(row + col);\n            \n            count += backtrack(row + 1, cols, diag1, diag2);\n            \n            cols.delete(col);\n            diag1.delete(row - col);\n            diag2.delete(row + col);\n        }\n        \n        return count;\n    }\n    \n    return backtrack(0, new Set(), new Set(), new Set());\n}"
+      }
+    },
+    {
+      "name": "Bit Manipulation - Optimal",
+      "order": 3,
+      "intuition": "Use bitmasks instead of sets. Bitwise operations are faster. Perfect for counting without storing solutions.",
+      "approach": "3 integer bitmasks for columns and diagonals. Use bit operations for ultra-fast conflict checking.",
+      "steps": [
+        "cols, diag1, diag2 are bitmasks",
+        "backtrack(row, cols, diag1, diag2):",
+        "  If row == n: return 1",
+        "  available = ~(cols | diag1 | diag2) & ((1 << n) - 1)",
+        "  count = 0",
+        "  While available has bits:",
+        "    pos = rightmost bit",
+        "    count += backtrack(row+1, cols|pos, (diag1|pos)<<1, (diag2|pos)>>1)",
+        "    Remove rightmost bit from available",
+        "  Return count"
+      ],
+      "complexity": {
+        "time": "O(n!)",
+        "space": "O(n)",
+        "timeExplanation": "n! placements with minimal constant factors",
+        "spaceExplanation": "Recursion depth n, bitmasks are O(1)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        return backtrack(0, 0, 0, 0, n);\n    }\n    \nprivate:\n    int backtrack(int row, int cols, int diag1, int diag2, int n) {\n        if (row == n) {\n            return 1;\n        }\n        \n        int count = 0;\n        int available = ~(cols | diag1 | diag2) & ((1 << n) - 1);\n        \n        while (available) {\n            int pos = available & -available;  // Rightmost bit\n            \n            count += backtrack(row + 1,\n                              cols | pos,\n                              (diag1 | pos) << 1,\n                              (diag2 | pos) >> 1,\n                              n);\n            \n            available &= available - 1;  // Remove rightmost bit\n        }\n        \n        return count;\n    }\n};",
+        "java": "class Solution {\n    public int totalNQueens(int n) {\n        return backtrack(0, 0, 0, 0, n);\n    }\n    \n    private int backtrack(int row, int cols, int diag1, int diag2, int n) {\n        if (row == n) {\n            return 1;\n        }\n        \n        int count = 0;\n        int available = ~(cols | diag1 | diag2) & ((1 << n) - 1);\n        \n        while (available != 0) {\n            int pos = available & -available;\n            \n            count += backtrack(row + 1,\n                              cols | pos,\n                              (diag1 | pos) << 1,\n                              (diag2 | pos) >> 1,\n                              n);\n            \n            available &= available - 1;\n        }\n        \n        return count;\n    }\n}",
+        "python": "def totalNQueens(n):\n    def backtrack(row, cols, diag1, diag2):\n        if row == n:\n            return 1\n        \n        count = 0\n        available = ~(cols | diag1 | diag2) & ((1 << n) - 1)\n        \n        while available:\n            pos = available & -available  # Rightmost bit\n            \n            count += backtrack(row + 1,\n                              cols | pos,\n                              (diag1 | pos) << 1,\n                              (diag2 | pos) >> 1)\n            \n            available &= available - 1\n        \n        return count\n    \n    return backtrack(0, 0, 0, 0)",
+        "javascript": "function totalNQueens(n) {\n    function backtrack(row, cols, diag1, diag2) {\n        if (row === n) {\n            return 1;\n        }\n        \n        let count = 0;\n        let available = ~(cols | diag1 | diag2) & ((1 << n) - 1);\n        \n        while (available) {\n            const pos = available & -available;\n            \n            count += backtrack(row + 1,\n                              cols | pos,\n                              (diag1 | pos) << 1,\n                              (diag2 | pos) >> 1);\n            \n            available &= available - 1;\n        }\n        \n        return count;\n    }\n    \n    return backtrack(0, 0, 0, 0);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using the same code as N-Queens (wasteful - no need to build board)",
+    "Not optimizing to O(1) validation with sets or bits",
+    "Incorrect diagonal tracking formulas",
+    "Forgetting to backtrack properly",
+    "Not realizing this is simpler than N-Queens (just count)",
+    "Storing unnecessary state"
+  ],
+  "hints": [
+    "Same algorithm as N-Queens, but only count solutions",
+    "Don't need to store board - just track conflicts",
+    "Use sets for O(1) validation: cols, diag1 (row-col), diag2 (row+col)",
+    "Bit manipulation is fastest for small n",
+    "Answer for n=8 is 92"
+  ],
+  "followUp": [
+    "Can you use memoization? (Not helpful - no overlapping subproblems)",
+    "What's the closed form formula? (No known formula, must compute)",
+    "How to compute for very large n? (Parallel computation, symmetry optimization)",
+    "Can you list all solutions too? (That's N-Queens I)",
+    "How many solutions for common values? (n=1:1, n=4:2, n=8:92, n=10:724)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Zenefits"],
+  "tags": ["backtracking"],
+  "relatedProblems": [
+    "N-Queens",
+    "Grid Illumination",
+    "Sudoku Solver"
+  ]
+}

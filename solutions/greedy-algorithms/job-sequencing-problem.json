@@ -1,0 +1,132 @@
+{
+  "questionId": "GFG-JOBSEQ",
+  "questionSlug": "job-sequencing-problem",
+  "title": "Job Sequencing Problem",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/maximum-profit-in-job-scheduling/",
+    "videos": [
+      {
+        "title": "Job Sequencing Problem - Greedy",
+        "url": "https://www.youtube.com/watch?v=zPtI8q9gvX8",
+        "channel": "takeUforward",
+        "duration": "13:45",
+        "language": "English"
+      },
+      {
+        "title": "Job Sequencing Explained",
+        "url": "https://www.youtube.com/watch?v=LjPx4wQaRIs",
+        "channel": "Abdul Bari",
+        "duration": "16:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Job Sequencing - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/job-sequencing-problem/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Job Sequencing Problem",
+        "url": "https://www.programiz.com/dsa/job-sequencing-problem",
+        "source": "Programiz"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/job-sequencing-problem/0",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Maximize profit with deadlines? Sort by profit descending, assign to latest available slot!",
+  "approaches": [
+    {
+      "name": "Greedy with Slot Allocation (Optimal)",
+      "order": 1,
+      "intuition": "Sort jobs by profit descending. For each job, assign to latest available slot before deadline to maximize future options.",
+      "approach": "Sort by profit, maintain slot array, assign each job to latest free slot <= deadline.",
+      "steps": [
+        "Sort jobs by profit (descending)",
+        "Find max deadline to create slot array",
+        "Initialize slots[maxDeadline + 1] = all false",
+        "For each job in sorted order:",
+        "  For slot from min(maxDeadline, job.deadline) down to 1:",
+        "    If slots[slot] is free:",
+        "      Assign job to slot",
+        "      Add profit, increment count",
+        "      Break",
+        "Return (count, totalProfit)"
+      ],
+      "complexity": {
+        "time": "O(n log n + n * m)",
+        "space": "O(m)",
+        "timeExplanation": "Sort O(n log n) + assign slots O(n * m) where m = max deadline",
+        "spaceExplanation": "Slot array of size m"
+      },
+      "code": {
+        "cpp": "struct Job {\n    int id, deadline, profit;\n};\n\nbool compare(Job a, Job b) {\n    return a.profit > b.profit;\n}\n\nvector<int> jobScheduling(Job jobs[], int n) {\n    sort(jobs, jobs + n, compare);\n    \n    int maxDeadline = 0;\n    for (int i = 0; i < n; i++) {\n        maxDeadline = max(maxDeadline, jobs[i].deadline);\n    }\n    \n    vector<int> slots(maxDeadline + 1, -1);\n    int count = 0, profit = 0;\n    \n    for (int i = 0; i < n; i++) {\n        for (int j = min(maxDeadline, jobs[i].deadline); j > 0; j--) {\n            if (slots[j] == -1) {\n                slots[j] = jobs[i].id;\n                count++;\n                profit += jobs[i].profit;\n                break;\n            }\n        }\n    }\n    \n    return {count, profit};\n}",
+        "java": "class Job {\n    int id, deadline, profit;\n    Job(int i, int d, int p) {\n        id = i; deadline = d; profit = p;\n    }\n}\n\npublic int[] jobScheduling(Job[] jobs, int n) {\n    Arrays.sort(jobs, (a, b) -> b.profit - a.profit);\n    \n    int maxDeadline = 0;\n    for (Job job : jobs) {\n        maxDeadline = Math.max(maxDeadline, job.deadline);\n    }\n    \n    int[] slots = new int[maxDeadline + 1];\n    Arrays.fill(slots, -1);\n    \n    int count = 0, profit = 0;\n    \n    for (Job job : jobs) {\n        for (int j = Math.min(maxDeadline, job.deadline); j > 0; j--) {\n            if (slots[j] == -1) {\n                slots[j] = job.id;\n                count++;\n                profit += job.profit;\n                break;\n            }\n        }\n    }\n    \n    return new int[]{count, profit};\n}",
+        "python": "def jobScheduling(jobs, n):\n    jobs.sort(key=lambda x: x[2], reverse=True)  # Sort by profit\n    \n    max_deadline = max(job[1] for job in jobs)\n    slots = [-1] * (max_deadline + 1)\n    \n    count = 0\n    profit = 0\n    \n    for job in jobs:\n        job_id, deadline, job_profit = job\n        \n        for j in range(min(max_deadline, deadline), 0, -1):\n            if slots[j] == -1:\n                slots[j] = job_id\n                count += 1\n                profit += job_profit\n                break\n    \n    return [count, profit]",
+        "javascript": "function jobScheduling(jobs, n) {\n    jobs.sort((a, b) => b.profit - a.profit);\n    \n    let maxDeadline = 0;\n    for (const job of jobs) {\n        maxDeadline = Math.max(maxDeadline, job.deadline);\n    }\n    \n    const slots = new Array(maxDeadline + 1).fill(-1);\n    let count = 0, profit = 0;\n    \n    for (const job of jobs) {\n        for (let j = Math.min(maxDeadline, job.deadline); j > 0; j--) {\n            if (slots[j] === -1) {\n                slots[j] = job.id;\n                count++;\n                profit += job.profit;\n                break;\n            }\n        }\n    }\n    \n    return [count, profit];\n}"
+      }
+    },
+    {
+      "name": "Greedy with Union-Find Optimization",
+      "order": 2,
+      "intuition": "Use union-find (disjoint set) to quickly find next available slot. Optimizes slot finding from O(m) to O(α(m)).",
+      "approach": "Sort by profit, use union-find to find and merge slots efficiently.",
+      "steps": [
+        "Sort jobs by profit descending",
+        "Initialize parent[i] = i for all slots",
+        "For each job:",
+        "  Find available slot using union-find",
+        "  If found, union with previous slot",
+        "Return count and profit"
+      ],
+      "complexity": {
+        "time": "O(n log n + n * α(m))",
+        "space": "O(m)",
+        "timeExplanation": "Sort O(n log n) + union-find operations O(n * α(m)) where α is inverse Ackermann",
+        "spaceExplanation": "Parent array of size m"
+      },
+      "code": {
+        "cpp": "struct Job {\n    int id, deadline, profit;\n};\n\nint find(int x, vector<int>& parent) {\n    if (parent[x] == x) return x;\n    return parent[x] = find(parent[x], parent);\n}\n\nvector<int> jobScheduling(Job jobs[], int n) {\n    sort(jobs, jobs + n, [](Job a, Job b) {\n        return a.profit > b.profit;\n    });\n    \n    int maxDeadline = 0;\n    for (int i = 0; i < n; i++) {\n        maxDeadline = max(maxDeadline, jobs[i].deadline);\n    }\n    \n    vector<int> parent(maxDeadline + 1);\n    for (int i = 0; i <= maxDeadline; i++) {\n        parent[i] = i;\n    }\n    \n    int count = 0, profit = 0;\n    \n    for (int i = 0; i < n; i++) {\n        int slot = find(min(maxDeadline, jobs[i].deadline), parent);\n        \n        if (slot > 0) {\n            parent[slot] = slot - 1;\n            count++;\n            profit += jobs[i].profit;\n        }\n    }\n    \n    return {count, profit};\n}",
+        "java": "public int find(int x, int[] parent) {\n    if (parent[x] == x) return x;\n    return parent[x] = find(parent[x], parent);\n}\n\npublic int[] jobScheduling(Job[] jobs, int n) {\n    Arrays.sort(jobs, (a, b) -> b.profit - a.profit);\n    \n    int maxDeadline = 0;\n    for (Job job : jobs) {\n        maxDeadline = Math.max(maxDeadline, job.deadline);\n    }\n    \n    int[] parent = new int[maxDeadline + 1];\n    for (int i = 0; i <= maxDeadline; i++) {\n        parent[i] = i;\n    }\n    \n    int count = 0, profit = 0;\n    \n    for (Job job : jobs) {\n        int slot = find(Math.min(maxDeadline, job.deadline), parent);\n        \n        if (slot > 0) {\n            parent[slot] = slot - 1;\n            count++;\n            profit += job.profit;\n        }\n    }\n    \n    return new int[]{count, profit};\n}",
+        "python": "def find(x, parent):\n    if parent[x] == x:\n        return x\n    parent[x] = find(parent[x], parent)\n    return parent[x]\n\ndef jobScheduling(jobs, n):\n    jobs.sort(key=lambda x: x[2], reverse=True)\n    \n    max_deadline = max(job[1] for job in jobs)\n    parent = list(range(max_deadline + 1))\n    \n    count = 0\n    profit = 0\n    \n    for job in jobs:\n        job_id, deadline, job_profit = job\n        slot = find(min(max_deadline, deadline), parent)\n        \n        if slot > 0:\n            parent[slot] = slot - 1\n            count += 1\n            profit += job_profit\n    \n    return [count, profit]",
+        "javascript": "function find(x, parent) {\n    if (parent[x] === x) return x;\n    return parent[x] = find(parent[x], parent);\n}\n\nfunction jobScheduling(jobs, n) {\n    jobs.sort((a, b) => b.profit - a.profit);\n    \n    let maxDeadline = 0;\n    for (const job of jobs) {\n        maxDeadline = Math.max(maxDeadline, job.deadline);\n    }\n    \n    const parent = Array.from({length: maxDeadline + 1}, (_, i) => i);\n    let count = 0, profit = 0;\n    \n    for (const job of jobs) {\n        const slot = find(Math.min(maxDeadline, job.deadline), parent);\n        \n        if (slot > 0) {\n            parent[slot] = slot - 1;\n            count++;\n            profit += job.profit;\n        }\n    }\n    \n    return [count, profit];\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Sorting by deadline instead of profit (wrong greedy choice)",
+    "Assigning to earliest slot instead of latest (wastes future options)",
+    "Not checking if deadline > maxDeadline (array bounds)",
+    "Starting slot search from 0 instead of deadline (inefficient)",
+    "Forgetting to track both count and profit"
+  ],
+  "hints": [
+    "Greedy strategy: prioritize high-profit jobs",
+    "Assign to latest possible slot to keep earlier slots free",
+    "Each job takes 1 time unit, can finish by deadline",
+    "Sort by profit descending ensures maximum profit",
+    "Union-find optimization reduces slot finding time",
+    "If all slots before deadline full, can't schedule job"
+  ],
+  "followUp": [
+    "Jobs with different durations? (Different problem, needs interval scheduling)",
+    "Return actual job sequence? (Track which jobs scheduled)",
+    "Multiple machines available? (Parallel job scheduling)",
+    "Weighted completion time? (Different objective function)",
+    "Online job arrival? (Dynamic scheduling problem)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Adobe", "Samsung"],
+  "tags": ["greedy", "sorting", "union-find", "disjoint-set"],
+  "relatedProblems": [
+    "Maximum Profit in Job Scheduling",
+    "Course Schedule",
+    "Single-Threaded CPU"
+  ]
+}

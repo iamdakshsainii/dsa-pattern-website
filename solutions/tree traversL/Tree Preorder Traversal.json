@@ -1,0 +1,162 @@
+{
+  "questionId": "LC-144",
+  "questionSlug": "binary-tree-preorder-traversal",
+  "title": "Binary Tree Preorder Traversal",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/binary-tree-preorder-traversal/",
+    "videos": [
+      {
+        "title": "Preorder Traversal - Recursive & Iterative",
+        "url": "https://www.youtube.com/watch?v=RlUu72JrOCQ",
+        "channel": "takeUforward",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Tree Traversals Explained",
+        "url": "https://www.youtube.com/watch?v=WLvU5EQVZqY",
+        "channel": "NeetCode",
+        "duration": "10:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Preorder Traversal - Official Solution",
+        "url": "https://leetcode.com/problems/binary-tree-preorder-traversal/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Tree Traversals - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/binary-tree-preorder-traversal/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Preorder = Root → Left → Right. Process root first, then recurse left, then right!",
+  "approaches": [
+    {
+      "name": "Recursive DFS (Simplest)",
+      "order": 1,
+      "intuition": "Preorder: visit root, then left subtree, then right subtree. Natural recursion.",
+      "approach": "Base case: null node. Otherwise: add root, recurse left, recurse right.",
+      "steps": [
+        "If node is null, return",
+        "Add node.val to result",
+        "Recursively traverse left subtree",
+        "Recursively traverse right subtree"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Recursion stack depth = tree height h"
+      },
+      "code": {
+        "cpp": "void preorderHelper(TreeNode* node, vector<int>& result) {\n    if (!node) return;\n    \n    result.push_back(node->val);      // Root\n    preorderHelper(node->left, result);  // Left\n    preorderHelper(node->right, result); // Right\n}\n\nvector<int> preorderTraversal(TreeNode* root) {\n    vector<int> result;\n    preorderHelper(root, result);\n    return result;\n}\n\n// Example:    1\n//              \\\n//               2\n//              /\n//             3\n// Preorder: 1 → 2 → 3\n// Output: [1,2,3]",
+        "java": "void preorderHelper(TreeNode node, List<Integer> result) {\n    if (node == null) return;\n    \n    result.add(node.val);\n    preorderHelper(node.left, result);\n    preorderHelper(node.right, result);\n}\n\npublic List<Integer> preorderTraversal(TreeNode root) {\n    List<Integer> result = new ArrayList<>();\n    preorderHelper(root, result);\n    return result;\n}",
+        "python": "def preorderTraversal(root: Optional[TreeNode]) -> List[int]:\n    result = []\n    \n    def preorder_helper(node):\n        if not node:\n            return\n        result.append(node.val)\n        preorder_helper(node.left)\n        preorder_helper(node.right)\n    \n    preorder_helper(root)\n    return result",
+        "javascript": "var preorderTraversal = function(root) {\n    const result = [];\n    \n    function preorderHelper(node) {\n        if (!node) return;\n        result.push(node.val);\n        preorderHelper(node.left);\n        preorderHelper(node.right);\n    }\n    \n    preorderHelper(root);\n    return result;\n};"
+      }
+    },
+    {
+      "name": "Iterative with Stack (Optimal Space)",
+      "order": 2,
+      "intuition": "Use stack to simulate recursion. Push right first, then left (stack is LIFO, so left processes first).",
+      "approach": "Stack-based DFS. Process node, push right child, push left child.",
+      "steps": [
+        "If root is null, return []",
+        "Initialize stack with root",
+        "While stack not empty:",
+        "  Pop node, add to result",
+        "  Push right child (if exists)",
+        "  Push left child (if exists)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once",
+        "spaceExplanation": "Stack stores at most h nodes (height of tree)"
+      },
+      "code": {
+        "cpp": "vector<int> preorderTraversal(TreeNode* root) {\n    vector<int> result;\n    if (!root) return result;\n    \n    stack<TreeNode*> st;\n    st.push(root);\n    \n    while (!st.empty()) {\n        TreeNode* node = st.top();\n        st.pop();\n        \n        result.push_back(node->val);\n        \n        // Push right first (will be processed after left)\n        if (node->right) st.push(node->right);\n        if (node->left) st.push(node->left);\n    }\n    \n    return result;\n}\n\n// Example:    1\n//           /   \\\n//          2     3\n// Stack: [1]\n// Pop 1, result=[1], push 3, push 2\n// Stack: [3,2]\n// Pop 2, result=[1,2]\n// Pop 3, result=[1,2,3]",
+        "java": "public List<Integer> preorderTraversal(TreeNode root) {\n    List<Integer> result = new ArrayList<>();\n    if (root == null) return result;\n    \n    Stack<TreeNode> stack = new Stack<>();\n    stack.push(root);\n    \n    while (!stack.isEmpty()) {\n        TreeNode node = stack.pop();\n        result.add(node.val);\n        \n        if (node.right != null) stack.push(node.right);\n        if (node.left != null) stack.push(node.left);\n    }\n    \n    return result;\n}",
+        "python": "def preorderTraversal(root: Optional[TreeNode]) -> List[int]:\n    if not root:\n        return []\n    \n    result = []\n    stack = [root]\n    \n    while stack:\n        node = stack.pop()\n        result.append(node.val)\n        \n        if node.right:\n            stack.append(node.right)\n        if node.left:\n            stack.append(node.left)\n    \n    return result",
+        "javascript": "var preorderTraversal = function(root) {\n    if (!root) return [];\n    \n    const result = [];\n    const stack = [root];\n    \n    while (stack.length > 0) {\n        const node = stack.pop();\n        result.push(node.val);\n        \n        if (node.right) stack.push(node.right);\n        if (node.left) stack.push(node.left);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Morris Traversal (O(1) Space)",
+      "order": 3,
+      "intuition": "Threaded binary tree approach. Create temporary links to avoid stack/recursion. O(1) extra space.",
+      "approach": "Use rightmost node of left subtree as temporary link back to current node.",
+      "steps": [
+        "curr = root",
+        "While curr:",
+        "  If no left child: process curr, go right",
+        "  Else:",
+        "    Find rightmost node in left subtree",
+        "    If rightmost.right is null:",
+        "      Create thread: rightmost.right = curr",
+        "      Process curr, go left",
+        "    Else:",
+        "      Remove thread: rightmost.right = null",
+        "      Go right",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Each edge traversed at most twice",
+        "spaceExplanation": "No extra space (modifies tree temporarily, restores it)"
+      },
+      "code": {
+        "cpp": "vector<int> preorderTraversal(TreeNode* root) {\n    vector<int> result;\n    TreeNode* curr = root;\n    \n    while (curr) {\n        if (!curr->left) {\n            result.push_back(curr->val);\n            curr = curr->right;\n        }\n        else {\n            TreeNode* pred = curr->left;\n            while (pred->right && pred->right != curr) {\n                pred = pred->right;\n            }\n            \n            if (!pred->right) {\n                result.push_back(curr->val);\n                pred->right = curr;\n                curr = curr->left;\n            }\n            else {\n                pred->right = nullptr;\n                curr = curr->right;\n            }\n        }\n    }\n    \n    return result;\n}\n\n// Morris threading creates temporary links\n// No extra space needed beyond result array",
+        "java": "public List<Integer> preorderTraversal(TreeNode root) {\n    List<Integer> result = new ArrayList<>();\n    TreeNode curr = root;\n    \n    while (curr != null) {\n        if (curr.left == null) {\n            result.add(curr.val);\n            curr = curr.right;\n        }\n        else {\n            TreeNode pred = curr.left;\n            while (pred.right != null && pred.right != curr) {\n                pred = pred.right;\n            }\n            \n            if (pred.right == null) {\n                result.add(curr.val);\n                pred.right = curr;\n                curr = curr.left;\n            }\n            else {\n                pred.right = null;\n                curr = curr.right;\n            }\n        }\n    }\n    \n    return result;\n}",
+        "python": "def preorderTraversal(root: Optional[TreeNode]) -> List[int]:\n    result = []\n    curr = root\n    \n    while curr:\n        if not curr.left:\n            result.append(curr.val)\n            curr = curr.right\n        else:\n            pred = curr.left\n            while pred.right and pred.right != curr:\n                pred = pred.right\n            \n            if not pred.right:\n                result.append(curr.val)\n                pred.right = curr\n                curr = curr.left\n            else:\n                pred.right = None\n                curr = curr.right\n    \n    return result",
+        "javascript": "var preorderTraversal = function(root) {\n    const result = [];\n    let curr = root;\n    \n    while (curr) {\n        if (!curr.left) {\n            result.push(curr.val);\n            curr = curr.right;\n        }\n        else {\n            let pred = curr.left;\n            while (pred.right && pred.right !== curr) {\n                pred = pred.right;\n            }\n            \n            if (!pred.right) {\n                result.push(curr.val);\n                pred.right = curr;\n                curr = curr.left;\n            }\n            else {\n                pred.right = null;\n                curr = curr.right;\n            }\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "In iterative: pushing left before right (wrong order, right should be pushed first)",
+    "In Morris: not removing threads (leaves tree modified)",
+    "In Morris: infinite loop by not handling thread detection correctly",
+    "Forgetting to handle null root case",
+    "In recursive: wrong order (inorder or postorder instead)",
+    "Stack approach: processing children in wrong order"
+  ],
+  "hints": [
+    "Preorder = Root → Left → Right",
+    "Recursive is most natural and simplest",
+    "Iterative: use stack, push RIGHT then LEFT (LIFO order)",
+    "Morris: O(1) space but complex implementation",
+    "For Morris: find predecessor (rightmost in left subtree)",
+    "Think of stack as simulating the recursion call stack"
+  ],
+  "followUp": [
+    "Return kth element in preorder? (Early termination)",
+    "Iterative without stack (Morris only)? (Yes, Morris traversal)",
+    "Preorder of N-ary tree? (Generalize to multiple children)",
+    "Reverse preorder (Root → Right → Left)? (Swap left/right)",
+    "Range query in preorder? (DFS with bounds checking)",
+    "Reconstruct tree from preorder + inorder? (Classic problem)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Adobe"],
+  "tags": ["tree", "binary-tree", "depth-first-search", "stack"],
+  "relatedProblems": [
+    "Binary Tree Inorder Traversal",
+    "Binary Tree Postorder Traversal",
+    "Binary Tree Level Order Traversal",
+    "Construct Binary Tree from Preorder and Inorder"
+  ]
+}

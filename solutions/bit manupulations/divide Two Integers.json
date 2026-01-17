@@ -1,0 +1,178 @@
+{
+  "questionId": "29",
+  "questionSlug": "divide-two-integers",
+  "title": "Divide Two Integers",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/divide-two-integers/",
+    "videos": [
+      {
+        "title": "Divide Two Integers - No Division Operator",
+        "url": "https://www.youtube.com/watch?v=m4L_5qG4vG8",
+        "channel": "NeetCode",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Divide Two Integers using Bit Manipulation",
+        "url": "https://www.youtube.com/watch?v=htX69j1jf5U",
+        "channel": "take U forward",
+        "duration": "18:45",
+        "language": "English"
+      },
+      {
+        "title": "Divide Without Division Operator",
+        "url": "https://www.youtube.com/watch?v=bdxJHWIyyqI",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "12:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Divide Two Integers - LeetCode Official",
+        "url": "https://leetcode.com/problems/divide-two-integers/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Divide two integers without using multiplication, division and mod operator",
+        "url": "https://www.geeksforgeeks.org/divide-two-integers-without-using-multiplication-division-mod-operator/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Divide Two Integers - Bit Manipulation",
+        "url": "https://takeuforward.org/data-structure/divide-two-integers-without-using-multiplication-division-and-mod-operator/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/divide-two-integers/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/division-without-using-multiplication-division-and-mod-operator/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Divide without / * %? Use bit shifts! Double divisor until > dividend, subtract, repeat. Handle overflow and signs.",
+  "approaches": [
+    {
+      "name": "Repeated Subtraction - Brute Force",
+      "order": 1,
+      "intuition": "Division is repeated subtraction. Subtract divisor from dividend repeatedly until dividend < divisor.",
+      "approach": "Keep subtracting divisor, count subtractions.",
+      "steps": [
+        "Handle signs and make both positive",
+        "count = 0",
+        "While dividend >= divisor:",
+        "  dividend -= divisor",
+        "  count++",
+        "Apply sign to result",
+        "Check overflow"
+      ],
+      "complexity": {
+        "time": "O(dividend/divisor)",
+        "space": "O(1)",
+        "timeExplanation": "Can be very slow for large dividend, small divisor (e.g., 2^31/1)",
+        "spaceExplanation": "Only count variable"
+      },
+      "code": {
+        "cpp": "int divide(int dividend, int divisor) {\n    // Handle overflow case\n    if (dividend == INT_MIN && divisor == -1) {\n        return INT_MAX;\n    }\n    \n    // Determine sign\n    bool negative = (dividend < 0) ^ (divisor < 0);\n    \n    // Work with positive values\n    long long dvd = abs((long long)dividend);\n    long long dvs = abs((long long)divisor);\n    \n    long long quotient = 0;\n    \n    // Repeated subtraction\n    while (dvd >= dvs) {\n        dvd -= dvs;\n        quotient++;\n    }\n    \n    return negative ? -quotient : quotient;\n}\n// Time Limit Exceeded for large inputs!",
+        "java": "public int divide(int dividend, int divisor) {\n    if (dividend == Integer.MIN_VALUE && divisor == -1) {\n        return Integer.MAX_VALUE;\n    }\n    \n    boolean negative = (dividend < 0) ^ (divisor < 0);\n    \n    long dvd = Math.abs((long)dividend);\n    long dvs = Math.abs((long)divisor);\n    \n    long quotient = 0;\n    \n    while (dvd >= dvs) {\n        dvd -= dvs;\n        quotient++;\n    }\n    \n    return negative ? (int)-quotient : (int)quotient;\n}",
+        "python": "def divide(dividend, divisor):\n    # Handle overflow\n    INT_MAX = 2**31 - 1\n    INT_MIN = -2**31\n    \n    if dividend == INT_MIN and divisor == -1:\n        return INT_MAX\n    \n    # Determine sign\n    negative = (dividend < 0) != (divisor < 0)\n    \n    # Work with positive\n    dvd = abs(dividend)\n    dvs = abs(divisor)\n    \n    quotient = 0\n    \n    while dvd >= dvs:\n        dvd -= dvs\n        quotient += 1\n    \n    return -quotient if negative else quotient",
+        "javascript": "function divide(dividend, divisor) {\n    const INT_MAX = 2**31 - 1;\n    const INT_MIN = -(2**31);\n    \n    if (dividend === INT_MIN && divisor === -1) {\n        return INT_MAX;\n    }\n    \n    const negative = (dividend < 0) !== (divisor < 0);\n    \n    let dvd = Math.abs(dividend);\n    let dvs = Math.abs(divisor);\n    \n    let quotient = 0;\n    \n    while (dvd >= dvs) {\n        dvd -= dvs;\n        quotient++;\n    }\n    \n    return negative ? -quotient : quotient;\n}"
+      }
+    },
+    {
+      "name": "Exponential Search (Doubling)",
+      "order": 2,
+      "intuition": "Instead of subtracting 1x divisor repeatedly, double it (2x, 4x, 8x...) until too big, subtract, repeat.",
+      "approach": "Repeatedly double divisor using left shift.",
+      "steps": [
+        "Handle signs and make positive",
+        "quotient = 0",
+        "While dividend >= divisor:",
+        "  temp = divisor, multiple = 1",
+        "  While dividend >= (temp << 1):",
+        "    temp <<= 1  (double)",
+        "    multiple <<= 1",
+        "  dividend -= temp",
+        "  quotient += multiple",
+        "Apply sign"
+      ],
+      "complexity": {
+        "time": "O(log²n)",
+        "space": "O(1)",
+        "timeExplanation": "Outer loop O(log n), inner loop O(log n)",
+        "spaceExplanation": "Only temp and multiple variables"
+      },
+      "code": {
+        "cpp": "int divide(int dividend, int divisor) {\n    if (dividend == INT_MIN && divisor == -1) {\n        return INT_MAX;\n    }\n    \n    bool negative = (dividend < 0) ^ (divisor < 0);\n    \n    long long dvd = abs((long long)dividend);\n    long long dvs = abs((long long)divisor);\n    \n    long long quotient = 0;\n    \n    while (dvd >= dvs) {\n        long long temp = dvs, multiple = 1;\n        \n        // Double temp until it's > dividend\n        while (dvd >= (temp << 1)) {\n            temp <<= 1;\n            multiple <<= 1;\n        }\n        \n        dvd -= temp;\n        quotient += multiple;\n    }\n    \n    return negative ? -quotient : quotient;\n}",
+        "java": "public int divide(int dividend, int divisor) {\n    if (dividend == Integer.MIN_VALUE && divisor == -1) {\n        return Integer.MAX_VALUE;\n    }\n    \n    boolean negative = (dividend < 0) ^ (divisor < 0);\n    \n    long dvd = Math.abs((long)dividend);\n    long dvs = Math.abs((long)divisor);\n    \n    long quotient = 0;\n    \n    while (dvd >= dvs) {\n        long temp = dvs, multiple = 1;\n        \n        while (dvd >= (temp << 1)) {\n            temp <<= 1;\n            multiple <<= 1;\n        }\n        \n        dvd -= temp;\n        quotient += multiple;\n    }\n    \n    return negative ? (int)-quotient : (int)quotient;\n}",
+        "python": "def divide(dividend, divisor):\n    INT_MAX = 2**31 - 1\n    INT_MIN = -2**31\n    \n    if dividend == INT_MIN and divisor == -1:\n        return INT_MAX\n    \n    negative = (dividend < 0) != (divisor < 0)\n    \n    dvd = abs(dividend)\n    dvs = abs(divisor)\n    \n    quotient = 0\n    \n    while dvd >= dvs:\n        temp = dvs\n        multiple = 1\n        \n        while dvd >= (temp << 1):\n            temp <<= 1\n            multiple <<= 1\n        \n        dvd -= temp\n        quotient += multiple\n    \n    result = -quotient if negative else quotient\n    return max(INT_MIN, min(INT_MAX, result))",
+        "javascript": "function divide(dividend, divisor) {\n    const INT_MAX = Math.pow(2, 31) - 1;\n    const INT_MIN = -Math.pow(2, 31);\n    \n    if (dividend === INT_MIN && divisor === -1) {\n        return INT_MAX;\n    }\n    \n    const negative = (dividend < 0) !== (divisor < 0);\n    \n    let dvd = Math.abs(dividend);\n    let dvs = Math.abs(divisor);\n    \n    let quotient = 0;\n    \n    while (dvd >= dvs) {\n        let temp = dvs;\n        let multiple = 1;\n        \n        while (dvd >= (temp << 1)) {\n            temp <<= 1;\n            multiple <<= 1;\n        }\n        \n        dvd -= temp;\n        quotient += multiple;\n    }\n    \n    return negative ? -quotient : quotient;\n}"
+      }
+    },
+    {
+      "name": "Bit Manipulation (Binary Search) - Optimal",
+      "order": 3,
+      "intuition": "Build quotient bit by bit from MSB. For each bit position, check if (divisor << i) <= dividend.",
+      "approach": "Try each bit position from 31 to 0.",
+      "steps": [
+        "Handle signs and overflow",
+        "quotient = 0",
+        "For i from 31 to 0:",
+        "  If (divisor << i) <= dividend:",
+        "    quotient |= (1 << i)  (set bit i)",
+        "    dividend -= (divisor << i)",
+        "Apply sign and return"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Fixed 32 iterations for 32-bit integer",
+        "spaceExplanation": "Only quotient variable"
+      },
+      "code": {
+        "cpp": "int divide(int dividend, int divisor) {\n    if (dividend == INT_MIN && divisor == -1) {\n        return INT_MAX;\n    }\n    \n    bool negative = (dividend < 0) ^ (divisor < 0);\n    \n    long long dvd = abs((long long)dividend);\n    long long dvs = abs((long long)divisor);\n    \n    long long quotient = 0;\n    \n    // Build quotient bit by bit\n    for (int i = 31; i >= 0; i--) {\n        // Check if (dvs << i) <= dvd\n        if ((dvs << i) <= dvd) {\n            quotient |= (1LL << i);\n            dvd -= (dvs << i);\n        }\n    }\n    \n    return negative ? -quotient : quotient;\n}",
+        "java": "public int divide(int dividend, int divisor) {\n    if (dividend == Integer.MIN_VALUE && divisor == -1) {\n        return Integer.MAX_VALUE;\n    }\n    \n    boolean negative = (dividend < 0) ^ (divisor < 0);\n    \n    long dvd = Math.abs((long)dividend);\n    long dvs = Math.abs((long)divisor);\n    \n    long quotient = 0;\n    \n    for (int i = 31; i >= 0; i--) {\n        if ((dvs << i) <= dvd) {\n            quotient |= (1L << i);\n            dvd -= (dvs << i);\n        }\n    }\n    \n    return negative ? (int)-quotient : (int)quotient;\n}",
+        "python": "def divide(dividend, divisor):\n    INT_MAX = 2**31 - 1\n    INT_MIN = -2**31\n    \n    if dividend == INT_MIN and divisor == -1:\n        return INT_MAX\n    \n    negative = (dividend < 0) != (divisor < 0)\n    \n    dvd = abs(dividend)\n    dvs = abs(divisor)\n    \n    quotient = 0\n    \n    for i in range(31, -1, -1):\n        if (dvs << i) <= dvd:\n            quotient |= (1 << i)\n            dvd -= (dvs << i)\n    \n    result = -quotient if negative else quotient\n    return max(INT_MIN, min(INT_MAX, result))",
+        "javascript": "function divide(dividend, divisor) {\n    const INT_MAX = Math.pow(2, 31) - 1;\n    const INT_MIN = -Math.pow(2, 31);\n    \n    if (dividend === INT_MIN && divisor === -1) {\n        return INT_MAX;\n    }\n    \n    const negative = (dividend < 0) !== (divisor < 0);\n    \n    let dvd = Math.abs(dividend);\n    let dvs = Math.abs(divisor);\n    \n    let quotient = 0;\n    \n    for (let i = 31; i >= 0; i--) {\n        if ((dvs << i) <= dvd) {\n            quotient |= (1 << i);\n            dvd -= (dvs << i);\n        }\n    }\n    \n    return negative ? -quotient : quotient;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling overflow case (INT_MIN / -1)",
+    "Not handling negative numbers correctly",
+    "Integer overflow when doubling",
+    "Using signed vs unsigned shifts incorrectly",
+    "Not converting to long for intermediate calculations"
+  ],
+  "hints": [
+    "Division is repeated subtraction, but too slow",
+    "Double the divisor (use left shift) to speed up",
+    "Build quotient bit by bit from MSB",
+    "Handle overflow: INT_MIN / -1 = INT_MAX",
+    "XOR to determine if result should be negative"
+  ],
+  "followUp": [
+    "Can you do it without converting to long? (More careful overflow handling)",
+    "How to handle division by zero? (Undefined, throw error)",
+    "Can you implement modulo operator too? (dividend - quotient * divisor)",
+    "What if both numbers are very large?",
+    "How to optimize for many divisions? (Lookup table)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Bloomberg", "Uber"],
+  "tags": ["bit-manipulation", "math", "binary-search"],
+  "relatedProblems": [
+    "Multiply Strings",
+    "Pow(x, n)",
+    "Sqrt(x)",
+    "Sum of Two Integers",
+    "Fraction to Recurring Decimal"
+  ]
+}

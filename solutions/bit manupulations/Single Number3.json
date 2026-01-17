@@ -1,0 +1,173 @@
+{
+  "questionId": "260",
+  "questionSlug": "single-number-iii",
+  "title": "Single Number III",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/single-number-iii/",
+    "videos": [
+      {
+        "title": "Single Number III - Two Unique Numbers",
+        "url": "https://www.youtube.com/watch?v=kOMxOGC8js4",
+        "channel": "NeetCode",
+        "duration": "10:25",
+        "language": "English"
+      },
+      {
+        "title": "Find Two Numbers Appearing Once",
+        "url": "https://www.youtube.com/watch?v=KCkKP_ARbeg",
+        "channel": "take U forward",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Single Number III Bit Manipulation",
+        "url": "https://www.youtube.com/watch?v=4x9q8DOCnQQ",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "8:50",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Single Number III - LeetCode Official",
+        "url": "https://leetcode.com/problems/single-number-iii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find two non-repeating elements",
+        "url": "https://www.geeksforgeeks.org/find-two-non-repeating-elements-in-an-array-of-repeating-elements/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Two Numbers Appearing Once",
+        "url": "https://takeuforward.org/arrays/find-two-numbers-appearing-once/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/single-number-iii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/finding-the-numbers0215/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Two unique numbers among duplicates? XOR all to get a^b, find rightmost set bit, partition array, XOR each partition.",
+  "approaches": [
+    {
+      "name": "Hash Map - Brute Force",
+      "order": 1,
+      "intuition": "Count frequency of each number. Return numbers with frequency 1.",
+      "approach": "Use hash map to count, collect elements with count 1.",
+      "steps": [
+        "Create hash map for frequencies",
+        "For each number:",
+        "  map[num]++",
+        "result = []",
+        "For each entry in map:",
+        "  If count == 1: add to result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes: build map, find singles",
+        "spaceExplanation": "Hash map stores unique elements"
+      },
+      "code": {
+        "cpp": "vector<int> singleNumber(vector<int>& nums) {\n    unordered_map<int, int> freq;\n    \n    for (int num : nums) {\n        freq[num]++;\n    }\n    \n    vector<int> result;\n    for (auto& [num, count] : freq) {\n        if (count == 1) {\n            result.push_back(num);\n        }\n    }\n    \n    return result;\n}",
+        "java": "public int[] singleNumber(int[] nums) {\n    Map<Integer, Integer> freq = new HashMap<>();\n    \n    for (int num : nums) {\n        freq.put(num, freq.getOrDefault(num, 0) + 1);\n    }\n    \n    List<Integer> result = new ArrayList<>();\n    for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {\n        if (entry.getValue() == 1) {\n            result.add(entry.getKey());\n        }\n    }\n    \n    return result.stream().mapToInt(i -> i).toArray();\n}",
+        "python": "def singleNumber(nums):\n    freq = {}\n    \n    for num in nums:\n        freq[num] = freq.get(num, 0) + 1\n    \n    result = []\n    for num, count in freq.items():\n        if count == 1:\n            result.append(num)\n    \n    return result",
+        "javascript": "function singleNumber(nums) {\n    const freq = new Map();\n    \n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    const result = [];\n    for (const [num, count] of freq) {\n        if (count === 1) {\n            result.push(num);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "XOR and Partition by Any Set Bit",
+      "order": 2,
+      "intuition": "XOR all numbers gives a^b. Find any set bit in a^b. This bit differs between a and b. Partition array by this bit, XOR each partition.",
+      "approach": "XOR all, find set bit, partition, XOR partitions.",
+      "steps": [
+        "xorAll = XOR of all numbers = a ^ b",
+        "Find any set bit in xorAll (using any method)",
+        "Partition array into two groups based on this bit",
+        "XOR each partition separately",
+        "Each partition will have one unique number"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes: XOR all, partition and XOR",
+        "spaceExplanation": "Only variables for results and bit position"
+      },
+      "code": {
+        "cpp": "vector<int> singleNumber(vector<int>& nums) {\n    // XOR all numbers to get a ^ b\n    int xorAll = 0;\n    for (int num : nums) {\n        xorAll ^= num;\n    }\n    \n    // Find any set bit (here we use rightmost)\n    int setBit = 0;\n    for (int i = 0; i < 32; i++) {\n        if ((xorAll >> i) & 1) {\n            setBit = i;\n            break;\n        }\n    }\n    \n    // Partition and XOR\n    int num1 = 0, num2 = 0;\n    for (int num : nums) {\n        if ((num >> setBit) & 1) {\n            num1 ^= num;\n        } else {\n            num2 ^= num;\n        }\n    }\n    \n    return {num1, num2};\n}",
+        "java": "public int[] singleNumber(int[] nums) {\n    int xorAll = 0;\n    for (int num : nums) {\n        xorAll ^= num;\n    }\n    \n    // Find any set bit\n    int setBit = 0;\n    for (int i = 0; i < 32; i++) {\n        if (((xorAll >> i) & 1) == 1) {\n            setBit = i;\n            break;\n        }\n    }\n    \n    // Partition and XOR\n    int num1 = 0, num2 = 0;\n    for (int num : nums) {\n        if (((num >> setBit) & 1) == 1) {\n            num1 ^= num;\n        } else {\n            num2 ^= num;\n        }\n    }\n    \n    return new int[]{num1, num2};\n}",
+        "python": "def singleNumber(nums):\n    # XOR all to get a ^ b\n    xor_all = 0\n    for num in nums:\n        xor_all ^= num\n    \n    # Find any set bit\n    set_bit = 0\n    for i in range(32):\n        if (xor_all >> i) & 1:\n            set_bit = i\n            break\n    \n    # Partition and XOR\n    num1, num2 = 0, 0\n    for num in nums:\n        if (num >> set_bit) & 1:\n            num1 ^= num\n        else:\n            num2 ^= num\n    \n    return [num1, num2]",
+        "javascript": "function singleNumber(nums) {\n    // XOR all numbers\n    let xorAll = 0;\n    for (const num of nums) {\n        xorAll ^= num;\n    }\n    \n    // Find any set bit\n    let setBit = 0;\n    for (let i = 0; i < 32; i++) {\n        if ((xorAll >> i) & 1) {\n            setBit = i;\n            break;\n        }\n    }\n    \n    // Partition and XOR\n    let num1 = 0, num2 = 0;\n    for (const num of nums) {\n        if ((num >> setBit) & 1) {\n            num1 ^= num;\n        } else {\n            num2 ^= num;\n        }\n    }\n    \n    return [num1, num2];\n}"
+      }
+    },
+    {
+      "name": "XOR and Rightmost Set Bit - Optimal",
+      "order": 3,
+      "intuition": "XOR all to get a^b. Rightmost set bit in a^b differs between a and b (Brian Kernighan). Use x & (-x) to isolate it. Partition by this bit.",
+      "approach": "XOR all, isolate rightmost set bit, partition, XOR partitions.",
+      "steps": [
+        "xorAll = XOR of all numbers = a ^ b",
+        "rightmostBit = xorAll & (-xorAll)  // Isolate rightmost set bit",
+        "This bit is 1 in one number, 0 in other",
+        "Partition array:",
+        "  If num & rightmostBit: XOR into num1",
+        "  Else: XOR into num2",
+        "Return [num1, num2]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes: XOR all, partition and XOR",
+        "spaceExplanation": "Only two variables for results"
+      },
+      "code": {
+        "cpp": "vector<int> singleNumber(vector<int>& nums) {\n    // Step 1: XOR all numbers to get a ^ b\n    int xorAll = 0;\n    for (int num : nums) {\n        xorAll ^= num;\n    }\n    \n    // Step 2: Isolate rightmost set bit\n    // x & (-x) gives rightmost set bit\n    int rightmostBit = xorAll & (-xorAll);\n    \n    // Step 3: Partition based on rightmost bit\n    int num1 = 0, num2 = 0;\n    for (int num : nums) {\n        if (num & rightmostBit) {\n            num1 ^= num;  // Group 1\n        } else {\n            num2 ^= num;  // Group 2\n        }\n    }\n    \n    return {num1, num2};\n}\n\n// Example: [1,2,1,3,2,5]\n// xorAll = 1^2^1^3^2^5 = 3^5 = 6 (110)\n// rightmost = 6 & -6 = 2 (010)\n// Group 1 (bit 1 set): 2,3,2 → 3\n// Group 2 (bit 1 clear): 1,1,5 → 5",
+        "java": "public int[] singleNumber(int[] nums) {\n    // XOR all to get a ^ b\n    int xorAll = 0;\n    for (int num : nums) {\n        xorAll ^= num;\n    }\n    \n    // Isolate rightmost set bit\n    // This bit differs between a and b\n    int rightmostBit = xorAll & (-xorAll);\n    \n    // Partition by rightmost bit\n    int num1 = 0, num2 = 0;\n    for (int num : nums) {\n        if ((num & rightmostBit) != 0) {\n            num1 ^= num;\n        } else {\n            num2 ^= num;\n        }\n    }\n    \n    return new int[]{num1, num2};\n}",
+        "python": "def singleNumber(nums):\n    # XOR all numbers to get a ^ b\n    xor_all = 0\n    for num in nums:\n        xor_all ^= num\n    \n    # Isolate rightmost set bit\n    # x & (-x) extracts rightmost set bit\n    rightmost_bit = xor_all & (-xor_all)\n    \n    # Partition array by rightmost bit\n    num1, num2 = 0, 0\n    for num in nums:\n        if num & rightmost_bit:\n            num1 ^= num\n        else:\n            num2 ^= num\n    \n    return [num1, num2]\n\n# Why x & (-x) works:\n# x = 6 = 0110, -x = 1010 (two's complement)\n# x & -x = 0010 (rightmost set bit isolated)",
+        "javascript": "function singleNumber(nums) {\n    // Step 1: XOR all to get a ^ b\n    let xorAll = 0;\n    for (const num of nums) {\n        xorAll ^= num;\n    }\n    \n    // Step 2: Get rightmost set bit\n    // x & -x isolates rightmost 1\n    const rightmostBit = xorAll & -xorAll;\n    \n    // Step 3: Partition and XOR each group\n    let num1 = 0, num2 = 0;\n    for (const num of nums) {\n        if (num & rightmostBit) {\n            num1 ^= num;\n        } else {\n            num2 ^= num;\n        }\n    }\n    \n    return [num1, num2];\n}\n\n// Visualization:\n// [1,2,1,3,2,5]\n// XOR: 3^5 = 6 (0110)\n// Rightmost: 6&-6 = 2 (0010)\n// Partition by bit 1:\n//   Group 1: 2,3,2 → 3\n//   Group 2: 1,1,5 → 5"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding why XOR gives a^b",
+    "Not realizing we need to partition the array",
+    "Using wrong bit isolation method (not using x & -x)",
+    "Forgetting that duplicates will cancel in each partition",
+    "Not understanding why the chosen bit differs between a and b"
+  ],
+  "hints": [
+    "XOR all numbers to get a ^ b (duplicates cancel)",
+    "Find any set bit in a ^ b (this bit differs between a and b)",
+    "Use x & (-x) to isolate rightmost set bit efficiently",
+    "Partition array by this bit: one group has a, other has b",
+    "XOR each partition to get the two unique numbers"
+  ],
+  "followUp": [
+    "What if three numbers appear once? (More complex partitioning)",
+    "Can you find them in one pass? (Yes, with two passes total)",
+    "What if array has k unique numbers? (Generalize partitioning)",
+    "Can you do without knowing how many unique numbers? (No, need count)",
+    "What if elements can be negative? (Works same, two's complement)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Bloomberg"],
+  "tags": ["bit-manipulation", "array"],
+  "relatedProblems": [
+    "Single Number",
+    "Single Number II",
+    "Missing Number",
+    "Find the Duplicate Number",
+    "Find All Duplicates in an Array"
+  ]
+}

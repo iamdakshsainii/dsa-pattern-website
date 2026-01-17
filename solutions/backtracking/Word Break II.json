@@ -1,0 +1,175 @@
+{
+  "questionId": "140",
+  "questionSlug": "word-break-ii",
+  "title": "Word Break II",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/word-break-ii/",
+    "videos": [
+      {
+        "title": "Word Break II - Backtracking + Memoization",
+        "url": "https://www.youtube.com/watch?v=pYKGRZwbuzs",
+        "channel": "NeetCode",
+        "duration": "14:25",
+        "language": "English"
+      },
+      {
+        "title": "Word Break 2 Explained",
+        "url": "https://www.youtube.com/watch?v=WepWFGxiwRs",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Word Break II - Complete Guide",
+        "url": "https://www.youtube.com/watch?v=th4OcJKS9kI",
+        "channel": "Tushar Roy",
+        "duration": "16:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Word Break II - LeetCode Official",
+        "url": "https://leetcode.com/problems/word-break-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Word Break II Solutions",
+        "url": "https://www.geeksforgeeks.org/word-break-problem-using-backtracking/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Dynamic Programming + Backtracking",
+        "url": "https://takeuforward.org/data-structure/word-break-ii/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/word-break-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/word-break-part-2/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Find all ways to break string? Use backtracking with memoization. Try each word, recurse on remaining.",
+  "approaches": [
+    {
+      "name": "Backtracking - Try All Word Combinations",
+      "order": 1,
+      "intuition": "At each position, try all dictionary words that match. If match, add to current sentence and recurse on remaining string.",
+      "approach": "Use backtracking to build all possible sentences.",
+      "steps": [
+        "backtrack(start, current):",
+        "  If start == s.length, add current to result",
+        "  For each word in wordDict:",
+        "    If s[start:] starts with word:",
+        "      Add word to current sentence",
+        "      backtrack(start + word.length, updated current)",
+        "Return all collected sentences"
+      ],
+      "complexity": {
+        "time": "O(2^n × n)",
+        "space": "O(2^n × n)",
+        "timeExplanation": "Exponential number of ways to break string, each takes O(n) to build",
+        "spaceExplanation": "Storing all possible sentences"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> dict(wordDict.begin(), wordDict.end());\n        vector<string> result;\n        string current = \"\";\n        backtrack(s, 0, dict, current, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(string& s, int start, unordered_set<string>& dict,\n                   string current, vector<string>& result) {\n        if (start == s.length()) {\n            current.pop_back(); // Remove last space\n            result.push_back(current);\n            return;\n        }\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            string word = s.substr(start, end - start);\n            if (dict.count(word)) {\n                backtrack(s, end, dict, current + word + \" \", result);\n            }\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<String> wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        List<String> result = new ArrayList<>();\n        backtrack(s, 0, dict, new ArrayList<>(), result);\n        return result;\n    }\n    \n    private void backtrack(String s, int start, Set<String> dict,\n                          List<String> current, List<String> result) {\n        if (start == s.length()) {\n            result.add(String.join(\" \", current));\n            return;\n        }\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            String word = s.substring(start, end);\n            if (dict.contains(word)) {\n                current.add(word);\n                backtrack(s, end, dict, current, result);\n                current.remove(current.size() - 1);\n            }\n        }\n    }\n}",
+        "python": "def wordBreak(s, wordDict):\n    word_set = set(wordDict)\n    result = []\n    \n    def backtrack(start, current):\n        if start == len(s):\n            result.append(' '.join(current))\n            return\n        \n        for end in range(start + 1, len(s) + 1):\n            word = s[start:end]\n            if word in word_set:\n                current.append(word)\n                backtrack(end, current)\n                current.pop()\n    \n    backtrack(0, [])\n    return result",
+        "javascript": "function wordBreak(s, wordDict) {\n    const wordSet = new Set(wordDict);\n    const result = [];\n    \n    function backtrack(start, current) {\n        if (start === s.length) {\n            result.push(current.join(' '));\n            return;\n        }\n        \n        for (let end = start + 1; end <= s.length; end++) {\n            const word = s.substring(start, end);\n            if (wordSet.has(word)) {\n                current.push(word);\n                backtrack(end, current);\n                current.pop();\n            }\n        }\n    }\n    \n    backtrack(0, []);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Memoization",
+      "order": 2,
+      "intuition": "Many subproblems repeat. Cache results for each starting index to avoid redundant computation.",
+      "approach": "Use memoization to store all possible sentences starting from each index.",
+      "steps": [
+        "memo[index] = list of all sentences from index to end",
+        "backtrack(start):",
+        "  If start in memo, return memo[start]",
+        "  If start == s.length, return ['']",
+        "  For each word in dict that matches:",
+        "    Get all sentences from (start + word.length)",
+        "    For each sentence, prepend word",
+        "  Cache and return results"
+      ],
+      "complexity": {
+        "time": "O(n × 2^n)",
+        "space": "O(2^n × n)",
+        "timeExplanation": "With memoization, each substring processed once, but exponential combinations",
+        "spaceExplanation": "Memo table + result storage"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> dict(wordDict.begin(), wordDict.end());\n        unordered_map<int, vector<string>> memo;\n        return backtrack(s, 0, dict, memo);\n    }\n    \nprivate:\n    vector<string> backtrack(string& s, int start, unordered_set<string>& dict,\n                            unordered_map<int, vector<string>>& memo) {\n        if (memo.count(start)) return memo[start];\n        \n        vector<string> result;\n        \n        if (start == s.length()) {\n            result.push_back(\"\");\n            return result;\n        }\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            string word = s.substr(start, end - start);\n            if (dict.count(word)) {\n                vector<string> sublist = backtrack(s, end, dict, memo);\n                for (string& sub : sublist) {\n                    result.push_back(word + (sub.empty() ? \"\" : \" \") + sub);\n                }\n            }\n        }\n        \n        memo[start] = result;\n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<String> wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        Map<Integer, List<String>> memo = new HashMap<>();\n        return backtrack(s, 0, dict, memo);\n    }\n    \n    private List<String> backtrack(String s, int start, Set<String> dict,\n                                   Map<Integer, List<String>> memo) {\n        if (memo.containsKey(start)) return memo.get(start);\n        \n        List<String> result = new ArrayList<>();\n        \n        if (start == s.length()) {\n            result.add(\"\");\n            return result;\n        }\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            String word = s.substring(start, end);\n            if (dict.contains(word)) {\n                List<String> sublist = backtrack(s, end, dict, memo);\n                for (String sub : sublist) {\n                    result.add(word + (sub.isEmpty() ? \"\" : \" \") + sub);\n                }\n            }\n        }\n        \n        memo.put(start, result);\n        return result;\n    }\n}",
+        "python": "def wordBreak(s, wordDict):\n    word_set = set(wordDict)\n    memo = {}\n    \n    def backtrack(start):\n        if start in memo:\n            return memo[start]\n        \n        if start == len(s):\n            return ['']\n        \n        result = []\n        for end in range(start + 1, len(s) + 1):\n            word = s[start:end]\n            if word in word_set:\n                for sub in backtrack(end):\n                    result.append(word + (' ' if sub else '') + sub)\n        \n        memo[start] = result\n        return result\n    \n    return backtrack(0)",
+        "javascript": "function wordBreak(s, wordDict) {\n    const wordSet = new Set(wordDict);\n    const memo = new Map();\n    \n    function backtrack(start) {\n        if (memo.has(start)) return memo.get(start);\n        \n        if (start === s.length) return [''];\n        \n        const result = [];\n        for (let end = start + 1; end <= s.length; end++) {\n            const word = s.substring(start, end);\n            if (wordSet.has(word)) {\n                const sublist = backtrack(end);\n                for (const sub of sublist) {\n                    result.push(word + (sub ? ' ' : '') + sub);\n                }\n            }\n        }\n        \n        memo.set(start, result);\n        return result;\n    }\n    \n    return backtrack(0);\n}"
+      }
+    },
+    {
+      "name": "DP + Backtracking - Optimal",
+      "order": 3,
+      "intuition": "First check if string is breakable using DP. Only then generate sentences. Avoids wasting time on impossible cases.",
+      "approach": "Two-phase: (1) DP to check if breakable, (2) Backtracking only if possible.",
+      "steps": [
+        "Phase 1 - DP to check breakability:",
+        "  dp[i] = true if s[0:i] can be broken",
+        "  If dp[n] is false, return []",
+        "Phase 2 - Backtracking with memoization:",
+        "  Only explore paths that are valid per DP",
+        "  Generate all sentences",
+        "Return results"
+      ],
+      "complexity": {
+        "time": "O(n² + n × 2^n)",
+        "space": "O(2^n × n)",
+        "timeExplanation": "O(n²) for DP check, then backtracking",
+        "spaceExplanation": "Memo + results"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<string> wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> dict(wordDict.begin(), wordDict.end());\n        int n = s.length();\n        \n        // Phase 1: Check if breakable\n        vector<bool> dp(n + 1, false);\n        dp[0] = true;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                if (dp[j] && dict.count(s.substr(j, i - j))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n        \n        if (!dp[n]) return {};\n        \n        // Phase 2: Generate sentences\n        unordered_map<int, vector<string>> memo;\n        return backtrack(s, 0, dict, dp, memo);\n    }\n    \nprivate:\n    vector<string> backtrack(string& s, int start, unordered_set<string>& dict,\n                            vector<bool>& dp, unordered_map<int, vector<string>>& memo) {\n        if (memo.count(start)) return memo[start];\n        \n        vector<string> result;\n        if (start == s.length()) {\n            result.push_back(\"\");\n            return result;\n        }\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            if (!dp[end]) continue; // Prune using DP\n            \n            string word = s.substr(start, end - start);\n            if (dict.count(word)) {\n                vector<string> sublist = backtrack(s, end, dict, dp, memo);\n                for (string& sub : sublist) {\n                    result.push_back(word + (sub.empty() ? \"\" : \" \") + sub);\n                }\n            }\n        }\n        \n        memo[start] = result;\n        return result;\n    }\n};",
+        "java": "class Solution {\n    public List<String> wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        int n = s.length();\n        \n        // Phase 1: Check breakability\n        boolean[] dp = new boolean[n + 1];\n        dp[0] = true;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                if (dp[j] && dict.contains(s.substring(j, i))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n        \n        if (!dp[n]) return new ArrayList<>();\n        \n        // Phase 2: Generate sentences\n        Map<Integer, List<String>> memo = new HashMap<>();\n        return backtrack(s, 0, dict, dp, memo);\n    }\n    \n    private List<String> backtrack(String s, int start, Set<String> dict,\n                                   boolean[] dp, Map<Integer, List<String>> memo) {\n        if (memo.containsKey(start)) return memo.get(start);\n        \n        List<String> result = new ArrayList<>();\n        if (start == s.length()) {\n            result.add(\"\");\n            return result;\n        }\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            if (!dp[end]) continue;\n            \n            String word = s.substring(start, end);\n            if (dict.contains(word)) {\n                List<String> sublist = backtrack(s, end, dict, dp, memo);\n                for (String sub : sublist) {\n                    result.add(word + (sub.isEmpty() ? \"\" : \" \") + sub);\n                }\n            }\n        }\n        \n        memo.put(start, result);\n        return result;\n    }\n}",
+        "python": "def wordBreak(s, wordDict):\n    word_set = set(wordDict)\n    n = len(s)\n    \n    # Phase 1: Check breakability\n    dp = [False] * (n + 1)\n    dp[0] = True\n    \n    for i in range(1, n + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break\n    \n    if not dp[n]:\n        return []\n    \n    # Phase 2: Generate sentences\n    memo = {}\n    \n    def backtrack(start):\n        if start in memo:\n            return memo[start]\n        \n        if start == n:\n            return ['']\n        \n        result = []\n        for end in range(start + 1, n + 1):\n            if not dp[end]:\n                continue\n            \n            word = s[start:end]\n            if word in word_set:\n                for sub in backtrack(end):\n                    result.append(word + (' ' if sub else '') + sub)\n        \n        memo[start] = result\n        return result\n    \n    return backtrack(0)",
+        "javascript": "function wordBreak(s, wordDict) {\n    const wordSet = new Set(wordDict);\n    const n = s.length;\n    \n    // Phase 1: Check breakability\n    const dp = new Array(n + 1).fill(false);\n    dp[0] = true;\n    \n    for (let i = 1; i <= n; i++) {\n        for (let j = 0; j < i; j++) {\n            if (dp[j] && wordSet.has(s.substring(j, i))) {\n                dp[i] = true;\n                break;\n            }\n        }\n    }\n    \n    if (!dp[n]) return [];\n    \n    // Phase 2: Generate sentences\n    const memo = new Map();\n    \n    function backtrack(start) {\n        if (memo.has(start)) return memo.get(start);\n        \n        if (start === n) return [''];\n        \n        const result = [];\n        for (let end = start + 1; end <= n; end++) {\n            if (!dp[end]) continue;\n            \n            const word = s.substring(start, end);\n            if (wordSet.has(word)) {\n                const sublist = backtrack(end);\n                for (const sub of sublist) {\n                    result.push(word + (sub ? ' ' : '') + sub);\n                }\n            }\n        }\n        \n        memo.set(start, result);\n        return result;\n    }\n    \n    return backtrack(0);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not using memoization (exponential time without it)",
+    "Forgetting to handle spaces between words correctly",
+    "Not checking if string is breakable before generating (wastes time)",
+    "Incorrect base case (should return [''] not [])",
+    "Not converting wordDict to set (slow lookups)"
+  ],
+  "hints": [
+    "Use backtracking to try all word combinations",
+    "Memoize based on starting index to avoid recomputation",
+    "First check if string is breakable using DP",
+    "Use set for O(1) word lookups",
+    "Base case: when start == length, return ['']"
+  ],
+  "followUp": [
+    "What if we only need to count sentences, not generate? (Use DP to count)",
+    "Can we optimize space? (Yes, but harder with memoization)",
+    "What if wordDict is very large? (Use Trie for faster prefix matching)",
+    "How to find longest possible sentence? (Track max during backtracking)",
+    "What if words can be reused unlimited times? (Same approach works)"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Uber", "Dropbox"],
+  "tags": ["backtracking", "dynamic-programming", "trie", "memoization", "string"],
+  "relatedProblems": [
+    "Word Break",
+    "Concatenated Words",
+    "Palindrome Partitioning II",
+    "Combination Sum IV"
+  ]
+}

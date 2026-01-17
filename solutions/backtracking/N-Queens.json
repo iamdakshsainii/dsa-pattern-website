@@ -1,0 +1,179 @@
+{
+  "questionId": "51",
+  "questionSlug": "n-queens",
+  "title": "N-Queens",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/n-queens/",
+    "videos": [
+      {
+        "title": "N-Queens - Backtracking",
+        "url": "https://www.youtube.com/watch?v=Ph95IHmRp5M",
+        "channel": "NeetCode",
+        "duration": "13:20",
+        "language": "English"
+      },
+      {
+        "title": "N-Queens Explained",
+        "url": "https://www.youtube.com/watch?v=xouin83ebxE",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "11:45",
+        "language": "English"
+      },
+      {
+        "title": "N-Queens Complete Tutorial",
+        "url": "https://www.youtube.com/watch?v=i05Ju7AftcM",
+        "channel": "take U forward",
+        "duration": "18:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "N-Queens - LeetCode Official",
+        "url": "https://leetcode.com/problems/n-queens/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "N Queen Problem",
+        "url": "https://www.geeksforgeeks.org/n-queen-problem-backtracking-3/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "N-Queens Problem Explained",
+        "url": "https://takeuforward.org/data-structure/n-queen-problem-return-all-distinct-solutions-to-the-n-queens-puzzle/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/n-queens/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/n-queen-problem/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Place N items with constraints? Use backtracking. Try placing queen row by row, check if safe, backtrack if conflict.",
+  "approaches": [
+    {
+      "name": "Backtracking with O(n) Validation - Basic",
+      "order": 1,
+      "intuition": "Place queens row by row. For each row, try every column. Check if placement is safe by scanning column, diagonals.",
+      "approach": "Backtrack through rows. For each position, validate by checking all previous rows for conflicts.",
+      "steps": [
+        "Start with empty board",
+        "backtrack(row):",
+        "  If row == n, add solution",
+        "  For each column in row:",
+        "    If isSafe(row, col):",
+        "      Place queen",
+        "      backtrack(row + 1)",
+        "      Remove queen",
+        "isSafe: check column, both diagonals for existing queens",
+        "Time: O(n!) solutions × O(n) validation = O(n! × n)"
+      ],
+      "complexity": {
+        "time": "O(n! × n)",
+        "space": "O(n²)",
+        "timeExplanation": "n! possible placements, each validation takes O(n) to check column/diagonals",
+        "spaceExplanation": "Board is n×n, recursion depth is n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<string>> solveNQueens(int n) {\n        vector<vector<string>> result;\n        vector<string> board(n, string(n, '.'));\n        backtrack(board, 0, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(vector<string>& board, int row, vector<vector<string>>& result) {\n        if (row == board.size()) {\n            result.push_back(board);\n            return;\n        }\n        \n        for (int col = 0; col < board.size(); col++) {\n            if (isSafe(board, row, col)) {\n                board[row][col] = 'Q';\n                backtrack(board, row + 1, result);\n                board[row][col] = '.';\n            }\n        }\n    }\n    \n    bool isSafe(vector<string>& board, int row, int col) {\n        int n = board.size();\n        \n        // Check column\n        for (int i = 0; i < row; i++) {\n            if (board[i][col] == 'Q') return false;\n        }\n        \n        // Check upper-left diagonal\n        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {\n            if (board[i][j] == 'Q') return false;\n        }\n        \n        // Check upper-right diagonal\n        for (int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {\n            if (board[i][j] == 'Q') return false;\n        }\n        \n        return true;\n    }\n};",
+        "java": "class Solution {\n    public List<List<String>> solveNQueens(int n) {\n        List<List<String>> result = new ArrayList<>();\n        char[][] board = new char[n][n];\n        for (int i = 0; i < n; i++) {\n            Arrays.fill(board[i], '.');\n        }\n        backtrack(board, 0, result);\n        return result;\n    }\n    \n    private void backtrack(char[][] board, int row, List<List<String>> result) {\n        if (row == board.length) {\n            result.add(construct(board));\n            return;\n        }\n        \n        for (int col = 0; col < board.length; col++) {\n            if (isSafe(board, row, col)) {\n                board[row][col] = 'Q';\n                backtrack(board, row + 1, result);\n                board[row][col] = '.';\n            }\n        }\n    }\n    \n    private boolean isSafe(char[][] board, int row, int col) {\n        int n = board.length;\n        \n        // Check column\n        for (int i = 0; i < row; i++) {\n            if (board[i][col] == 'Q') return false;\n        }\n        \n        // Check upper-left diagonal\n        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {\n            if (board[i][j] == 'Q') return false;\n        }\n        \n        // Check upper-right diagonal\n        for (int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {\n            if (board[i][j] == 'Q') return false;\n        }\n        \n        return true;\n    }\n    \n    private List<String> construct(char[][] board) {\n        List<String> res = new ArrayList<>();\n        for (char[] row : board) {\n            res.add(new String(row));\n        }\n        return res;\n    }\n}",
+        "python": "def solveNQueens(n):\n    result = []\n    board = [['.' for _ in range(n)] for _ in range(n)]\n    \n    def is_safe(row, col):\n        # Check column\n        for i in range(row):\n            if board[i][col] == 'Q':\n                return False\n        \n        # Check upper-left diagonal\n        i, j = row - 1, col - 1\n        while i >= 0 and j >= 0:\n            if board[i][j] == 'Q':\n                return False\n            i -= 1\n            j -= 1\n        \n        # Check upper-right diagonal\n        i, j = row - 1, col + 1\n        while i >= 0 and j < n:\n            if board[i][j] == 'Q':\n                return False\n            i -= 1\n            j += 1\n        \n        return True\n    \n    def backtrack(row):\n        if row == n:\n            result.append([''.join(row) for row in board])\n            return\n        \n        for col in range(n):\n            if is_safe(row, col):\n                board[row][col] = 'Q'\n                backtrack(row + 1)\n                board[row][col] = '.'\n    \n    backtrack(0)\n    return result",
+        "javascript": "function solveNQueens(n) {\n    const result = [];\n    const board = Array(n).fill().map(() => Array(n).fill('.'));\n    \n    function isSafe(row, col) {\n        // Check column\n        for (let i = 0; i < row; i++) {\n            if (board[i][col] === 'Q') return false;\n        }\n        \n        // Check upper-left diagonal\n        for (let i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {\n            if (board[i][j] === 'Q') return false;\n        }\n        \n        // Check upper-right diagonal\n        for (let i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {\n            if (board[i][j] === 'Q') return false;\n        }\n        \n        return true;\n    }\n    \n    function backtrack(row) {\n        if (row === n) {\n            result.push(board.map(r => r.join('')));\n            return;\n        }\n        \n        for (let col = 0; col < n; col++) {\n            if (isSafe(row, col)) {\n                board[row][col] = 'Q';\n                backtrack(row + 1);\n                board[row][col] = '.';\n            }\n        }\n    }\n    \n    backtrack(0);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Sets for O(1) Validation - Better",
+      "order": 2,
+      "intuition": "Instead of scanning for conflicts, track occupied columns and diagonals in sets. Checking becomes O(1).",
+      "approach": "Use 3 sets: columns, diagonal1 (row-col), diagonal2 (row+col). Check/update in O(1).",
+      "steps": [
+        "cols = set of occupied columns",
+        "diag1 = set of occupied '/' diagonals (row-col)",
+        "diag2 = set of occupied '\\' diagonals (row+col)",
+        "backtrack(row):",
+        "  For each col:",
+        "    If col in cols or (row-col) in diag1 or (row+col) in diag2:",
+        "      Skip",
+        "    Add to sets, place queen, recurse, remove from sets",
+        "Time: O(n!) validation is now O(1)"
+      ],
+      "complexity": {
+        "time": "O(n!)",
+        "space": "O(n²)",
+        "timeExplanation": "n! possible queen placements, validation is O(1) with sets",
+        "spaceExplanation": "Board n×n, 3 sets of size O(n), recursion depth n"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<string>> solveNQueens(int n) {\n        vector<vector<string>> result;\n        vector<string> board(n, string(n, '.'));\n        unordered_set<int> cols, diag1, diag2;\n        backtrack(board, 0, cols, diag1, diag2, result);\n        return result;\n    }\n    \nprivate:\n    void backtrack(vector<string>& board, int row,\n                   unordered_set<int>& cols,\n                   unordered_set<int>& diag1,\n                   unordered_set<int>& diag2,\n                   vector<vector<string>>& result) {\n        if (row == board.size()) {\n            result.push_back(board);\n            return;\n        }\n        \n        for (int col = 0; col < board.size(); col++) {\n            if (cols.count(col) || diag1.count(row - col) || diag2.count(row + col)) {\n                continue;\n            }\n            \n            cols.insert(col);\n            diag1.insert(row - col);\n            diag2.insert(row + col);\n            board[row][col] = 'Q';\n            \n            backtrack(board, row + 1, cols, diag1, diag2, result);\n            \n            board[row][col] = '.';\n            cols.erase(col);\n            diag1.erase(row - col);\n            diag2.erase(row + col);\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<String>> solveNQueens(int n) {\n        List<List<String>> result = new ArrayList<>();\n        char[][] board = new char[n][n];\n        for (int i = 0; i < n; i++) {\n            Arrays.fill(board[i], '.');\n        }\n        \n        Set<Integer> cols = new HashSet<>();\n        Set<Integer> diag1 = new HashSet<>();\n        Set<Integer> diag2 = new HashSet<>();\n        \n        backtrack(board, 0, cols, diag1, diag2, result);\n        return result;\n    }\n    \n    private void backtrack(char[][] board, int row,\n                          Set<Integer> cols,\n                          Set<Integer> diag1,\n                          Set<Integer> diag2,\n                          List<List<String>> result) {\n        if (row == board.length) {\n            result.add(construct(board));\n            return;\n        }\n        \n        for (int col = 0; col < board.length; col++) {\n            if (cols.contains(col) || \n                diag1.contains(row - col) || \n                diag2.contains(row + col)) {\n                continue;\n            }\n            \n            cols.add(col);\n            diag1.add(row - col);\n            diag2.add(row + col);\n            board[row][col] = 'Q';\n            \n            backtrack(board, row + 1, cols, diag1, diag2, result);\n            \n            board[row][col] = '.';\n            cols.remove(col);\n            diag1.remove(row - col);\n            diag2.remove(row + col);\n        }\n    }\n    \n    private List<String> construct(char[][] board) {\n        List<String> res = new ArrayList<>();\n        for (char[] row : board) {\n            res.add(new String(row));\n        }\n        return res;\n    }\n}",
+        "python": "def solveNQueens(n):\n    result = []\n    board = [['.' for _ in range(n)] for _ in range(n)]\n    cols = set()\n    diag1 = set()  # row - col\n    diag2 = set()  # row + col\n    \n    def backtrack(row):\n        if row == n:\n            result.append([''.join(row) for row in board])\n            return\n        \n        for col in range(n):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            \n            cols.add(col)\n            diag1.add(row - col)\n            diag2.add(row + col)\n            board[row][col] = 'Q'\n            \n            backtrack(row + 1)\n            \n            board[row][col] = '.'\n            cols.remove(col)\n            diag1.remove(row - col)\n            diag2.remove(row + col)\n    \n    backtrack(0)\n    return result",
+        "javascript": "function solveNQueens(n) {\n    const result = [];\n    const board = Array(n).fill().map(() => Array(n).fill('.'));\n    const cols = new Set();\n    const diag1 = new Set();  // row - col\n    const diag2 = new Set();  // row + col\n    \n    function backtrack(row) {\n        if (row === n) {\n            result.push(board.map(r => r.join('')));\n            return;\n        }\n        \n        for (let col = 0; col < n; col++) {\n            if (cols.has(col) || \n                diag1.has(row - col) || \n                diag2.has(row + col)) {\n                continue;\n            }\n            \n            cols.add(col);\n            diag1.add(row - col);\n            diag2.add(row + col);\n            board[row][col] = 'Q';\n            \n            backtrack(row + 1);\n            \n            board[row][col] = '.';\n            cols.delete(col);\n            diag1.delete(row - col);\n            diag2.delete(row + col);\n        }\n    }\n    \n    backtrack(0);\n    return result;\n}"
+      }
+    },
+    {
+      "name": "Optimized with Bit Manipulation - Optimal",
+      "order": 3,
+      "intuition": "Use bitmasks instead of sets. Each bit represents column/diagonal. Bitwise operations are faster than set operations.",
+      "approach": "Use 3 integers as bitmasks for columns and diagonals. Use bit operations for O(1) check and update.",
+      "steps": [
+        "cols, diag1, diag2 are integers (bitmasks)",
+        "Bit i set = that position is occupied",
+        "available = ~(cols | diag1 | diag2) & ((1 << n) - 1)",
+        "For each available position (bit):",
+        "  Set bit, recurse with updated masks",
+        "  Left shift diag1, right shift diag2 for next row",
+        "Extremely fast for small n"
+      ],
+      "complexity": {
+        "time": "O(n!)",
+        "space": "O(n²)",
+        "timeExplanation": "Same as approach 2, but with better constants due to bitwise ops",
+        "spaceExplanation": "Board n×n, recursion depth n, bitmasks are O(1)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    vector<vector<string>> solveNQueens(int n) {\n        vector<vector<string>> result;\n        vector<string> board(n, string(n, '.'));\n        backtrack(board, 0, 0, 0, 0, result, n);\n        return result;\n    }\n    \nprivate:\n    void backtrack(vector<string>& board, int row,\n                   int cols, int diag1, int diag2,\n                   vector<vector<string>>& result, int n) {\n        if (row == n) {\n            result.push_back(board);\n            return;\n        }\n        \n        // Find available positions\n        int available = ~(cols | diag1 | diag2) & ((1 << n) - 1);\n        \n        while (available) {\n            int pos = available & -available;  // Get rightmost bit\n            int col = __builtin_ctz(pos);  // Column number\n            \n            board[row][col] = 'Q';\n            \n            backtrack(board, row + 1,\n                     cols | pos,\n                     (diag1 | pos) << 1,\n                     (diag2 | pos) >> 1,\n                     result, n);\n            \n            board[row][col] = '.';\n            available &= available - 1;  // Remove rightmost bit\n        }\n    }\n};",
+        "java": "class Solution {\n    public List<List<String>> solveNQueens(int n) {\n        List<List<String>> result = new ArrayList<>();\n        char[][] board = new char[n][n];\n        for (int i = 0; i < n; i++) {\n            Arrays.fill(board[i], '.');\n        }\n        backtrack(board, 0, 0, 0, 0, result, n);\n        return result;\n    }\n    \n    private void backtrack(char[][] board, int row,\n                          int cols, int diag1, int diag2,\n                          List<List<String>> result, int n) {\n        if (row == n) {\n            result.add(construct(board));\n            return;\n        }\n        \n        int available = ~(cols | diag1 | diag2) & ((1 << n) - 1);\n        \n        while (available != 0) {\n            int pos = available & -available;\n            int col = Integer.numberOfTrailingZeros(pos);\n            \n            board[row][col] = 'Q';\n            \n            backtrack(board, row + 1,\n                     cols | pos,\n                     (diag1 | pos) << 1,\n                     (diag2 | pos) >> 1,\n                     result, n);\n            \n            board[row][col] = '.';\n            available &= available - 1;\n        }\n    }\n    \n    private List<String> construct(char[][] board) {\n        List<String> res = new ArrayList<>();\n        for (char[] row : board) {\n            res.add(new String(row));\n        }\n        return res;\n    }\n}",
+        "python": "def solveNQueens(n):\n    result = []\n    board = [['.' for _ in range(n)] for _ in range(n)]\n    \n    def backtrack(row, cols, diag1, diag2):\n        if row == n:\n            result.append([''.join(row) for row in board])\n            return\n        \n        # Find available positions\n        available = ~(cols | diag1 | diag2) & ((1 << n) - 1)\n        \n        while available:\n            pos = available & -available  # Rightmost bit\n            col = (pos - 1).bit_length() - 1\n            \n            board[row][col] = 'Q'\n            \n            backtrack(row + 1,\n                     cols | pos,\n                     (diag1 | pos) << 1,\n                     (diag2 | pos) >> 1)\n            \n            board[row][col] = '.'\n            available &= available - 1\n    \n    backtrack(0, 0, 0, 0)\n    return result",
+        "javascript": "function solveNQueens(n) {\n    const result = [];\n    const board = Array(n).fill().map(() => Array(n).fill('.'));\n    \n    function backtrack(row, cols, diag1, diag2) {\n        if (row === n) {\n            result.push(board.map(r => r.join('')));\n            return;\n        }\n        \n        let available = ~(cols | diag1 | diag2) & ((1 << n) - 1);\n        \n        while (available) {\n            const pos = available & -available;\n            const col = Math.log2(pos);\n            \n            board[row][col] = 'Q';\n            \n            backtrack(row + 1,\n                     cols | pos,\n                     (diag1 | pos) << 1,\n                     (diag2 | pos) >> 1);\n            \n            board[row][col] = '.';\n            available &= available - 1;\n        }\n    }\n    \n    backtrack(0, 0, 0, 0);\n    return result;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not tracking diagonals correctly (row±col is the key)",
+    "Checking all rows instead of only previous rows",
+    "Forgetting to backtrack (restore board state)",
+    "Incorrect diagonal formulas",
+    "Not optimizing validation from O(n) to O(1)",
+    "Treating board construction as part of time complexity"
+  ],
+  "hints": [
+    "Place queens row by row (only one queen per row)",
+    "Use sets to track occupied columns and diagonals in O(1)",
+    "Diagonal formulas: '/' diagonal = row-col, '\\' diagonal = row+col",
+    "Bit manipulation can optimize further for small n",
+    "Only need to check previous rows, not entire board"
+  ],
+  "followUp": [
+    "Can you just count solutions? (Yes, easier - N-Queens II)",
+    "What if board size is very large? (Bit manipulation helps up to n=32/64)",
+    "Can you optimize space to O(n)? (Don't store full board, just queen positions)",
+    "How many solutions exist for n=8? (92 solutions)",
+    "Can you use symmetry to reduce computation? (Yes, compute half and mirror)"
+  ],
+  "companies": ["Google", "Microsoft", "Amazon", "Facebook", "Zenefits"],
+  "tags": ["array", "backtracking"],
+  "relatedProblems": [
+    "N-Queens II",
+    "Grid Illumination",
+    "Sudoku Solver"
+  ]
+}

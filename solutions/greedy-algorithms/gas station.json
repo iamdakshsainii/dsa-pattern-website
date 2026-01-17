@@ -1,0 +1,131 @@
+{
+  "questionId": "LC-134",
+  "questionSlug": "gas-station",
+  "title": "Gas Station",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/gas-station/",
+    "videos": [
+      {
+        "title": "Gas Station - Greedy Solution",
+        "url": "https://www.youtube.com/watch?v=lJwbPZGo05A",
+        "channel": "NeetCode",
+        "duration": "10:30",
+        "language": "English"
+      },
+      {
+        "title": "Gas Station Explained",
+        "url": "https://www.youtube.com/watch?v=_gJ3to4RyeQ",
+        "channel": "takeUforward",
+        "duration": "12:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Gas Station - Official Solution",
+        "url": "https://leetcode.com/problems/gas-station/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Gas Station - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/find-a-tour-that-visits-all-stations/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/gas-station/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Circular tour with gains/costs? Check total sum, then find valid start using greedy!",
+  "approaches": [
+    {
+      "name": "Greedy One Pass (Optimal)",
+      "order": 1,
+      "intuition": "If total gas >= total cost, solution exists. Track current tank; if negative, previous stations can't be start, try next.",
+      "approach": "Check if tour possible (total gas >= cost). Find starting station by tracking tank balance and resetting start when tank goes negative.",
+      "steps": [
+        "Calculate totalGas and totalCost",
+        "If totalGas < totalCost: return -1 (impossible)",
+        "Initialize tank = 0, start = 0",
+        "For i from 0 to n-1:",
+        "  tank += gas[i] - cost[i]",
+        "  If tank < 0:",
+        "    start = i + 1 (reset start)",
+        "    tank = 0 (reset tank)",
+        "Return start"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through stations",
+        "spaceExplanation": "Constant space"
+      },
+      "code": {
+        "cpp": "int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {\n    int n = gas.size();\n    int totalGas = 0, totalCost = 0;\n    int tank = 0, start = 0;\n    \n    for (int i = 0; i < n; i++) {\n        totalGas += gas[i];\n        totalCost += cost[i];\n        tank += gas[i] - cost[i];\n        \n        // If tank negative, can't start from any station up to i\n        if (tank < 0) {\n            start = i + 1;\n            tank = 0;\n        }\n    }\n    \n    return totalGas >= totalCost ? start : -1;\n}",
+        "java": "public int canCompleteCircuit(int[] gas, int[] cost) {\n    int n = gas.length;\n    int totalGas = 0, totalCost = 0;\n    int tank = 0, start = 0;\n    \n    for (int i = 0; i < n; i++) {\n        totalGas += gas[i];\n        totalCost += cost[i];\n        tank += gas[i] - cost[i];\n        \n        if (tank < 0) {\n            start = i + 1;\n            tank = 0;\n        }\n    }\n    \n    return totalGas >= totalCost ? start : -1;\n}",
+        "python": "def canCompleteCircuit(gas: List[int], cost: List[int]) -> int:\n    total_gas = 0\n    total_cost = 0\n    tank = 0\n    start = 0\n    \n    for i in range(len(gas)):\n        total_gas += gas[i]\n        total_cost += cost[i]\n        tank += gas[i] - cost[i]\n        \n        if tank < 0:\n            start = i + 1\n            tank = 0\n    \n    return start if total_gas >= total_cost else -1",
+        "javascript": "var canCompleteCircuit = function(gas, cost) {\n    let totalGas = 0, totalCost = 0;\n    let tank = 0, start = 0;\n    \n    for (let i = 0; i < gas.length; i++) {\n        totalGas += gas[i];\n        totalCost += cost[i];\n        tank += gas[i] - cost[i];\n        \n        if (tank < 0) {\n            start = i + 1;\n            tank = 0;\n        }\n    }\n    \n    return totalGas >= totalCost ? start : -1;\n};"
+      }
+    },
+    {
+      "name": "Brute Force Simulation",
+      "order": 2,
+      "intuition": "Try each station as starting point, simulate full circular tour.",
+      "approach": "For each station, try to complete circuit. If successful, return that station.",
+      "steps": [
+        "For each station i as start:",
+        "  tank = 0, current = i",
+        "  For j from 0 to n-1:",
+        "    tank += gas[current] - cost[current]",
+        "    If tank < 0: break (can't continue)",
+        "    current = (current + 1) % n",
+        "  If completed circuit: return i",
+        "Return -1"
+      ],
+      "complexity": {
+        "time": "O(n²)",
+        "space": "O(1)",
+        "timeExplanation": "Try n starting points, each takes O(n) to verify",
+        "spaceExplanation": "Constant space"
+      },
+      "code": {
+        "cpp": "int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {\n    int n = gas.size();\n    \n    for (int start = 0; start < n; start++) {\n        int tank = 0;\n        int current = start;\n        bool completed = true;\n        \n        for (int j = 0; j < n; j++) {\n            tank += gas[current] - cost[current];\n            \n            if (tank < 0) {\n                completed = false;\n                break;\n            }\n            \n            current = (current + 1) % n;\n        }\n        \n        if (completed) return start;\n    }\n    \n    return -1;\n}",
+        "java": "public int canCompleteCircuit(int[] gas, int[] cost) {\n    int n = gas.length;\n    \n    for (int start = 0; start < n; start++) {\n        int tank = 0;\n        int current = start;\n        boolean completed = true;\n        \n        for (int j = 0; j < n; j++) {\n            tank += gas[current] - cost[current];\n            \n            if (tank < 0) {\n                completed = false;\n                break;\n            }\n            \n            current = (current + 1) % n;\n        }\n        \n        if (completed) return start;\n    }\n    \n    return -1;\n}",
+        "python": "def canCompleteCircuit(gas: List[int], cost: List[int]) -> int:\n    n = len(gas)\n    \n    for start in range(n):\n        tank = 0\n        current = start\n        completed = True\n        \n        for j in range(n):\n            tank += gas[current] - cost[current]\n            \n            if tank < 0:\n                completed = False\n                break\n            \n            current = (current + 1) % n\n        \n        if completed:\n            return start\n    \n    return -1",
+        "javascript": "var canCompleteCircuit = function(gas, cost) {\n    const n = gas.length;\n    \n    for (let start = 0; start < n; start++) {\n        let tank = 0;\n        let current = start;\n        let completed = true;\n        \n        for (let j = 0; j < n; j++) {\n            tank += gas[current] - cost[current];\n            \n            if (tank < 0) {\n                completed = false;\n                break;\n            }\n            \n            current = (current + 1) % n;\n        }\n        \n        if (completed) return start;\n    }\n    \n    return -1;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking if total gas >= total cost first",
+    "Trying to track multiple possible starts (only one valid start exists if solution exists)",
+    "Not understanding why greedy works: if can't reach j from i, can't reach j from any station between i and j",
+    "Resetting to wrong index after tank goes negative",
+    "Trying to simulate actual circular traversal in optimal solution (unnecessary)"
+  ],
+  "hints": [
+    "If total gas < total cost, no solution exists",
+    "If solution exists, it's unique",
+    "If can't reach station j from i, no station between i and j can be valid start",
+    "When tank goes negative at position i, next valid start candidate is i+1",
+    "Don't need to actually simulate full circuit once valid start found"
+  ],
+  "followUp": [
+    "Multiple valid starting points? (Problem guarantees unique solution)",
+    "Return all valid starting points? (Only one exists if solution exists)",
+    "What if gas/cost arrays are very large? (O(n) algorithm scales well)",
+    "Can we do better than O(n)? (No, must examine all stations)",
+    "What if we want minimum starting gas? (Different problem)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Apple"],
+  "tags": ["greedy", "array"],
+  "relatedProblems": [
+    "Minimum Number of Refueling Stops",
+    "Circular Array Loop"
+  ]
+}

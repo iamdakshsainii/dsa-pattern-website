@@ -1,0 +1,130 @@
+{
+  "questionId": "GFG-BoundaryTraversal",
+  "questionSlug": "boundary-traversal-of-binary-tree",
+  "title": "Boundary Traversal of Binary Tree",
+  "difficulty": "Medium",
+  "resources": {
+    "geeksforgeeks": "https://practice.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1",
+    "videos": [
+      {
+        "title": "Boundary Traversal of Binary Tree - Complete Guide",
+        "url": "https://www.youtube.com/watch?v=0ca1nvR0be4",
+        "channel": "takeUforward",
+        "duration": "18:45",
+        "language": "English"
+      },
+      {
+        "title": "Boundary Traversal Explained",
+        "url": "https://www.youtube.com/watch?v=s1d8UGDCCN8",
+        "channel": "Pepcoding",
+        "duration": "15:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Boundary Traversal - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/boundary-traversal-of-binary-tree/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Print boundary of tree? Left boundary + leaves + right boundary (reversed)!",
+  "approaches": [
+    {
+      "name": "Three-Part Traversal (Optimal)",
+      "order": 1,
+      "intuition": "Boundary = left boundary (excluding leaves) + all leaf nodes + right boundary reversed (excluding leaves).",
+      "approach": "Split into 3 parts: traverse left boundary top-down, collect leaves left-to-right, traverse right boundary bottom-up.",
+      "steps": [
+        "Add root to result",
+        "Traverse left boundary (exclude leaves):",
+        "  Go left if exists, else right",
+        "  Add non-leaf nodes",
+        "Collect all leaf nodes (inorder/any traversal):",
+        "  If node is leaf, add to result",
+        "Traverse right boundary (exclude leaves) in reverse:",
+        "  Go right if exists, else left",
+        "  Store in temp, add reversed at end",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Visit each node once across all three parts",
+        "spaceExplanation": "Recursion stack for height h"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isLeaf(Node* node) {\n        return !node->left && !node->right;\n    }\n    \n    void addLeftBoundary(Node* root, vector<int>& result) {\n        Node* curr = root->left;\n        while (curr) {\n            if (!isLeaf(curr)) result.push_back(curr->data);\n            if (curr->left) curr = curr->left;\n            else curr = curr->right;\n        }\n    }\n    \n    void addLeaves(Node* root, vector<int>& result) {\n        if (!root) return;\n        if (isLeaf(root)) {\n            result.push_back(root->data);\n            return;\n        }\n        addLeaves(root->left, result);\n        addLeaves(root->right, result);\n    }\n    \n    void addRightBoundary(Node* root, vector<int>& result) {\n        Node* curr = root->right;\n        vector<int> temp;\n        while (curr) {\n            if (!isLeaf(curr)) temp.push_back(curr->data);\n            if (curr->right) curr = curr->right;\n            else curr = curr->left;\n        }\n        // Add in reverse\n        for (int i = temp.size() - 1; i >= 0; i--) {\n            result.push_back(temp[i]);\n        }\n    }\n    \n    vector<int> boundary(Node* root) {\n        vector<int> result;\n        if (!root) return result;\n        \n        if (!isLeaf(root)) result.push_back(root->data);\n        \n        addLeftBoundary(root, result);\n        addLeaves(root, result);\n        addRightBoundary(root, result);\n        \n        return result;\n    }\n};\n\n// Example:      1\n//             /   \\\n//            2     3\n//           / \\   / \\\n//          4   5 6   7\n// Left boundary: 1, 2\n// Leaves: 4, 5, 6, 7\n// Right boundary: 3\n// Result: [1,2,4,5,6,7,3]",
+        "java": "class Solution {\n    boolean isLeaf(Node node) {\n        return node.left == null && node.right == null;\n    }\n    \n    void addLeftBoundary(Node root, ArrayList<Integer> result) {\n        Node curr = root.left;\n        while (curr != null) {\n            if (!isLeaf(curr)) result.add(curr.data);\n            if (curr.left != null) curr = curr.left;\n            else curr = curr.right;\n        }\n    }\n    \n    void addLeaves(Node root, ArrayList<Integer> result) {\n        if (root == null) return;\n        if (isLeaf(root)) {\n            result.add(root.data);\n            return;\n        }\n        addLeaves(root.left, result);\n        addLeaves(root.right, result);\n    }\n    \n    void addRightBoundary(Node root, ArrayList<Integer> result) {\n        Node curr = root.right;\n        ArrayList<Integer> temp = new ArrayList<>();\n        while (curr != null) {\n            if (!isLeaf(curr)) temp.add(curr.data);\n            if (curr.right != null) curr = curr.right;\n            else curr = curr.left;\n        }\n        for (int i = temp.size() - 1; i >= 0; i--) {\n            result.add(temp.get(i));\n        }\n    }\n    \n    ArrayList<Integer> boundary(Node root) {\n        ArrayList<Integer> result = new ArrayList<>();\n        if (root == null) return result;\n        \n        if (!isLeaf(root)) result.add(root.data);\n        \n        addLeftBoundary(root, result);\n        addLeaves(root, result);\n        addRightBoundary(root, result);\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def isLeaf(self, node):\n        return not node.left and not node.right\n    \n    def addLeftBoundary(self, root, result):\n        curr = root.left\n        while curr:\n            if not self.isLeaf(curr):\n                result.append(curr.data)\n            if curr.left:\n                curr = curr.left\n            else:\n                curr = curr.right\n    \n    def addLeaves(self, root, result):\n        if not root:\n            return\n        if self.isLeaf(root):\n            result.append(root.data)\n            return\n        self.addLeaves(root.left, result)\n        self.addLeaves(root.right, result)\n    \n    def addRightBoundary(self, root, result):\n        curr = root.right\n        temp = []\n        while curr:\n            if not self.isLeaf(curr):\n                temp.append(curr.data)\n            if curr.right:\n                curr = curr.right\n            else:\n                curr = curr.left\n        result.extend(reversed(temp))\n    \n    def boundary(self, root):\n        result = []\n        if not root:\n            return result\n        \n        if not self.isLeaf(root):\n            result.append(root.data)\n        \n        self.addLeftBoundary(root, result)\n        self.addLeaves(root, result)\n        self.addRightBoundary(root, result)\n        \n        return result",
+        "javascript": "class Solution {\n    isLeaf(node) {\n        return !node.left && !node.right;\n    }\n    \n    addLeftBoundary(root, result) {\n        let curr = root.left;\n        while (curr) {\n            if (!this.isLeaf(curr)) result.push(curr.data);\n            if (curr.left) curr = curr.left;\n            else curr = curr.right;\n        }\n    }\n    \n    addLeaves(root, result) {\n        if (!root) return;\n        if (this.isLeaf(root)) {\n            result.push(root.data);\n            return;\n        }\n        this.addLeaves(root.left, result);\n        this.addLeaves(root.right, result);\n    }\n    \n    addRightBoundary(root, result) {\n        let curr = root.right;\n        const temp = [];\n        while (curr) {\n            if (!this.isLeaf(curr)) temp.push(curr.data);\n            if (curr.right) curr = curr.right;\n            else curr = curr.left;\n        }\n        for (let i = temp.length - 1; i >= 0; i--) {\n            result.push(temp[i]);\n        }\n    }\n    \n    boundary(root) {\n        const result = [];\n        if (!root) return result;\n        \n        if (!this.isLeaf(root)) result.push(root.data);\n        \n        this.addLeftBoundary(root, result);\n        this.addLeaves(root, result);\n        this.addRightBoundary(root, result);\n        \n        return result;\n    }\n}"
+      }
+    },
+    {
+      "name": "Single Traversal with Flags",
+      "order": 2,
+      "intuition": "Use flags to mark nodes as left boundary, leaf, or right boundary during single traversal.",
+      "approach": "DFS with boolean flags indicating which boundary each node belongs to.",
+      "steps": [
+        "DFS with parameters (node, isLeft, isRight)",
+        "If node is leaf: add to result",
+        "If isLeft and not leaf: add to result",
+        "Recurse left: (left child, isLeft, isRight && !hasRight)",
+        "Recurse right: (right child, isLeft && !hasLeft, isRight)",
+        "If isRight and not leaf: add to result (at end)",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(h)",
+        "timeExplanation": "Single DFS traversal",
+        "spaceExplanation": "Recursion stack"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool isLeaf(Node* node) {\n        return !node->left && !node->right;\n    }\n    \n    void dfs(Node* node, bool isLeft, bool isRight, \n             vector<int>& result, vector<int>& rightBoundary) {\n        if (!node) return;\n        \n        if (isLeaf(node)) {\n            result.push_back(node->data);\n            return;\n        }\n        \n        if (isLeft) result.push_back(node->data);\n        \n        dfs(node->left, isLeft, isRight && !node->right, result, rightBoundary);\n        dfs(node->right, isLeft && !node->left, isRight, result, rightBoundary);\n        \n        if (isRight) rightBoundary.push_back(node->data);\n    }\n    \n    vector<int> boundary(Node* root) {\n        vector<int> result, rightBoundary;\n        if (!root) return result;\n        \n        if (!isLeaf(root)) result.push_back(root->data);\n        \n        dfs(root->left, true, false, result, rightBoundary);\n        dfs(root->right, false, true, result, rightBoundary);\n        \n        for (int i = rightBoundary.size() - 1; i >= 0; i--) {\n            result.push_back(rightBoundary[i]);\n        }\n        \n        return result;\n    }\n};",
+        "java": "class Solution {\n    boolean isLeaf(Node node) {\n        return node.left == null && node.right == null;\n    }\n    \n    void dfs(Node node, boolean isLeft, boolean isRight, \n             ArrayList<Integer> result, ArrayList<Integer> rightBoundary) {\n        if (node == null) return;\n        \n        if (isLeaf(node)) {\n            result.add(node.data);\n            return;\n        }\n        \n        if (isLeft) result.add(node.data);\n        \n        dfs(node.left, isLeft, isRight && node.right == null, result, rightBoundary);\n        dfs(node.right, isLeft && node.left == null, isRight, result, rightBoundary);\n        \n        if (isRight) rightBoundary.add(node.data);\n    }\n    \n    ArrayList<Integer> boundary(Node root) {\n        ArrayList<Integer> result = new ArrayList<>();\n        ArrayList<Integer> rightBoundary = new ArrayList<>();\n        if (root == null) return result;\n        \n        if (!isLeaf(root)) result.add(root.data);\n        \n        dfs(root.left, true, false, result, rightBoundary);\n        dfs(root.right, false, true, result, rightBoundary);\n        \n        for (int i = rightBoundary.size() - 1; i >= 0; i--) {\n            result.add(rightBoundary.get(i));\n        }\n        \n        return result;\n    }\n}",
+        "python": "class Solution:\n    def isLeaf(self, node):\n        return not node.left and not node.right\n    \n    def dfs(self, node, is_left, is_right, result, right_boundary):\n        if not node:\n            return\n        \n        if self.isLeaf(node):\n            result.append(node.data)\n            return\n        \n        if is_left:\n            result.append(node.data)\n        \n        self.dfs(node.left, is_left, is_right and not node.right, result, right_boundary)\n        self.dfs(node.right, is_left and not node.left, is_right, result, right_boundary)\n        \n        if is_right:\n            right_boundary.append(node.data)\n    \n    def boundary(self, root):\n        result = []\n        right_boundary = []\n        if not root:\n            return result\n        \n        if not self.isLeaf(root):\n            result.append(root.data)\n        \n        self.dfs(root.left, True, False, result, right_boundary)\n        self.dfs(root.right, False, True, result, right_boundary)\n        \n        result.extend(reversed(right_boundary))\n        \n        return result",
+        "javascript": "class Solution {\n    isLeaf(node) {\n        return !node.left && !node.right;\n    }\n    \n    dfs(node, isLeft, isRight, result, rightBoundary) {\n        if (!node) return;\n        \n        if (this.isLeaf(node)) {\n            result.push(node.data);\n            return;\n        }\n        \n        if (isLeft) result.push(node.data);\n        \n        this.dfs(node.left, isLeft, isRight && !node.right, result, rightBoundary);\n        this.dfs(node.right, isLeft && !node.left, isRight, result, rightBoundary);\n        \n        if (isRight) rightBoundary.push(node.data);\n    }\n    \n    boundary(root) {\n        const result = [];\n        const rightBoundary = [];\n        if (!root) return result;\n        \n        if (!this.isLeaf(root)) result.push(root.data);\n        \n        this.dfs(root.left, true, false, result, rightBoundary);\n        this.dfs(root.right, false, true, result, rightBoundary);\n        \n        for (let i = rightBoundary.length - 1; i >= 0; i--) {\n            result.push(rightBoundary[i]);\n        }\n        \n        return result;\n    }\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Including leaf nodes in left/right boundary (should only be in leaves section)",
+    "Not reversing right boundary",
+    "Adding root twice (add only once at start if not a leaf)",
+    "Including root in left/right boundary when it's a leaf",
+    "Wrong order: should be left boundary → leaves → right boundary reversed",
+    "Not handling single node tree (just return [root.data])"
+  ],
+  "hints": [
+    "Boundary = left edge + leaves + right edge (reversed)",
+    "Leaves should not be duplicated in left/right boundary",
+    "Left boundary: keep going left, if no left go right",
+    "Right boundary: keep going right, if no right go left (then reverse)",
+    "For leaves: any traversal works (preorder, inorder, postorder)",
+    "Root is special case: add once at start if not leaf"
+  ],
+  "followUp": [
+    "Anti-clockwise boundary? (Start from root, go right boundary, leaves reversed, left boundary reversed)",
+    "Return only nodes at depth d? (BFS level tracking)",
+    "Boundary with specific property (e.g., even values only)? (Add filtering)",
+    "N-ary tree boundary? (Generalize to multiple children)",
+    "Boundary excluding certain nodes? (Add skip condition)"
+  ],
+  "companies": ["Amazon", "Microsoft", "Flipkart", "Samsung"],
+  "tags": ["tree", "binary-tree", "depth-first-search", "tree-traversal"],
+  "relatedProblems": [
+    "Binary Tree Right Side View",
+    "Binary Tree Left Side View",
+    "Print All Leaf Nodes",
+    "Vertical Order Traversal"
+  ]
+}

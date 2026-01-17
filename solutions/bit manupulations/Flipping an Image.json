@@ -1,0 +1,172 @@
+{
+  "questionId": "832",
+  "questionSlug": "flipping-an-image",
+  "title": "Flipping an Image",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/flipping-an-image/",
+    "videos": [
+      {
+        "title": "Flipping an Image - Array Manipulation",
+        "url": "https://www.youtube.com/watch?v=7hx6vW2P8II",
+        "channel": "NeetCode",
+        "duration": "6:45",
+        "language": "English"
+      },
+      {
+        "title": "Flip and Invert Image - Complete Solution",
+        "url": "https://www.youtube.com/watch?v=kJoboDAp5Qo",
+        "channel": "take U forward",
+        "duration": "9:30",
+        "language": "English"
+      },
+      {
+        "title": "Flipping an Image LeetCode",
+        "url": "https://www.youtube.com/watch?v=VY5x4qY6vTQ",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "5:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Flipping an Image - LeetCode Official",
+        "url": "https://leetcode.com/problems/flipping-an-image/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Flip and Invert a Binary Matrix",
+        "url": "https://www.geeksforgeeks.org/flip-binary-matrix/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Flipping an Image Solution",
+        "url": "https://takeuforward.org/arrays/flipping-an-image/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/flipping-an-image/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/flip-bits/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Flip and invert? Reverse each row, then XOR each element with 1 (or use 1-val). Can combine both operations.",
+  "approaches": [
+    {
+      "name": "Two Pass - Brute Force",
+      "order": 1,
+      "intuition": "First reverse each row, then invert (0→1, 1→0) each element. Two separate operations.",
+      "approach": "Pass 1: Reverse rows. Pass 2: Invert bits.",
+      "steps": [
+        "For each row:",
+        "  Reverse the row (swap first with last, etc.)",
+        "For each row again:",
+        "  For each element:",
+        "    Invert: val = 1 - val (or val ^= 1)",
+        "Return modified image"
+      ],
+      "complexity": {
+        "time": "O(n * m)",
+        "space": "O(1)",
+        "timeExplanation": "Two passes through all elements, n rows × m cols",
+        "spaceExplanation": "In-place modification, no extra space"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> flipAndInvertImage(vector<vector<int>>& image) {\n    int n = image.size();\n    \n    // Pass 1: Reverse each row\n    for (int i = 0; i < n; i++) {\n        reverse(image[i].begin(), image[i].end());\n    }\n    \n    // Pass 2: Invert each element\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < image[i].size(); j++) {\n            image[i][j] = 1 - image[i][j];\n            // OR: image[i][j] ^= 1;\n        }\n    }\n    \n    return image;\n}",
+        "java": "public int[][] flipAndInvertImage(int[][] image) {\n    int n = image.length;\n    \n    // Reverse each row\n    for (int i = 0; i < n; i++) {\n        int left = 0, right = image[i].length - 1;\n        while (left < right) {\n            int temp = image[i][left];\n            image[i][left] = image[i][right];\n            image[i][right] = temp;\n            left++;\n            right--;\n        }\n    }\n    \n    // Invert each element\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < image[i].length; j++) {\n            image[i][j] = 1 - image[i][j];\n        }\n    }\n    \n    return image;\n}",
+        "python": "def flipAndInvertImage(image):\n    # Reverse each row\n    for row in image:\n        row.reverse()\n    \n    # Invert each element\n    for i in range(len(image)):\n        for j in range(len(image[i])):\n            image[i][j] = 1 - image[i][j]\n            # OR: image[i][j] ^= 1\n    \n    return image",
+        "javascript": "function flipAndInvertImage(image) {\n    const n = image.length;\n    \n    // Reverse each row\n    for (let i = 0; i < n; i++) {\n        image[i].reverse();\n    }\n    \n    // Invert each element\n    for (let i = 0; i < n; i++) {\n        for (let j = 0; j < image[i].length; j++) {\n            image[i][j] = 1 - image[i][j];\n        }\n    }\n    \n    return image;\n}"
+      }
+    },
+    {
+      "name": "Single Pass with Two Pointers",
+      "order": 2,
+      "intuition": "Combine flip and invert. Use two pointers from both ends, swap and invert simultaneously.",
+      "approach": "For each row, swap and invert from both ends.",
+      "steps": [
+        "For each row:",
+        "  left = 0, right = n-1",
+        "  While left <= right:",
+        "    Swap image[row][left] and image[row][right]",
+        "    Invert both: left val = 1-left, right val = 1-right",
+        "    left++, right--"
+      ],
+      "complexity": {
+        "time": "O(n * m)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through matrix",
+        "spaceExplanation": "In-place modification"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> flipAndInvertImage(vector<vector<int>>& image) {\n    int n = image.size();\n    \n    for (int i = 0; i < n; i++) {\n        int left = 0, right = image[i].size() - 1;\n        \n        while (left <= right) {\n            // Swap and invert\n            int temp = image[i][left];\n            image[i][left] = 1 - image[i][right];\n            image[i][right] = 1 - temp;\n            \n            left++;\n            right--;\n        }\n    }\n    \n    return image;\n}",
+        "java": "public int[][] flipAndInvertImage(int[][] image) {\n    int n = image.length;\n    \n    for (int i = 0; i < n; i++) {\n        int left = 0, right = image[i].length - 1;\n        \n        while (left <= right) {\n            int temp = image[i][left];\n            image[i][left] = 1 - image[i][right];\n            image[i][right] = 1 - temp;\n            \n            left++;\n            right--;\n        }\n    }\n    \n    return image;\n}",
+        "python": "def flipAndInvertImage(image):\n    n = len(image)\n    \n    for i in range(n):\n        left, right = 0, len(image[i]) - 1\n        \n        while left <= right:\n            # Swap and invert\n            image[i][left], image[i][right] = \\\n                1 - image[i][right], 1 - image[i][left]\n            \n            left += 1\n            right -= 1\n    \n    return image",
+        "javascript": "function flipAndInvertImage(image) {\n    const n = image.length;\n    \n    for (let i = 0; i < n; i++) {\n        let left = 0, right = image[i].length - 1;\n        \n        while (left <= right) {\n            const temp = image[i][left];\n            image[i][left] = 1 - image[i][right];\n            image[i][right] = 1 - temp;\n            \n            left++;\n            right--;\n        }\n    }\n    \n    return image;\n}"
+      }
+    },
+    {
+      "name": "XOR Optimization - Optimal",
+      "order": 3,
+      "intuition": "If elements are same after flip, XOR with 1 doesn't change outcome. Only swap when different. Use XOR for inversion.",
+      "approach": "Swap and XOR, handle middle element.",
+      "steps": [
+        "For each row:",
+        "  For j from 0 to n/2:",
+        "    Swap image[i][j] and image[i][n-1-j]",
+        "    XOR both with 1: image[i][j] ^= 1",
+        "  If odd length, invert middle element",
+        "Optimization: if left == right after swap, only invert once"
+      ],
+      "complexity": {
+        "time": "O(n * m)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass, half columns per row",
+        "spaceExplanation": "In-place modification"
+      },
+      "code": {
+        "cpp": "vector<vector<int>> flipAndInvertImage(vector<vector<int>>& image) {\n    int n = image.size();\n    \n    for (int i = 0; i < n; i++) {\n        int m = image[i].size();\n        \n        for (int j = 0; j < (m + 1) / 2; j++) {\n            // Swap and invert using XOR\n            int temp = image[i][j] ^ 1;\n            image[i][j] = image[i][m - 1 - j] ^ 1;\n            image[i][m - 1 - j] = temp;\n        }\n    }\n    \n    return image;\n}\n\n// Example: [1,1,0]\n// j=0: swap(1,0) → invert → [0,1,1]\n// j=1: middle element 1 → invert → [0,0,1]",
+        "java": "public int[][] flipAndInvertImage(int[][] image) {\n    int n = image.length;\n    \n    for (int i = 0; i < n; i++) {\n        int m = image[i].length;\n        \n        for (int j = 0; j < (m + 1) / 2; j++) {\n            int temp = image[i][j] ^ 1;\n            image[i][j] = image[i][m - 1 - j] ^ 1;\n            image[i][m - 1 - j] = temp;\n        }\n    }\n    \n    return image;\n}",
+        "python": "def flipAndInvertImage(image):\n    n = len(image)\n    \n    for i in range(n):\n        m = len(image[i])\n        \n        for j in range((m + 1) // 2):\n            # Swap and invert using XOR\n            image[i][j], image[i][m - 1 - j] = \\\n                image[i][m - 1 - j] ^ 1, image[i][j] ^ 1\n    \n    return image\n\n# One-liner alternative:\n# return [[1 - val for val in row[::-1]] for row in image]",
+        "javascript": "function flipAndInvertImage(image) {\n    const n = image.length;\n    \n    for (let i = 0; i < n; i++) {\n        const m = image[i].length;\n        \n        for (let j = 0; j < Math.floor((m + 1) / 2); j++) {\n            const temp = image[i][j] ^ 1;\n            image[i][j] = image[i][m - 1 - j] ^ 1;\n            image[i][m - 1 - j] = temp;\n        }\n    }\n    \n    return image;\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Forgetting to handle middle element in odd-length rows",
+    "Not combining flip and invert operations efficiently",
+    "Using extra space when in-place modification is possible",
+    "Off-by-one errors in two-pointer approach",
+    "Not using XOR for bit inversion"
+  ],
+  "hints": [
+    "Flip = reverse each row",
+    "Invert = 0→1, 1→0 (use 1-val or val^1)",
+    "Can combine both operations in single pass",
+    "Use two pointers from both ends",
+    "XOR with 1 inverts bit: 0^1=1, 1^1=0"
+  ],
+  "followUp": [
+    "What if matrix is very large? (Same approach, memory efficient)",
+    "Can you do it without modifying input? (Need O(n*m) space)",
+    "What if we only need to flip (not invert)?",
+    "What if we need to rotate instead of flip?",
+    "Can you generalize for any bit length (not just 0/1)?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook"],
+  "tags": ["bit-manipulation", "array", "two-pointers"],
+  "relatedProblems": [
+    "Reverse String",
+    "Rotate Image",
+    "Transpose Matrix",
+    "Number Complement",
+    "Reverse Bits"
+  ]
+}

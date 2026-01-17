@@ -1,0 +1,175 @@
+{
+  "questionId": "137",
+  "questionSlug": "single-number-ii",
+  "title": "Single Number II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/single-number-ii/",
+    "videos": [
+      {
+        "title": "Single Number II - Bit Manipulation",
+        "url": "https://www.youtube.com/watch?v=cOFAmaMBVps",
+        "channel": "NeetCode",
+        "duration": "11:30",
+        "language": "English"
+      },
+      {
+        "title": "Find Element Appearing Once (Others Thrice)",
+        "url": "https://www.youtube.com/watch?v=WsVJ4kaH_a4",
+        "channel": "take U forward",
+        "duration": "15:45",
+        "language": "English"
+      },
+      {
+        "title": "Single Number II Explained",
+        "url": "https://www.youtube.com/watch?v=puXcQpwgcD0",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Single Number II - LeetCode Official",
+        "url": "https://leetcode.com/problems/single-number-ii/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Find element that appears once",
+        "url": "https://www.geeksforgeeks.org/find-element-appears-array-every-element-appears-three-times/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Single Number II - Bit Manipulation",
+        "url": "https://takeuforward.org/data-structure/find-the-number-appearing-once-ii/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/single-number-ii/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/element-appearing-once2552/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Every element appears 3 times except one? Count bits at each position, take modulo 3. Or use ones/twos state machine.",
+  "approaches": [
+    {
+      "name": "Hash Map - Brute Force",
+      "order": 1,
+      "intuition": "Count frequency of each number. The number appearing once is the answer.",
+      "approach": "Use hash map to count, find element with count 1.",
+      "steps": [
+        "Create hash map for frequencies",
+        "For each number:",
+        "  map[num]++",
+        "Iterate map:",
+        "  If count == 1: return num"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Two passes: build map, find single",
+        "spaceExplanation": "Hash map stores up to n/3 unique elements"
+      },
+      "code": {
+        "cpp": "int singleNumber(vector<int>& nums) {\n    unordered_map<int, int> freq;\n    \n    for (int num : nums) {\n        freq[num]++;\n    }\n    \n    for (auto& [num, count] : freq) {\n        if (count == 1) return num;\n    }\n    \n    return -1;\n}",
+        "java": "public int singleNumber(int[] nums) {\n    Map<Integer, Integer> freq = new HashMap<>();\n    \n    for (int num : nums) {\n        freq.put(num, freq.getOrDefault(num, 0) + 1);\n    }\n    \n    for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {\n        if (entry.getValue() == 1) {\n            return entry.getKey();\n        }\n    }\n    \n    return -1;\n}",
+        "python": "def singleNumber(nums):\n    freq = {}\n    \n    for num in nums:\n        freq[num] = freq.get(num, 0) + 1\n    \n    for num, count in freq.items():\n        if count == 1:\n            return num\n    \n    return -1",
+        "javascript": "function singleNumber(nums) {\n    const freq = new Map();\n    \n    for (const num of nums) {\n        freq.set(num, (freq.get(num) || 0) + 1);\n    }\n    \n    for (const [num, count] of freq) {\n        if (count === 1) return num;\n    }\n    \n    return -1;\n}"
+      }
+    },
+    {
+      "name": "Bit Counting (Modulo 3)",
+      "order": 2,
+      "intuition": "Count how many times each bit position is set across all numbers. If count % 3 != 0, that bit belongs to single number.",
+      "approach": "Count bits at each position, mod 3 to get single number's bits.",
+      "steps": [
+        "For each bit position (0 to 31):",
+        "  count = 0",
+        "  For each number:",
+        "    If bit is set: count++",
+        "  If count % 3 != 0:",
+        "    Set this bit in result",
+        "Return result"
+      ],
+      "complexity": {
+        "time": "O(32n) = O(n)",
+        "space": "O(1)",
+        "timeExplanation": "32 iterations × n numbers = 32n operations",
+        "spaceExplanation": "Only result and count variables"
+      },
+      "code": {
+        "cpp": "int singleNumber(vector<int>& nums) {\n    int result = 0;\n    \n    // Check each bit position\n    for (int i = 0; i < 32; i++) {\n        int count = 0;\n        \n        // Count how many numbers have this bit set\n        for (int num : nums) {\n            if ((num >> i) & 1) {\n                count++;\n            }\n        }\n        \n        // If count % 3 != 0, single number has this bit\n        if (count % 3 != 0) {\n            result |= (1 << i);\n        }\n    }\n    \n    return result;\n}",
+        "java": "public int singleNumber(int[] nums) {\n    int result = 0;\n    \n    for (int i = 0; i < 32; i++) {\n        int count = 0;\n        \n        for (int num : nums) {\n            if (((num >> i) & 1) == 1) {\n                count++;\n            }\n        }\n        \n        if (count % 3 != 0) {\n            result |= (1 << i);\n        }\n    }\n    \n    return result;\n}",
+        "python": "def singleNumber(nums):\n    result = 0\n    \n    # Check each bit position (32 for signed int)\n    for i in range(32):\n        count = 0\n        \n        # Count numbers with this bit set\n        for num in nums:\n            if (num >> i) & 1:\n                count += 1\n        \n        # If count not divisible by 3, set bit\n        if count % 3 != 0:\n            result |= (1 << i)\n    \n    # Handle negative numbers in Python\n    if result >= 2**31:\n        result -= 2**32\n    \n    return result",
+        "javascript": "function singleNumber(nums) {\n    let result = 0;\n    \n    for (let i = 0; i < 32; i++) {\n        let count = 0;\n        \n        for (const num of nums) {\n            if ((num >> i) & 1) {\n                count++;\n            }\n        }\n        \n        if (count % 3 !== 0) {\n            result |= (1 << i);\n        }\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "State Machine (ones/twos) - Optimal",
+      "order": 3,
+      "intuition": "Use two variables to track bits seen once and twice. When bit seen 3 times, reset both. Uses digital logic concepts.",
+      "approach": "Maintain state with ones and twos variables.",
+      "steps": [
+        "ones = bits seen once",
+        "twos = bits seen twice",
+        "For each num:",
+        "  twos |= ones & num  (add to twos if in ones)",
+        "  ones ^= num  (toggle in ones)",
+        "  threes = ones & twos  (bits seen 3 times)",
+        "  ones &= ~threes  (clear from ones)",
+        "  twos &= ~threes  (clear from twos)",
+        "Return ones (single number)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through array, constant operations per element",
+        "spaceExplanation": "Only two variables (ones, twos)"
+      },
+      "code": {
+        "cpp": "int singleNumber(vector<int>& nums) {\n    int ones = 0, twos = 0;\n    \n    for (int num : nums) {\n        // Add to twos if already in ones\n        twos |= ones & num;\n        \n        // Toggle in ones\n        ones ^= num;\n        \n        // Find bits that appeared 3 times\n        int threes = ones & twos;\n        \n        // Remove bits that appeared 3 times\n        ones &= ~threes;\n        twos &= ~threes;\n    }\n    \n    return ones;\n}\n\n// Example: [2,2,3,2]\n// num=2: ones=2, twos=0\n// num=2: ones=0, twos=2\n// num=3: ones=3, twos=2\n// num=2: ones=3, twos=0 → return 3",
+        "java": "public int singleNumber(int[] nums) {\n    int ones = 0, twos = 0;\n    \n    for (int num : nums) {\n        // If bit in ones, move to twos\n        twos |= ones & num;\n        \n        // Toggle bit in ones\n        ones ^= num;\n        \n        // Bits appearing 3 times\n        int threes = ones & twos;\n        \n        // Clear bits appearing 3 times\n        ones &= ~threes;\n        twos &= ~threes;\n    }\n    \n    return ones;\n}",
+        "python": "def singleNumber(nums):\n    ones, twos = 0, 0\n    \n    for num in nums:\n        # Add to twos if in ones\n        twos |= ones & num\n        \n        # Toggle in ones\n        ones ^= num\n        \n        # Bits seen 3 times\n        threes = ones & twos\n        \n        # Clear bits seen 3 times\n        ones &= ~threes\n        twos &= ~threes\n    \n    return ones\n\n# State transitions:\n# 0 times → 1 time (in ones)\n# 1 time → 2 times (in twos, clear from ones)\n# 2 times → 3 times (clear from both)",
+        "javascript": "function singleNumber(nums) {\n    let ones = 0, twos = 0;\n    \n    for (const num of nums) {\n        // Promote to twos if already in ones\n        twos |= ones & num;\n        \n        // Toggle in ones\n        ones ^= num;\n        \n        // Find bits appearing 3 times\n        const threes = ones & twos;\n        \n        // Clear from both\n        ones &= ~threes;\n        twos &= ~threes;\n    }\n    \n    return ones;\n}\n\n// Intuition: Digital logic state machine\n// Track: seen once (ones), seen twice (twos)\n// Reset when seen thrice (threes)"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Trying to use XOR directly (works for pairs, not triplets)",
+    "Not handling negative numbers correctly in bit counting",
+    "Confusing the state machine logic (ones/twos)",
+    "Forgetting to clear threes from both ones and twos",
+    "Not understanding why count % 3 works"
+  ],
+  "hints": [
+    "Count occurrences of each bit position across all numbers",
+    "If bit count % 3 != 0, that bit belongs to single number",
+    "Alternative: Use state machine with ones/twos variables",
+    "Think: digital logic with 3 states (0, 1, 2 times seen)",
+    "For general k times: use log₂(k) state variables"
+  ],
+  "followUp": [
+    "What if elements appear k times except one? (Generalize to k)",
+    "Can you do it with one pass? (Yes, state machine)",
+    "What if two elements appear once? (Different problem - Single Number III)",
+    "How to extend to k appearances? (Use ceiling(log₂(k)) variables)",
+    "What if we need to find all elements appearing once?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Bloomberg"],
+  "tags": ["bit-manipulation", "array"],
+  "relatedProblems": [
+    "Single Number",
+    "Single Number III",
+    "Missing Number",
+    "Find the Duplicate Number",
+    "Majority Element II"
+  ]
+}

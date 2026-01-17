@@ -1,0 +1,173 @@
+{
+  "questionId": "GFG-XOR-Range",
+  "questionSlug": "find-xor-from-l-to-r",
+  "title": "Find XOR from L to R",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/xor-queries-of-a-subarray/",
+    "videos": [
+      {
+        "title": "XOR from L to R - Pattern Explained",
+        "url": "https://www.youtube.com/watch?v=kJoboDAp5Qo",
+        "channel": "take U forward",
+        "duration": "14:30",
+        "language": "English"
+      },
+      {
+        "title": "Range XOR Queries",
+        "url": "https://www.youtube.com/watch?v=gXUrDV4tZfY",
+        "channel": "NeetCode",
+        "duration": "11:45",
+        "language": "English"
+      },
+      {
+        "title": "XOR Properties for Range Queries",
+        "url": "https://www.youtube.com/watch?v=fAh8cUMN_fo",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "9:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Calculate XOR from 1 to n",
+        "url": "https://www.geeksforgeeks.org/calculate-xor-1-n/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "XOR of numbers in given range",
+        "url": "https://www.geeksforgeeks.org/find-xor-of-numbers-from-the-range-l-r/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "XOR from L to R",
+        "url": "https://takeuforward.org/bit-manipulation/xor-from-l-to-r/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/xor-from-1-to-n/",
+        "platform": "GeeksforGeeks"
+      },
+      {
+        "title": "XOR Queries on LeetCode",
+        "url": "https://leetcode.com/problems/xor-queries-of-a-subarray/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "XOR range [L,R]? Use XOR(1,R) ^ XOR(1,L-1). XOR(1,n) follows pattern based on n%4!",
+  "approaches": [
+    {
+      "name": "Brute Force - XOR Loop",
+      "order": 1,
+      "intuition": "XOR all numbers from L to R in a loop.",
+      "approach": "Simple iteration from L to R.",
+      "steps": [
+        "result = 0",
+        "For i from L to R:",
+        "  result ^= i",
+        "Return result",
+        "Works but slow for large ranges"
+      ],
+      "complexity": {
+        "time": "O(R - L)",
+        "space": "O(1)",
+        "timeExplanation": "Iterate through all numbers in range",
+        "spaceExplanation": "Only result variable"
+      },
+      "code": {
+        "cpp": "int findXOR(int L, int R) {\n    int result = 0;\n    \n    for (int i = L; i <= R; i++) {\n        result ^= i;\n    }\n    \n    return result;\n}\n\n// Too slow for large ranges!\n// Example: L=3, R=7\n// 3 ^ 4 ^ 5 ^ 6 ^ 7 = 3",
+        "java": "public int findXOR(int L, int R) {\n    int result = 0;\n    \n    for (int i = L; i <= R; i++) {\n        result ^= i;\n    }\n    \n    return result;\n}",
+        "python": "def findXOR(L, R):\n    result = 0\n    \n    for i in range(L, R + 1):\n        result ^= i\n    \n    return result\n\n# Alternative using functools:\n# from functools import reduce\n# return reduce(lambda x, y: x ^ y, range(L, R + 1), 0)",
+        "javascript": "function findXOR(L, R) {\n    let result = 0;\n    \n    for (let i = L; i <= R; i++) {\n        result ^= i;\n    }\n    \n    return result;\n}"
+      }
+    },
+    {
+      "name": "Using XOR(1,n) Helper - Better",
+      "order": 2,
+      "intuition": "XOR(L,R) = XOR(1,R) ^ XOR(1,L-1). XOR is self-inverse: a^a=0. So XOR(1,L-1) cancels from XOR(1,R).",
+      "approach": "Compute XOR(1,n) using helper, then use formula.",
+      "steps": [
+        "Define helper: XOR(1,n)",
+        "  Can compute in O(n) by looping",
+        "Return XOR(1,R) ^ XOR(1,L-1)",
+        "Better but still O(n) for helper"
+      ],
+      "complexity": {
+        "time": "O(R)",
+        "space": "O(1)",
+        "timeExplanation": "Computing XOR(1,R) takes O(R)",
+        "spaceExplanation": "Only variables"
+      },
+      "code": {
+        "cpp": "int computeXOR(int n) {\n    int result = 0;\n    for (int i = 1; i <= n; i++) {\n        result ^= i;\n    }\n    return result;\n}\n\nint findXOR(int L, int R) {\n    // XOR(L,R) = XOR(1,R) ^ XOR(1,L-1)\n    return computeXOR(R) ^ computeXOR(L - 1);\n}\n\n// Example: L=3, R=7\n// XOR(1,7) = 1^2^3^4^5^6^7 = 0\n// XOR(1,2) = 1^2 = 3\n// Result: 0 ^ 3 = 3",
+        "java": "public int computeXOR(int n) {\n    int result = 0;\n    for (int i = 1; i <= n; i++) {\n        result ^= i;\n    }\n    return result;\n}\n\npublic int findXOR(int L, int R) {\n    return computeXOR(R) ^ computeXOR(L - 1);\n}",
+        "python": "def computeXOR(n):\n    result = 0\n    for i in range(1, n + 1):\n        result ^= i\n    return result\n\ndef findXOR(L, R):\n    # XOR(L,R) = XOR(1,R) ^ XOR(1,L-1)\n    return computeXOR(R) ^ computeXOR(L - 1)",
+        "javascript": "function computeXOR(n) {\n    let result = 0;\n    for (let i = 1; i <= n; i++) {\n        result ^= i;\n    }\n    return result;\n}\n\nfunction findXOR(L, R) {\n    return computeXOR(R) ^ computeXOR(L - 1);\n}"
+      }
+    },
+    {
+      "name": "Pattern-Based O(1) - Optimal",
+      "order": 3,
+      "intuition": "XOR(1,n) follows a pattern based on n%4! Pattern: n%4=1→1, 2→n+1, 3→0, 0→n. Use this for O(1) computation.",
+      "approach": "Discover pattern, use formula.",
+      "steps": [
+        "Pattern for XOR(1,n):",
+        "  n%4 == 1: result = 1",
+        "  n%4 == 2: result = n + 1",
+        "  n%4 == 3: result = 0",
+        "  n%4 == 0: result = n",
+        "XOR(L,R) = XOR(1,R) ^ XOR(1,L-1)",
+        "Both computed in O(1)!",
+        "Pattern proof:",
+        "  1=1, 1^2=3, 1^2^3=0, 1^2^3^4=4",
+        "  Continues: 5=1, 5^6=3, 5^6^7=0, 5^6^7^8=8"
+      ],
+      "complexity": {
+        "time": "O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Pattern lookup and XOR are constant time",
+        "spaceExplanation": "No extra space"
+      },
+      "code": {
+        "cpp": "int computeXOR(int n) {\n    // Pattern for XOR from 1 to n\n    if (n % 4 == 1) return 1;\n    if (n % 4 == 2) return n + 1;\n    if (n % 4 == 3) return 0;\n    return n;  // n % 4 == 0\n}\n\nint findXOR(int L, int R) {\n    // XOR(L,R) = XOR(1,R) ^ XOR(1,L-1)\n    return computeXOR(R) ^ computeXOR(L - 1);\n}\n\n// Pattern explanation:\n// n=1: 1 → 1\n// n=2: 1^2 = 3 → n+1\n// n=3: 1^2^3 = 0 → 0\n// n=4: 1^2^3^4 = 4 → n\n// n=5: 1^2^3^4^5 = 1 → 1 (repeats!)",
+        "java": "public int computeXOR(int n) {\n    // O(1) pattern-based computation\n    int mod = n % 4;\n    if (mod == 1) return 1;\n    if (mod == 2) return n + 1;\n    if (mod == 3) return 0;\n    return n;\n}\n\npublic int findXOR(int L, int R) {\n    return computeXOR(R) ^ computeXOR(L - 1);\n}",
+        "python": "def computeXOR(n):\n    \"\"\"O(1) XOR from 1 to n using pattern\"\"\"\n    mod = n % 4\n    if mod == 1:\n        return 1\n    elif mod == 2:\n        return n + 1\n    elif mod == 3:\n        return 0\n    else:  # mod == 0\n        return n\n\ndef findXOR(L, R):\n    # XOR(L,R) = XOR(1,R) ^ XOR(1,L-1)\n    return computeXOR(R) ^ computeXOR(L - 1)\n\n# Pattern verification:\n# 1^2^3^4 = 4, 1^2^3^4^5 = 1\n# 1^2^3^4^5^6 = 7 (5+1=6, but wait...)\n# Actually: 1^2=3, 1^2^3=0, 1^2^3^4=4\n# Then repeats with offset",
+        "javascript": "function computeXOR(n) {\n    // Pattern-based O(1) computation\n    const mod = n % 4;\n    if (mod === 1) return 1;\n    if (mod === 2) return n + 1;\n    if (mod === 3) return 0;\n    return n;\n}\n\nfunction findXOR(L, R) {\n    return computeXOR(R) ^ computeXOR(L - 1);\n}\n\n// Example: L=3, R=7\n// computeXOR(7): 7%4=3 → 0\n// computeXOR(2): 2%4=2 → 2+1=3\n// Result: 0 ^ 3 = 3"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not realizing XOR(L,R) = XOR(1,R) ^ XOR(1,L-1)",
+    "Not discovering the n%4 pattern for XOR(1,n)",
+    "Forgetting to handle L-1 correctly (especially when L=0 or 1)",
+    "Computing XOR(1,n) by looping instead of pattern",
+    "Not understanding why pattern works (XOR properties)"
+  ],
+  "hints": [
+    "XOR is self-inverse: a^a=0, so XOR(1,L-1) cancels from XOR(1,R)",
+    "Find pattern for XOR(1,n) by computing first few values",
+    "Pattern repeats every 4 numbers!",
+    "n%4: 1→1, 2→n+1, 3→0, 0→n",
+    "Use formula: XOR(L,R) = XOR(1,R) ^ XOR(1,L-1)"
+  ],
+  "followUp": [
+    "What if we have multiple queries? (Precompute doesn't help, O(1) already)",
+    "Can you find XOR for any arithmetic sequence? (Yes, but complex)",
+    "What if range is [0,R] instead of [1,R]? (Handle 0 separately)",
+    "How to prove the n%4 pattern? (Analyze bit patterns)",
+    "What about XOR of even/odd numbers only in range?"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Adobe"],
+  "tags": ["bit-manipulation", "math", "pattern"],
+  "relatedProblems": [
+    "XOR Queries of a Subarray",
+    "Single Number",
+    "Missing Number",
+    "Find XOR Sum of All Pairs",
+    "Maximum XOR"
+  ]
+}

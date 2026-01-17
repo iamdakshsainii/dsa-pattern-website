@@ -1,0 +1,172 @@
+{
+  "questionId": "LC-1642",
+  "questionSlug": "furthest-building-you-can-reach",
+  "title": "Furthest Building You Can Reach",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/furthest-building-you-can-reach/",
+    "videos": [
+      {
+        "title": "Furthest Building You Can Reach - Min Heap Solution",
+        "url": "https://www.youtube.com/watch?v=zyTeznvXCtg",
+        "channel": "NeetCode",
+        "duration": "14:45",
+        "language": "English"
+      },
+      {
+        "title": "Furthest Building - Greedy Approach",
+        "url": "https://www.youtube.com/watch?v=kS20mDqWCEo",
+        "channel": "Nikhil Lohia",
+        "duration": "11:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Furthest Building You Can Reach - Official Solution",
+        "url": "https://leetcode.com/problems/furthest-building-you-can-reach/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Furthest Building - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/furthest-building-you-can-reach/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/furthest-building-you-can-reach/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Limited resources optimization? Use min heap to track and replace smallest usages!",
+  "approaches": [
+    {
+      "name": "Min Heap (Greedy - Use Ladders for Largest Climbs)",
+      "order": 1,
+      "intuition": "Use bricks initially. Track brick usage in min heap. When out of bricks, replace smallest brick usage with ladder.",
+      "approach": "Use bricks for all climbs, track in min heap. When bricks run out, use ladder for smallest climb (pop heap), recover those bricks.",
+      "steps": [
+        "Iterate through buildings",
+        "For each climb (heights[i+1] > heights[i]):",
+        "  Calculate climb = heights[i+1] - heights[i]",
+        "  Use bricks first: bricks -= climb",
+        "  Add climb to min heap",
+        "  If bricks < 0 (ran out):",
+        "    If no ladders left: return i (can't proceed)",
+        "    Use ladder for smallest climb:",
+        "      Pop min from heap (smallest climb)",
+        "      Recover those bricks: bricks += min_climb",
+        "      ladders--",
+        "Return n-1 (reached last building)"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Visit n buildings, each heap operation O(log n)",
+        "spaceExplanation": "Heap stores up to n climbs"
+      },
+      "code": {
+        "cpp": "int furthestBuilding(vector<int>& heights, int bricks, int ladders) {\n    int n = heights.size();\n    priority_queue<int, vector<int>, greater<int>> minHeap; // Min heap\n    \n    for (int i = 0; i < n - 1; i++) {\n        int climb = heights[i + 1] - heights[i];\n        \n        if (climb <= 0) continue; // Going down or same level\n        \n        // Use bricks first\n        bricks -= climb;\n        minHeap.push(climb);\n        \n        // If out of bricks, use ladder for smallest climb\n        if (bricks < 0) {\n            if (ladders == 0) {\n                return i; // Can't proceed\n            }\n            \n            // Replace smallest climb with ladder\n            bricks += minHeap.top();\n            minHeap.pop();\n            ladders--;\n        }\n    }\n    \n    return n - 1; // Reached last building\n}\n\n// Example: heights = [4,2,7,6,9,14,12], bricks = 5, ladders = 1\n// i=0: 2<4, no climb\n// i=1: 7>2, climb=5, bricks=0, heap=[5]\n// i=2: 6<7, no climb\n// i=3: 9>6, climb=3, bricks=-3, heap=[3,5]\n//      Out of bricks! Use ladder for min=3\n//      bricks=0, heap=[5], ladders=0\n// i=4: 14>9, climb=5, bricks=-5, heap=[5,5]\n//      Out of bricks! No ladders left!\n//      Return i=4",
+        "java": "public int furthestBuilding(int[] heights, int bricks, int ladders) {\n    int n = heights.length;\n    PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n    \n    for (int i = 0; i < n - 1; i++) {\n        int climb = heights[i + 1] - heights[i];\n        \n        if (climb <= 0) continue;\n        \n        bricks -= climb;\n        minHeap.offer(climb);\n        \n        if (bricks < 0) {\n            if (ladders == 0) {\n                return i;\n            }\n            \n            bricks += minHeap.poll();\n            ladders--;\n        }\n    }\n    \n    return n - 1;\n}",
+        "python": "import heapq\n\ndef furthestBuilding(heights: List[int], bricks: int, ladders: int) -> int:\n    n = len(heights)\n    min_heap = []  # Min heap in Python\n    \n    for i in range(n - 1):\n        climb = heights[i + 1] - heights[i]\n        \n        if climb <= 0:\n            continue\n        \n        # Use bricks first\n        bricks -= climb\n        heapq.heappush(min_heap, climb)\n        \n        # If out of bricks, use ladder for smallest climb\n        if bricks < 0:\n            if ladders == 0:\n                return i\n            \n            # Replace smallest climb with ladder\n            bricks += heapq.heappop(min_heap)\n            ladders -= 1\n    \n    return n - 1",
+        "javascript": "var furthestBuilding = function(heights, bricks, ladders) {\n    const n = heights.length;\n    const minHeap = new MinPriorityQueue();\n    \n    for (let i = 0; i < n - 1; i++) {\n        const climb = heights[i + 1] - heights[i];\n        \n        if (climb <= 0) continue;\n        \n        bricks -= climb;\n        minHeap.enqueue(climb);\n        \n        if (bricks < 0) {\n            if (ladders === 0) {\n                return i;\n            }\n            \n            bricks += minHeap.dequeue().element;\n            ladders--;\n        }\n    }\n    \n    return n - 1;\n};"
+      }
+    },
+    {
+      "name": "Max Heap (Greedy - Reserve Ladders for Largest)",
+      "order": 2,
+      "intuition": "Save ladders for largest climbs. Use heap to track largest 'ladders' climbs, use bricks for rest.",
+      "approach": "Use bricks initially. Track in max heap. When heap > ladders size, use bricks for largest in heap.",
+      "steps": [
+        "Iterate through buildings",
+        "For each climb:",
+        "  If heap size < ladders:",
+        "    Add climb to max heap (reserve ladder)",
+        "  Else:",
+        "    Compare climb with max in heap:",
+        "      If climb <= max:",
+        "        Use bricks for this climb",
+        "      Else:",
+        "        Use bricks for max (pop heap)",
+        "        Add current climb to heap (ladder for this)",
+        "  If bricks < 0: return i-1",
+        "Return n-1"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(ladders)",
+        "timeExplanation": "Visit n buildings, heap operations O(log ladders)",
+        "spaceExplanation": "Heap stores at most 'ladders' elements"
+      },
+      "code": {
+        "cpp": "int furthestBuilding(vector<int>& heights, int bricks, int ladders) {\n    int n = heights.size();\n    priority_queue<int> maxHeap; // Max heap for largest climbs\n    \n    for (int i = 0; i < n - 1; i++) {\n        int climb = heights[i + 1] - heights[i];\n        \n        if (climb <= 0) continue;\n        \n        // Try to reserve ladder for this climb\n        if (maxHeap.size() < ladders) {\n            maxHeap.push(climb);\n        } else {\n            // Need to use bricks somewhere\n            if (!maxHeap.empty() && climb > maxHeap.top()) {\n                // Current climb larger, use bricks for previous max\n                bricks -= maxHeap.top();\n                maxHeap.pop();\n                maxHeap.push(climb);\n            } else {\n                // Use bricks for current climb\n                bricks -= climb;\n            }\n            \n            if (bricks < 0) {\n                return i;\n            }\n        }\n    }\n    \n    return n - 1;\n}",
+        "java": "public int furthestBuilding(int[] heights, int bricks, int ladders) {\n    int n = heights.length;\n    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());\n    \n    for (int i = 0; i < n - 1; i++) {\n        int climb = heights[i + 1] - heights[i];\n        \n        if (climb <= 0) continue;\n        \n        if (maxHeap.size() < ladders) {\n            maxHeap.offer(climb);\n        } else {\n            if (!maxHeap.isEmpty() && climb > maxHeap.peek()) {\n                bricks -= maxHeap.poll();\n                maxHeap.offer(climb);\n            } else {\n                bricks -= climb;\n            }\n            \n            if (bricks < 0) {\n                return i;\n            }\n        }\n    }\n    \n    return n - 1;\n}",
+        "python": "import heapq\n\ndef furthestBuilding(heights: List[int], bricks: int, ladders: int) -> int:\n    n = len(heights)\n    max_heap = []  # Max heap (negate values)\n    \n    for i in range(n - 1):\n        climb = heights[i + 1] - heights[i]\n        \n        if climb <= 0:\n            continue\n        \n        # Try to reserve ladder\n        if len(max_heap) < ladders:\n            heapq.heappush(max_heap, -climb)  # Negate for max heap\n        else:\n            # Need to use bricks somewhere\n            if max_heap and climb > -max_heap[0]:\n                # Use bricks for previous max climb\n                bricks += heapq.heappop(max_heap)  # Add back (was negative)\n                heapq.heappush(max_heap, -climb)\n            else:\n                # Use bricks for current climb\n                bricks -= climb\n            \n            if bricks < 0:\n                return i\n    \n    return n - 1",
+        "javascript": "var furthestBuilding = function(heights, bricks, ladders) {\n    const n = heights.length;\n    const maxHeap = new MaxPriorityQueue();\n    \n    for (let i = 0; i < n - 1; i++) {\n        const climb = heights[i + 1] - heights[i];\n        \n        if (climb <= 0) continue;\n        \n        if (maxHeap.size() < ladders) {\n            maxHeap.enqueue(climb);\n        } else {\n            if (!maxHeap.isEmpty() && climb > maxHeap.front().element) {\n                bricks -= maxHeap.dequeue().element;\n                maxHeap.enqueue(climb);\n            } else {\n                bricks -= climb;\n            }\n            \n            if (bricks < 0) {\n                return i;\n            }\n        }\n    }\n    \n    return n - 1;\n};"
+      }
+    },
+    {
+      "name": "Binary Search + Greedy Check",
+      "order": 3,
+      "intuition": "Binary search on answer: can we reach building k? For each k, greedily check if possible.",
+      "approach": "Binary search on furthest building index. For each mid, check if reachable by using ladders for largest climbs.",
+      "steps": [
+        "Binary search: left=0, right=n-1",
+        "For each mid:",
+        "  Check if we can reach building mid:",
+        "    Collect all climbs up to mid",
+        "    Sort climbs, use ladders for largest 'ladders' climbs",
+        "    Use bricks for remaining climbs",
+        "    If bricks sufficient: can reach mid",
+        "  If reachable: left = mid + 1",
+        "  Else: right = mid - 1",
+        "Return right (furthest reachable)"
+      ],
+      "complexity": {
+        "time": "O(n² log n)",
+        "space": "O(n)",
+        "timeExplanation": "Binary search O(log n) × check O(n log n) for sorting",
+        "spaceExplanation": "Store climbs array"
+      },
+      "code": {
+        "cpp": "bool canReach(vector<int>& heights, int target, int bricks, int ladders) {\n    vector<int> climbs;\n    \n    for (int i = 0; i < target; i++) {\n        int climb = heights[i + 1] - heights[i];\n        if (climb > 0) {\n            climbs.push_back(climb);\n        }\n    }\n    \n    // Use ladders for largest climbs\n    sort(climbs.begin(), climbs.end(), greater<int>());\n    \n    for (int i = min((int)climbs.size(), ladders); i < climbs.size(); i++) {\n        bricks -= climbs[i];\n        if (bricks < 0) return false;\n    }\n    \n    return true;\n}\n\nint furthestBuilding(vector<int>& heights, int bricks, int ladders) {\n    int left = 0, right = heights.size() - 1;\n    int result = 0;\n    \n    while (left <= right) {\n        int mid = left + (right - left) / 2;\n        \n        if (canReach(heights, mid, bricks, ladders)) {\n            result = mid;\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    return result;\n}",
+        "java": "private boolean canReach(int[] heights, int target, int bricks, int ladders) {\n    List<Integer> climbs = new ArrayList<>();\n    \n    for (int i = 0; i < target; i++) {\n        int climb = heights[i + 1] - heights[i];\n        if (climb > 0) {\n            climbs.add(climb);\n        }\n    }\n    \n    Collections.sort(climbs, Collections.reverseOrder());\n    \n    for (int i = Math.min(climbs.size(), ladders); i < climbs.size(); i++) {\n        bricks -= climbs.get(i);\n        if (bricks < 0) return false;\n    }\n    \n    return true;\n}\n\npublic int furthestBuilding(int[] heights, int bricks, int ladders) {\n    int left = 0, right = heights.length - 1;\n    int result = 0;\n    \n    while (left <= right) {\n        int mid = left + (right - left) / 2;\n        \n        if (canReach(heights, mid, bricks, ladders)) {\n            result = mid;\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    return result;\n}",
+        "python": "def furthestBuilding(heights: List[int], bricks: int, ladders: int) -> int:\n    def can_reach(target):\n        climbs = []\n        for i in range(target):\n            climb = heights[i + 1] - heights[i]\n            if climb > 0:\n                climbs.append(climb)\n        \n        # Use ladders for largest climbs\n        climbs.sort(reverse=True)\n        \n        remaining_bricks = bricks\n        for i in range(min(len(climbs), ladders), len(climbs)):\n            remaining_bricks -= climbs[i]\n            if remaining_bricks < 0:\n                return False\n        \n        return True\n    \n    left, right = 0, len(heights) - 1\n    result = 0\n    \n    while left <= right:\n        mid = (left + right) // 2\n        \n        if can_reach(mid):\n            result = mid\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return result",
+        "javascript": "var furthestBuilding = function(heights, bricks, ladders) {\n    const canReach = (target) => {\n        const climbs = [];\n        \n        for (let i = 0; i < target; i++) {\n            const climb = heights[i + 1] - heights[i];\n            if (climb > 0) {\n                climbs.push(climb);\n            }\n        }\n        \n        climbs.sort((a, b) => b - a);\n        \n        let remainingBricks = bricks;\n        for (let i = Math.min(climbs.length, ladders); i < climbs.length; i++) {\n            remainingBricks -= climbs[i];\n            if (remainingBricks < 0) return false;\n        }\n        \n        return true;\n    };\n    \n    let left = 0, right = heights.length - 1;\n    let result = 0;\n    \n    while (left <= right) {\n        const mid = Math.floor((left + right) / 2);\n        \n        if (canReach(mid)) {\n            result = mid;\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    return result;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using ladders first instead of bricks (should use bricks first, then optimize)",
+    "Not understanding greedy strategy: use ladders for largest climbs to save bricks",
+    "Forgetting to check if climb <= 0 (no resources needed when going down)",
+    "In min heap approach: not understanding why we replace smallest brick usage",
+    "Off-by-one: returning wrong index when can't proceed",
+    "Not handling edge case: if heights[i+1] <= heights[i], no climb needed"
+  ],
+  "hints": [
+    "Use ladders for LARGEST climbs to maximize brick savings",
+    "Min heap approach: use bricks first, replace smallest usage with ladder when needed",
+    "Max heap approach: reserve ladders for largest climbs from start",
+    "Both heap approaches give same result, different perspectives",
+    "When bricks run out, either use ladder or stop",
+    "Greedy works: local optimal (saving bricks) = global optimal"
+  ],
+  "followUp": [
+    "What if ladders can be used for any distance? (Still use for largest climbs)",
+    "Can we modify heights array? (Yes, doesn't affect solution)",
+    "What if we want to minimize ladders used? (Different problem - use bricks first)",
+    "Multiple paths to reach building? (This problem has single path)",
+    "Can we go back down and use different route? (No, only forward movement)"
+  ],
+  "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple"],
+  "tags": ["heap", "priority-queue", "greedy", "binary-search", "array"],
+  "relatedProblems": [
+    "Jump Game II",
+    "Minimum Number of Refueling Stops",
+    "Find K Pairs with Smallest Sums"
+  ]
+}

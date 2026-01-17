@@ -1,0 +1,163 @@
+{
+  "questionId": "LC-264",
+  "questionSlug": "ugly-number-ii",
+  "title": "Ugly Number II",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/ugly-number-ii/",
+    "videos": [
+      {
+        "title": "Ugly Number II - Min Heap Solution",
+        "url": "https://www.youtube.com/watch?v=Lj68VJ1wu84",
+        "channel": "NeetCode",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Ugly Number II - Dynamic Programming",
+        "url": "https://www.youtube.com/watch?v=ZDGTuO-uHvM",
+        "channel": "Back To Back SWE",
+        "duration": "15:20",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Ugly Number II - Official Solution",
+        "url": "https://leetcode.com/problems/ugly-number-ii/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Ugly Number II - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/ugly-numbers/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/ugly-number-ii/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Find nth number with specific prime factors? Use min heap or dynamic programming with multiple pointers!",
+  "approaches": [
+    {
+      "name": "Min Heap (Generate & Extract)",
+      "order": 1,
+      "intuition": "Generate ugly numbers by multiplying existing ugly numbers by 2, 3, 5. Use min heap to get them in order.",
+      "approach": "Start with 1, multiply by 2/3/5, add to heap, extract minimum n times. Use set to avoid duplicates.",
+      "steps": [
+        "Initialize min heap with 1",
+        "Use set to track seen numbers (avoid duplicates)",
+        "Repeat n times:",
+        "  Extract minimum from heap (this is next ugly number)",
+        "  Multiply it by 2, 3, 5",
+        "  Add new numbers to heap if not seen",
+        "  Add to seen set",
+        "Return nth extracted number"
+      ],
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Extract n numbers, each extraction is O(log n), insertions are O(log n)",
+        "spaceExplanation": "Heap and set store O(n) numbers"
+      },
+      "code": {
+        "cpp": "int nthUglyNumber(int n) {\n    priority_queue<long, vector<long>, greater<long>> minHeap;\n    unordered_set<long> seen;\n    \n    minHeap.push(1);\n    seen.insert(1);\n    \n    long current = 1;\n    \n    for (int i = 0; i < n; i++) {\n        current = minHeap.top();\n        minHeap.pop();\n        \n        // Generate next ugly numbers\n        vector<long> factors = {2, 3, 5};\n        for (long factor : factors) {\n            long newUgly = current * factor;\n            if (seen.find(newUgly) == seen.end()) {\n                seen.insert(newUgly);\n                minHeap.push(newUgly);\n            }\n        }\n    }\n    \n    return (int)current;\n}\n\n// Example: n = 10\n// Heap: [1]\n// Extract 1: add 2,3,5 → [2,3,5]\n// Extract 2: add 4,6,10 → [3,4,5,6,10]\n// Extract 3: add 6,9,15 → [4,5,6,9,10,15] (6 duplicate)\n// Extract 4: add 8,12,20 → [5,6,8,9,10,12,15,20]\n// Extract 5: add 10,15,25 → [6,8,9,10,12,15,20,25]\n// Extract 6: add 12,18,30 → [8,9,10,12,15,18,20,25,30]\n// Extract 8: add 16,24,40 → [9,10,12,15,16,18,20,24,25,30,40]\n// Extract 9: add 18,27,45 → [10,12,15,16,18,20,24,25,27,30,40,45]\n// Extract 10: 10th ugly number",
+        "java": "public int nthUglyNumber(int n) {\n    PriorityQueue<Long> minHeap = new PriorityQueue<>();\n    Set<Long> seen = new HashSet<>();\n    \n    minHeap.offer(1L);\n    seen.add(1L);\n    \n    long current = 1;\n    long[] factors = {2, 3, 5};\n    \n    for (int i = 0; i < n; i++) {\n        current = minHeap.poll();\n        \n        for (long factor : factors) {\n            long newUgly = current * factor;\n            if (!seen.contains(newUgly)) {\n                seen.add(newUgly);\n                minHeap.offer(newUgly);\n            }\n        }\n    }\n    \n    return (int)current;\n}",
+        "python": "import heapq\n\ndef nthUglyNumber(n: int) -> int:\n    min_heap = [1]\n    seen = {1}\n    \n    current = 1\n    \n    for _ in range(n):\n        current = heapq.heappop(min_heap)\n        \n        # Generate next ugly numbers\n        for factor in [2, 3, 5]:\n            new_ugly = current * factor\n            if new_ugly not in seen:\n                seen.add(new_ugly)\n                heapq.heappush(min_heap, new_ugly)\n    \n    return current",
+        "javascript": "var nthUglyNumber = function(n) {\n    const minHeap = new MinPriorityQueue();\n    const seen = new Set();\n    \n    minHeap.enqueue(1);\n    seen.add(1);\n    \n    let current = 1;\n    const factors = [2, 3, 5];\n    \n    for (let i = 0; i < n; i++) {\n        current = minHeap.dequeue().element;\n        \n        for (const factor of factors) {\n            const newUgly = current * factor;\n            if (!seen.has(newUgly)) {\n                seen.add(newUgly);\n                minHeap.enqueue(newUgly);\n            }\n        }\n    }\n    \n    return current;\n};"
+      }
+    },
+    {
+      "name": "Dynamic Programming (Three Pointers)",
+      "order": 2,
+      "intuition": "Build ugly numbers array sequentially. Use 3 pointers for multiples of 2, 3, 5. Each pointer generates candidates.",
+      "approach": "Maintain 3 pointers i2, i3, i5. Next ugly = min(ugly[i2]*2, ugly[i3]*3, ugly[i5]*5). Move pointer(s) that generated minimum.",
+      "steps": [
+        "Create array ugly[n], ugly[0] = 1",
+        "Initialize pointers: i2 = i3 = i5 = 0",
+        "For each position from 1 to n-1:",
+        "  Calculate candidates:",
+        "    next2 = ugly[i2] * 2",
+        "    next3 = ugly[i3] * 3",
+        "    next5 = ugly[i5] * 5",
+        "  ugly[i] = min(next2, next3, next5)",
+        "  Move pointer(s) that produced minimum:",
+        "    if ugly[i] == next2: i2++",
+        "    if ugly[i] == next3: i3++",
+        "    if ugly[i] == next5: i5++",
+        "Return ugly[n-1]"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass through n positions, each step O(1)",
+        "spaceExplanation": "Array stores n ugly numbers"
+      },
+      "code": {
+        "cpp": "int nthUglyNumber(int n) {\n    vector<int> ugly(n);\n    ugly[0] = 1;\n    \n    int i2 = 0, i3 = 0, i5 = 0;\n    \n    for (int i = 1; i < n; i++) {\n        int next2 = ugly[i2] * 2;\n        int next3 = ugly[i3] * 3;\n        int next5 = ugly[i5] * 5;\n        \n        ugly[i] = min({next2, next3, next5});\n        \n        // Move pointers that produced minimum\n        if (ugly[i] == next2) i2++;\n        if (ugly[i] == next3) i3++;\n        if (ugly[i] == next5) i5++;\n    }\n    \n    return ugly[n - 1];\n}\n\n// Example: n = 10\n// ugly = [1, _, _, _, _, _, _, _, _, _]\n// i2=0, i3=0, i5=0\n// \n// i=1: next2=2, next3=3, next5=5 → min=2, i2++\n// ugly = [1, 2, _, _, _, _, _, _, _, _]\n// \n// i=2: next2=4, next3=3, next5=5 → min=3, i3++\n// ugly = [1, 2, 3, _, _, _, _, _, _, _]\n// \n// i=3: next2=4, next3=6, next5=5 → min=4, i2++\n// ugly = [1, 2, 3, 4, _, _, _, _, _, _]\n// \n// i=4: next2=6, next3=6, next5=5 → min=5, i5++\n// ugly = [1, 2, 3, 4, 5, _, _, _, _, _]\n// \n// i=5: next2=6, next3=6, next5=10 → min=6, i2++, i3++\n// ugly = [1, 2, 3, 4, 5, 6, _, _, _, _]\n// \n// Continue until ugly[9] = 12",
+        "java": "public int nthUglyNumber(int n) {\n    int[] ugly = new int[n];\n    ugly[0] = 1;\n    \n    int i2 = 0, i3 = 0, i5 = 0;\n    \n    for (int i = 1; i < n; i++) {\n        int next2 = ugly[i2] * 2;\n        int next3 = ugly[i3] * 3;\n        int next5 = ugly[i5] * 5;\n        \n        ugly[i] = Math.min(next2, Math.min(next3, next5));\n        \n        if (ugly[i] == next2) i2++;\n        if (ugly[i] == next3) i3++;\n        if (ugly[i] == next5) i5++;\n    }\n    \n    return ugly[n - 1];\n}",
+        "python": "def nthUglyNumber(n: int) -> int:\n    ugly = [0] * n\n    ugly[0] = 1\n    \n    i2 = i3 = i5 = 0\n    \n    for i in range(1, n):\n        next2 = ugly[i2] * 2\n        next3 = ugly[i3] * 3\n        next5 = ugly[i5] * 5\n        \n        ugly[i] = min(next2, next3, next5)\n        \n        # Move pointers\n        if ugly[i] == next2:\n            i2 += 1\n        if ugly[i] == next3:\n            i3 += 1\n        if ugly[i] == next5:\n            i5 += 1\n    \n    return ugly[n - 1]",
+        "javascript": "var nthUglyNumber = function(n) {\n    const ugly = new Array(n);\n    ugly[0] = 1;\n    \n    let i2 = 0, i3 = 0, i5 = 0;\n    \n    for (let i = 1; i < n; i++) {\n        const next2 = ugly[i2] * 2;\n        const next3 = ugly[i3] * 3;\n        const next5 = ugly[i5] * 5;\n        \n        ugly[i] = Math.min(next2, next3, next5);\n        \n        if (ugly[i] === next2) i2++;\n        if (ugly[i] === next3) i3++;\n        if (ugly[i] === next5) i5++;\n    }\n    \n    return ugly[n - 1];\n};"
+      }
+    },
+    {
+      "name": "Optimized DP (Space Efficient)",
+      "order": 3,
+      "intuition": "Same as DP approach but optimized. Can track only necessary state.",
+      "approach": "Build ugly numbers using three pointers, same logic as approach 2 but with cleaner implementation.",
+      "steps": [
+        "Same as DP approach",
+        "Key insight: Must move ALL pointers that produced minimum to avoid duplicates",
+        "Example: if next2=next3=6, move both i2 and i3"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "timeExplanation": "Single pass, O(1) per step",
+        "spaceExplanation": "Store n ugly numbers"
+      },
+      "code": {
+        "cpp": "int nthUglyNumber(int n) {\n    vector<int> dp(n);\n    dp[0] = 1;\n    \n    int p2 = 0, p3 = 0, p5 = 0;\n    \n    for (int i = 1; i < n; i++) {\n        int two = dp[p2] * 2;\n        int three = dp[p3] * 3;\n        int five = dp[p5] * 5;\n        \n        dp[i] = min({two, three, five});\n        \n        // IMPORTANT: Use separate if statements, not else-if\n        // Multiple pointers can produce same value\n        if (dp[i] == two) p2++;\n        if (dp[i] == three) p3++;\n        if (dp[i] == five) p5++;\n    }\n    \n    return dp[n - 1];\n}",
+        "java": "public int nthUglyNumber(int n) {\n    int[] dp = new int[n];\n    dp[0] = 1;\n    \n    int p2 = 0, p3 = 0, p5 = 0;\n    \n    for (int i = 1; i < n; i++) {\n        int two = dp[p2] * 2;\n        int three = dp[p3] * 3;\n        int five = dp[p5] * 5;\n        \n        dp[i] = Math.min(two, Math.min(three, five));\n        \n        if (dp[i] == two) p2++;\n        if (dp[i] == three) p3++;\n        if (dp[i] == five) p5++;\n    }\n    \n    return dp[n - 1];\n}",
+        "python": "def nthUglyNumber(n: int) -> int:\n    dp = [0] * n\n    dp[0] = 1\n    \n    p2 = p3 = p5 = 0\n    \n    for i in range(1, n):\n        two = dp[p2] * 2\n        three = dp[p3] * 3\n        five = dp[p5] * 5\n        \n        dp[i] = min(two, three, five)\n        \n        if dp[i] == two:\n            p2 += 1\n        if dp[i] == three:\n            p3 += 1\n        if dp[i] == five:\n            p5 += 1\n    \n    return dp[n - 1]",
+        "javascript": "var nthUglyNumber = function(n) {\n    const dp = new Array(n);\n    dp[0] = 1;\n    \n    let p2 = 0, p3 = 0, p5 = 0;\n    \n    for (let i = 1; i < n; i++) {\n        const two = dp[p2] * 2;\n        const three = dp[p3] * 3;\n        const five = dp[p5] * 5;\n        \n        dp[i] = Math.min(two, three, five);\n        \n        if (dp[i] === two) p2++;\n        if (dp[i] === three) p3++;\n        if (dp[i] === five) p5++;\n    }\n    \n    return dp[n - 1];\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "In heap approach: forgetting to use set, leading to duplicate ugly numbers",
+    "In DP approach: using else-if instead of separate if statements for pointer updates (causes duplicates)",
+    "Integer overflow: should use long for heap approach with large n",
+    "Not understanding why three pointers work: each generates sequence of multiples",
+    "Thinking you need to check if number is ugly (no - we only generate ugly numbers)",
+    "Off-by-one errors: array is 0-indexed, return ugly[n-1] not ugly[n]"
+  ],
+  "hints": [
+    "Ugly number only has prime factors 2, 3, 5",
+    "1 is ugly by definition (no prime factors)",
+    "Every ugly number = previous ugly number × 2, 3, or 5",
+    "Three pointers track: which ugly to multiply by 2, by 3, by 5",
+    "Move pointer(s) that produced minimum to avoid duplicates",
+    "DP approach is O(n) time and space - optimal!",
+    "Heap approach is O(n log n) but easier to understand initially"
+  ],
+  "followUp": [
+    "What if factors are 2, 3, 5, 7? (Add 4th pointer, same approach)",
+    "Can we find nth ugly number without storing all previous? (No, need previous to generate next)",
+    "Space optimization possible? (No, need all n numbers for pointer approach)",
+    "What if factors are arbitrary primes? (Generalize to k pointers)",
+    "How to generate first n ugly numbers in different order? (Would need sorting, more complex)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple"],
+  "tags": ["heap", "priority-queue", "dynamic-programming", "math", "hash-table"],
+  "relatedProblems": [
+    "Ugly Number",
+    "Super Ugly Number",
+    "Perfect Squares",
+    "Hamming Distance"
+  ]
+}

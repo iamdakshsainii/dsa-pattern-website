@@ -1,0 +1,155 @@
+{
+  "questionId": "m-coloring",
+  "questionSlug": "m-coloring-problem",
+  "title": "M-Coloring Problem",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://practice.geeksforgeeks.org/problems/m-coloring-problem/",
+    "videos": [
+      {
+        "title": "Graph Coloring Problem",
+        "url": "https://www.youtube.com/watch?v=wuVTquMLOeM",
+        "channel": "take U forward",
+        "duration": "20:30",
+        "language": "English"
+      },
+      {
+        "title": "M-Coloring using Backtracking",
+        "url": "https://www.youtube.com/watch?v=052VkKhIaQ4",
+        "channel": "Jenny's Lectures",
+        "duration": "18:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "M-Coloring Problem - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/m-coloring-problem-backtracking-5/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Graph Coloring Algorithm",
+        "url": "https://takeuforward.org/data-structure/m-coloring-problem/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/m-coloring-problem/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Color graph vertices with constraints? Use backtracking. Try each color, check if safe, recurse.",
+  "approaches": [
+    {
+      "name": "Backtracking - Try All Colors",
+      "order": 1,
+      "intuition": "For each vertex, try all M colors. Check if any adjacent vertex has same color. Backtrack if conflict.",
+      "approach": "Color vertices one by one using backtracking.",
+      "steps": [
+        "color(vertex):",
+        "  If vertex == N, all colored, return true",
+        "  For each color from 1 to M:",
+        "    If safe to assign this color:",
+        "      Assign color to vertex",
+        "      Recursively color next vertex",
+        "      If successful, return true",
+        "      Remove color (backtrack)",
+        "  Return false",
+        "isSafe: check if any adjacent vertex has this color"
+      ],
+      "complexity": {
+        "time": "O(M^N)",
+        "space": "O(N)",
+        "timeExplanation": "Try M colors for each of N vertices",
+        "spaceExplanation": "Recursion depth N, color array O(N)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool graphColoring(bool graph[101][101], int m, int n) {\n        vector<int> color(n, 0);\n        return solve(0, graph, color, m, n);\n    }\n    \nprivate:\n    bool solve(int node, bool graph[101][101], vector<int>& color, int m, int n) {\n        if (node == n) return true;\n        \n        for (int c = 1; c <= m; c++) {\n            if (isSafe(node, graph, color, c, n)) {\n                color[node] = c;\n                if (solve(node + 1, graph, color, m, n)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    bool isSafe(int node, bool graph[101][101], vector<int>& color, int c, int n) {\n        for (int i = 0; i < n; i++) {\n            if (graph[node][i] && color[i] == c) return false;\n        }\n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean graphColoring(boolean graph[][], int m, int n) {\n        int[] color = new int[n];\n        return solve(0, graph, color, m, n);\n    }\n    \n    private boolean solve(int node, boolean graph[][], int[] color, int m, int n) {\n        if (node == n) return true;\n        \n        for (int c = 1; c <= m; c++) {\n            if (isSafe(node, graph, color, c, n)) {\n                color[node] = c;\n                if (solve(node + 1, graph, color, m, n)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    private boolean isSafe(int node, boolean graph[][], int[] color, int c, int n) {\n        for (int i = 0; i < n; i++) {\n            if (graph[node][i] && color[i] == c) return false;\n        }\n        return true;\n    }\n}",
+        "python": "def graphColoring(graph, m, n):\n    color = [0] * n\n    \n    def is_safe(node, c):\n        for i in range(n):\n            if graph[node][i] and color[i] == c:\n                return False\n        return True\n    \n    def solve(node):\n        if node == n:\n            return True\n        \n        for c in range(1, m + 1):\n            if is_safe(node, c):\n                color[node] = c\n                if solve(node + 1):\n                    return True\n                color[node] = 0\n        \n        return False\n    \n    return solve(0)",
+        "javascript": "function graphColoring(graph, m, n) {\n    const color = new Array(n).fill(0);\n    \n    function isSafe(node, c) {\n        for (let i = 0; i < n; i++) {\n            if (graph[node][i] && color[i] === c) return false;\n        }\n        return true;\n    }\n    \n    function solve(node) {\n        if (node === n) return true;\n        \n        for (let c = 1; c <= m; c++) {\n            if (isSafe(node, c)) {\n                color[node] = c;\n                if (solve(node + 1)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    return solve(0);\n}"
+      }
+    },
+    {
+      "name": "Backtracking with Adjacency List",
+      "order": 2,
+      "intuition": "Use adjacency list instead of matrix for better space efficiency when graph is sparse.",
+      "approach": "Convert matrix to adjacency list, then apply backtracking.",
+      "steps": [
+        "Build adjacency list from matrix",
+        "For each vertex, try colors 1 to M",
+        "Check neighbors in adjacency list (faster)",
+        "Backtrack if needed",
+        "Return true when all vertices colored"
+      ],
+      "complexity": {
+        "time": "O(M^N)",
+        "space": "O(N + E)",
+        "timeExplanation": "Same backtracking complexity",
+        "spaceExplanation": "Adjacency list O(E), color array O(N)"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool graphColoring(bool graph[101][101], int m, int n) {\n        vector<vector<int>> adj(n);\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (graph[i][j]) adj[i].push_back(j);\n            }\n        }\n        \n        vector<int> color(n, 0);\n        return solve(0, adj, color, m, n);\n    }\n    \nprivate:\n    bool solve(int node, vector<vector<int>>& adj, vector<int>& color, int m, int n) {\n        if (node == n) return true;\n        \n        for (int c = 1; c <= m; c++) {\n            if (isSafe(node, adj, color, c)) {\n                color[node] = c;\n                if (solve(node + 1, adj, color, m, n)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    bool isSafe(int node, vector<vector<int>>& adj, vector<int>& color, int c) {\n        for (int neighbor : adj[node]) {\n            if (color[neighbor] == c) return false;\n        }\n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean graphColoring(boolean graph[][], int m, int n) {\n        List<List<Integer>> adj = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            adj.add(new ArrayList<>());\n            for (int j = 0; j < n; j++) {\n                if (graph[i][j]) adj.get(i).add(j);\n            }\n        }\n        \n        int[] color = new int[n];\n        return solve(0, adj, color, m, n);\n    }\n    \n    private boolean solve(int node, List<List<Integer>> adj, int[] color, int m, int n) {\n        if (node == n) return true;\n        \n        for (int c = 1; c <= m; c++) {\n            if (isSafe(node, adj, color, c)) {\n                color[node] = c;\n                if (solve(node + 1, adj, color, m, n)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    private boolean isSafe(int node, List<List<Integer>> adj, int[] color, int c) {\n        for (int neighbor : adj.get(node)) {\n            if (color[neighbor] == c) return false;\n        }\n        return true;\n    }\n}",
+        "python": "def graphColoring(graph, m, n):\n    adj = [[] for _ in range(n)]\n    for i in range(n):\n        for j in range(n):\n            if graph[i][j]:\n                adj[i].append(j)\n    \n    color = [0] * n\n    \n    def is_safe(node, c):\n        for neighbor in adj[node]:\n            if color[neighbor] == c:\n                return False\n        return True\n    \n    def solve(node):\n        if node == n:\n            return True\n        \n        for c in range(1, m + 1):\n            if is_safe(node, c):\n                color[node] = c\n                if solve(node + 1):\n                    return True\n                color[node] = 0\n        \n        return False\n    \n    return solve(0)",
+        "javascript": "function graphColoring(graph, m, n) {\n    const adj = Array(n).fill(null).map(() => []);\n    for (let i = 0; i < n; i++) {\n        for (let j = 0; j < n; j++) {\n            if (graph[i][j]) adj[i].push(j);\n        }\n    }\n    \n    const color = new Array(n).fill(0);\n    \n    function isSafe(node, c) {\n        for (const neighbor of adj[node]) {\n            if (color[neighbor] === c) return false;\n        }\n        return true;\n    }\n    \n    function solve(node) {\n        if (node === n) return true;\n        \n        for (let c = 1; c <= m; c++) {\n            if (isSafe(node, c)) {\n                color[node] = c;\n                if (solve(node + 1)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    return solve(0);\n}"
+      }
+    },
+    {
+      "name": "Optimized - Color Vertex with Most Constraints First",
+      "order": 3,
+      "intuition": "Color vertices with highest degree first. This prunes search space early as constrained vertices are harder to color.",
+      "approach": "Sort vertices by degree descending, then apply backtracking.",
+      "steps": [
+        "Calculate degree of each vertex",
+        "Sort vertices by degree (highest first)",
+        "Apply backtracking in sorted order",
+        "This reduces backtracking as we handle hard cases first"
+      ],
+      "complexity": {
+        "time": "O(N log N + M^N)",
+        "space": "O(N + E)",
+        "timeExplanation": "O(N log N) to sort, then M^N backtracking (but pruned better)",
+        "spaceExplanation": "Adjacency list and arrays"
+      },
+      "code": {
+        "cpp": "class Solution {\npublic:\n    bool graphColoring(bool graph[101][101], int m, int n) {\n        vector<vector<int>> adj(n);\n        vector<int> degree(n, 0);\n        \n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (graph[i][j]) {\n                    adj[i].push_back(j);\n                    degree[i]++;\n                }\n            }\n        }\n        \n        vector<int> order(n);\n        iota(order.begin(), order.end(), 0);\n        sort(order.begin(), order.end(), [&](int a, int b) {\n            return degree[a] > degree[b];\n        });\n        \n        vector<int> color(n, 0);\n        return solve(0, adj, color, m, n, order);\n    }\n    \nprivate:\n    bool solve(int idx, vector<vector<int>>& adj, vector<int>& color, \n               int m, int n, vector<int>& order) {\n        if (idx == n) return true;\n        \n        int node = order[idx];\n        \n        for (int c = 1; c <= m; c++) {\n            if (isSafe(node, adj, color, c)) {\n                color[node] = c;\n                if (solve(idx + 1, adj, color, m, n, order)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    bool isSafe(int node, vector<vector<int>>& adj, vector<int>& color, int c) {\n        for (int neighbor : adj[node]) {\n            if (color[neighbor] == c) return false;\n        }\n        return true;\n    }\n};",
+        "java": "class Solution {\n    public boolean graphColoring(boolean graph[][], int m, int n) {\n        List<List<Integer>> adj = new ArrayList<>();\n        int[] degree = new int[n];\n        \n        for (int i = 0; i < n; i++) {\n            adj.add(new ArrayList<>());\n            for (int j = 0; j < n; j++) {\n                if (graph[i][j]) {\n                    adj.get(i).add(j);\n                    degree[i]++;\n                }\n            }\n        }\n        \n        Integer[] order = new Integer[n];\n        for (int i = 0; i < n; i++) order[i] = i;\n        Arrays.sort(order, (a, b) -> degree[b] - degree[a]);\n        \n        int[] color = new int[n];\n        return solve(0, adj, color, m, n, order);\n    }\n    \n    private boolean solve(int idx, List<List<Integer>> adj, int[] color,\n                         int m, int n, Integer[] order) {\n        if (idx == n) return true;\n        \n        int node = order[idx];\n        \n        for (int c = 1; c <= m; c++) {\n            if (isSafe(node, adj, color, c)) {\n                color[node] = c;\n                if (solve(idx + 1, adj, color, m, n, order)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    private boolean isSafe(int node, List<List<Integer>> adj, int[] color, int c) {\n        for (int neighbor : adj.get(node)) {\n            if (color[neighbor] == c) return false;\n        }\n        return true;\n    }\n}",
+        "python": "def graphColoring(graph, m, n):\n    adj = [[] for _ in range(n)]\n    degree = [0] * n\n    \n    for i in range(n):\n        for j in range(n):\n            if graph[i][j]:\n                adj[i].append(j)\n                degree[i] += 1\n    \n    order = sorted(range(n), key=lambda x: degree[x], reverse=True)\n    color = [0] * n\n    \n    def is_safe(node, c):\n        for neighbor in adj[node]:\n            if color[neighbor] == c:\n                return False\n        return True\n    \n    def solve(idx):\n        if idx == n:\n            return True\n        \n        node = order[idx]\n        \n        for c in range(1, m + 1):\n            if is_safe(node, c):\n                color[node] = c\n                if solve(idx + 1):\n                    return True\n                color[node] = 0\n        \n        return False\n    \n    return solve(0)",
+        "javascript": "function graphColoring(graph, m, n) {\n    const adj = Array(n).fill(null).map(() => []);\n    const degree = new Array(n).fill(0);\n    \n    for (let i = 0; i < n; i++) {\n        for (let j = 0; j < n; j++) {\n            if (graph[i][j]) {\n                adj[i].push(j);\n                degree[i]++;\n            }\n        }\n    }\n    \n    const order = Array.from({length: n}, (_, i) => i)\n        .sort((a, b) => degree[b] - degree[a]);\n    \n    const color = new Array(n).fill(0);\n    \n    function isSafe(node, c) {\n        for (const neighbor of adj[node]) {\n            if (color[neighbor] === c) return false;\n        }\n        return true;\n    }\n    \n    function solve(idx) {\n        if (idx === n) return true;\n        \n        const node = order[idx];\n        \n        for (let c = 1; c <= m; c++) {\n            if (isSafe(node, c)) {\n                color[node] = c;\n                if (solve(idx + 1)) return true;\n                color[node] = 0;\n            }\n        }\n        \n        return false;\n    }\n    \n    return solve(0);\n}"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not checking all adjacent vertices for color conflict",
+    "Forgetting to reset color when backtracking",
+    "Off-by-one errors in color numbering (1 to M, not 0 to M-1)",
+    "Not handling self-loops correctly",
+    "Inefficient isSafe implementation (checking entire graph)"
+  ],
+  "hints": [
+    "Try coloring vertices one by one",
+    "For each vertex, try all M colors",
+    "Check if any adjacent vertex has same color",
+    "Backtrack if no valid color found",
+    "Optimization: color high-degree vertices first"
+  ],
+  "followUp": [
+    "What's the minimum number of colors needed? (Chromatic number - NP-hard)",
+    "Can you use greedy coloring? (Yes, but not always optimal)",
+    "How to find all valid colorings? (Continue backtracking, don't stop at first)",
+    "What if M < chromatic number? (Return false)",
+    "Can you optimize with constraint propagation? (Yes, advanced technique)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Samsung"],
+  "tags": ["backtracking", "graph", "recursion"],
+  "relatedProblems": [
+    "N-Queens",
+    "Sudoku Solver",
+    "Graph Valid Tree",
+    "Course Schedule"
+  ]
+}

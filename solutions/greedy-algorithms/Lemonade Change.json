@@ -1,0 +1,145 @@
+{
+  "questionId": "LC-860",
+  "questionSlug": "lemonade-change",
+  "title": "Lemonade Change",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/lemonade-change/",
+    "videos": [
+      {
+        "title": "Lemonade Change - Greedy Solution",
+        "url": "https://www.youtube.com/watch?v=1Fz0r-Rhqx0",
+        "channel": "NeetCode",
+        "duration": "7:20",
+        "language": "English"
+      },
+      {
+        "title": "Lemonade Change Explained",
+        "url": "https://www.youtube.com/watch?v=c9nNIkuKR8A",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Lemonade Change - Official Solution",
+        "url": "https://leetcode.com/problems/lemonade-change/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Lemonade Change - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/lemonade-change/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/lemonade-change/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Cashier making change with limited bills? Track bill counts and greedily use larger bills first!",
+  "approaches": [
+    {
+      "name": "Greedy Bill Counting (Optimal)",
+      "order": 1,
+      "intuition": "Track count of $5 and $10 bills. For change, greedily use $10 first (prefer keeping $5 bills as they're more flexible).",
+      "approach": "Maintain counts of $5 and $10 bills. For each customer, calculate required change and greedily provide it using available bills.",
+      "steps": [
+        "Initialize five = 0, ten = 0 (bill counts)",
+        "For each bill in bills array:",
+        "  If bill == 5:",
+        "    five++ (no change needed)",
+        "  Else if bill == 10:",
+        "    Need $5 change:",
+        "      If five == 0: return false",
+        "      five--, ten++",
+        "  Else (bill == 20):",
+        "    Need $15 change:",
+        "      Prefer: 1×$10 + 1×$5 (saves $5 bills)",
+        "      If ten > 0 and five > 0:",
+        "        ten--, five--",
+        "      Else if five >= 3:",
+        "        five -= 3",
+        "      Else:",
+        "        return false (can't make change)",
+        "Return true (all customers served)"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass through bills array",
+        "spaceExplanation": "Only storing two counters"
+      },
+      "code": {
+        "cpp": "bool lemonadeChange(vector<int>& bills) {\n    int five = 0, ten = 0;\n    \n    for (int bill : bills) {\n        if (bill == 5) {\n            five++;\n        } \n        else if (bill == 10) {\n            if (five == 0) return false;\n            five--;\n            ten++;\n        } \n        else { // bill == 20\n            // Need $15 change\n            // Prefer 1×$10 + 1×$5 over 3×$5\n            if (ten > 0 && five > 0) {\n                ten--;\n                five--;\n            } \n            else if (five >= 3) {\n                five -= 3;\n            } \n            else {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n}\n\n// Example: bills = [5,5,5,10,20]\n// bill=5: five=1, ten=0\n// bill=5: five=2, ten=0\n// bill=5: five=3, ten=0\n// bill=10: five=2, ten=1 (give $5 change)\n// bill=20: five=1, ten=0 (give $10+$5 change)\n// Return true\n\n// Example: bills = [5,5,10,10,20]\n// bill=5: five=1, ten=0\n// bill=5: five=2, ten=0\n// bill=10: five=1, ten=1\n// bill=10: five=0, ten=2\n// bill=20: Need $15, have 0×$5, 2×$10\n//          Can't give 1×$10+1×$5 (no $5)\n//          Can't give 3×$5 (no $5)\n// Return false",
+        "java": "public boolean lemonadeChange(int[] bills) {\n    int five = 0, ten = 0;\n    \n    for (int bill : bills) {\n        if (bill == 5) {\n            five++;\n        } else if (bill == 10) {\n            if (five == 0) return false;\n            five--;\n            ten++;\n        } else { // bill == 20\n            if (ten > 0 && five > 0) {\n                ten--;\n                five--;\n            } else if (five >= 3) {\n                five -= 3;\n            } else {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n}",
+        "python": "def lemonadeChange(bills: List[int]) -> bool:\n    five = 0\n    ten = 0\n    \n    for bill in bills:\n        if bill == 5:\n            five += 1\n        elif bill == 10:\n            if five == 0:\n                return False\n            five -= 1\n            ten += 1\n        else:  # bill == 20\n            # Prefer 1×$10 + 1×$5\n            if ten > 0 and five > 0:\n                ten -= 1\n                five -= 1\n            elif five >= 3:\n                five -= 3\n            else:\n                return False\n    \n    return True",
+        "javascript": "var lemonadeChange = function(bills) {\n    let five = 0, ten = 0;\n    \n    for (const bill of bills) {\n        if (bill === 5) {\n            five++;\n        } else if (bill === 10) {\n            if (five === 0) return false;\n            five--;\n            ten++;\n        } else { // bill === 20\n            if (ten > 0 && five > 0) {\n                ten--;\n                five--;\n            } else if (five >= 3) {\n                five -= 3;\n            } else {\n                return false;\n            }\n        }\n    }\n    \n    return true;\n};"
+      }
+    },
+    {
+      "name": "Greedy with Explicit Change Calculation",
+      "order": 2,
+      "intuition": "Same greedy strategy but with more explicit change calculation logic.",
+      "approach": "Calculate change needed, then greedily use bills starting from largest denomination.",
+      "steps": [
+        "Track five and ten counts",
+        "For each bill:",
+        "  Calculate change = bill - 5",
+        "  If change == 0: five++",
+        "  Else: Try to make change greedily:",
+        "    Use as many $10 as possible",
+        "    Use $5 for remainder",
+        "    If can't make exact change: return false",
+        "Return true"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass",
+        "spaceExplanation": "Two counters only"
+      },
+      "code": {
+        "cpp": "bool lemonadeChange(vector<int>& bills) {\n    int five = 0, ten = 0;\n    \n    for (int bill : bills) {\n        int change = bill - 5;\n        \n        if (change == 0) {\n            five++;\n        } \n        else if (change == 5) {\n            if (five == 0) return false;\n            five--;\n            ten++;\n        } \n        else if (change == 15) {\n            // Try to make $15 change\n            int tens_needed = min(change / 10, ten);\n            change -= tens_needed * 10;\n            ten -= tens_needed;\n            \n            int fives_needed = change / 5;\n            if (five < fives_needed) return false;\n            five -= fives_needed;\n        }\n    }\n    \n    return true;\n}",
+        "java": "public boolean lemonadeChange(int[] bills) {\n    int five = 0, ten = 0;\n    \n    for (int bill : bills) {\n        int change = bill - 5;\n        \n        if (change == 0) {\n            five++;\n        } else if (change == 5) {\n            if (five == 0) return false;\n            five--;\n            ten++;\n        } else if (change == 15) {\n            int tensNeeded = Math.min(change / 10, ten);\n            change -= tensNeeded * 10;\n            ten -= tensNeeded;\n            \n            int fivesNeeded = change / 5;\n            if (five < fivesNeeded) return false;\n            five -= fivesNeeded;\n        }\n    }\n    \n    return true;\n}",
+        "python": "def lemonadeChange(bills: List[int]) -> bool:\n    five = 0\n    ten = 0\n    \n    for bill in bills:\n        change = bill - 5\n        \n        if change == 0:\n            five += 1\n        elif change == 5:\n            if five == 0:\n                return False\n            five -= 1\n            ten += 1\n        elif change == 15:\n            tens_needed = min(change // 10, ten)\n            change -= tens_needed * 10\n            ten -= tens_needed\n            \n            fives_needed = change // 5\n            if five < fives_needed:\n                return False\n            five -= fives_needed\n    \n    return True",
+        "javascript": "var lemonadeChange = function(bills) {\n    let five = 0, ten = 0;\n    \n    for (const bill of bills) {\n        let change = bill - 5;\n        \n        if (change === 0) {\n            five++;\n        } else if (change === 5) {\n            if (five === 0) return false;\n            five--;\n            ten++;\n        } else if (change === 15) {\n            const tensNeeded = Math.min(Math.floor(change / 10), ten);\n            change -= tensNeeded * 10;\n            ten -= tensNeeded;\n            \n            const fivesNeeded = Math.floor(change / 5);\n            if (five < fivesNeeded) return false;\n            five -= fivesNeeded;\n        }\n    }\n    \n    return true;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "For $20 bill: using 3×$5 before trying 1×$10+1×$5 (wrong greedy choice - $5 bills are more valuable)",
+    "Not tracking $10 bills (only tracking $5) - need both counts",
+    "Trying to track all bills including $20 (unnecessary - $20 can't be used as change)",
+    "Not returning false immediately when can't make change",
+    "Off-by-one errors in bill counting",
+    "Not understanding why $5 bills are more flexible than $10 bills"
+  ],
+  "hints": [
+    "Lemonade costs $5, so we only receive $5, $10, or $20 bills",
+    "We can't give $20 as change (larger than any change needed)",
+    "For $20 bill: prefer giving 1×$10+1×$5 over 3×$5 (saves flexible $5 bills)",
+    "Why $5 more valuable? Can be used for any change, $10 can only help with $15 or $20 change",
+    "Greedy works: make best local decision (prefer $10+$5) leads to global optimum",
+    "Only need to track $5 and $10 counts, not individual bills"
+  ],
+  "followUp": [
+    "What if lemonade costs $3? (Different denominations, same greedy approach)",
+    "What if we can reject customers? (Choose order to maximize satisfied customers)",
+    "What if bills arrive in batches? (Process batch by batch, same logic)",
+    "Minimum starting change to guarantee all customers served? (Complex - depends on bill sequence)",
+    "What if customers can pay exact change? (Easier - no change-making needed)",
+    "Multiple cashiers sharing change drawer? (Concurrency issues, locking needed)"
+  ],
+  "companies": ["Amazon", "Google", "Bloomberg", "Apple"],
+  "tags": ["greedy", "array", "simulation"],
+  "relatedProblems": [
+    "Minimum Number of Coins for Fruits",
+    "Minimum Cost to Make Array Equal",
+    "Coin Change"
+  ]
+}

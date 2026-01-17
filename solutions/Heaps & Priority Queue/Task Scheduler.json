@@ -1,0 +1,145 @@
+{
+  "questionId": "LC-621",
+  "questionSlug": "task-scheduler",
+  "title": "Task Scheduler",
+  "difficulty": "Medium",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/task-scheduler/",
+    "videos": [
+      {
+        "title": "Task Scheduler - Greedy + Max Heap",
+        "url": "https://www.youtube.com/watch?v=s8p8ukTyA2I",
+        "channel": "NeetCode",
+        "duration": "14:20",
+        "language": "English"
+      },
+      {
+        "title": "Task Scheduler Explained",
+        "url": "https://www.youtube.com/watch?v=eGf-26OTI-A",
+        "channel": "take U forward",
+        "duration": "18:30",
+        "language": "English"
+      },
+      {
+        "title": "Task Scheduler - CPU Scheduling",
+        "url": "https://www.youtube.com/watch?v=ySTQCRya6B0",
+        "channel": "Back To Back SWE",
+        "duration": "16:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Task Scheduler - Official Solution",
+        "url": "https://leetcode.com/problems/task-scheduler/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Task Scheduler - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/task-scheduler/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/task-scheduler/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Task scheduling with cooldown? Use max heap + queue for cooling tasks!",
+  "approaches": [
+    {
+      "name": "Simulation with Max Heap + Queue",
+      "order": 1,
+      "intuition": "Simulate the scheduling! Use max heap to pick most frequent task, queue to track cooling tasks.",
+      "approach": "Schedule most frequent available task each time, track cooling with queue.",
+      "steps": [
+        "Count task frequencies",
+        "Add all frequencies to max heap",
+        "Create queue for cooling tasks: (freq, availableTime)",
+        "For each time unit:",
+        "  Check queue: move tasks back to heap if cooled",
+        "  If heap not empty: schedule most frequent task",
+        "    Decrease frequency, add to cooling queue if > 0",
+        "  Else: idle",
+        "  Increment time",
+        "Continue until heap and queue both empty"
+      ],
+      "complexity": {
+        "time": "O(n * k) where k = unique tasks",
+        "space": "O(k)",
+        "timeExplanation": "Simulate each time unit, heap/queue ops O(log k)",
+        "spaceExplanation": "Heap + queue store at most k tasks"
+      },
+      "code": {
+        "cpp": "int leastInterval(vector<char>& tasks, int n) {\n    // Count frequencies\n    unordered_map<char, int> freq;\n    for (char task : tasks) {\n        freq[task]++;\n    }\n    \n    // Max heap of frequencies\n    priority_queue<int> maxHeap;\n    for (auto& p : freq) {\n        maxHeap.push(p.second);\n    }\n    \n    // Queue: (frequency, availableTime)\n    queue<pair<int, int>> cooling;\n    int time = 0;\n    \n    while (!maxHeap.empty() || !cooling.empty()) {\n        time++;\n        \n        // Move cooled tasks back to heap\n        if (!cooling.empty() && cooling.front().second == time) {\n            maxHeap.push(cooling.front().first);\n            cooling.pop();\n        }\n        \n        // Schedule most frequent task\n        if (!maxHeap.empty()) {\n            int count = maxHeap.top();\n            maxHeap.pop();\n            count--;\n            \n            if (count > 0) {\n                cooling.push({count, time + n + 1});\n            }\n        }\n    }\n    \n    return time;\n}\n\n// Example: tasks = [A,A,A,B,B,B], n = 2\n// freq = {A:3, B:3}\n// time=0: schedule A (freq=2), cooling=[(2,3)]\n// time=1: schedule B (freq=2), cooling=[(2,3),(2,4)]\n// time=2: idle, cooling=[(2,3),(2,4)]\n// time=3: schedule A (freq=1), cooling=[(2,4),(1,6)]\n// ...",
+        "java": "public int leastInterval(char[] tasks, int n) {\n    Map<Character, Integer> freq = new HashMap<>();\n    for (char task : tasks) {\n        freq.put(task, freq.getOrDefault(task, 0) + 1);\n    }\n    \n    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());\n    maxHeap.addAll(freq.values());\n    \n    Queue<int[]> cooling = new LinkedList<>();\n    int time = 0;\n    \n    while (!maxHeap.isEmpty() || !cooling.isEmpty()) {\n        time++;\n        \n        if (!cooling.isEmpty() && cooling.peek()[1] == time) {\n            maxHeap.offer(cooling.poll()[0]);\n        }\n        \n        if (!maxHeap.isEmpty()) {\n            int count = maxHeap.poll();\n            count--;\n            \n            if (count > 0) {\n                cooling.offer(new int[]{count, time + n + 1});\n            }\n        }\n    }\n    \n    return time;\n}",
+        "python": "from collections import Counter, deque\nimport heapq\n\ndef leastInterval(tasks: List[str], n: int) -> int:\n    # Count frequencies\n    freq = Counter(tasks)\n    \n    # Max heap (negate for max heap)\n    max_heap = [-count for count in freq.values()]\n    heapq.heapify(max_heap)\n    \n    # Queue: (frequency, availableTime)\n    cooling = deque()\n    time = 0\n    \n    while max_heap or cooling:\n        time += 1\n        \n        # Move cooled tasks back\n        if cooling and cooling[0][1] == time:\n            heapq.heappush(max_heap, cooling.popleft()[0])\n        \n        # Schedule most frequent\n        if max_heap:\n            count = heapq.heappop(max_heap)\n            count += 1  # Increment (was negative)\n            \n            if count < 0:  # Still has tasks\n                cooling.append((count, time + n + 1))\n    \n    return time",
+        "javascript": "var leastInterval = function(tasks, n) {\n    const freq = new Map();\n    for (const task of tasks) {\n        freq.set(task, (freq.get(task) || 0) + 1);\n    }\n    \n    const maxHeap = new MaxPriorityQueue();\n    for (const count of freq.values()) {\n        maxHeap.enqueue(count);\n    }\n    \n    const cooling = [];\n    let time = 0;\n    \n    while (maxHeap.size() > 0 || cooling.length > 0) {\n        time++;\n        \n        if (cooling.length > 0 && cooling[0][1] === time) {\n            maxHeap.enqueue(cooling.shift()[0]);\n        }\n        \n        if (maxHeap.size() > 0) {\n            let count = maxHeap.dequeue().element;\n            count--;\n            \n            if (count > 0) {\n                cooling.push([count, time + n + 1]);\n            }\n        }\n    }\n    \n    return time;\n};"
+      }
+    },
+    {
+      "name": "Math Formula (Optimal)",
+      "order": 2,
+      "intuition": "Most frequent task determines minimum time! Calculate slots needed based on max frequency.",
+      "approach": "Find max frequency, calculate chunks and slots mathematically.",
+      "steps": [
+        "Count task frequencies",
+        "Find maximum frequency: maxFreq",
+        "Count tasks with max frequency: maxCount",
+        "Formula reasoning:",
+        "  Most frequent task creates (maxFreq - 1) chunks",
+        "  Each chunk has (n + 1) slots",
+        "  Last chunk needs maxCount slots (for all max freq tasks)",
+        "  Minimum time = (maxFreq - 1) * (n + 1) + maxCount",
+        "But if tasks.length > formula result: use tasks.length",
+        "Return max(formulaResult, tasks.length)",
+        "One pass! O(n) time"
+      ],
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "timeExplanation": "Single pass to count frequencies (26 letters max)",
+        "spaceExplanation": "Fixed size frequency array/map"
+      },
+      "code": {
+        "cpp": "int leastInterval(vector<char>& tasks, int n) {\n    // Count frequencies (only 26 letters)\n    vector<int> freq(26, 0);\n    for (char task : tasks) {\n        freq[task - 'A']++;\n    }\n    \n    // Find max frequency\n    int maxFreq = *max_element(freq.begin(), freq.end());\n    \n    // Count tasks with max frequency\n    int maxCount = count(freq.begin(), freq.end(), maxFreq);\n    \n    // Calculate minimum time\n    // (maxFreq - 1) chunks, each with (n + 1) slots\n    // Plus maxCount for last chunk\n    int minTime = (maxFreq - 1) * (n + 1) + maxCount;\n    \n    // If we have more tasks than slots, use tasks.size()\n    return max((int)tasks.size(), minTime);\n}\n\n// Example: tasks = [A,A,A,B,B,B], n = 2\n// freq: A=3, B=3\n// maxFreq = 3, maxCount = 2 (both A and B)\n// minTime = (3-1)*(2+1) + 2 = 2*3 + 2 = 8\n// Layout: A B _ A B _ A B\n\n// Example 2: tasks = [A,A,A,B,B,B,C,C,C,D,D,E], n = 2\n// maxFreq = 3, maxCount = 3 (A,B,C)\n// minTime = (3-1)*(2+1) + 3 = 6 + 3 = 9\n// But tasks.size() = 12 > 9, so return 12\n// Can fit without idle: A B C A B C A B C D D E",
+        "java": "public int leastInterval(char[] tasks, int n) {\n    int[] freq = new int[26];\n    for (char task : tasks) {\n        freq[task - 'A']++;\n    }\n    \n    int maxFreq = 0;\n    for (int f : freq) {\n        maxFreq = Math.max(maxFreq, f);\n    }\n    \n    int maxCount = 0;\n    for (int f : freq) {\n        if (f == maxFreq) maxCount++;\n    }\n    \n    int minTime = (maxFreq - 1) * (n + 1) + maxCount;\n    return Math.max(tasks.length, minTime);\n}",
+        "python": "def leastInterval(tasks: List[str], n: int) -> int:\n    from collections import Counter\n    \n    # Count frequencies\n    freq = Counter(tasks)\n    \n    # Find max frequency\n    max_freq = max(freq.values())\n    \n    # Count tasks with max frequency\n    max_count = sum(1 for f in freq.values() if f == max_freq)\n    \n    # Calculate minimum time\n    min_time = (max_freq - 1) * (n + 1) + max_count\n    \n    # Return max of tasks length or calculated time\n    return max(len(tasks), min_time)",
+        "javascript": "var leastInterval = function(tasks, n) {\n    const freq = new Array(26).fill(0);\n    for (const task of tasks) {\n        freq[task.charCodeAt(0) - 65]++;\n    }\n    \n    const maxFreq = Math.max(...freq);\n    const maxCount = freq.filter(f => f === maxFreq).length;\n    \n    const minTime = (maxFreq - 1) * (n + 1) + maxCount;\n    return Math.max(tasks.length, minTime);\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not understanding why formula works (chunks and slots concept)",
+    "Forgetting to handle case when tasks.length > calculated time",
+    "Using wrong cooling time (should be n+1, not n)",
+    "Simulation approach: not moving cooled tasks back to heap",
+    "Counting max frequency incorrectly when multiple tasks have same max",
+    "Off-by-one errors in chunk calculation"
+  ],
+  "hints": [
+    "Most frequent task determines minimum possible time",
+    "Think of (maxFreq - 1) chunks separated by cooldown",
+    "Each chunk needs (n + 1) slots to satisfy cooldown",
+    "Last chunk only needs tasks, no cooldown after",
+    "If many tasks, they fill idle slots - use max(tasks.length, formula)"
+  ],
+  "followUp": [
+    "What if different tasks have different cooldowns? (More complex DP)",
+    "Can we schedule in any order? (Yes, as long as cooldown satisfied)",
+    "What if we want actual schedule, not just count? (Use simulation approach)",
+    "Multiple CPUs? (Different problem - parallel scheduling)",
+    "Minimize idle time instead of total time? (Same problem)"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Bloomberg", "Uber"],
+  "tags": ["heap", "priority-queue", "greedy", "array", "counting", "scheduling"],
+  "relatedProblems": [
+    "Rearrange String k Distance Apart",
+    "Reorganize String",
+    "CPU Scheduling",
+    "Task Scheduler II"
+  ]
+}

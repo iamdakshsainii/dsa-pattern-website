@@ -1,0 +1,175 @@
+{
+  "questionId": "2220",
+  "questionSlug": "minimum-bit-flips-to-convert-number",
+  "title": "Minimum Bit Flips to Convert Number",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/minimum-bit-flips-to-convert-number/",
+    "videos": [
+      {
+        "title": "Minimum Bit Flips - Hamming Distance",
+        "url": "https://www.youtube.com/watch?v=NXzjPHJM1eY",
+        "channel": "NeetCode",
+        "duration": "5:30",
+        "language": "English"
+      },
+      {
+        "title": "Count Bit Differences Between Numbers",
+        "url": "https://www.youtube.com/watch?v=yT8BbFRuitE",
+        "channel": "take U forward",
+        "duration": "8:45",
+        "language": "English"
+      },
+      {
+        "title": "Minimum Bit Flips Solution",
+        "url": "https://www.youtube.com/watch?v=cJoboDAp5Qo",
+        "channel": "Kevin Naughton Jr.",
+        "duration": "6:15",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Minimum Bit Flips - LeetCode Official",
+        "url": "https://leetcode.com/problems/minimum-bit-flips-to-convert-number/editorial/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Count number of bits to be flipped",
+        "url": "https://www.geeksforgeeks.org/count-number-of-bits-to-be-flipped-to-convert-a-to-b/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "Hamming Distance",
+        "url": "https://takeuforward.org/bit-manipulation/hamming-distance/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/minimum-bit-flips-to-convert-number/",
+        "platform": "LeetCode"
+      },
+      {
+        "title": "Practice on GeeksforGeeks",
+        "url": "https://practice.geeksforgeeks.org/problems/bit-difference/",
+        "platform": "GeeksforGeeks"
+      }
+    ]
+  },
+  "patternTriggers": "Count bit differences? XOR to find differing bits, count set bits. This is Hamming Distance!",
+  "approaches": [
+    {
+      "name": "Compare Each Bit - Brute Force",
+      "order": 1,
+      "intuition": "Compare each bit position. Count positions where bits differ.",
+      "approach": "Loop through all bits, compare each.",
+      "steps": [
+        "count = 0",
+        "For i from 0 to 31:",
+        "  bit1 = (start >> i) & 1",
+        "  bit2 = (goal >> i) & 1",
+        "  If bit1 != bit2:",
+        "    count++",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(32) = O(1)",
+        "space": "O(1)",
+        "timeExplanation": "Fixed 32 iterations for 32-bit integers",
+        "spaceExplanation": "Only count variable"
+      },
+      "code": {
+        "cpp": "int minBitFlips(int start, int goal) {\n    int count = 0;\n    \n    for (int i = 0; i < 32; i++) {\n        int bit1 = (start >> i) & 1;\n        int bit2 = (goal >> i) & 1;\n        \n        if (bit1 != bit2) {\n            count++;\n        }\n    }\n    \n    return count;\n}",
+        "java": "public int minBitFlips(int start, int goal) {\n    int count = 0;\n    \n    for (int i = 0; i < 32; i++) {\n        int bit1 = (start >> i) & 1;\n        int bit2 = (goal >> i) & 1;\n        \n        if (bit1 != bit2) {\n            count++;\n        }\n    }\n    \n    return count;\n}",
+        "python": "def minBitFlips(start, goal):\n    count = 0\n    \n    for i in range(32):\n        bit1 = (start >> i) & 1\n        bit2 = (goal >> i) & 1\n        \n        if bit1 != bit2:\n            count += 1\n    \n    return count",
+        "javascript": "function minBitFlips(start, goal) {\n    let count = 0;\n    \n    for (let i = 0; i < 32; i++) {\n        const bit1 = (start >> i) & 1;\n        const bit2 = (goal >> i) & 1;\n        \n        if (bit1 !== bit2) {\n            count++;\n        }\n    }\n    \n    return count;\n}"
+      }
+    },
+    {
+      "name": "XOR and Right Shift",
+      "order": 2,
+      "intuition": "XOR gives 1 where bits differ. Count 1s in XOR result by right shifting.",
+      "approach": "XOR to find differences, count set bits.",
+      "steps": [
+        "xor = start ^ goal  (1 where different)",
+        "count = 0",
+        "While xor != 0:",
+        "  If xor & 1 == 1:",
+        "    count++",
+        "  xor >>= 1",
+        "Return count"
+      ],
+      "complexity": {
+        "time": "O(log n)",
+        "space": "O(1)",
+        "timeExplanation": "Shift until xor becomes 0, at most log(max(start,goal)) times",
+        "spaceExplanation": "Only count and xor variables"
+      },
+      "code": {
+        "cpp": "int minBitFlips(int start, int goal) {\n    int xorResult = start ^ goal;\n    int count = 0;\n    \n    // Count set bits in XOR\n    while (xorResult > 0) {\n        count += xorResult & 1;\n        xorResult >>= 1;\n    }\n    \n    return count;\n}\n\n// Example: start=10 (1010), goal=7 (0111)\n// XOR: 1010 ^ 0111 = 1101\n// Count 1s in 1101 = 3",
+        "java": "public int minBitFlips(int start, int goal) {\n    int xorResult = start ^ goal;\n    int count = 0;\n    \n    while (xorResult > 0) {\n        count += xorResult & 1;\n        xorResult >>= 1;\n    }\n    \n    return count;\n}",
+        "python": "def minBitFlips(start, goal):\n    xor_result = start ^ goal\n    count = 0\n    \n    while xor_result:\n        count += xor_result & 1\n        xor_result >>= 1\n    \n    return count\n\n# Alternative using bin():\n# return bin(start ^ goal).count('1')",
+        "javascript": "function minBitFlips(start, goal) {\n    let xorResult = start ^ goal;\n    let count = 0;\n    \n    while (xorResult > 0) {\n        count += xorResult & 1;\n        xorResult >>= 1;\n    }\n    \n    return count;\n}"
+      }
+    },
+    {
+      "name": "Brian Kernighan's Algorithm - Optimal",
+      "order": 3,
+      "intuition": "XOR to find differences. Use n & (n-1) to count set bits efficiently (only iterates for each 1 bit).",
+      "approach": "XOR + Brian Kernighan's counting.",
+      "steps": [
+        "xor = start ^ goal",
+        "count = 0",
+        "While xor != 0:",
+        "  xor = xor & (xor - 1)  // Remove rightmost 1",
+        "  count++",
+        "Return count",
+        "This only loops for number of differing bits!"
+      ],
+      "complexity": {
+        "time": "O(k)",
+        "space": "O(1)",
+        "timeExplanation": "k = number of differing bits, only loop k times",
+        "spaceExplanation": "Only count and xor variables"
+      },
+      "code": {
+        "cpp": "int minBitFlips(int start, int goal) {\n    int xorResult = start ^ goal;\n    int count = 0;\n    \n    // Brian Kernighan's algorithm\n    // n & (n-1) removes rightmost 1 bit\n    while (xorResult > 0) {\n        xorResult = xorResult & (xorResult - 1);\n        count++;\n    }\n    \n    return count;\n}\n\n// Example: start=10, goal=7\n// XOR: 1010 ^ 0111 = 1101\n// 1101 & 1100 = 1100 (count=1)\n// 1100 & 1011 = 1000 (count=2)\n// 1000 & 0111 = 0000 (count=3)\n// Result: 3 flips needed",
+        "java": "public int minBitFlips(int start, int goal) {\n    int xorResult = start ^ goal;\n    int count = 0;\n    \n    // Brian Kernighan's algorithm\n    while (xorResult > 0) {\n        xorResult = xorResult & (xorResult - 1);\n        count++;\n    }\n    \n    return count;\n}\n\n// Alternative using built-in:\n// return Integer.bitCount(start ^ goal);",
+        "python": "def minBitFlips(start, goal):\n    xor_result = start ^ goal\n    count = 0\n    \n    # Brian Kernighan's algorithm\n    while xor_result:\n        xor_result = xor_result & (xor_result - 1)\n        count += 1\n    \n    return count\n\n# One-liner alternatives:\n# return bin(start ^ goal).count('1')\n# return (start ^ goal).bit_count()  # Python 3.10+",
+        "javascript": "function minBitFlips(start, goal) {\n    let xorResult = start ^ goal;\n    let count = 0;\n    \n    // Brian Kernighan's algorithm\n    while (xorResult > 0) {\n        xorResult = xorResult & (xorResult - 1);\n        count++;\n    }\n    \n    return count;\n}\n\n// Alternative:\n// return (start ^ goal).toString(2).split('1').length - 1;"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not realizing this is Hamming Distance problem",
+    "Comparing bits without XOR (inefficient)",
+    "Not using Brian Kernighan's for optimal solution",
+    "Forgetting that XOR gives 1 where bits differ",
+    "Loop running for all 32 bits instead of only set bits"
+  ],
+  "hints": [
+    "This is Hamming Distance - count differing bit positions",
+    "XOR gives 1 where bits differ, 0 where same",
+    "Count number of 1s in (start ^ goal)",
+    "Use Brian Kernighan's: n & (n-1) removes rightmost 1",
+    "Built-in functions: __builtin_popcount(), Integer.bitCount(), bin().count('1')"
+  ],
+  "followUp": [
+    "What if inputs are very large (64-bit)? (Same approach)",
+    "Can you find which specific bits to flip? (Check each bit in XOR)",
+    "What if you need to minimize cost with weighted flips? (Different problem)",
+    "How to handle multiple numbers? (Pairwise XOR and sum)",
+    "Can you do without loops? (Use built-in popcount)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple"],
+  "tags": ["bit-manipulation"],
+  "relatedProblems": [
+    "Hamming Distance",
+    "Total Hamming Distance",
+    "Number of 1 Bits",
+    "Single Number",
+    "Count Set Bits"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "questionId": "LC-23",
+  "questionSlug": "merge-k-sorted-lists",
+  "title": "Merge K Sorted Lists",
+  "difficulty": "Hard",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/merge-k-sorted-lists/",
+    "videos": [
+      {
+        "title": "Merge K Sorted Lists - Min Heap",
+        "url": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
+        "channel": "NeetCode",
+        "duration": "12:30",
+        "language": "English"
+      },
+      {
+        "title": "Merge K Sorted Lists - All Approaches",
+        "url": "https://www.youtube.com/watch?v=ptYUCjfNhJY",
+        "channel": "take U forward",
+        "duration": "20:15",
+        "language": "English"
+      },
+      {
+        "title": "K-Way Merge using Heap",
+        "url": "https://www.youtube.com/watch?v=kpCDuOXQwfU",
+        "channel": "Back To Back SWE",
+        "duration": "16:45",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Merge K Sorted Lists - Official",
+        "url": "https://leetcode.com/problems/merge-k-sorted-lists/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Merge K Sorted Lists - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/merge-k-sorted-linked-lists/",
+        "source": "GeeksforGeeks"
+      },
+      {
+        "title": "K-Way Merge Pattern",
+        "url": "https://takeuforward.org/data-structure/merge-k-sorted-arrays/",
+        "source": "takeuforward"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Merge K sorted structures? Use Min Heap for K-way merge!",
+  "approaches": [
+    {
+      "name": "Brute Force - Collect All & Sort",
+      "order": 1,
+      "intuition": "Collect all values from all lists into array, sort, rebuild linked list.",
+      "approach": "Extract all values, sort them, create new sorted list.",
+      "steps": [
+        "Traverse all k lists",
+        "Collect all values into array",
+        "Sort the array",
+        "Create new linked list from sorted array",
+        "Return head",
+        "Simple but doesn't utilize sorted property!"
+      ],
+      "complexity": {
+        "time": "O(N log N)",
+        "space": "O(N)",
+        "timeExplanation": "N = total nodes, sorting dominates",
+        "spaceExplanation": "Array stores all N nodes"
+      },
+      "code": {
+        "cpp": "ListNode* mergeKLists(vector<ListNode*>& lists) {\n    vector<int> values;\n    \n    // Collect all values\n    for (ListNode* head : lists) {\n        while (head) {\n            values.push_back(head->val);\n            head = head->next;\n        }\n    }\n    \n    // Sort\n    sort(values.begin(), values.end());\n    \n    // Build new list\n    ListNode* dummy = new ListNode(0);\n    ListNode* curr = dummy;\n    \n    for (int val : values) {\n        curr->next = new ListNode(val);\n        curr = curr->next;\n    }\n    \n    return dummy->next;\n}\n\n// Example: [[1,4,5],[1,3,4],[2,6]]\n// Collect: [1,4,5,1,3,4,2,6]\n// Sort: [1,1,2,3,4,4,5,6]\n// Build list: 1→1→2→3→4→4→5→6",
+        "java": "public ListNode mergeKLists(ListNode[] lists) {\n    List<Integer> values = new ArrayList<>();\n    \n    for (ListNode head : lists) {\n        while (head != null) {\n            values.add(head.val);\n            head = head.next;\n        }\n    }\n    \n    Collections.sort(values);\n    \n    ListNode dummy = new ListNode(0);\n    ListNode curr = dummy;\n    \n    for (int val : values) {\n        curr.next = new ListNode(val);\n        curr = curr.next;\n    }\n    \n    return dummy.next;\n}",
+        "python": "def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:\n    values = []\n    \n    # Collect all values\n    for head in lists:\n        while head:\n            values.append(head.val)\n            head = head.next\n    \n    # Sort\n    values.sort()\n    \n    # Build new list\n    dummy = ListNode(0)\n    curr = dummy\n    \n    for val in values:\n        curr.next = ListNode(val)\n        curr = curr.next\n    \n    return dummy.next",
+        "javascript": "var mergeKLists = function(lists) {\n    const values = [];\n    \n    for (const head of lists) {\n        let curr = head;\n        while (curr) {\n            values.push(curr.val);\n            curr = curr.next;\n        }\n    }\n    \n    values.sort((a, b) => a - b);\n    \n    const dummy = new ListNode(0);\n    let curr = dummy;\n    \n    for (const val of values) {\n        curr.next = new ListNode(val);\n        curr = curr.next;\n    }\n    \n    return dummy.next;\n};"
+      }
+    },
+    {
+      "name": "Merge Two at a Time",
+      "order": 2,
+      "intuition": "Merge first two lists, then merge result with third, and so on. Use standard 2-list merge.",
+      "approach": "Sequentially merge lists one by one.",
+      "steps": [
+        "Start with result = lists[0]",
+        "For each remaining list:",
+        "  Merge result with current list",
+        "  Update result",
+        "Return final result",
+        "Each merge takes O(n) where n is combined length",
+        "Total: k-1 merges"
+      ],
+      "complexity": {
+        "time": "O(kN)",
+        "space": "O(1)",
+        "timeExplanation": "k lists, each merge processes up to N nodes",
+        "spaceExplanation": "Only pointers, reuse existing nodes"
+      },
+      "code": {
+        "cpp": "ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {\n    ListNode* dummy = new ListNode(0);\n    ListNode* curr = dummy;\n    \n    while (l1 && l2) {\n        if (l1->val < l2->val) {\n            curr->next = l1;\n            l1 = l1->next;\n        } else {\n            curr->next = l2;\n            l2 = l2->next;\n        }\n        curr = curr->next;\n    }\n    \n    curr->next = l1 ? l1 : l2;\n    return dummy->next;\n}\n\nListNode* mergeKLists(vector<ListNode*>& lists) {\n    if (lists.empty()) return nullptr;\n    \n    ListNode* result = lists[0];\n    \n    for (int i = 1; i < lists.size(); i++) {\n        result = mergeTwoLists(result, lists[i]);\n    }\n    \n    return result;\n}\n\n// Example: [[1,4,5],[1,3,4],[2,6]]\n// Merge list[0] and list[1]: [1,1,3,4,4,5]\n// Merge result and list[2]: [1,1,2,3,4,4,5,6]",
+        "java": "private ListNode mergeTwoLists(ListNode l1, ListNode l2) {\n    ListNode dummy = new ListNode(0);\n    ListNode curr = dummy;\n    \n    while (l1 != null && l2 != null) {\n        if (l1.val < l2.val) {\n            curr.next = l1;\n            l1 = l1.next;\n        } else {\n            curr.next = l2;\n            l2 = l2.next;\n        }\n        curr = curr.next;\n    }\n    \n    curr.next = l1 != null ? l1 : l2;\n    return dummy.next;\n}\n\npublic ListNode mergeKLists(ListNode[] lists) {\n    if (lists.length == 0) return null;\n    \n    ListNode result = lists[0];\n    \n    for (int i = 1; i < lists.length; i++) {\n        result = mergeTwoLists(result, lists[i]);\n    }\n    \n    return result;\n}",
+        "python": "def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:\n    def mergeTwoLists(l1, l2):\n        dummy = ListNode(0)\n        curr = dummy\n        \n        while l1 and l2:\n            if l1.val < l2.val:\n                curr.next = l1\n                l1 = l1.next\n            else:\n                curr.next = l2\n                l2 = l2.next\n            curr = curr.next\n        \n        curr.next = l1 if l1 else l2\n        return dummy.next\n    \n    if not lists:\n        return None\n    \n    result = lists[0]\n    for i in range(1, len(lists)):\n        result = mergeTwoLists(result, lists[i])\n    \n    return result",
+        "javascript": "var mergeKLists = function(lists) {\n    const mergeTwoLists = (l1, l2) => {\n        const dummy = new ListNode(0);\n        let curr = dummy;\n        \n        while (l1 && l2) {\n            if (l1.val < l2.val) {\n                curr.next = l1;\n                l1 = l1.next;\n            } else {\n                curr.next = l2;\n                l2 = l2.next;\n            }\n            curr = curr.next;\n        }\n        \n        curr.next = l1 || l2;\n        return dummy.next;\n    };\n    \n    if (lists.length === 0) return null;\n    \n    let result = lists[0];\n    for (let i = 1; i < lists.length; i++) {\n        result = mergeTwoLists(result, lists[i]);\n    }\n    \n    return result;\n};"
+      }
+    },
+    {
+      "name": "Min Heap (K-Way Merge) - Optimal",
+      "order": 3,
+      "intuition": "Use min heap to track smallest current element from each list! Always pick globally smallest next.",
+      "approach": "Add first node of each list to min heap, repeatedly extract min and add its next.",
+      "steps": [
+        "Create min heap (priority queue)",
+        "Add first node of each k lists to heap",
+        "While heap not empty:",
+        "  Extract minimum node",
+        "  Add to result list",
+        "  If extracted node has next:",
+        "    Add next node to heap",
+        "Heap size ≤ k at all times!",
+        "Total N nodes, each O(log k) heap operation"
+      ],
+      "complexity": {
+        "time": "O(N log k)",
+        "space": "O(k)",
+        "timeExplanation": "N nodes, each heap operation O(log k)",
+        "spaceExplanation": "Heap stores at most k nodes"
+      },
+      "code": {
+        "cpp": "struct Compare {\n    bool operator()(ListNode* a, ListNode* b) {\n        return a->val > b->val; // Min heap\n    }\n};\n\nListNode* mergeKLists(vector<ListNode*>& lists) {\n    priority_queue<ListNode*, vector<ListNode*>, Compare> minHeap;\n    \n    // Add first node of each list\n    for (ListNode* head : lists) {\n        if (head) {\n            minHeap.push(head);\n        }\n    }\n    \n    ListNode* dummy = new ListNode(0);\n    ListNode* curr = dummy;\n    \n    while (!minHeap.empty()) {\n        // Extract minimum\n        ListNode* node = minHeap.top();\n        minHeap.pop();\n        \n        // Add to result\n        curr->next = node;\n        curr = curr->next;\n        \n        // Add next node if exists\n        if (node->next) {\n            minHeap.push(node->next);\n        }\n    }\n    \n    return dummy->next;\n}\n\n// Example: [[1,4,5],[1,3,4],[2,6]]\n// Heap initially: [1(list0), 1(list1), 2(list2)]\n// Extract 1(list0), add 4: heap=[1,2,4]\n// Extract 1(list1), add 3: heap=[2,3,4]\n// Continue...",
+        "java": "public ListNode mergeKLists(ListNode[] lists) {\n    PriorityQueue<ListNode> minHeap = new PriorityQueue<>(\n        (a, b) -> a.val - b.val\n    );\n    \n    for (ListNode head : lists) {\n        if (head != null) {\n            minHeap.offer(head);\n        }\n    }\n    \n    ListNode dummy = new ListNode(0);\n    ListNode curr = dummy;\n    \n    while (!minHeap.isEmpty()) {\n        ListNode node = minHeap.poll();\n        curr.next = node;\n        curr = curr.next;\n        \n        if (node.next != null) {\n            minHeap.offer(node.next);\n        }\n    }\n    \n    return dummy.next;\n}",
+        "python": "import heapq\n\ndef mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:\n    # Min heap: (value, index, node)\n    min_heap = []\n    \n    # Add first node of each list\n    for i, head in enumerate(lists):\n        if head:\n            heapq.heappush(min_heap, (head.val, i, head))\n    \n    dummy = ListNode(0)\n    curr = dummy\n    \n    while min_heap:\n        val, i, node = heapq.heappop(min_heap)\n        \n        curr.next = node\n        curr = curr.next\n        \n        if node.next:\n            heapq.heappush(min_heap, (node.next.val, i, node.next))\n    \n    return dummy.next\n\n# Note: index i used to break ties for same values",
+        "javascript": "var mergeKLists = function(lists) {\n    const minHeap = new MinPriorityQueue({\n        priority: (node) => node.val\n    });\n    \n    for (const head of lists) {\n        if (head) {\n            minHeap.enqueue(head);\n        }\n    }\n    \n    const dummy = new ListNode(0);\n    let curr = dummy;\n    \n    while (minHeap.size() > 0) {\n        const node = minHeap.dequeue().element;\n        curr.next = node;\n        curr = curr.next;\n        \n        if (node.next) {\n            minHeap.enqueue(node.next);\n        }\n    }\n    \n    return dummy.next;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Not handling empty lists in input array",
+    "Heap comparator backwards (max instead of min)",
+    "Forgetting to add next node after extracting from heap",
+    "Not initializing heap with first nodes",
+    "Trying to add null nodes to heap",
+    "Heap size O(N) instead of O(k) - inefficient"
+  ],
+  "hints": [
+    "Lists are already sorted - exploit this!",
+    "Min heap tracks smallest current element across k lists",
+    "Heap size is at most k, not N!",
+    "Each node enters and leaves heap exactly once",
+    "K-way merge is classic heap pattern"
+  ],
+  "followUp": [
+    "What if lists are very long? (Same approach works, streaming)",
+    "Can we do better than O(N log k)? (No, need comparisons)",
+    "What if k is very large? (Divide and conquer merge)",
+    "Merge k sorted arrays instead? (Same min heap approach)",
+    "In-place merging possible? (No, linked lists can't be in-place merged efficiently)"
+  ],
+  "companies": ["Google", "Amazon", "Microsoft", "Facebook", "Apple", "Uber", "LinkedIn"],
+  "tags": ["heap", "priority-queue", "linked-list", "divide-and-conquer", "k-way-merge"],
+  "relatedProblems": [
+    "Merge Two Sorted Lists",
+    "Ugly Number II",
+    "Kth Smallest Element in Sorted Matrix",
+    "Smallest Range Covering Elements from K Lists",
+    "Merge Sorted Array"
+  ]
+}

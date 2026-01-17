@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
-import { Lightbulb, Clock, ArrowRight, FileCode, Search, CheckCircle, AlertCircle } from "lucide-react"
+import { Lightbulb, Clock, ArrowRight, FileCode, Search, CheckCircle, AlertCircle, ChevronDown, ChevronUp } from "lucide-react"
 
 export default function SolutionManagerClient() {
   const [patterns, setPatterns] = useState([])
@@ -16,6 +16,8 @@ export default function SolutionManagerClient() {
   const [recentSolutions, setRecentSolutions] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const [isRecentExpanded, setIsRecentExpanded] = useState(true)
+  const [solutionFilter, setSolutionFilter] = useState("all") // "all", "no-solution", "has-solution"
 
   useEffect(() => {
     fetchPatterns()
@@ -29,16 +31,24 @@ export default function SolutionManagerClient() {
   }, [selectedPattern])
 
   useEffect(() => {
+    let filtered = questions
+
+    // Apply search filter
     if (searchQuery.trim()) {
-      setFilteredQuestions(
-        questions.filter(q =>
-          q.title.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+      filtered = filtered.filter(q =>
+        q.title.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    } else {
-      setFilteredQuestions(questions)
     }
-  }, [searchQuery, questions])
+
+    // Apply solution filter
+    if (solutionFilter === "no-solution") {
+      filtered = filtered.filter(q => !q.approaches || q.approaches.length === 0)
+    } else if (solutionFilter === "has-solution") {
+      filtered = filtered.filter(q => q.approaches && q.approaches.length > 0)
+    }
+
+    setFilteredQuestions(filtered)
+  }, [searchQuery, questions, solutionFilter])
 
   const fetchPatterns = async () => {
     try {
@@ -57,6 +67,7 @@ export default function SolutionManagerClient() {
       const data = await res.json()
       setQuestions(data.questions || [])
       setFilteredQuestions(data.questions || [])
+      setSolutionFilter("all") // Reset filter when changing pattern
     } catch (error) {
       console.error("Error fetching questions:", error)
     } finally {
@@ -100,6 +111,18 @@ export default function SolutionManagerClient() {
     }
   }
 
+  const getFilterCounts = () => {
+    const searchFiltered = searchQuery.trim()
+      ? questions.filter(q => q.title.toLowerCase().includes(searchQuery.toLowerCase()))
+      : questions
+
+    return {
+      all: searchFiltered.length,
+      noSolution: searchFiltered.filter(q => !q.approaches || q.approaches.length === 0).length,
+      hasSolution: searchFiltered.filter(q => q.approaches && q.approaches.length > 0).length
+    }
+  }
+
   return (
     <div className="p-6 lg:p-8 space-y-6">
       <div className="flex items-center justify-between">
@@ -111,33 +134,46 @@ export default function SolutionManagerClient() {
 
       {recentSolutions.length > 0 && (
         <Card className="p-6">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Recently Edited Solutions
-          </h2>
-          <div className="grid gap-3">
-            {recentSolutions.map((solution) => (
-              <Link key={solution._id} href={`/admin/questions/solutions/${solution._id}`}>
-                <div className="p-4 border rounded-lg hover:bg-accent transition-colors flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <FileCode className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <div className="font-medium">{solution.title}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {solution.approaches?.length || 0} approaches
+          <div
+            className="flex items-center justify-between cursor-pointer mb-4"
+            onClick={() => setIsRecentExpanded(!isRecentExpanded)}
+          >
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Recently Edited Solutions
+            </h2>
+            {isRecentExpanded ? (
+              <ChevronUp className="h-5 w-5 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-muted-foreground" />
+            )}
+          </div>
+
+          {isRecentExpanded && (
+            <div className="grid gap-3">
+              {recentSolutions.map((solution) => (
+                <Link key={solution._id} href={`/admin/questions/solutions/${solution._id}`}>
+                  <div className="p-4 border rounded-lg hover:bg-accent transition-colors flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <FileCode className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <div className="font-medium">{solution.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {solution.approaches?.length || 0} approaches
+                        </div>
                       </div>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className={getDifficultyColor(solution.difficulty)}>
+                        {solution.difficulty}
+                      </Badge>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={getDifficultyColor(solution.difficulty)}>
-                      {solution.difficulty}
-                    </Badge>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </Card>
       )}
 
@@ -188,6 +224,42 @@ export default function SolutionManagerClient() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
               />
+            </div>
+          )}
+
+          {questions.length > 0 && (
+            <div className="flex gap-2 mb-4">
+              {(() => {
+                const counts = getFilterCounts()
+                return (
+                  <>
+                    <Button
+                      variant={solutionFilter === "all" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSolutionFilter("all")}
+                      className="flex-1"
+                    >
+                      All Questions ({counts.all})
+                    </Button>
+                    <Button
+                      variant={solutionFilter === "no-solution" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSolutionFilter("no-solution")}
+                      className="flex-1"
+                    >
+                      No Solution ({counts.noSolution})
+                    </Button>
+                    <Button
+                      variant={solutionFilter === "has-solution" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSolutionFilter("has-solution")}
+                      className="flex-1"
+                    >
+                      Has Solution ({counts.hasSolution})
+                    </Button>
+                  </>
+                )
+              })()}
             </div>
           )}
 

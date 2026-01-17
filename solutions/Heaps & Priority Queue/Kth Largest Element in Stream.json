@@ -1,0 +1,159 @@
+{
+  "questionId": "LC-703",
+  "questionSlug": "kth-largest-element-in-a-stream",
+  "title": "Kth Largest Element in Stream",
+  "difficulty": "Easy",
+  "resources": {
+    "leetcode": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
+    "videos": [
+      {
+        "title": "Kth Largest Element in Stream - Min Heap",
+        "url": "https://www.youtube.com/watch?v=hOjcdrqMoQ8",
+        "channel": "NeetCode",
+        "duration": "8:15",
+        "language": "English"
+      },
+      {
+        "title": "Kth Largest in Stream Explained",
+        "url": "https://www.youtube.com/watch?v=hVLuhb8Z3Mg",
+        "channel": "Nick White",
+        "duration": "6:30",
+        "language": "English"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Kth Largest Element in Stream - Official",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/solution/",
+        "source": "LeetCode"
+      },
+      {
+        "title": "Kth Largest in Stream - GeeksforGeeks",
+        "url": "https://www.geeksforgeeks.org/kth-largest-element-in-a-stream/",
+        "source": "GeeksforGeeks"
+      }
+    ],
+    "practice": [
+      {
+        "title": "Practice on LeetCode",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
+        "platform": "LeetCode"
+      }
+    ]
+  },
+  "patternTriggers": "Kth largest in stream? Maintain min heap of size k!",
+  "approaches": [
+    {
+      "name": "Sorting Every Time - Brute Force",
+      "order": 1,
+      "intuition": "Store all numbers, sort every time we need kth largest.",
+      "approach": "Maintain list of all numbers, sort on each add.",
+      "steps": [
+        "Store all numbers in array",
+        "add(val): append to array, sort, return nums[n-k]",
+        "Very inefficient for frequent adds!",
+        "Each add: O(n log n)"
+      ],
+      "complexity": {
+        "time": "add: O(n log n), constructor: O(n log n)",
+        "space": "O(n)",
+        "timeExplanation": "Sort entire array on each add",
+        "spaceExplanation": "Store all numbers"
+      },
+      "code": {
+        "cpp": "class KthLargest {\nprivate:\n    vector<int> nums;\n    int k;\n    \npublic:\n    KthLargest(int k, vector<int>& nums) : k(k), nums(nums) {}\n    \n    int add(int val) {\n        nums.push_back(val);\n        sort(nums.begin(), nums.end());\n        return nums[nums.size() - k];\n    }\n};\n\n// Example: k=3, nums=[4,5,8,2]\n// add(3): [2,3,4,5,8] → 3rd largest = 4\n// add(5): [2,3,4,5,5,8] → 3rd largest = 5",
+        "java": "class KthLargest {\n    private List<Integer> nums;\n    private int k;\n    \n    public KthLargest(int k, int[] nums) {\n        this.k = k;\n        this.nums = new ArrayList<>();\n        for (int num : nums) {\n            this.nums.add(num);\n        }\n    }\n    \n    public int add(int val) {\n        nums.add(val);\n        Collections.sort(nums);\n        return nums.get(nums.size() - k);\n    }\n}",
+        "python": "class KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.k = k\n        self.nums = nums\n    \n    def add(self, val: int) -> int:\n        self.nums.append(val)\n        self.nums.sort()\n        return self.nums[-self.k]",
+        "javascript": "var KthLargest = function(k, nums) {\n    this.k = k;\n    this.nums = nums;\n};\n\nKthLargest.prototype.add = function(val) {\n    this.nums.push(val);\n    this.nums.sort((a, b) => a - b);\n    return this.nums[this.nums.length - this.k];\n};"
+      }
+    },
+    {
+      "name": "Min Heap (Size K) - Optimal",
+      "order": 2,
+      "intuition": "Maintain min heap of size k containing k largest elements. Top is kth largest!",
+      "approach": "Keep min heap with exactly k largest elements seen so far.",
+      "steps": [
+        "Constructor:",
+        "  Create min heap",
+        "  Add all initial numbers to heap",
+        "  Keep heap size ≤ k (remove smaller elements)",
+        "add(val):",
+        "  If heap size < k: just add val",
+        "  If heap size == k and val > top: remove top, add val",
+        "  Return top of heap (kth largest)",
+        "Heap always contains k largest elements!",
+        "Top is the smallest among them = kth largest overall"
+      ],
+      "complexity": {
+        "time": "add: O(log k), constructor: O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Each heap operation is O(log k)",
+        "spaceExplanation": "Heap stores exactly k elements"
+      },
+      "code": {
+        "cpp": "class KthLargest {\nprivate:\n    priority_queue<int, vector<int>, greater<int>> minHeap; // Min heap\n    int k;\n    \npublic:\n    KthLargest(int k, vector<int>& nums) : k(k) {\n        for (int num : nums) {\n            minHeap.push(num);\n            if (minHeap.size() > k) {\n                minHeap.pop();\n            }\n        }\n    }\n    \n    int add(int val) {\n        minHeap.push(val);\n        if (minHeap.size() > k) {\n            minHeap.pop();\n        }\n        return minHeap.top();\n    }\n};\n\n// Example: k=3, nums=[4,5,8,2]\n// Constructor: heap = [4,5,8] (min heap, top=4)\n// add(3): 3 < 4, heap stays [4,5,8] → return 4\n// add(5): heap = [5,5,8] → return 5\n// add(10): heap = [5,8,10] → return 5\n// add(9): heap = [8,9,10] → return 8",
+        "java": "class KthLargest {\n    private PriorityQueue<Integer> minHeap;\n    private int k;\n    \n    public KthLargest(int k, int[] nums) {\n        this.k = k;\n        this.minHeap = new PriorityQueue<>();\n        \n        for (int num : nums) {\n            minHeap.offer(num);\n            if (minHeap.size() > k) {\n                minHeap.poll();\n            }\n        }\n    }\n    \n    public int add(int val) {\n        minHeap.offer(val);\n        if (minHeap.size() > k) {\n            minHeap.poll();\n        }\n        return minHeap.peek();\n    }\n}",
+        "python": "import heapq\n\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.k = k\n        self.min_heap = nums\n        heapq.heapify(self.min_heap)\n        \n        # Keep only k largest\n        while len(self.min_heap) > k:\n            heapq.heappop(self.min_heap)\n    \n    def add(self, val: int) -> int:\n        heapq.heappush(self.min_heap, val)\n        if len(self.min_heap) > self.k:\n            heapq.heappop(self.min_heap)\n        return self.min_heap[0]",
+        "javascript": "var KthLargest = function(k, nums) {\n    this.k = k;\n    this.minHeap = new MinPriorityQueue();\n    \n    for (const num of nums) {\n        this.minHeap.enqueue(num);\n        if (this.minHeap.size() > k) {\n            this.minHeap.dequeue();\n        }\n    }\n};\n\nKthLargest.prototype.add = function(val) {\n    this.minHeap.enqueue(val);\n    if (this.minHeap.size() > this.k) {\n        this.minHeap.dequeue();\n    }\n    return this.minHeap.front().element;\n};"
+      }
+    },
+    {
+      "name": "Min Heap (Optimized Add) - Best",
+      "order": 3,
+      "intuition": "Only add to heap if value is larger than current kth largest. Skip smaller values!",
+      "approach": "Same as approach 2 but optimize add() to skip values smaller than top.",
+      "steps": [
+        "Constructor: same as approach 2",
+        "add(val) optimized:",
+        "  If heap size < k: add val (need more elements)",
+        "  Else if val <= top: skip (too small to be kth largest)",
+        "  Else: remove top, add val",
+        "  Return top",
+        "Avoids unnecessary heap operations!",
+        "Faster in practice when many small values added"
+      ],
+      "complexity": {
+        "time": "add: O(log k) worst, O(1) best, constructor: O(n log k)",
+        "space": "O(k)",
+        "timeExplanation": "Skip small values in O(1), heap ops O(log k)",
+        "spaceExplanation": "Heap stores k elements"
+      },
+      "code": {
+        "cpp": "class KthLargest {\nprivate:\n    priority_queue<int, vector<int>, greater<int>> minHeap;\n    int k;\n    \npublic:\n    KthLargest(int k, vector<int>& nums) : k(k) {\n        for (int num : nums) {\n            add(num);\n        }\n    }\n    \n    int add(int val) {\n        // Only add if heap not full or val is large enough\n        if (minHeap.size() < k) {\n            minHeap.push(val);\n        } else if (val > minHeap.top()) {\n            minHeap.pop();\n            minHeap.push(val);\n        }\n        \n        return minHeap.top();\n    }\n};\n\n// Optimization: if val <= top, we skip heap operations!\n// Example: k=3, heap=[4,5,8]\n// add(2): 2 <= 4, skip! → return 4\n// add(10): 10 > 4, pop 4, push 10 → return 5",
+        "java": "class KthLargest {\n    private PriorityQueue<Integer> minHeap;\n    private int k;\n    \n    public KthLargest(int k, int[] nums) {\n        this.k = k;\n        this.minHeap = new PriorityQueue<>();\n        \n        for (int num : nums) {\n            add(num);\n        }\n    }\n    \n    public int add(int val) {\n        if (minHeap.size() < k) {\n            minHeap.offer(val);\n        } else if (val > minHeap.peek()) {\n            minHeap.poll();\n            minHeap.offer(val);\n        }\n        \n        return minHeap.peek();\n    }\n}",
+        "python": "import heapq\n\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.k = k\n        self.min_heap = []\n        \n        for num in nums:\n            self.add(num)\n    \n    def add(self, val: int) -> int:\n        if len(self.min_heap) < self.k:\n            heapq.heappush(self.min_heap, val)\n        elif val > self.min_heap[0]:\n            heapq.heapreplace(self.min_heap, val)  # Pop and push in one op\n        \n        return self.min_heap[0]",
+        "javascript": "var KthLargest = function(k, nums) {\n    this.k = k;\n    this.minHeap = new MinPriorityQueue();\n    \n    for (const num of nums) {\n        this.add(num);\n    }\n};\n\nKthLargest.prototype.add = function(val) {\n    if (this.minHeap.size() < this.k) {\n        this.minHeap.enqueue(val);\n    } else if (val > this.minHeap.front().element) {\n        this.minHeap.dequeue();\n        this.minHeap.enqueue(val);\n    }\n    \n    return this.minHeap.front().element;\n};"
+      }
+    }
+  ],
+  "commonMistakes": [
+    "Using max heap instead of min heap (won't track kth largest)",
+    "Not maintaining heap size exactly k",
+    "Forgetting to handle case when heap has less than k elements",
+    "Trying to remove specific elements from heap (expensive)",
+    "Not understanding why min heap works for kth LARGEST",
+    "Sorting entire stream on each add"
+  ],
+  "hints": [
+    "Min heap of size k keeps k largest elements",
+    "Top of min heap = smallest among k largest = kth largest!",
+    "Only need to track k elements, not all n",
+    "If new value ≤ top, it can't be kth largest",
+    "Python: use heapreplace() for atomic pop+push"
+  ],
+  "followUp": [
+    "What if k changes dynamically? (Rebuild heap when k changes)",
+    "What if stream is infinite? (Min heap approach works perfectly)",
+    "Find kth smallest instead? (Use max heap of size k)",
+    "What if k > stream size? (Return smallest element or handle as edge case)",
+    "Can we do better than O(log k) per add? (No, need ordered structure)"
+  ],
+  "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Apple"],
+  "tags": ["heap", "priority-queue", "design", "data-stream"],
+  "relatedProblems": [
+    "Kth Largest Element in Array",
+    "Find Median from Data Stream",
+    "Sliding Window Median",
+    "Top K Frequent Elements"
+  ]
+}
